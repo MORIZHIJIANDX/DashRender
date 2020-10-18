@@ -54,19 +54,19 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\Bin\Debug-windows-x86_64\%prj.name\</OutDir>
+    <OutDir>..\Bin\Debug-windows-x86_64\DashCore\</OutDir>
     <IntDir>..\Bin-Intermediate\Debug-windows-x86_64\DashCore\</IntDir>
     <TargetName>DashCore</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\Bin\Release-windows-x86_64\%prj.name\</OutDir>
+    <OutDir>..\Bin\Release-windows-x86_64\DashCore\</OutDir>
     <IntDir>..\Bin-Intermediate\Release-windows-x86_64\DashCore\</IntDir>
     <TargetName>DashCore</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
-    <OutDir>..\Bin\Dist-windows-x86_64\%prj.name\</OutDir>
+    <OutDir>..\Bin\Dist-windows-x86_64\DashCore\</OutDir>
     <IntDir>..\Bin-Intermediate\Dist-windows-x86_64\DashCore\</IntDir>
     <TargetName>DashCore</TargetName>
     <TargetExt>.lib</TargetExt>
@@ -137,10 +137,12 @@
     <ClInclude Include="Src\DesignPatterns\DelegateBase.h" />
     <ClInclude Include="Src\DesignPatterns\MulticastDelegate.h" />
     <ClInclude Include="Src\DesignPatterns\Singleton.h" />
+    <ClInclude Include="Src\EntryPoint.h" />
     <ClInclude Include="Src\Graphics\Application.h" />
     <ClInclude Include="Src\Graphics\ApplicationDX12.h" />
     <ClInclude Include="Src\Graphics\Camera.h" />
     <ClInclude Include="Src\Graphics\DX12Helper.h" />
+    <ClInclude Include="Src\Graphics\GameApp.h" />
     <ClInclude Include="Src\Graphics\Viewport.h" />
     <ClInclude Include="Src\Graphics\Window.h" />
     <ClInclude Include="Src\Graphics\d3dx12.h" />
@@ -186,10 +188,12 @@
     <ClInclude Include="Src\Utility\ThreadSafeQueue.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\EntryPoint.cpp" />
     <ClCompile Include="Src\Graphics\Application.cpp" />
     <ClCompile Include="Src\Graphics\ApplicationDX12.cpp" />
     <ClCompile Include="Src\Graphics\Camera.cpp" />
     <ClCompile Include="Src\Graphics\DX12Helper.cpp" />
+    <ClCompile Include="Src\Graphics\GameApp.cpp" />
     <ClCompile Include="Src\Graphics\Window.cpp" />
     <ClCompile Include="Src\Math\Color.cpp" />
     <ClCompile Include="Src\PCH\PCH.cpp">

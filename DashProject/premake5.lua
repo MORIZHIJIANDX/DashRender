@@ -19,7 +19,7 @@ project "DashCore"
 	cppdialect "C++17"
 	staticruntime "on"
 
-    targetdir ("Bin/"..outputdir.."/%prj.name")
+    targetdir ("Bin/"..outputdir.."/%{prj.name}")
     objdir ("Bin-Intermediate/"..outputdir.."/%{prj.name}")
 
     pchheader ("PCH.h")
@@ -65,7 +65,7 @@ project "DashProject"
     cppdialect "C++17"
     staticruntime "on"
 
-    targetdir ("Bin/"..outputdir.."/%prj.name")
+    targetdir ("Bin/"..outputdir.."/%{prj.name}")
     objdir ("Bin-Intermediate/"..outputdir.."/%{prj.name}")
 
     characterset ("MBCS")

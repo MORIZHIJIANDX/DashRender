@@ -55,21 +55,21 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\Bin\Debug-windows-x86_64\%prj.name\</OutDir>
+    <OutDir>..\Bin\Debug-windows-x86_64\DashProject\</OutDir>
     <IntDir>..\Bin-Intermediate\Debug-windows-x86_64\DashProject\</IntDir>
     <TargetName>DashProject</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\Bin\Release-windows-x86_64\%prj.name\</OutDir>
+    <OutDir>..\Bin\Release-windows-x86_64\DashProject\</OutDir>
     <IntDir>..\Bin-Intermediate\Release-windows-x86_64\DashProject\</IntDir>
     <TargetName>DashProject</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\Bin\Dist-windows-x86_64\%prj.name\</OutDir>
+    <OutDir>..\Bin\Dist-windows-x86_64\DashProject\</OutDir>
     <IntDir>..\Bin-Intermediate\Dist-windows-x86_64\DashProject\</IntDir>
     <TargetName>DashProject</TargetName>
     <TargetExt>.exe</TargetExt>

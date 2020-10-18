@@ -11,13 +11,13 @@
 #define NOGDICAPMASKS
 #define NOSYSMETRICS
 #define NOMENUS
-#define NOICONS
+//#define NOICONS
 #define NOSYSCOMMANDS
 #define NORASTEROPS
 #define OEMRESOURCE
 #define NOATOM
 #define NOCLIPBOARD
-#define NOCOLOR
+//#define NOCOLOR
 #define NOCTLMGR
 #define NODRAWTEXT
 #define NOKERNEL
