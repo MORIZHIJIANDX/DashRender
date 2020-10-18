@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Consolid">
+      <UniqueIdentifier>{208765BA-0C54-C0C5-356D-AE6D2199F553}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DesignPatterns">
+      <UniqueIdentifier>{10AA6C8E-FC77-6094-E50B-D1BAD1783CF9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{1653CE33-0220-293F-2B39-17E717655ECD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{AFF4887C-9B2B-8A0D-4418-7010302E060F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PCH">
+      <UniqueIdentifier>{2010880B-8C19-887C-1595-9E7C819D937C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{594615A9-C525-9444-CE3D-1F1B3A9CFAA5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Src\Consolid\Consolid.h">
+      <Filter>Consolid</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Consolid\DashWinAPI.h">
+      <Filter>Consolid</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DesignPatterns\Delegate.h">
+      <Filter>DesignPatterns</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DesignPatterns\DelegateBase.h">
+      <Filter>DesignPatterns</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DesignPatterns\MulticastDelegate.h">
+      <Filter>DesignPatterns</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DesignPatterns\Singleton.h">
+      <Filter>DesignPatterns</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\Application.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\ApplicationDX12.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\Camera.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\DX12Helper.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\Viewport.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\Window.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\d3dx12.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\AABB.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\AABB2.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\AABB3.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\Algebra.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\BitMask.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\Color.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\DashFormatEnums.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\Intersection.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\Interval.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\MathType.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\Matrix3x3.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\Matrix4x4.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\Metric.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\Promote.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\Quaternion.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\Ray.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\Scalar.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\ScalarArray.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\ScalarMatrix.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\ScalarTraits.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\Transform.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\Vector2.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\Vector3.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\Vector4.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\Vector4_SSE.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PCH\PCH.h">
+      <Filter>PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\Assert.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\DDS.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\Events.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\Exception.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\HighResolutionTimer.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\Image.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\ImageHelper.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\KeyCodes.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\Keyboard.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\LogEnums.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\LogManager.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\LogStream.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\Mouse.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\ThreadSafeQueue.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Graphics\Application.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\ApplicationDX12.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\Camera.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\DX12Helper.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\Window.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Math\Color.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PCH\PCH.cpp">
+      <Filter>PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utility\Assert.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utility\Exception.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utility\HighResolutionTimer.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utility\Image.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utility\ImageHelper.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utility\Keyboard.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utility\LogManager.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utility\LogStream.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utility\Mouse.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

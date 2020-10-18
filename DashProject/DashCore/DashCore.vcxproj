@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Dist|x64">
+      <Configuration>Dist</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{4EB4C27B-3A81-1D87-639A-0B2F4FC65215}</ProjectGuid>
+    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>DashCore</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>..\Bin\Debug-windows-x86_64\%prj.name\</OutDir>
+    <IntDir>..\Bin-Intermediate\Debug-windows-x86_64\DashCore\</IntDir>
+    <TargetName>DashCore</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>..\Bin\Release-windows-x86_64\%prj.name\</OutDir>
+    <IntDir>..\Bin-Intermediate\Release-windows-x86_64\DashCore\</IntDir>
+    <TargetName>DashCore</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
+    <OutDir>..\Bin\Dist-windows-x86_64\%prj.name\</OutDir>
+    <IntDir>..\Bin-Intermediate\Dist-windows-x86_64\DashCore\</IntDir>
+    <TargetName>DashCore</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;DASH_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>Src\PCH;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;DASH_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>Src\PCH;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;DASH_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>Src\PCH;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="Src\Consolid\Consolid.h" />
+    <ClInclude Include="Src\Consolid\DashWinAPI.h" />
+    <ClInclude Include="Src\DesignPatterns\Delegate.h" />
+    <ClInclude Include="Src\DesignPatterns\DelegateBase.h" />
+    <ClInclude Include="Src\DesignPatterns\MulticastDelegate.h" />
+    <ClInclude Include="Src\DesignPatterns\Singleton.h" />
+    <ClInclude Include="Src\Graphics\Application.h" />
+    <ClInclude Include="Src\Graphics\ApplicationDX12.h" />
+    <ClInclude Include="Src\Graphics\Camera.h" />
+    <ClInclude Include="Src\Graphics\DX12Helper.h" />
+    <ClInclude Include="Src\Graphics\Viewport.h" />
+    <ClInclude Include="Src\Graphics\Window.h" />
+    <ClInclude Include="Src\Graphics\d3dx12.h" />
+    <ClInclude Include="Src\Math\AABB.h" />
+    <ClInclude Include="Src\Math\AABB2.h" />
+    <ClInclude Include="Src\Math\AABB3.h" />
+    <ClInclude Include="Src\Math\Algebra.h" />
+    <ClInclude Include="Src\Math\BitMask.h" />
+    <ClInclude Include="Src\Math\Color.h" />
+    <ClInclude Include="Src\Math\DashFormatEnums.h" />
+    <ClInclude Include="Src\Math\Intersection.h" />
+    <ClInclude Include="Src\Math\Interval.h" />
+    <ClInclude Include="Src\Math\MathType.h" />
+    <ClInclude Include="Src\Math\Matrix3x3.h" />
+    <ClInclude Include="Src\Math\Matrix4x4.h" />
+    <ClInclude Include="Src\Math\Metric.h" />
+    <ClInclude Include="Src\Math\Promote.h" />
+    <ClInclude Include="Src\Math\Quaternion.h" />
+    <ClInclude Include="Src\Math\Ray.h" />
+    <ClInclude Include="Src\Math\Scalar.h" />
+    <ClInclude Include="Src\Math\ScalarArray.h" />
+    <ClInclude Include="Src\Math\ScalarMatrix.h" />
+    <ClInclude Include="Src\Math\ScalarTraits.h" />
+    <ClInclude Include="Src\Math\Transform.h" />
+    <ClInclude Include="Src\Math\Vector2.h" />
+    <ClInclude Include="Src\Math\Vector3.h" />
+    <ClInclude Include="Src\Math\Vector4.h" />
+    <ClInclude Include="Src\Math\Vector4_SSE.h" />
+    <ClInclude Include="Src\PCH\PCH.h" />
+    <ClInclude Include="Src\Utility\Assert.h" />
+    <ClInclude Include="Src\Utility\DDS.h" />
+    <ClInclude Include="Src\Utility\Events.h" />
+    <ClInclude Include="Src\Utility\Exception.h" />
+    <ClInclude Include="Src\Utility\HighResolutionTimer.h" />
+    <ClInclude Include="Src\Utility\Image.h" />
+    <ClInclude Include="Src\Utility\ImageHelper.h" />
+    <ClInclude Include="Src\Utility\KeyCodes.h" />
+    <ClInclude Include="Src\Utility\Keyboard.h" />
+    <ClInclude Include="Src\Utility\LogEnums.h" />
+    <ClInclude Include="Src\Utility\LogManager.h" />
+    <ClInclude Include="Src\Utility\LogStream.h" />
+    <ClInclude Include="Src\Utility\Mouse.h" />
+    <ClInclude Include="Src\Utility\ThreadSafeQueue.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Graphics\Application.cpp" />
+    <ClCompile Include="Src\Graphics\ApplicationDX12.cpp" />
+    <ClCompile Include="Src\Graphics\Camera.cpp" />
+    <ClCompile Include="Src\Graphics\DX12Helper.cpp" />
+    <ClCompile Include="Src\Graphics\Window.cpp" />
+    <ClCompile Include="Src\Math\Color.cpp" />
+    <ClCompile Include="Src\PCH\PCH.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Src\Utility\Assert.cpp" />
+    <ClCompile Include="Src\Utility\Exception.cpp" />
+    <ClCompile Include="Src\Utility\HighResolutionTimer.cpp" />
+    <ClCompile Include="Src\Utility\Image.cpp" />
+    <ClCompile Include="Src\Utility\ImageHelper.cpp" />
+    <ClCompile Include="Src\Utility\Keyboard.cpp" />
+    <ClCompile Include="Src\Utility\LogManager.cpp" />
+    <ClCompile Include="Src\Utility\LogStream.cpp" />
+    <ClCompile Include="Src\Utility\Mouse.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
