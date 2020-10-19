@@ -2,6 +2,8 @@
 #include "Window.h"
 #include "../Utility/Events.h"
 
+#include <atomic>
+
 namespace Dash
 {
 	class FApplication

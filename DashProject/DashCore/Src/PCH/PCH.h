@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -22,8 +24,11 @@
 #include "../Consolid/Consolid.h"
 #include "../Utility/LogManager.h"
 #include "../Utility/Assert.h"
+#include "../Utility/Events.h"
 
 #include "../Math/MathType.h"
+
+
 
 
 static void SetThreadName(std::thread& thread, const char* threadName)

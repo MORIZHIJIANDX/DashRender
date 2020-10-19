@@ -2,7 +2,6 @@
 #include <bitset>
 #include <optional>
 #include "KeyCodes.h"
-#include "Events.h"
 
 namespace Dash
 {
@@ -10,6 +9,8 @@ namespace Dash
 	{
 		friend class FWindow;
 		friend class FApplication;
+
+		friend LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	public:
 		static FKeyboard& Get();
 
@@ -46,11 +47,9 @@ namespace Dash
 		
 		void FlushRepeatKey();
 	private:
-		FKeyState mPrevKeyStates[256];
 
+		FKeyState mPrevKeyStates[256];
 		std::queue<char> mCharBuffer;
 		bool mAutoRepeat = false;
-
-		HWND mFocusedWindow;
 	};
 }

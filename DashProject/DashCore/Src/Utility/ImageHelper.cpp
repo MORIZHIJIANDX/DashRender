@@ -833,7 +833,7 @@ namespace Dash
 		else if (twidth != width || theight != height)
 		{
 			// Resize
-			auto pWIC = _GetWIC();
+			//auto pWIC = _GetWIC();
 			if (!pWIC)
 				ASSERT_FAIL("Get WIC Factory Failed!");
 

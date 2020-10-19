@@ -1,6 +1,5 @@
 #pragma once
 
-//#include "../Math/MathType.h"
 #include <d3d12.h>
 #include <fstream>
 

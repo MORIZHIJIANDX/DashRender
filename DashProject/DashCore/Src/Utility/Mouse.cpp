@@ -46,6 +46,11 @@ namespace Dash
 			LOG_ERROR << "Can't Set Cursor Pos";
 	}
 
+	void FMouse::Initialize(HWND hwnd)
+	{
+		mFocusedWindow = hwnd;
+	}
+
 	void FMouse::OnMouseButtonPressed(FMouseButtonEventArgs& e)
 	{
 		mCurrentMouseButtonStates[static_cast<unsigned int>(EMouseButton::Left)].Pressed = e.mLeftButton;

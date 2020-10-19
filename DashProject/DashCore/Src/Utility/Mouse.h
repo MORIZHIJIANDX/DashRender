@@ -1,13 +1,14 @@
 #pragma once
 
 #include <bitset>
-#include "Events.h"
 
 namespace Dash
 {
 	class FMouse
 	{
 		friend class FWindow;
+		friend LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 	public:
 		static FMouse& Get();
 		
@@ -19,6 +20,8 @@ namespace Dash
 		FVector2i GetCursorPosition() const;
 		void SetCursorPosition(FVector2i pos);
 
+		void Initialize(HWND hwnd);
+
 	public:
 
 		FMouseButtonEvent MouseButtonPressed;
@@ -28,7 +31,7 @@ namespace Dash
 		FMouseWheelEvent MouseWheelDown;
 		
 	private:
-		FMouse() : mMouseWheelAccumulate(0), mIsInWindow(false) {};
+		FMouse() : mFocusedWindow(NULL), mMouseWheelAccumulate(0), mIsInWindow(false) {};
 		~FMouse() {};
 
 		void OnMouseButtonPressed(FMouseButtonEventArgs& e);

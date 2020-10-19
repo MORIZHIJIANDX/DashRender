@@ -68,8 +68,6 @@ namespace Dash
 
 	void FKeyboard::OnKeyReleased(FKeyEventArgs& e)
 	{
-		//mKeyStates[static_cast<unsigned int>(e.mKey)] = false;
-
 		FKeyState currentKeyState;
 		currentKeyState.Pressed = false;
 		currentKeyState.RisingEdge =
@@ -80,8 +78,6 @@ namespace Dash
 		mPrevKeyStates[static_cast<unsigned int>(e.mKey)] = currentKeyState;
 
 		KeyReleased(e);
-
-		//LOG_INFO << "Key Released";
 	}
 
 

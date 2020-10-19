@@ -1,6 +1,10 @@
 #include "PCH.h"
 #include "EntryPoint.h"
 #include "Utility/HighResolutionTimer.h"
+#include "Utility/Events.h"
+#include "Utility/Keyboard.h"
+#include "Utility/Mouse.h"
+#include "Utility/SystemTimer.h"
 
 namespace Dash
 {
@@ -8,19 +12,16 @@ namespace Dash
 
 	void CreateApplicationWindow(IGameApp* app, HINSTANCE hInstance)
 	{
-		WNDCLASSEX windowClass;
+		IGameApp::mAppInstance = app;
+
+		// Initialize the window class.
+		WNDCLASSEX windowClass = { 0 };
 		windowClass.cbSize = sizeof(WNDCLASSEX);
 		windowClass.style = CS_HREDRAW | CS_VREDRAW;
 		windowClass.lpfnWndProc = WindowProc;
-		windowClass.cbClsExtra = 0;
-		windowClass.cbWndExtra = 0;
 		windowClass.hInstance = hInstance;
-		windowClass.hIcon = LoadIcon(hInstance, IDI_APPLICATION);
-		windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
-		windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-		windowClass.lpszMenuName = nullptr;
+		windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
 		windowClass.lpszClassName = "DashGameApp";
-		windowClass.hIconSm = LoadIcon(hInstance, IDI_APPLICATION);
 		RegisterClassEx(&windowClass);
 
 		RECT windowRect = { 0, 0, static_cast<LONG>(app->GetWindowWidth()), static_cast<LONG>(app->GetWindowHeight()) };
@@ -46,6 +47,8 @@ namespace Dash
 
 	void InitializeApplication(IGameApp* app)
 	{
+		FMouse::Get().Initialize(app->GetWindowHandle());
+		FSystemTimer::Initialize();
 		FLogManager::Get()->Init();
 		FLogManager::Get()->RegisterLogStream(std::make_shared<FLogStreamConsole>());
 		app->Startup();
@@ -57,42 +60,247 @@ namespace Dash
 		FLogManager::Get()->Shutdown();
 	}
 
-	bool UpdateApplication(IGameApp* app, size_t& frameCount)
+	void UpdateApplication(IGameApp* app, size_t& frameCount, FCpuTimer& timer)
 	{
-		//app->OnUpdate();
+		timer.Tick();
+		float deltaTime = timer.GetDeltaTime();
+		float totalTime = timer.GetTotalTime();
+
+		FUpdateEventArgs updateArgs{ deltaTime, totalTime, frameCount};
+
+		FRenderEventArgs RenderArgs{ deltaTime, totalTime, frameCount };
+
+		app->OnUpdate(updateArgs);
+
+		app->OnRenderScene(RenderArgs);
+
+		app->OnRenderUI(RenderArgs);
 
 		++frameCount;
-
-		return !app->IsDone();
 	}
 
-	void RunApplication(IGameApp* app)
+	int RunApplication(IGameApp* app)
 	{
-		FHighResolutionTimer timer;
+		FCpuTimer timer;
 
 		size_t frameCount = 0;
 
-		do
+		MSG msg = {0};
+
+		while (!(msg.message == WM_QUIT || app->IsDone()))
 		{
-			MSG msg = {};
-			while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+			if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
-			if (msg.message == WM_QUIT)
-				break;
-		} while (UpdateApplication(app, frameCount));    // Returns false to quit loop
+			else
+			{
+				UpdateApplication(app, frameCount, timer);
+			}
+		}
+
+		return (int)msg.wParam;
+	}
+
+	EMouseButton DecodeMouseButton(UINT messageID)
+	{
+		EMouseButton mouseButton = EMouseButton::None;
+		switch (messageID)
+		{
+		case WM_LBUTTONDOWN:
+		case WM_LBUTTONUP:
+		case WM_LBUTTONDBLCLK:
+		{
+			mouseButton = EMouseButton::Left;
+			break;
+		}
+		case WM_RBUTTONDOWN:
+		case WM_RBUTTONUP:
+		case WM_RBUTTONDBLCLK:
+		{
+			mouseButton = EMouseButton::Right;
+			break;
+		}
+		case WM_MBUTTONDOWN:
+		case WM_MBUTTONUP:
+		case WM_MBUTTONDBLCLK:
+		{
+			mouseButton = EMouseButton::Middle;
+			break;
+		}
+		}
+
+		return mouseButton;
 	}
 
 	LRESULT WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
+		IGameApp* app = reinterpret_cast<IGameApp*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+
 		switch (message)
 		{
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			break;
+		case WM_CREATE:
+		{
+			// Save the DXSample* passed in to CreateWindow.
+			LPCREATESTRUCT pCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
+			SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
+		}
+		
+			/*********** KEYBOARD MESSAGES ***********/
+		case WM_KEYDOWN:
+			// syskey commands need to be handled to track ALT key (VK_MENU) and F10
+		case WM_SYSKEYDOWN:
+		{
+			MSG charMsg;
 
+			// Get the Unicode character (UTF-16)
+			unsigned int c = 0;
+			// For printable characters, the next message will be WM_CHAR.
+			// This message contains the character code we need to send the KeyPressed event.
+			// Inspired by the SDL 1.2 implementation.
+			if (PeekMessage(&charMsg, hWnd, 0, 0, PM_NOREMOVE) && charMsg.message == WM_CHAR)
+			{
+				GetMessage(&charMsg, hWnd, 0, 0);
+				c = static_cast<unsigned int>(charMsg.wParam);
+			}
+
+			bool repeat = lParam & 0x40000000;
+
+			bool shift = (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0;
+			bool control = (GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0;
+			bool alt = (GetAsyncKeyState(VK_MENU) & 0x8000) != 0;
+
+			EKeyCode key = (EKeyCode)wParam;
+			unsigned int scanCode = (lParam & 0x00FF0000) >> 16;
+			FKeyEventArgs keyEventArgs(key, c, EKeyState::Pressed, control, shift, alt, repeat);
+			FKeyboard::Get().OnKeyPressed(keyEventArgs);
+			break;
+		}
+		case WM_KEYUP:
+		case WM_SYSKEYUP:
+		{
+			bool shift = (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0;
+			bool control = (GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0;
+			bool alt = (GetAsyncKeyState(VK_MENU) & 0x8000) != 0;
+
+			EKeyCode key = (EKeyCode)wParam;
+
+			FKeyEventArgs keyEventArgs(key, 0, EKeyState::Released, control, shift, alt, false);
+			FKeyboard::Get().OnKeyReleased(keyEventArgs);
+			break;
+		}
+		/************* MOUSE MESSAGES ****************/
+		case WM_MOUSEMOVE:
+		{
+			if (app == nullptr)
+			{
+				return 0;
+			}
+
+			bool lButton = (wParam & MK_LBUTTON) != 0;
+			bool rButton = (wParam & MK_RBUTTON) != 0;
+			bool mButton = (wParam & MK_MBUTTON) != 0;
+			bool shift = (wParam & MK_SHIFT) != 0;
+			bool control = (wParam & MK_CONTROL) != 0;
+
+			int x = ((int)(short)LOWORD(lParam));
+			int y = ((int)(short)HIWORD(lParam));
+
+			FMouseMotionEventArgs mouseMotionEventArgs(lButton, mButton, rButton, control, shift, x, y);
+
+			int windowWidth = static_cast<int>(app->GetWindowWidth());
+			int windowHeight = static_cast<int>(app->GetWindowHeight());
+
+			// in client region -> log move, and log enter + capture mouse (if not previously in window)
+			if (x >= 0 && x < windowWidth && y >= 0 && y < windowHeight)
+			{
+				FMouse::Get().OnMouseMove(mouseMotionEventArgs);
+
+				if (!FMouse::Get().IsInWindow())
+				{
+					SetCapture(hWnd);
+					FMouse::Get().OnMouseEnter(mouseMotionEventArgs);
+				}
+			}
+			// not in client -> log move / maintain capture if button down
+			else
+			{
+				if (wParam & (MK_LBUTTON | MK_RBUTTON))
+				{
+					FMouse::Get().OnMouseMove(mouseMotionEventArgs);
+				}
+				// button up -> release capture / log event for leaving
+				else
+				{
+					ReleaseCapture();
+					FMouse::Get().OnMouseLeave(mouseMotionEventArgs);
+				}
+			}
+			break;
+		}
+		case WM_LBUTTONDOWN:
+		case WM_RBUTTONDOWN:
+		case WM_MBUTTONDOWN:
+		{
+			bool lButton = (wParam & MK_LBUTTON) != 0;
+			bool rButton = (wParam & MK_RBUTTON) != 0;
+			bool mButton = (wParam & MK_MBUTTON) != 0;
+			bool shift = (wParam & MK_SHIFT) != 0;
+			bool control = (wParam & MK_CONTROL) != 0;
+
+			int x = ((int)(short)LOWORD(lParam));
+			int y = ((int)(short)HIWORD(lParam));
+
+			FMouseButtonEventArgs mouseButtonEventArgs(DecodeMouseButton(message), EButtonState::Pressed, lButton, mButton, rButton, control, shift, x, y);
+			FMouse::Get().OnMouseButtonPressed(mouseButtonEventArgs);
+			break;
+		}
+		case WM_LBUTTONUP:
+		case WM_RBUTTONUP:
+		case WM_MBUTTONUP:
+		{
+			bool lButton = (wParam & MK_LBUTTON) != 0;
+			bool rButton = (wParam & MK_RBUTTON) != 0;
+			bool mButton = (wParam & MK_MBUTTON) != 0;
+			bool shift = (wParam & MK_SHIFT) != 0;
+			bool control = (wParam & MK_CONTROL) != 0;
+
+			int x = ((int)(short)LOWORD(lParam));
+			int y = ((int)(short)HIWORD(lParam));
+
+			FMouseButtonEventArgs mouseButtonEventArgs(DecodeMouseButton(message), EButtonState::Released, lButton, mButton, rButton, control, shift, x, y);
+			FMouse::Get().OnMouseButtonReleased(mouseButtonEventArgs);
+			break;
+		}
+		case WM_MOUSEWHEEL:
+		{
+			const int zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+			short keyStates = (short)LOWORD(wParam);
+
+			bool lButton = (keyStates & MK_LBUTTON) != 0;
+			bool rButton = (keyStates & MK_RBUTTON) != 0;
+			bool mButton = (keyStates & MK_MBUTTON) != 0;
+			bool shift = (keyStates & MK_SHIFT) != 0;
+			bool control = (keyStates & MK_CONTROL) != 0;
+
+			int x = ((int)(short)LOWORD(lParam));
+			int y = ((int)(short)HIWORD(lParam));
+
+			// Convert the screen coordinates to client coordinates.
+			POINT clientToScreenPoint;
+			clientToScreenPoint.x = x;
+			clientToScreenPoint.y = y;
+			::ScreenToClient(hWnd, &clientToScreenPoint);
+
+			FMouseWheelEventArgs mouseWheelEventArgs((float)zDelta, lButton, mButton, rButton, control, shift, (int)clientToScreenPoint.x, (int)clientToScreenPoint.y);
+			FMouse::Get().OnMouseWheel(mouseWheelEventArgs);
+			break;
+		}
+		/************** END MOUSE MESSAGES **************/
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
@@ -101,10 +309,11 @@ namespace Dash
 	}
 }
 
-int CALLBACK WinMain(HINSTANCE hInstance,
-	HINSTANCE hPrevInstance,
-	LPSTR lpCmdLine,
-	int nCmdShow)
+int CALLBACK WinMain(
+	_In_ HINSTANCE hInstance,
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPSTR lpCmdLine,
+	_In_ int nShowCmd)
 {
 	Dash::IGameApp* app = CreateApplication();
 
@@ -114,8 +323,10 @@ int CALLBACK WinMain(HINSTANCE hInstance,
 
 	::ShowWindow(app->GetWindowHandle(), SW_SHOWDEFAULT);
 
-	Dash::RunApplication(app);
+	int retureCode = Dash::RunApplication(app);
 	Dash::TerminateApplication(app);
 
 	delete app;
+
+	return retureCode;
 }
