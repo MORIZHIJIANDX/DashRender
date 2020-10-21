@@ -185,6 +185,7 @@
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\SystemTimer.h" />
+    <ClInclude Include="Src\Utility\FileUtility.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\EntryPoint.cpp" />
@@ -240,5 +241,6 @@
       <Filter>Utility</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\SystemTimer.cpp" />
+    <ClCompile Include="Src\Utility\FileUtility.cpp" />
   </ItemGroup>
 </Project>

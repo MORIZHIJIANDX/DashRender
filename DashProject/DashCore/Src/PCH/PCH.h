@@ -10,6 +10,7 @@
 #include <filesystem>
 
 #include <thread>
+#include <future>
 #include <mutex>
 #include <atomic>
 

@@ -140,14 +140,36 @@ namespace Dash
 
 		switch (message)
 		{
-		case WM_DESTROY:
-			PostQuitMessage(0);
-			break;
 		case WM_CREATE:
 		{
-			// Save the DXSample* passed in to CreateWindow.
 			LPCREATESTRUCT pCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
 			SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
+			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
+		case WM_DESTROY:
+		{
+			PostQuitMessage(0);
+			break;
+		}
+		case WM_KILLFOCUS:
+		{
+			FKeyboard::Get().ClearStates();
+			break;
+		}
+		case WM_SIZE:
+		{
+			if (app == nullptr)
+			{
+				return 0;
+			}
+
+			RECT clientRect = {};
+			GetClientRect(hWnd, &clientRect);
+
+			FResizeEventArgs windowResizeArgs{ clientRect.right - clientRect.left, clientRect.bottom - clientRect.top, wParam == SIZE_MINIMIZED };
+
+			app->OnWindowResize(windowResizeArgs);
+			break;
 		}
 		
 			/*********** KEYBOARD MESSAGES ***********/

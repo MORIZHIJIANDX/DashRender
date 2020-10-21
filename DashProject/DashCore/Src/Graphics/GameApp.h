@@ -24,6 +24,8 @@ namespace Dash
 
         virtual void OnRenderUI(const FRenderEventArgs& e) {};
 
+        virtual void OnWindowResize(const FResizeEventArgs& e) {};
+
         virtual bool IsDone(void);
 
         HWND GetWindowHandle() const { return mWindowHandle; }

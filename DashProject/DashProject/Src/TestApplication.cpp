@@ -38,6 +38,6 @@ namespace Dash
 
 	void TestApplication::OnRenderScene(const FRenderEventArgs& e)
 	{
-		//LOG_INFO << "OnRenderScene";
+		
 	}
 }
