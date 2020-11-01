@@ -40,12 +40,6 @@
       <Filter>DesignPatterns</Filter>
     </ClInclude>
     <ClInclude Include="Src\EntryPoint.h" />
-    <ClInclude Include="Src\Graphics\Application.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Graphics\ApplicationDX12.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Graphics\Camera.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -154,7 +148,7 @@
     <ClInclude Include="Src\Utility\Exception.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Utility\HighResolutionTimer.h">
+    <ClInclude Include="Src\Utility\FileUtility.h">
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\Image.h">
@@ -181,20 +175,16 @@
     <ClInclude Include="Src\Utility\Mouse.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Utility\SystemTimer.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Utility\ThreadSafeQueue.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Utility\SystemTimer.h" />
-    <ClInclude Include="Src\Utility\FileUtility.h" />
+    <ClInclude Include="Src\Graphics\GraphicsCore.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\EntryPoint.cpp" />
-    <ClCompile Include="Src\Graphics\Application.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Graphics\ApplicationDX12.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Graphics\Camera.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
@@ -219,7 +209,7 @@
     <ClCompile Include="Src\Utility\Exception.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Utility\HighResolutionTimer.cpp">
+    <ClCompile Include="Src\Utility\FileUtility.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\Image.cpp">
@@ -240,7 +230,9 @@
     <ClCompile Include="Src\Utility\Mouse.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Utility\SystemTimer.cpp" />
-    <ClCompile Include="Src\Utility\FileUtility.cpp" />
+    <ClCompile Include="Src\Utility\SystemTimer.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\GraphicsCore.cpp" />
   </ItemGroup>
 </Project>

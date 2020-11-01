@@ -1,7 +1,15 @@
 #include "PCH.h"
 
-#include "DX12Helper.h"
-#include <D3Dcompiler.h>
+
+namespace Dash
+{
+
+}
+
+
+//#include "DX12Helper.h"
+//#include <D3Dcompiler.h>
+/*
 
 namespace Dash
 {
@@ -176,9 +184,9 @@ namespace Dash
 
         UINT shaderCompileFlag = 0;
 
-#ifdef _DEBUG
+#ifdef DASH_DEBUG
         shaderCompileFlag |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-#endif // _DEBUG
+#endif // DASH_DEBUG
 
         shaderCompileFlag |= D3DCOMPILE_PACK_MATRIX_ROW_MAJOR;
 
@@ -1243,7 +1251,7 @@ namespace Dash
 
         // Create a temporary buffer
         Microsoft::WRL::ComPtr<ID3D12Resource> scratchResource = nullptr;
-        ThrowIfFailed(mD3DDevice->CreateCommittedResource(
+        HR(mD3DDevice->CreateCommittedResource(
             &heapProps,
             D3D12_HEAP_FLAG_NONE,
             &resDesc,
@@ -1504,7 +1512,7 @@ namespace Dash
                 break;
 
             case D3D12_RESOURCE_DIMENSION_TEXTURE2D:
-                if (d3d10ext->miscFlag & 0x4 /* RESOURCE_MISC_TEXTURECUBE */)
+                if (d3d10ext->miscFlag & 0x4 ) // RESOURCE_MISC_TEXTURECUBE 
                 {
                     arraySize *= 6;
                     isCubeMap = true;
@@ -2553,6 +2561,5 @@ namespace Dash
         mTrackedObjects.push_back(aliasCopy);
         mTrackedObjects.push_back(resource);
     }
-
-
 }
+*/

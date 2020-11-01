@@ -1,7 +1,7 @@
 #pragma once
 
 
-#ifdef _DEBUG
+#ifdef DASH_DEBUG
 #define USE_ASSERTS 1
 #else
 #define USE_ASSERTS 0

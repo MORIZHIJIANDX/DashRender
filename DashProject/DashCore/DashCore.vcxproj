@@ -138,11 +138,10 @@
     <ClInclude Include="Src\DesignPatterns\MulticastDelegate.h" />
     <ClInclude Include="Src\DesignPatterns\Singleton.h" />
     <ClInclude Include="Src\EntryPoint.h" />
-    <ClInclude Include="Src\Graphics\Application.h" />
-    <ClInclude Include="Src\Graphics\ApplicationDX12.h" />
     <ClInclude Include="Src\Graphics\Camera.h" />
     <ClInclude Include="Src\Graphics\DX12Helper.h" />
     <ClInclude Include="Src\Graphics\GameApp.h" />
+    <ClInclude Include="Src\Graphics\GraphicsCore.h" />
     <ClInclude Include="Src\Graphics\Viewport.h" />
     <ClInclude Include="Src\Graphics\Window.h" />
     <ClInclude Include="Src\Graphics\d3dx12.h" />
@@ -177,8 +176,6 @@
     <ClInclude Include="Src\Utility\Events.h" />
     <ClInclude Include="Src\Utility\Exception.h" />
     <ClInclude Include="Src\Utility\FileUtility.h" />
-    <ClInclude Include="Src\Utility\SystemTimer.h" />
-    <ClInclude Include="Src\Utility\HighResolutionTimer.h" />
     <ClInclude Include="Src\Utility\Image.h" />
     <ClInclude Include="Src\Utility\ImageHelper.h" />
     <ClInclude Include="Src\Utility\KeyCodes.h" />
@@ -187,15 +184,15 @@
     <ClInclude Include="Src\Utility\LogManager.h" />
     <ClInclude Include="Src\Utility\LogStream.h" />
     <ClInclude Include="Src\Utility\Mouse.h" />
+    <ClInclude Include="Src\Utility\SystemTimer.h" />
     <ClInclude Include="Src\Utility\ThreadSafeQueue.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\EntryPoint.cpp" />
-    <ClCompile Include="Src\Graphics\Application.cpp" />
-    <ClCompile Include="Src\Graphics\ApplicationDX12.cpp" />
     <ClCompile Include="Src\Graphics\Camera.cpp" />
     <ClCompile Include="Src\Graphics\DX12Helper.cpp" />
     <ClCompile Include="Src\Graphics\GameApp.cpp" />
+    <ClCompile Include="Src\Graphics\GraphicsCore.cpp" />
     <ClCompile Include="Src\Graphics\Window.cpp" />
     <ClCompile Include="Src\Math\Color.cpp" />
     <ClCompile Include="Src\PCH\PCH.cpp">
@@ -204,7 +201,6 @@
     <ClCompile Include="Src\Utility\Assert.cpp" />
     <ClCompile Include="Src\Utility\Exception.cpp" />
     <ClCompile Include="Src\Utility\FileUtility.cpp" />
-    <ClCompile Include="Src\Utility\HighResolutionTimer.cpp" />
     <ClCompile Include="Src\Utility\Image.cpp" />
     <ClCompile Include="Src\Utility\ImageHelper.cpp" />
     <ClCompile Include="Src\Utility\Keyboard.cpp" />

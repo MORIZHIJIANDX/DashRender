@@ -2,14 +2,14 @@
 #include <chrono>
 
 #include "Consolid/Consolid.h"
-#include "Graphics/ApplicationDX12.h"
+#include "Utility/Events.h"
 #include "Utility/LogManager.h"
 #include "Utility/LogStream.h"
 
 #include "TestApplication.h"
 
 
-namespace DMath = Dash::FMath;
+//namespace DMath = Dash::FMath;
 
 //int CALLBACK WinMain(HINSTANCE hInstance,
 //	HINSTANCE hPrevInstance,

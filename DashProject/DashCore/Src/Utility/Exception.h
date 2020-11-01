@@ -7,21 +7,21 @@
 // for the GPU lifetime of resources to avoid destroying objects that may still be
 // referenced by the GPU.
 
-inline std::string HrToString(HRESULT hr)
-{
-    char s_str[64] = {};
-    sprintf_s(s_str, "HRESULT of 0x%08X", static_cast<UINT>(hr));
-    return std::string(s_str);
-}
-
-class HrException : public std::runtime_error
-{
-public:
-    HrException(HRESULT hr) : std::runtime_error(HrToString(hr)), m_hr(hr) {}
-    HRESULT Error() const { return m_hr; }
-private:
-    const HRESULT m_hr;
-};
+//inline std::string HrToString(HRESULT hr)
+//{
+//    char s_str[64] = {};
+//    sprintf_s(s_str, "HRESULT of 0x%08X", static_cast<UINT>(hr));
+//    return std::string(s_str);
+//}
+//
+//class HrException : public std::runtime_error
+//{
+//public:
+//    HrException(HRESULT hr) : std::runtime_error(HrToString(hr)), m_hr(hr) {}
+//    HRESULT Error() const { return m_hr; }
+//private:
+//    const HRESULT m_hr;
+//};
 
 // ------------------------------
 // DXTraceW函数
@@ -39,7 +39,7 @@ HRESULT WINAPI DXTraceW(_In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRE
 // HR宏
 // ------------------------------
 // Debug模式下的错误提醒与追踪
-#if defined(DEBUG) | defined(_DEBUG)
+#if defined(DEBUG) | defined(DASH_DEBUG)
 #ifndef HR
 #define HR(x)												\
 	{															\
@@ -56,12 +56,12 @@ HRESULT WINAPI DXTraceW(_In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRE
 #endif 
 #endif
  
-inline void ThrowIfFailed(HRESULT hr)
-{
-    if (FAILED(hr))
-    {
-        std::string error = HrToString(hr);
-
-        throw HrException(hr);
-    }
-}
+//inline void ThrowIfFailed(HRESULT hr)
+//{
+//    if (FAILED(hr))
+//    {
+//        std::string error = HrToString(hr);
+//
+//        throw HrException(hr);
+//    }
+//}

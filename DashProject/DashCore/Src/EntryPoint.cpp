@@ -1,6 +1,5 @@
 #include "PCH.h"
 #include "EntryPoint.h"
-#include "Utility/HighResolutionTimer.h"
 #include "Utility/Events.h"
 #include "Utility/Keyboard.h"
 #include "Utility/Mouse.h"

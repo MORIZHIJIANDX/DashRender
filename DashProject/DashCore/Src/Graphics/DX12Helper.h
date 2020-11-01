@@ -1,13 +1,81 @@
 #pragma once
 
-#include <wrl.h>
+//#include <wrl.h>
 #include "d3dx12.h"
-#include "../Utility/Image.h"
-#include "../Utility/ImageHelper.h"
-#include "../Utility/Exception.h"
-#include "../DesignPatterns/Singleton.h"
+#include <dxgi.h>
+#include <strsafe.h>
+//#include "../Utility/Image.h"
+//#include "../Utility/ImageHelper.h"
+//#include "../Utility/Exception.h"
+//#include "../DesignPatterns/Singleton.h"
 
 
+
+namespace Dash
+{
+    // 为了调试加入下面的内联函数和宏定义，为每个接口对象设置名称，方便查看调试输出
+    #if defined(DASH_DEBUG)
+        FORCEINLINE void SetD3D12DebugName(ID3D12Object* pObject, LPCWSTR name)
+        {
+            pObject->SetName(name);
+        }
+
+        FORCEINLINE void SetD3D12DebugNameIndexed(ID3D12Object* pObject, LPCWSTR name, UINT index)
+        {
+            WCHAR _DebugName[MAX_PATH] = {};
+            if (SUCCEEDED(StringCchPrintfW(_DebugName, _countof(_DebugName), L"%s[%u]", name, index)))
+            {
+                pObject->SetName(_DebugName);
+            }
+        }
+    #else
+        FORCEINLINE void SetD3D12DebugName(ID3D12Object*, LPCWSTR)
+        {
+        }
+        FORCEINLINE void SetD3D12DebugNameIndexed(ID3D12Object*, LPCWSTR, UINT)
+        {
+        }
+    #endif
+    #define DASH_SET_D3D12_DEBUGNAME(x)                     SetD3D12DebugName(x, L#x)
+    #define DASH_SET_D3D12_DEBUGNAME_INDEXED(x, n)           SetD3D12DebugNameIndexed(x[n], L#x, n)
+    #define DASH_SET_D3D12_DEBUGNAME_COMPTR(x)              SetD3D12DebugName(x.Get(), L#x)
+    #define DASH_SET_D3D12_DEBUGNAME_INDEXED_COMPTR(x, n) SetD3D12DebugNameIndexed(x[n].Get(), L#x, n)
+
+    #if defined(DASH_DEBUG)
+        FORCEINLINE void SetDXGIDebugName(IDXGIObject* pObject, LPCWSTR name)
+        {
+            size_t szLen = 0;
+            if (SUCCEEDED(StringCchLengthW(name, 50, &szLen)))
+            {
+                pObject->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(szLen - 1), name);
+            }          
+        }
+        FORCEINLINE void SetDXGIDebugNameIndexed(IDXGIObject* pObject, LPCWSTR name, UINT index)
+        {
+            size_t szLen = 0;
+            WCHAR _DebugName[MAX_PATH] = {};
+            if (SUCCEEDED(StringCchPrintfW(_DebugName, _countof(_DebugName), L"%s[%u]", name, index)))
+            {
+                if (SUCCEEDED(StringCchLengthW(_DebugName, _countof(_DebugName), &szLen)))
+                {
+                    pObject->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(szLen), _DebugName);
+                }                   
+            }
+        }
+    #else
+        FORCEINLINE void SetDXGIDebugName(ID3D12Object*, LPCWSTR)
+        {
+        }
+        FORCEINLINE void SetDXGIDebugNameIndexed(ID3D12Object*, LPCWSTR, UINT)
+        {
+        }
+    #endif
+    #define DASH_SET_DXGI_DEBUGNAME(x)                      SetDXGIDebugName(x, L#x)
+    #define DASH_SET_DXGI_DEBUGNAME_INDEXED(x, n)        SetDXGIDebugNameIndexed(x[n], L#x, n)
+    #define DASH_SET_DXGI_DEBUGNAME_COMPTR(x)               SetDXGIDebugName(x.Get(), L#x)
+    #define DASH_SET_DXGI_DEBUGNAME_INDEXED_COMPTR(x, n)      SetDXGIDebugNameIndexed(x[n].Get(), L#x, n)
+
+}
 /*
 Create Mips
 init : 创建 PSO, root signature
@@ -16,6 +84,7 @@ end : 传入 command queue, execute command list
 释放  command list, command allocator
 */
 
+/*
 namespace Dash
 {
     FORCEINLINE uint32_t CountMips(uint32_t width, uint32_t height) noexcept
@@ -47,7 +116,7 @@ namespace Dash
 
         resource->SetName(wstr.c_str());
 
-#if !defined(NO_D3D12_DEBUG_NAME) && (defined(_DEBUG) || defined(PROFILE))
+#if !defined(NO_D3D12_DEBUG_NAME) && (defined(DASH_DEBUG) || defined(PROFILE))
         //wchar_t wname[MAX_PATH];
         //int result = MultiByteToWideChar(CP_UTF8, 0, name, TNameLength, wname, MAX_PATH);
         //if (result > 0)
@@ -63,7 +132,7 @@ namespace Dash
     template<UINT TNameLength>
     FORCEINLINE void SetDebugObjectName(_In_ ID3D12DeviceChild* resource, _In_z_ const wchar_t(&name)[TNameLength]) noexcept
     {
-#if !defined(NO_D3D12_DEBUG_NAME) && (defined(_DEBUG) || defined(PROFILE))
+#if !defined(NO_D3D12_DEBUG_NAME) && (defined(DASH_DEBUG) || defined(PROFILE))
         resource->SetName(name);
 #else
         UNREFERENCED_PARAMETER(resource);
@@ -352,3 +421,4 @@ namespace Dash
     };
 
 }
+*/
