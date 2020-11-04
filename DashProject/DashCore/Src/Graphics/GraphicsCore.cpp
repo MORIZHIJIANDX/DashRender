@@ -1,5 +1,6 @@
 #include "PCH.h"
 #include "GraphicsCore.h"
+#include "GameApp.h"
 #include "../Utility/Exception.h"
 
 #if defined(NTDDI_WIN10_RS2) && (NTDDI_VERSION >= NTDDI_WIN10_RS2)
@@ -13,11 +14,14 @@ using namespace Microsoft::WRL;
 namespace Dash
 {
 	ID3D12Device* Graphics::Device = nullptr;
+    IDXGISwapChain1* SwapChain = nullptr;
+
+    ID3D12DescriptorHeap* RTVDescriptorHeap;
+
     D3D_FEATURE_LEVEL DefaultD3DFeatureLevel = D3D_FEATURE_LEVEL_12_0;
     bool bTypedUAVLoadSupport_R11G11B10_FLOAT = false;
     bool bTypedUAVLoadSupport_R16G16B16A16_FLOAT = false;
 
-	IDXGISwapChain1* SwapChain;
 
 	void Graphics::Initialize()
 	{
@@ -199,8 +203,56 @@ namespace Dash
         }
 
         //Create command queue
+        D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
+        commandQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+        commandQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+        HR(Graphics::Device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&CommandQueue)));
+
         //Create swap chain
-        //Create back buffer
+        IGameApp::GetInstance()->GetWindowWidth();
+        IGameApp::GetInstance()->GetWindowHeight();
+
+        DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+        swapChainDesc.Width = IGameApp::GetInstance()->GetWindowWidth();
+        swapChainDesc.Height = IGameApp::GetInstance()->GetWindowHeight();
+        swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        swapChainDesc.Scaling = DXGI_SCALING_NONE;
+        swapChainDesc.SampleDesc.Quality = 0;
+        swapChainDesc.SampleDesc.Count = 1;
+        swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+        swapChainDesc.BufferCount = Graphics::BackBufferCount;
+        swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+        swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+
+        HR(dxgiFactory->CreateSwapChainForHwnd(Graphics::CommandQueue, IGameApp::GetInstance()->GetWindowHandle(), &swapChainDesc, nullptr, nullptr, &SwapChain));
+
+        //Create RenderTarge View
+        {
+            D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc{};
+            rtvHeapDesc.NumDescriptors = Graphics::BackBufferCount;
+            rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+            rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+
+            HR(Graphics::Device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&RTVDescriptorHeap)));
+
+            UINT handleIncrementSize = Graphics::Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+            CD3DX12_CPU_DESCRIPTOR_HANDLE descriptorHandle(RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+            for (size_t i = 0; i < Graphics::BackBufferCount; i++)
+            {
+                ComPtr<ID3D12Resource> BackBuffer;
+                SwapChain->GetBuffer(i, IID_PPV_ARGS(&BackBuffer));
+                Graphics::Device->CreateRenderTargetView(BackBuffer.Get(), nullptr, descriptorHandle);
+                descriptorHandle.Offset(1, handleIncrementSize);
+            }
+        }
+
+        //Create Depth Buffer
+        {
+            Graphics::Device->CreateCommittedResource(
+                &CD3DX12_HEAP_PROPERTIES()
+            );
+        }
 	}
 
 

@@ -11,5 +11,9 @@ namespace Dash
 		static void Shutdown();
 
 		static ID3D12Device* Device;
+
+		static ID3D12CommandQueue* CommandQueue;
+
+		static constexpr int BackBufferCount = 3;
 	};
 }

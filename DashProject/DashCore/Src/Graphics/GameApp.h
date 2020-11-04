@@ -13,7 +13,7 @@ namespace Dash
         IGameApp(UINT width = 1080, UINT height = 720, const std::string& title = "Sample");
         virtual ~IGameApp() {};
 
-        IGameApp* GetInstance() { return  mAppInstance; }
+        static IGameApp* GetInstance() { return  mAppInstance; }
 
         virtual void Startup(void) = 0;
         virtual void Cleanup(void) = 0;
