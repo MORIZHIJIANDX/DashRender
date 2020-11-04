@@ -16,7 +16,10 @@ namespace Dash
 	ID3D12Device* Graphics::Device = nullptr;
     IDXGISwapChain1* SwapChain = nullptr;
 
+    ID3D12Resource* DepthBuffer = nullptr;
+
     ID3D12DescriptorHeap* RTVDescriptorHeap;
+    ID3D12DescriptorHeap* DSVDescriptorHeap;
 
     D3D_FEATURE_LEVEL DefaultD3DFeatureLevel = D3D_FEATURE_LEVEL_12_0;
     bool bTypedUAVLoadSupport_R11G11B10_FLOAT = false;
@@ -209,9 +212,6 @@ namespace Dash
         HR(Graphics::Device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&CommandQueue)));
 
         //Create swap chain
-        IGameApp::GetInstance()->GetWindowWidth();
-        IGameApp::GetInstance()->GetWindowHeight();
-
         DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
         swapChainDesc.Width = IGameApp::GetInstance()->GetWindowWidth();
         swapChainDesc.Height = IGameApp::GetInstance()->GetWindowHeight();
@@ -226,7 +226,7 @@ namespace Dash
 
         HR(dxgiFactory->CreateSwapChainForHwnd(Graphics::CommandQueue, IGameApp::GetInstance()->GetWindowHandle(), &swapChainDesc, nullptr, nullptr, &SwapChain));
 
-        //Create RenderTarge View
+        //Create Render Targe View
         {
             D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc{};
             rtvHeapDesc.NumDescriptors = Graphics::BackBufferCount;
@@ -245,14 +245,59 @@ namespace Dash
                 Graphics::Device->CreateRenderTargetView(BackBuffer.Get(), nullptr, descriptorHandle);
                 descriptorHandle.Offset(1, handleIncrementSize);
             }
-        }
+        }       
 
         //Create Depth Buffer
         {
+            D3D12_RESOURCE_DESC depthStencilDesc{};
+            depthStencilDesc.MipLevels = 1;
+            depthStencilDesc.Format = DXGI_FORMAT_D32_FLOAT;
+            depthStencilDesc.Width = IGameApp::GetInstance()->GetWindowWidth();
+            depthStencilDesc.Height = IGameApp::GetInstance()->GetWindowHeight();
+            depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+            depthStencilDesc.DepthOrArraySize = 1;
+            depthStencilDesc.MipLevels = 0;
+            depthStencilDesc.SampleDesc.Count = 1;
+            depthStencilDesc.SampleDesc.Quality = 0;
+            depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+
+            D3D12_CLEAR_VALUE depthClearValue;
+            depthClearValue.DepthStencil.Depth = 1.0f;
+            depthClearValue.DepthStencil.Stencil = 0;
+            depthClearValue.Format = depthStencilDesc.Format;
+
             Graphics::Device->CreateCommittedResource(
-                &CD3DX12_HEAP_PROPERTIES()
+                &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_DEFAULT),
+                D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE,
+                &depthStencilDesc,
+                D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_DEPTH_WRITE,
+                &depthClearValue,
+                IID_PPV_ARGS(&DepthBuffer)
             );
         }
+
+        //Create Depth Descriptor Heap & Depth Stencil View
+        {
+            D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc{};
+            dsvHeapDesc.NumDescriptors = 1;
+            dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+            dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+
+            HR(Graphics::Device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&DSVDescriptorHeap)));
+
+            CD3DX12_CPU_DESCRIPTOR_HANDLE descriptorHandle(DSVDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+            Graphics::Device->CreateDepthStencilView(DepthBuffer, nullptr, descriptorHandle);
+        }
+
+        //Create Root Signature
+
+        //Create PSO
+
+        //Create Command Allocator
+
+        //Create Command List
+
+        //Create Vertex Buffer & Index Buffer
 	}
 
 
