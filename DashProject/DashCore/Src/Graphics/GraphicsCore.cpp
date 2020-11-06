@@ -9,40 +9,175 @@
 #include <dxgi1_4.h>    // For WARP
 #endif
 
+#include <d3dcompiler.h>
+
 using namespace Microsoft::WRL;
 
 namespace Dash
 {
+    struct FFrameConstantBuffer
+    {
+        FMatrix4x4 ViewMatrix;
+        FMatrix4x4 ProjectionMatrix;
+        float Time;
+        FVector2f Speed;
+    };
+
 	ID3D12Device* Graphics::Device = nullptr;
     IDXGISwapChain1* SwapChain = nullptr;
 
     ID3D12Resource* DepthBuffer = nullptr;
+    ID3D12Resource* ConstantBuffer = nullptr;
 
-    ID3D12DescriptorHeap* RTVDescriptorHeap;
-    ID3D12DescriptorHeap* DSVDescriptorHeap;
+    ID3D12Resource* VertexBuffer = nullptr;
+    ID3D12Resource* IndexBuffer = nullptr;
+
+    D3D12_VERTEX_BUFFER_VIEW VertexBufferView;
+    D3D12_INDEX_BUFFER_VIEW IndexBufferView;
+
+    ID3D12DescriptorHeap* RTVDescriptorHeap = nullptr;
+    ID3D12DescriptorHeap* DSVDescriptorHeap = nullptr;
+    ID3D12DescriptorHeap* SRVCBVDescriptorHeap = nullptr;
+
+    ID3D12RootSignature* RootSignature = nullptr;
+    ID3D12PipelineState* PipelineState = nullptr;
 
     D3D_FEATURE_LEVEL DefaultD3DFeatureLevel = D3D_FEATURE_LEVEL_12_0;
     bool bTypedUAVLoadSupport_R11G11B10_FLOAT = false;
     bool bTypedUAVLoadSupport_R16G16B16A16_FLOAT = false;
+
+    FFrameConstantBuffer* FrameConstantBuffer = nullptr;
+
+    ID3DBlob* VertexShader = nullptr;
+    ID3DBlob* PixelShader = nullptr;
+
+    DXGI_FORMAT BackBufferFormat = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+
+    struct Vertex
+    {
+        FVector3f Pos;
+        FVector3f Normal;
+        FVector4f Tangent;
+        FVector4f Color;
+        FVector2f UV;
+    };
+
+    struct MeshData
+    {
+        std::vector<Vertex> VertexData;    // 顶点数组
+        std::vector<UINT> IndexData;    // 索引数组
+
+        MeshData()
+        {
+        }
+    };
+
+    static MeshData CreateBoxMesh(Scalar width, Scalar height, Scalar depth, FVector4f color)
+    {
+        const Scalar halfWidth = width * 0.5f;
+        const Scalar halfHeight = height * 0.5f;
+        const Scalar halfDepth = depth * 0.5f;
+
+        MeshData data;
+        data.VertexData.resize(24);
+
+        // 右面(+X面)
+        data.VertexData[0].Pos = FVector3f(halfWidth, -halfHeight, -halfDepth);
+        data.VertexData[1].Pos = FVector3f(halfWidth, halfHeight, -halfDepth);
+        data.VertexData[2].Pos = FVector3f(halfWidth, halfHeight, halfDepth);
+        data.VertexData[3].Pos = FVector3f(halfWidth, -halfHeight, halfDepth);
+        // 左面(-X面)
+        data.VertexData[4].Pos = FVector3f(-halfWidth, -halfHeight, halfDepth);
+        data.VertexData[5].Pos = FVector3f(-halfWidth, halfHeight, halfDepth);
+        data.VertexData[6].Pos = FVector3f(-halfWidth, halfHeight, -halfDepth);
+        data.VertexData[7].Pos = FVector3f(-halfWidth, -halfHeight, -halfDepth);
+        // 顶面(+Y面)
+        data.VertexData[8].Pos = FVector3f(-halfWidth, halfHeight, -halfDepth);
+        data.VertexData[9].Pos = FVector3f(-halfWidth, halfHeight, halfDepth);
+        data.VertexData[10].Pos = FVector3f(halfWidth, halfHeight, halfDepth);
+        data.VertexData[11].Pos = FVector3f(halfWidth, halfHeight, -halfDepth);
+        // 底面(-Y面)
+        data.VertexData[12].Pos = FVector3f(halfWidth, -halfHeight, -halfDepth);
+        data.VertexData[13].Pos = FVector3f(halfWidth, -halfHeight, halfDepth);
+        data.VertexData[14].Pos = FVector3f(-halfWidth, -halfHeight, halfDepth);
+        data.VertexData[15].Pos = FVector3f(-halfWidth, -halfHeight, -halfDepth);
+        // 背面(+Z面)
+        data.VertexData[16].Pos = FVector3f(halfWidth, -halfHeight, halfDepth);
+        data.VertexData[17].Pos = FVector3f(halfWidth, halfHeight, halfDepth);
+        data.VertexData[18].Pos = FVector3f(-halfWidth, halfHeight, halfDepth);
+        data.VertexData[19].Pos = FVector3f(-halfWidth, -halfHeight, halfDepth);
+        // 正面(-Z面)
+        data.VertexData[20].Pos = FVector3f(-halfWidth, -halfHeight, -halfDepth);
+        data.VertexData[21].Pos = FVector3f(-halfWidth, halfHeight, -halfDepth);
+        data.VertexData[22].Pos = FVector3f(halfWidth, halfHeight, -halfDepth);
+        data.VertexData[23].Pos = FVector3f(halfWidth, -halfHeight, -halfDepth);
+
+        for (size_t i = 0; i < 4; ++i)
+        {
+            // 右面(+X面)
+            data.VertexData[i].Normal = FVector3f(1.0f, 0.0f, 0.0f);
+            data.VertexData[i].Tangent = FVector4f(0.0f, 0.0f, 1.0f, 1.0f);
+            data.VertexData[i].Color = color;
+            // 左面(-X面)
+            data.VertexData[i + 4].Normal = FVector3f(-1.0f, 0.0f, 0.0f);
+            data.VertexData[i + 4].Tangent = FVector4f(0.0f, 0.0f, -1.0f, 1.0f);
+            data.VertexData[i + 4].Color = color;
+            // 顶面(+Y面)
+            data.VertexData[i + 8].Normal = FVector3f(0.0f, 1.0f, 0.0f);
+            data.VertexData[i + 8].Tangent = FVector4f(1.0f, 0.0f, 0.0f, 1.0f);
+            data.VertexData[i + 8].Color = color;
+            // 底面(-Y面)
+            data.VertexData[i + 12].Normal = FVector3f(0.0f, -1.0f, 0.0f);
+            data.VertexData[i + 12].Tangent = FVector4f(-1.0f, 0.0f, 0.0f, 1.0f);
+            data.VertexData[i + 12].Color = color;
+            // 背面(+Z面)
+            data.VertexData[i + 16].Normal = FVector3f(0.0f, 0.0f, 1.0f);
+            data.VertexData[i + 16].Tangent = FVector4f(-1.0f, 0.0f, 0.0f, 1.0f);
+            data.VertexData[i + 16].Color = color;
+            // 正面(-Z面)
+            data.VertexData[i + 20].Normal = FVector3f(0.0f, 0.0f, -1.0f);
+            data.VertexData[i + 20].Tangent = FVector4f(1.0f, 0.0f, 0.0f, 1.0f);
+            data.VertexData[i + 20].Color = color;
+        }
+
+        for (size_t i = 0; i < 6; ++i)
+        {
+            data.VertexData[i * 4].UV = FVector2f(0.0f, 1.0f);
+            data.VertexData[i * 4 + 1].UV = FVector2f(0.0f, 0.0f);
+            data.VertexData[i * 4 + 2].UV = FVector2f(1.0f, 0.0f);
+            data.VertexData[i * 4 + 3].UV = FVector2f(1.0f, 1.0f);
+        }
+
+        data.IndexData = {
+            0, 1, 2, 2, 3, 0,        // 右面(+X面)
+            4, 5, 6, 6, 7, 4,        // 左面(-X面)
+            8, 9, 10, 10, 11, 8,    // 顶面(+Y面)
+            12, 13, 14, 14, 15, 12,    // 底面(-Y面)
+            16, 17, 18, 18, 19, 16, // 背面(+Z面)
+            20, 21, 22, 22, 23, 20    // 正面(-Z面)
+        };
+
+        return data;
+    }
 
 
 	void Graphics::Initialize()
 	{
 		ASSERT_MSG(SwapChain != nullptr, "Graphics has already been initialized!");
 
-		UINT dxgiFactoryFlag = 0;
+		UINT dxgiFactoryFlags = 0;
 
 #if DASH_DEBUG
 		ComPtr<ID3D12Debug> DebugInterface;
 		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&DebugInterface))))
 		{
 			DebugInterface->EnableDebugLayer();
-			dxgiFactoryFlag |= DXGI_CREATE_FACTORY_DEBUG;
+            dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 		}
 #endif // DASH_DEBUG
 
 		ComPtr<IDXGIFactory4> dxgiFactory;
-		CreateDXGIFactory2(dxgiFactoryFlag, IID_PPV_ARGS(&dxgiFactory));
+		CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&dxgiFactory));
 
 		ComPtr<IDXGIAdapter1> dxgiAdapter;
 
@@ -215,7 +350,7 @@ namespace Dash
         DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
         swapChainDesc.Width = IGameApp::GetInstance()->GetWindowWidth();
         swapChainDesc.Height = IGameApp::GetInstance()->GetWindowHeight();
-        swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        swapChainDesc.Format = BackBufferFormat;
         swapChainDesc.Scaling = DXGI_SCALING_NONE;
         swapChainDesc.SampleDesc.Quality = 0;
         swapChainDesc.SampleDesc.Count = 1;
@@ -238,7 +373,7 @@ namespace Dash
             UINT handleIncrementSize = Graphics::Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
             CD3DX12_CPU_DESCRIPTOR_HANDLE descriptorHandle(RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
-            for (size_t i = 0; i < Graphics::BackBufferCount; i++)
+            for (UINT i = 0; i < Graphics::BackBufferCount; i++)
             {
                 ComPtr<ID3D12Resource> BackBuffer;
                 SwapChain->GetBuffer(i, IID_PPV_ARGS(&BackBuffer));
@@ -289,19 +424,177 @@ namespace Dash
             Graphics::Device->CreateDepthStencilView(DepthBuffer, nullptr, descriptorHandle);
         }
 
-        //Create Root Signature
+        //Create SRV & CBV Heap
+        {
+            D3D12_DESCRIPTOR_HEAP_DESC srvCBVHeapDesc{};
+            srvCBVHeapDesc.NumDescriptors = 1;
+            srvCBVHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+            srvCBVHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
-        //Create PSO
+            HR(Graphics::Device->CreateDescriptorHeap(&srvCBVHeapDesc, IID_PPV_ARGS(&SRVCBVDescriptorHeap)));
+        }
 
-        //Create Command Allocator
+        //Create Constant Buffer
+        {
+            UINT constantBufferSize = UPPER_ALIGNMENT(sizeof(FFrameConstantBuffer), 256);
 
-        //Create Command List
+            HR(Graphics::Device->CreateCommittedResource(
+                &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_DEFAULT),
+                D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE,
+                &CD3DX12_RESOURCE_DESC::Buffer(constantBufferSize),
+                D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ,
+                nullptr,
+                IID_PPV_ARGS(&ConstantBuffer)
+            ));
+
+            D3D12_CONSTANT_BUFFER_VIEW_DESC constantBufferViewDesc;
+            constantBufferViewDesc.SizeInBytes = constantBufferSize;
+            constantBufferViewDesc.BufferLocation = ConstantBuffer->GetGPUVirtualAddress();
+
+            CD3DX12_CPU_DESCRIPTOR_HANDLE descriptorHandle(SRVCBVDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+            Graphics::Device->CreateConstantBufferView(&constantBufferViewDesc, descriptorHandle);
+
+            //Map constant buffer
+            CD3DX12_RANGE readRange(0, 0);
+            ConstantBuffer->Map(0, &readRange, reinterpret_cast<void**>(&FrameConstantBuffer));
+        }
 
         //Create Vertex Buffer & Index Buffer
+        {
+            MeshData boxMesh = CreateBoxMesh(1, 1, 1, FVector4f{ 0.5f, 0.5f, 0.5f, 1.0f });
+
+            const UINT vertexBufferSize = (UINT)boxMesh.VertexData.size() * sizeof(Vertex);
+            const UINT indexBufferSize = (UINT)boxMesh.IndexData.size() * sizeof(UINT);
+
+            HR(Graphics::Device->CreateCommittedResource(
+                &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_DEFAULT),
+                D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE,
+                &CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize),
+                D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ,
+                nullptr,
+                IID_PPV_ARGS(&VertexBuffer)
+            ));
+
+            CD3DX12_RANGE readRange{0, 0};
+
+            //Copy Vertex Data
+            UINT8* vertexDataBegin;
+            HR(VertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&vertexDataBegin)));
+            memcpy(vertexDataBegin, boxMesh.VertexData.data(), vertexBufferSize);
+            VertexBuffer->Unmap(0, nullptr);
+
+            //Create Vertex Buffer View
+            VertexBufferView.BufferLocation = VertexBuffer->GetGPUVirtualAddress();
+            VertexBufferView.SizeInBytes = vertexBufferSize;
+            VertexBufferView.StrideInBytes = sizeof(Vertex);
+
+            HR(Graphics::Device->CreateCommittedResource(
+                &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_DEFAULT),
+                D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE,
+                &CD3DX12_RESOURCE_DESC::Buffer(indexBufferSize),
+                D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ,
+                nullptr,
+                IID_PPV_ARGS(&IndexBuffer)
+            ));
+
+            //Copy Index Data
+            UINT8* indexDataBegin;
+            HR(VertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&indexDataBegin)));
+            memcpy(indexDataBegin, boxMesh.IndexData.data(), indexBufferSize);
+            VertexBuffer->Unmap(0, nullptr);
+
+            //Create Index Buffer View
+            IndexBufferView.BufferLocation = VertexBuffer->GetGPUVirtualAddress();
+            IndexBufferView.SizeInBytes = vertexBufferSize;
+            IndexBufferView.Format = DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
+        }
+
+        //Create Root Signature
+        {
+            CD3DX12_DESCRIPTOR_RANGE1 descriptorRanges[1] = {};
+            descriptorRanges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
+
+            CD3DX12_ROOT_PARAMETER1 rootParameters[1] = {};
+            rootParameters[0].InitAsDescriptorTable(1, &descriptorRanges[0], D3D12_SHADER_VISIBILITY_ALL);
+
+            CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc;
+            rootSignatureDesc.Init_1_1(_countof(rootParameters), rootParameters, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+            ComPtr<ID3DBlob> blob;
+            ComPtr<ID3DBlob> errorBlob;
+            HR(D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_1, &blob, &errorBlob));
+            HR(Graphics::Device->CreateRootSignature(0, blob->GetBufferPointer(), blob->GetBufferSize(), IID_PPV_ARGS(&RootSignature)));
+        }
+
+        //Compile Shader
+        {
+            UINT shaderCompileFlags = 0;
+            
+#if DASH_DEBUG
+            shaderCompileFlags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif // DASH_DEBUG
+
+            shaderCompileFlags |= D3DCOMPILE_PACK_MATRIX_ROW_MAJOR;
+
+            std::filesystem::path currentPath = std::filesystem::current_path();
+            std::filesystem::path shaderPath = currentPath.parent_path() / "DashCore\\Src\\Resources\\shader.hlsl";
+
+            HR(D3DCompileFromFile(shaderPath.c_str(), nullptr, nullptr, "VSMain", "vs_5_0", shaderCompileFlags, 0, &VertexShader, nullptr));
+            HR(D3DCompileFromFile(shaderPath.c_str(), nullptr, nullptr, "PSMain", "ps_5_0", shaderCompileFlags, 0, &PixelShader, nullptr));
+        }
+
+        //Create PSO
+        {
+            D3D12_INPUT_ELEMENT_DESC inputElements[] = 
+            {
+                { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+                { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+                { "TANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+                { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 40, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+                { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 56, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+            };
+
+            D3D12_GRAPHICS_PIPELINE_STATE_DESC PipelineStateDesc;
+            PipelineStateDesc.pRootSignature = RootSignature;
+            PipelineStateDesc.InputLayout = { inputElements , _countof(inputElements) };
+            PipelineStateDesc.VS = D3D12_SHADER_BYTECODE{ VertexShader };
+            PipelineStateDesc.PS = D3D12_SHADER_BYTECODE{ PixelShader };
+            PipelineStateDesc.RasterizerState = CD3DX12_RASTERIZER_DESC{D3D12_DEFAULT};
+            PipelineStateDesc.BlendState = CD3DX12_BLEND_DESC{ D3D12_DEFAULT };
+            PipelineStateDesc.DepthStencilState.DepthEnable = TRUE;
+            PipelineStateDesc.DepthStencilState.StencilEnable = FALSE;
+            PipelineStateDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+            PipelineStateDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+            PipelineStateDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+            PipelineStateDesc.SampleMask = UINT_MAX;
+            PipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+            PipelineStateDesc.NumRenderTargets = 1;
+            PipelineStateDesc.RTVFormats[0] = BackBufferFormat;
+            PipelineStateDesc.SampleDesc.Count = 1;
+            HR(Graphics::Device->CreateGraphicsPipelineState(&PipelineStateDesc, IID_PPV_ARGS(&PipelineState)));
+        }
+
+        //Create Command Allocator
+        {
+        
+        }
+
+        //Create Command List
+        {
+        
+        }
+        
+        //Create Fence
+        {
+        
+        }
 	}
 
 
 	void Graphics::Shutdown()
 	{
+        //Unmap constant buffer
+        ConstantBuffer->Unmap(0, nullptr);
+
 	}
 }
