@@ -4,6 +4,8 @@
 #include "Utility/LogManager.h"
 #include "Utility/Keyboard.h"
 
+#include "Graphics/GraphicsCore.h"
+
 
 #include <string>
 
@@ -38,6 +40,6 @@ namespace Dash
 
 	void TestApplication::OnRenderScene(const FRenderEventArgs& e)
 	{
-		
+		Graphics::OnRender();
 	}
 }

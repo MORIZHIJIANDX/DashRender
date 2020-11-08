@@ -4,6 +4,7 @@
 #include "Utility/Keyboard.h"
 #include "Utility/Mouse.h"
 #include "Utility/SystemTimer.h"
+#include "Graphics/GraphicsCore.h"
 
 namespace Dash
 {
@@ -46,16 +47,21 @@ namespace Dash
 
 	void InitializeApplication(IGameApp* app)
 	{
-		FMouse::Get().Initialize(app->GetWindowHandle());
-		FSystemTimer::Initialize();
 		FLogManager::Get()->Init();
 		FLogManager::Get()->RegisterLogStream(std::make_shared<FLogStreamConsole>());
+
+		FMouse::Get().Initialize(app->GetWindowHandle());
+		FSystemTimer::Initialize();
+
+		Graphics::Initialize();
+
 		app->Startup();
 	}
 
 	void TerminateApplication(IGameApp* app)
 	{
 		app->Cleanup();
+		Graphics::Shutdown();
 		FLogManager::Get()->Shutdown();
 	}
 

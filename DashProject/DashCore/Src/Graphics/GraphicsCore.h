@@ -10,6 +10,8 @@ namespace Dash
 		static void Initialize();
 		static void Shutdown();
 
+		static void OnRender();
+
 		static ID3D12Device* Device;
 
 		static ID3D12CommandQueue* CommandQueue;

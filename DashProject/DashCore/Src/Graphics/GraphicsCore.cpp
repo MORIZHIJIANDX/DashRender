@@ -2,14 +2,28 @@
 #include "GraphicsCore.h"
 #include "GameApp.h"
 #include "../Utility/Exception.h"
+#include "Camera.h"
 
-#if defined(NTDDI_WIN10_RS2) && (NTDDI_VERSION >= NTDDI_WIN10_RS2)
+//#if defined(NTDDI_WIN10_RS2) && (NTDDI_VERSION >= NTDDI_WIN10_RS2)
+//#include <dxgi1_6.h>
+//#else
+//#include <dxgi1_4.h>    // For WARP
+//#endif
+//
+//#include <d3dcompiler.h>
+//
+//#include <d3d12sdklayers.h>
+
+#include <d3d12.h>
 #include <dxgi1_6.h>
-#else
-#include <dxgi1_4.h>    // For WARP
-#endif
+#include <D3Dcompiler.h>
+#include <DirectXMath.h>
+#include <d3d12sdklayers.h>
 
-#include <d3dcompiler.h>
+#pragma comment(lib, "dxguid.lib")
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d3d12.lib")
+#pragma comment(lib, "d3dcompiler.lib")
 
 using namespace Microsoft::WRL;
 
@@ -24,7 +38,10 @@ namespace Dash
     };
 
 	ID3D12Device* Graphics::Device = nullptr;
+    ID3D12CommandQueue* Graphics::CommandQueue = nullptr;
     IDXGISwapChain1* SwapChain = nullptr;
+
+    ID3D12Resource* BackBuffers[Graphics::BackBufferCount];
 
     ID3D12Resource* DepthBuffer = nullptr;
     ID3D12Resource* ConstantBuffer = nullptr;
@@ -35,9 +52,13 @@ namespace Dash
     D3D12_VERTEX_BUFFER_VIEW VertexBufferView;
     D3D12_INDEX_BUFFER_VIEW IndexBufferView;
 
+    UINT IndexCount = 0;
+
     ID3D12DescriptorHeap* RTVDescriptorHeap = nullptr;
     ID3D12DescriptorHeap* DSVDescriptorHeap = nullptr;
     ID3D12DescriptorHeap* SRVCBVDescriptorHeap = nullptr;
+
+    UINT RTVDescriptorSize = 0;
 
     ID3D12RootSignature* RootSignature = nullptr;
     ID3D12PipelineState* PipelineState = nullptr;
@@ -51,7 +72,21 @@ namespace Dash
     ID3DBlob* VertexShader = nullptr;
     ID3DBlob* PixelShader = nullptr;
 
+    ID3D12CommandAllocator* CommandAllocator = nullptr;
+    ID3D12GraphicsCommandList* CommandList = nullptr;
+
+    ID3D12Fence* GPUFence = nullptr;
+    UINT64 FenceValue = 0;
+    HANDLE FenceEvent = nullptr;
+
+    UINT64 FrameIndex = 0;
+
     DXGI_FORMAT BackBufferFormat = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+
+    FPerspectiveCamera PrespectiveCamera;
+
+    D3D12_VIEWPORT ViewPort;
+    RECT ScissorRect;
 
     struct Vertex
     {
@@ -160,10 +195,70 @@ namespace Dash
         return data;
     }
 
+    void WaitForGpu()
+    {
+        UINT64 valueToWait = FenceValue++;
+
+        HR(Graphics::CommandQueue->Signal(GPUFence, valueToWait));
+
+        if (GPUFence->GetCompletedValue() < valueToWait)
+        {
+            HR(GPUFence->SetEventOnCompletion(valueToWait, FenceEvent));
+            WaitForSingleObject(FenceEvent, INFINITE);
+        }
+    }
+
+    void PopulateCommandList()
+    {
+        if (FrameConstantBuffer)
+        {
+            FrameConstantBuffer->ProjectionMatrix = PrespectiveCamera.GetProjectionMatrix();
+            FrameConstantBuffer->ViewMatrix = PrespectiveCamera.GetViewMatrix();
+        }
+
+        HR(CommandAllocator->Reset());
+        HR(CommandList->Reset(CommandAllocator, PipelineState));
+
+        CommandList->SetGraphicsRootSignature(RootSignature);
+        CommandList->SetPipelineState(PipelineState);
+
+        ID3D12DescriptorHeap* descriptorHeaps[] = { SRVCBVDescriptorHeap };
+        CommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
+        CommandList->SetGraphicsRootDescriptorTable(0, SRVCBVDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
+
+        CommandList->RSSetViewports(1, &ViewPort);
+        CommandList->RSSetScissorRects(1, &ScissorRect);
+
+        UINT64 backBufferIndex = FrameIndex % Graphics::BackBufferCount;
+        CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(BackBuffers[backBufferIndex], 
+            D3D12_RESOURCE_STATE_PRESENT, 
+            D3D12_RESOURCE_STATE_RENDER_TARGET));
+
+        CD3DX12_CPU_DESCRIPTOR_HANDLE rtDescriptorHandle(RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), (INT)backBufferIndex, RTVDescriptorSize);
+        CD3DX12_CPU_DESCRIPTOR_HANDLE dsDescriptorHandle(DSVDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+        CommandList->OMSetRenderTargets(1, &rtDescriptorHandle, false, &dsDescriptorHandle);
+
+        FVector4f clearColor{0.5f, 0.5f, 0.5f, 1.0f};
+        CommandList->ClearRenderTargetView(rtDescriptorHandle, clearColor, 0, nullptr);
+        CommandList->ClearDepthStencilView(dsDescriptorHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+        CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        CommandList->IASetVertexBuffers(0, 1, &VertexBufferView);
+        CommandList->IASetIndexBuffer(&IndexBufferView);
+
+        CommandList->DrawIndexedInstanced(IndexCount, 1, 0, 0, 0);
+
+        CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(BackBuffers[backBufferIndex],
+            D3D12_RESOURCE_STATE_RENDER_TARGET,
+            D3D12_RESOURCE_STATE_PRESENT));
+
+        HR(CommandList->Close());
+    }
 
 	void Graphics::Initialize()
 	{
-		ASSERT_MSG(SwapChain != nullptr, "Graphics has already been initialized!");
+		ASSERT_MSG(SwapChain == nullptr, "Graphics has already been initialized!");
 
 		UINT dxgiFactoryFlags = 0;
 
@@ -239,7 +334,7 @@ namespace Dash
             LOG_ERROR << "Can't Create D3D12 Hardware Device!" ;
         }
 
-#if DASH_DEBUG
+#if !DASH_DEBUG
         {
             bool DeveloperModeEnabled = false;
 
@@ -370,15 +465,14 @@ namespace Dash
 
             HR(Graphics::Device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&RTVDescriptorHeap)));
 
-            UINT handleIncrementSize = Graphics::Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+            RTVDescriptorSize = Graphics::Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
             CD3DX12_CPU_DESCRIPTOR_HANDLE descriptorHandle(RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
             for (UINT i = 0; i < Graphics::BackBufferCount; i++)
             {
-                ComPtr<ID3D12Resource> BackBuffer;
-                SwapChain->GetBuffer(i, IID_PPV_ARGS(&BackBuffer));
-                Graphics::Device->CreateRenderTargetView(BackBuffer.Get(), nullptr, descriptorHandle);
-                descriptorHandle.Offset(1, handleIncrementSize);
+                SwapChain->GetBuffer(i, IID_PPV_ARGS(&BackBuffers[i]));
+                Graphics::Device->CreateRenderTargetView(BackBuffers[i], nullptr, descriptorHandle);
+                descriptorHandle.Offset(1, RTVDescriptorSize);
             }
         }       
 
@@ -439,7 +533,7 @@ namespace Dash
             UINT constantBufferSize = UPPER_ALIGNMENT(sizeof(FFrameConstantBuffer), 256);
 
             HR(Graphics::Device->CreateCommittedResource(
-                &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_DEFAULT),
+                &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_UPLOAD),
                 D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE,
                 &CD3DX12_RESOURCE_DESC::Buffer(constantBufferSize),
                 D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ,
@@ -467,7 +561,7 @@ namespace Dash
             const UINT indexBufferSize = (UINT)boxMesh.IndexData.size() * sizeof(UINT);
 
             HR(Graphics::Device->CreateCommittedResource(
-                &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_DEFAULT),
+                &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_UPLOAD),
                 D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE,
                 &CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize),
                 D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ,
@@ -475,10 +569,10 @@ namespace Dash
                 IID_PPV_ARGS(&VertexBuffer)
             ));
 
-            CD3DX12_RANGE readRange{0, 0};
+            CD3DX12_RANGE readRange(0, 0);
 
             //Copy Vertex Data
-            UINT8* vertexDataBegin;
+            UINT8* vertexDataBegin = nullptr;
             HR(VertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&vertexDataBegin)));
             memcpy(vertexDataBegin, boxMesh.VertexData.data(), vertexBufferSize);
             VertexBuffer->Unmap(0, nullptr);
@@ -489,7 +583,7 @@ namespace Dash
             VertexBufferView.StrideInBytes = sizeof(Vertex);
 
             HR(Graphics::Device->CreateCommittedResource(
-                &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_DEFAULT),
+                &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_UPLOAD),
                 D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE,
                 &CD3DX12_RESOURCE_DESC::Buffer(indexBufferSize),
                 D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ,
@@ -498,7 +592,7 @@ namespace Dash
             ));
 
             //Copy Index Data
-            UINT8* indexDataBegin;
+            UINT8* indexDataBegin = nullptr;
             HR(VertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&indexDataBegin)));
             memcpy(indexDataBegin, boxMesh.IndexData.data(), indexBufferSize);
             VertexBuffer->Unmap(0, nullptr);
@@ -507,6 +601,8 @@ namespace Dash
             IndexBufferView.BufferLocation = VertexBuffer->GetGPUVirtualAddress();
             IndexBufferView.SizeInBytes = vertexBufferSize;
             IndexBufferView.Format = DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
+
+            IndexCount = (UINT)boxMesh.IndexData.size();
         }
 
         //Create Root Signature
@@ -517,12 +613,16 @@ namespace Dash
             CD3DX12_ROOT_PARAMETER1 rootParameters[1] = {};
             rootParameters[0].InitAsDescriptorTable(1, &descriptorRanges[0], D3D12_SHADER_VISIBILITY_ALL);
 
+            //CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
             CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc;
             rootSignatureDesc.Init_1_1(_countof(rootParameters), rootParameters, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
+            //rootSignatureDesc.Init(0, nullptr, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
             ComPtr<ID3DBlob> blob;
             ComPtr<ID3DBlob> errorBlob;
-            HR(D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_1, &blob, &errorBlob));
+            HR(D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &blob, &errorBlob));
+            //HR(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &blob, &errorBlob));
             HR(Graphics::Device->CreateRootSignature(0, blob->GetBufferPointer(), blob->GetBufferSize(), IID_PPV_ARGS(&RootSignature)));
         }
 
@@ -554,11 +654,11 @@ namespace Dash
                 { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 56, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
             };
 
-            D3D12_GRAPHICS_PIPELINE_STATE_DESC PipelineStateDesc;
+            D3D12_GRAPHICS_PIPELINE_STATE_DESC PipelineStateDesc = {};
             PipelineStateDesc.pRootSignature = RootSignature;
             PipelineStateDesc.InputLayout = { inputElements , _countof(inputElements) };
-            PipelineStateDesc.VS = D3D12_SHADER_BYTECODE{ VertexShader };
-            PipelineStateDesc.PS = D3D12_SHADER_BYTECODE{ PixelShader };
+            PipelineStateDesc.VS = CD3DX12_SHADER_BYTECODE{ VertexShader };
+            PipelineStateDesc.PS = CD3DX12_SHADER_BYTECODE{ PixelShader };
             PipelineStateDesc.RasterizerState = CD3DX12_RASTERIZER_DESC{D3D12_DEFAULT};
             PipelineStateDesc.BlendState = CD3DX12_BLEND_DESC{ D3D12_DEFAULT };
             PipelineStateDesc.DepthStencilState.DepthEnable = TRUE;
@@ -571,30 +671,125 @@ namespace Dash
             PipelineStateDesc.NumRenderTargets = 1;
             PipelineStateDesc.RTVFormats[0] = BackBufferFormat;
             PipelineStateDesc.SampleDesc.Count = 1;
+
             HR(Graphics::Device->CreateGraphicsPipelineState(&PipelineStateDesc, IID_PPV_ARGS(&PipelineState)));
         }
 
         //Create Command Allocator
         {
-        
+            HR(Graphics::Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&CommandAllocator)));
         }
 
         //Create Command List
         {
-        
+            HR(Graphics::Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, CommandAllocator, PipelineState, IID_PPV_ARGS(&CommandList)));
+            HR(CommandList->Close());
         }
         
         //Create Fence
         {
-        
+            HR(Graphics::Device->CreateFence(FenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&GPUFence)));
+            ++FenceValue;
+        }
+
+        //Create Event
+        {
+            FenceEvent = CreateEvent(nullptr, false, false, nullptr);
+            if (FenceEvent == nullptr)
+            {
+                HR(HRESULT_FROM_WIN32(GetLastError()));
+            }
+        }
+
+        WaitForGpu();
+
+
+
+
+        //Create Camera &&  ViewPort
+        {
+            float fov = 45.0f;
+            float aspect = IGameApp::GetInstance()->GetWindowWidth() / (float)IGameApp::GetInstance()->GetWindowHeight();
+
+            PrespectiveCamera.SetCameraParams(aspect, fov, 0.1f, 100.0f);
+            PrespectiveCamera.SetPosition(FVector3f{ 0.0f, 0.0f, -2.0f });
+
+            ViewPort.Width = (FLOAT)IGameApp::GetInstance()->GetWindowWidth();
+            ViewPort.Height = (FLOAT)IGameApp::GetInstance()->GetWindowHeight();
+            ViewPort.TopLeftX = 0;
+            ViewPort.TopLeftY = 0;
+            ViewPort.MinDepth = 0;
+            ViewPort.MaxDepth = 1;
+            
+            ScissorRect.left = 0;
+            ScissorRect.right = (LONG)IGameApp::GetInstance()->GetWindowWidth();;
+            ScissorRect.top = 0;
+            ScissorRect.bottom = (LONG)IGameApp::GetInstance()->GetWindowHeight();
         }
 	}
 
 
 	void Graphics::Shutdown()
 	{
+        WaitForGpu();
+
         //Unmap constant buffer
         ConstantBuffer->Unmap(0, nullptr);
 
+        CommandList->Release();
+        GPUFence->Release();
+        CommandQueue->Release();
+        SwapChain->Release();
+
+        CommandAllocator->Release();
+
+        PipelineState->Release();
+        RootSignature->Release();
+
+        RTVDescriptorHeap->Release();
+        DSVDescriptorHeap->Release();
+        SRVCBVDescriptorHeap->Release();
+
+        DepthBuffer->Release();
+        ConstantBuffer->Release();
+
+        VertexBuffer->Release();
+        IndexBuffer->Release();
+
+        for (UINT i = 0; i < Graphics::BackBufferCount; i++)
+        {
+            BackBuffers[i]->Release();
+        }
+
+#if defined(DASH_DEBUG)
+        ID3D12DebugDevice* debugInterface;
+        if (SUCCEEDED(Graphics::Device->QueryInterface(&debugInterface)))
+        {
+            debugInterface->ReportLiveDeviceObjects(D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL);
+            debugInterface->Release();
+        }
+#endif
+
+        if (Graphics::Device != nullptr)
+        {
+            Graphics::Device->Release();
+            Graphics::Device = nullptr;
+        }
+
+        CloseHandle(FenceEvent);
 	}
+
+    void Graphics::OnRender()
+    {
+        PopulateCommandList();
+
+        ID3D12CommandList* commands[] = { CommandList };
+        CommandQueue->ExecuteCommandLists(_countof(commands), commands);
+
+        HR(SwapChain->Present(1, 0));
+
+        WaitForGpu();
+
+        ++FrameIndex;
+    }
 }
