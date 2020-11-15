@@ -4,16 +4,6 @@
 #include "../Utility/Exception.h"
 #include "Camera.h"
 
-//#if defined(NTDDI_WIN10_RS2) && (NTDDI_VERSION >= NTDDI_WIN10_RS2)
-//#include <dxgi1_6.h>
-//#else
-//#include <dxgi1_4.h>    // For WARP
-//#endif
-//
-//#include <d3dcompiler.h>
-//
-//#include <d3d12sdklayers.h>
-
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <D3Dcompiler.h>
@@ -26,6 +16,8 @@
 #pragma comment(lib, "d3dcompiler.lib")
 
 using namespace Microsoft::WRL;
+
+#define CONDITIONALLY_ENABLE_HDR_OUTPUT 1
 
 namespace Dash
 {
@@ -66,6 +58,7 @@ namespace Dash
     D3D_FEATURE_LEVEL DefaultD3DFeatureLevel = D3D_FEATURE_LEVEL_12_0;
     bool bTypedUAVLoadSupport_R11G11B10_FLOAT = false;
     bool bTypedUAVLoadSupport_R16G16B16A16_FLOAT = false;
+    bool bEnableHDROutput = false;
 
     FFrameConstantBuffer* FrameConstantBuffer = nullptr;
 
@@ -81,7 +74,7 @@ namespace Dash
 
     UINT64 FrameIndex = 0;
 
-    DXGI_FORMAT BackBufferFormat = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+    DXGI_FORMAT BackBufferFormat = DXGI_FORMAT::DXGI_FORMAT_R10G10B10A2_UNORM;
 
     FPerspectiveCamera PrespectiveCamera;
 
@@ -300,7 +293,7 @@ namespace Dash
                     if (SUCCEEDED(D3D12CreateDevice(dxgiAdapter.Get(), DefaultD3DFeatureLevel, IID_PPV_ARGS(&Graphics::Device))))
                     {
                         LOG_INFO << "Create Device With Adapter : " << desc.Description;
-                        LOG_INFO << "Adapter Memory " << desc.DedicatedVideoMemory;
+                        LOG_INFO << "Adapter Memory " << desc.DedicatedVideoMemory / (1024 * 1024) << " MB";
 
                         break;
                     }
@@ -322,7 +315,7 @@ namespace Dash
                     if (SUCCEEDED(D3D12CreateDevice(dxgiAdapter.Get(), DefaultD3DFeatureLevel, IID_PPV_ARGS(&Graphics::Device))))
                     {
                         LOG_INFO << "Create Device With Adapter : " << desc.Description;
-                        LOG_INFO << "Adapter Memory " << desc.DedicatedVideoMemory;
+                        LOG_INFO << "Adapter Memory " << desc.DedicatedVideoMemory / (1024 * 1024) << " MB";
                         break;
                     }
                 }
@@ -455,6 +448,28 @@ namespace Dash
         swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
 
         HR(dxgiFactory->CreateSwapChainForHwnd(Graphics::CommandQueue, IGameApp::GetInstance()->GetWindowHandle(), &swapChainDesc, nullptr, nullptr, &SwapChain));
+
+#if CONDITIONALLY_ENABLE_HDR_OUTPUT && defined(NTDDI_WIN10_RS2) && (NTDDI_VERSION >= NTDDI_WIN10_RS2)
+        {
+            IDXGISwapChain4* swapChain = (IDXGISwapChain4*)SwapChain;
+            ComPtr<IDXGIOutput> output;
+            ComPtr<IDXGIOutput6> output6;
+            DXGI_OUTPUT_DESC1 outputDesc;
+            UINT colorSpaceSupport;
+
+            // Query support for ST.2084 on the display and set the color space accordingly
+            if (SUCCEEDED(swapChain->GetContainingOutput(&output)) &&
+                SUCCEEDED(output.As(&output6)) &&
+                SUCCEEDED(output6->GetDesc1(&outputDesc)) &&
+                outputDesc.ColorSpace == DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020 &&
+                SUCCEEDED(swapChain->CheckColorSpaceSupport(DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020, &colorSpaceSupport)) &&
+                (colorSpaceSupport & DXGI_SWAP_CHAIN_COLOR_SPACE_SUPPORT_FLAG_PRESENT) &&
+                SUCCEEDED(swapChain->SetColorSpace1(DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020)))
+            {
+                bEnableHDROutput = true;
+            }
+        }
+#endif
 
         //Create Render Targe View
         {

@@ -4,6 +4,10 @@
 
 namespace Dash
 {
+	// CommandAllocatorPool		分配和管理command allocator
+	// CommandQueue				代表一个硬件队列( Direct, Compute or Copy )
+	// CommandListManager		拥有 Direct, Compute 和 Copy Queue, 负责创建新的Command List
+	// GpuResource
 	class Graphics
 	{
 	public:
