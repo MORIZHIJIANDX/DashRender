@@ -14,7 +14,7 @@ namespace Dash
 		static void Initialize();
 		static void Shutdown();
 
-		static void OnRender();
+		static void OnRender(const FRenderEventArgs& e);
 
 		static ID3D12Device* Device;
 

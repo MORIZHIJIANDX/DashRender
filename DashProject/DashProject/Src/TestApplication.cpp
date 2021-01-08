@@ -40,6 +40,6 @@ namespace Dash
 
 	void TestApplication::OnRenderScene(const FRenderEventArgs& e)
 	{
-		Graphics::OnRender();
+		Graphics::OnRender(e);
 	}
 }

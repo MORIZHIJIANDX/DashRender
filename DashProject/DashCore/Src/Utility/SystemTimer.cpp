@@ -87,6 +87,7 @@ namespace Dash
 		mBaseTick = currentTick;
 		mPrevTick = currentTick;
 		mStopTick = 0;
+		mPauseTicks = 0;
 		mStopped = false;
 	}
 

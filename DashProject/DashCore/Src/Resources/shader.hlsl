@@ -43,5 +43,5 @@ float4 PSMain(PSInput input) : SV_TARGET
 {
 	//return g_texture.Sample(g_sampler, input.UV);
 
-	return float4(1.0f, 0.5f, 0.5f, 1.0f);
+	return float4( (sin(TotalTime) + 1.0f) /2.0f, (cos(TotalTime) + 1.0f) / 2.0f, 0.5f, 1.0f);
 }

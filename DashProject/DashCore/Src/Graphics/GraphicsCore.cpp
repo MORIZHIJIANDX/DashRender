@@ -201,12 +201,13 @@ namespace Dash
         }
     }
 
-    void PopulateCommandList()
+    void PopulateCommandList(const FRenderEventArgs& e)
     {
         if (FrameConstantBuffer)
         {
             FrameConstantBuffer->ProjectionMatrix = PrespectiveCamera.GetProjectionMatrix();
             FrameConstantBuffer->ViewMatrix = PrespectiveCamera.GetViewMatrix();
+            FrameConstantBuffer->Time = e.mTotalTime;
         }
 
         HR(CommandAllocator->Reset());
@@ -794,9 +795,9 @@ namespace Dash
         CloseHandle(FenceEvent);
 	}
 
-    void Graphics::OnRender()
+    void Graphics::OnRender(const FRenderEventArgs& e)
     {
-        PopulateCommandList();
+        PopulateCommandList(e);
 
         ID3D12CommandList* commands[] = { CommandList };
         CommandQueue->ExecuteCommandLists(_countof(commands), commands);

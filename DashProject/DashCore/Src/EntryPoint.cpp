@@ -88,6 +88,7 @@ namespace Dash
 	int RunApplication(IGameApp* app)
 	{
 		FCpuTimer timer;
+		timer.Reset();
 
 		size_t frameCount = 0;
 
