@@ -207,7 +207,7 @@ namespace Dash
         {
             FrameConstantBuffer->ProjectionMatrix = PrespectiveCamera.GetProjectionMatrix();
             FrameConstantBuffer->ViewMatrix = PrespectiveCamera.GetViewMatrix();
-            FrameConstantBuffer->Time = e.mTotalTime;
+            FrameConstantBuffer->Time = static_cast<float>(e.mTotalTime);
         }
 
         HR(CommandAllocator->Reset());

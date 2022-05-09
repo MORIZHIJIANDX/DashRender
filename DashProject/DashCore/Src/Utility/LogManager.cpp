@@ -8,8 +8,8 @@ namespace Dash
 {
 	struct LogMessage
 	{
-		ELogLevel m_Level = ELogLevel::Info;
-		std::wstring m_Message;
+		ELogLevel mLevel = ELogLevel::Info;
+		std::wstring mMessage;
 	};
 
 	static std::vector<std::shared_ptr<FLogStream>> gsLogStreams;
@@ -48,7 +48,7 @@ namespace Dash
 				std::scoped_lock lock(gsLogStreamMutex);
 				for (auto log : gsLogStreams)
 				{
-					log->Write(msg.m_Level, msg.m_Message);
+					log->Write(msg.mLevel, msg.mMessage);
 				}
 			}
 

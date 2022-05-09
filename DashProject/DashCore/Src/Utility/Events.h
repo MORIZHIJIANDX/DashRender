@@ -45,9 +45,9 @@ namespace Dash
 			, mRepeat(repeat)
 		{}
 
-		EKeyCode         mKey;    // The Key Code that was pressed or released.
+		EKeyCode        mKey;    // The Key Code that was pressed or released.
 		unsigned int    mChar;   // The 32-bit character code that was pressed. This value will be 0 if it is a non-printable character.
-		EKeyState        mState;  // Was the key pressed or released?
+		EKeyState       mState;  // Was the key pressed or released?
 		bool            mControl;// Is the Control modifier pressed
 		bool            mShift;  // Is the Shift modifier pressed
 		bool            mAlt;    // Is the Alt modifier pressed

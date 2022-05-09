@@ -5,7 +5,7 @@ workspace "DashProject"
     {
         "Debug",
         "Release",
-        "Dist"
+        "Distribution"
     }
 
     startproject "DashProject"
@@ -54,8 +54,8 @@ project "DashCore"
         defines "DASH_RELEASE"
         optimize "On"
 
-    filter "configurations:Dist"
-        defines "DASH_DIST"
+    filter "configurations:Distribution"
+        defines "DASH_DISTRIBUTION"
         optimize "On"
 
 project "DashProject"
@@ -102,6 +102,6 @@ project "DashProject"
         defines "DASH_RELEASE"
         optimize "On"
 
-    filter "configurations:Dist"
-        defines "DASH_DIST"
+    filter "configurations:Distribution"
+        defines "DASH_DISTRIBUTION"
         optimize "On"

@@ -54,7 +54,7 @@ namespace Dash
 #ifdef LOG_SIMPLE
 	#define LOG_INFO (Dash::FLogManager::Get()->operator()(Dash::ELogLevel::Info)) << "  [Info]: "
 	#define LOG_WARNING (Dash::FLogManager::Get()->operator()(Dash::ELogLevel::Warning)) << "  [Warning]: "
-	#define LOG_ERROR (Dash::FLogManager::Get()->operator()(Dash::ELogLevel::Error)) << "  [Error]: "
+	#define LOG_ERROR (Dash::FLogManager::Get()->operator()(Dash::ELogLevel::Error)) << "[File]: " << __FILE__ << "  [Line]: " << __LINE__ << "  [Function]: " << __FUNCTION__ << "  [Error]: "
 #else
 	#define LOG_INFO (Dash::FLogManager::Get()->operator()(Dash::ELogLevel::Info)) << "[File]: " << __FILE__ << "  [Line]: " << __LINE__ << "  [Function]: " << __FUNCTION__ << "  [Info]: "
 	#define LOG_WARNING (Dash::FLogManager::Get()->operator()(Dash::ELogLevel::Warning)) << "[File]: " << __FILE__ << "  [Line]: " << __LINE__ << "  [Function]: " << __FUNCTION__ << "  [Warning]: "
