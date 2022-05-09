@@ -60,10 +60,6 @@ namespace Dash
 		}
 
 		KeyPressed(e);
-
-		//LOG_INFO << "Key Pressed";
-
-		//LOG_INFO << "Key RisingEdge" << currentKeyState.RisingEdge;
 	}
 
 	void FKeyboard::OnKeyReleased(FKeyEventArgs& e)

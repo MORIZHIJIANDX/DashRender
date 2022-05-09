@@ -143,7 +143,6 @@
     <ClInclude Include="Src\Graphics\GameApp.h" />
     <ClInclude Include="Src\Graphics\GraphicsCore.h" />
     <ClInclude Include="Src\Graphics\Viewport.h" />
-    <ClInclude Include="Src\Graphics\Window.h" />
     <ClInclude Include="Src\Graphics\d3dx12.h" />
     <ClInclude Include="Src\Math\AABB.h" />
     <ClInclude Include="Src\Math\AABB2.h" />
@@ -193,7 +192,6 @@
     <ClCompile Include="Src\Graphics\DX12Helper.cpp" />
     <ClCompile Include="Src\Graphics\GameApp.cpp" />
     <ClCompile Include="Src\Graphics\GraphicsCore.cpp" />
-    <ClCompile Include="Src\Graphics\Window.cpp" />
     <ClCompile Include="Src\Math\Color.cpp" />
     <ClCompile Include="Src\PCH\PCH.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
