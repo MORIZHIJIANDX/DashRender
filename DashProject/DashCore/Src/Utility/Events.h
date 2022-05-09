@@ -6,10 +6,9 @@
 #include <memory>
 #include <string>
 
-namespace Graphics
+namespace Dash
 {
 	class FCamera;
-	class GraphicsCommandBuffer;
 }
 
 namespace Dash
@@ -218,21 +217,18 @@ namespace Dash
 		using base = FEventArgs;
 		FRenderEventArgs(double fDeltaTime, double fTotalTime,
 			uint64_t frameCounter,
-			std::shared_ptr<Graphics::FCamera> camera = nullptr,
-			std::shared_ptr<Graphics::GraphicsCommandBuffer> graphicsCommandBuffer = nullptr)
+			std::shared_ptr<Dash::FCamera> camera = nullptr)
 			: mElapsedTime(fDeltaTime)
 			, mTotalTime(fTotalTime)
 			, mFrameCounter(frameCounter)
 			, mCamera(camera)
-			, mGraphicsCommandBuffer(graphicsCommandBuffer)
 		{}
 
 		double mElapsedTime;
 		double mTotalTime;
 		uint64_t mFrameCounter;
 
-		std::shared_ptr<Graphics::FCamera> mCamera;
-		std::shared_ptr<Graphics::GraphicsCommandBuffer> mGraphicsCommandBuffer;
+		std::shared_ptr<Dash::FCamera> mCamera;
 	};
 
 	using FRenderEvent = TMulticastDelegate<void(FRenderEventArgs&)>;
