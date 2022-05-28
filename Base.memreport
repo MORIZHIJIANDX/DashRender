@@ -1,71 +1,71 @@
 CommandLine Options: 
-Time Since Boot: 59.92 Seconds
+Time Since Boot: 138.37 Seconds
 
 Platform Memory Stats for Android
-Process Physical Memory: 723.79 MB used, 808.37 MB peak
-Process Virtual Memory: 7744.89 MB used, 7799.37 MB peak
-Physical Memory: 4962.87 MB used,  2679.87 MB free, 7642.74 MB total
-Virtual Memory: 1998.02 MB used,  4145.98 MB free, 6144.00 MB total
+Process Physical Memory: 663.33 MB used, 776.12 MB peak
+Process Virtual Memory: 7753.89 MB used, 7811.58 MB peak
+Physical Memory: 4754.22 MB used,  2888.52 MB free, 7642.74 MB total
+Virtual Memory: 2571.66 MB used,  3572.33 MB free, 6144.00 MB total
 
 Allocator Stats for binned:
-Current Memory 293.21 MB used, plus 10.98 MB waste
-Peak Memory 348.43 MB used, plus 11.42 MB waste
-Current OS Memory 304.18 MB, peak 359.85 MB
-Current Waste 5.59 MB, peak 5.61 MB
-Current Used 293.21 MB, peak 348.43 MB
-Current Slack -1.13 MB
-Allocs        1024608 Current /   8183941 Total
+Current Memory 294.26 MB used, plus 12.04 MB waste
+Peak Memory 350.27 MB used, plus 11.76 MB waste
+Current OS Memory 306.30 MB, peak 362.03 MB
+Current Waste 5.57 MB, peak 5.67 MB
+Current Used 294.26 MB, peak 350.27 MB
+Current Slack 0.18 MB
+Allocs        1017861 Current /   15458522 Total
 
 Block Size Num Pools Max Pools Cur Allocs Total Allocs Min Req Max Req Mem Used Mem Slack Mem Waste Efficiency
 ---------- --------- --------- ---------- ------------ ------- ------- -------- --------- --------- ----------
-         16         58         58      234778       1560555       16       16     3668K        44K         0K     100.00%
-         32         95         95      191806       1017412       32       32     5993K        87K         0K     100.00%
-         48         77         77      103721        769639       48       48     4861K        66K         1K      99.98%
-         64        147        148      148759        722627       64       64     9297K       111K         0K     100.00%
-         80         45         46       35202        310656       80       80     2750K       130K         0K     100.00%
-         96         43         43       28612        348736       96       96     2682K        68K         2K      99.93%
-        112         23         24       13403        151223      112      112     1465K         7K         0K     100.00%
-        128        160        160       81411        402107      128      128    10176K        64K         0K     100.00%
-        160         60         60       23982        595633      144      160     3747K        88K        21K      99.45%
-        192         64         64       21530       1248616      176      192     4036K        56K         8K      99.80%
-        224         95         96       27311        193013      208      224     5974K        95K        54K      99.11%
-        256         81         81       20607        128140      240      256     5151K        33K        56K      98.92%
-        288         57         57       12689        149086      272      288     3568K        72K        27K      99.26%
-        320         79         79       15864         36680      304      320     4957K        80K        26K      99.49%
-        384         73         73       12126         73932      336      384     4547K       107K       206K      95.59%
-        448         19         19        2684         18515      400      448     1174K        40K        13K      98.93%
-        512         43         44        5174         90219      464      512     2587K       165K       102K      96.29%
-        576         36         36        3803         25192      528      576     2139K       150K        42K      98.18%
-        640         68         68        6640         50069      592      640     4150K       185K       165K      96.21%
-        704         28         29        2500          6467      656      704     1718K        73K        51K      97.15%
-        768         10         10         816          5633      720      768      612K        26K        15K      97.66%
-        896         33         33        2288         15783      784      896     2002K       106K        87K      95.88%
-       1024         73         74        3862         61097      912     1024     3862K       810K        48K      98.97%
-       1168         40         40        2044         15892     1040     1168     2331K       224K        70K      97.27%
-       1360         39         41        1739         12191     1184     1360     2309K       178K        90K      96.39%
-       1632         40         52        1533         17100     1376     1632     2443K       107K       125K      95.12%
-       2048        152        152        4844         18780     1648     2048     9688K        40K       252K      97.41%
-       2336         66        130         909         20269     2064     2336     2073K      2143K        31K      99.27%
-       2720         43         43        1005          4612     2352     2720     2669K        73K       114K      95.86%
-       3264         90         91        1780          8902     2736     3264     5673K        65K       183K      96.82%
-       4096        223        223        3535          9091     3280     4096    14140K       132K       767K      94.63%
-       4672        112        113        1542          7146     4112     4672     7035K       119K       472K      93.42%
-       5456        145        147        1725          7179     4688     5456     9191K        80K       251K      97.30%
-       6544        106        107        1032          6784     5472     6544     6595K       180K       672K      90.09%
-       8192        124        127         970         17005     6560     8192     7760K       176K       706K      91.10%
-       9360         32         41         219          1318     8208     9360     2001K        47K        42K      97.95%
-      10912         30         33         180          5550     9376    10912     1918K         1K        11K      99.43%
-      13104         37         39         175          1001    10928    13104     2239K       129K        77K      96.75%
-      16384         68         73         267          8854    13120    16384     4272K        80K        60K      98.62%
-      21840         94         97         279          1404    16400    21840     5950K        65K       428K      92.89%
-      32768        116        157         229          3474    21856    32752     7328K        96K      1374K      81.49%
+         16         58         58      234756       3181600       16       16     3668K        44K         0K     100.00%
+         32         89         89      180624       1959984       32       32     5644K        52K         0K     100.00%
+         48         77         77      104082       1937279       48       48     4878K        49K         1K      99.98%
+         64        151        152      151463       1524688       64       64     9466K       198K         0K     100.00%
+         80         45         45       35311        777074       80       80     2758K       122K         0K     100.00%
+         96         43         43       28427        912089       96       96     2665K        85K         2K      99.93%
+        112         23         24       13398        204070      112      112     1465K         7K         0K     100.00%
+        128        160        160       81064        796670      128      128    10133K       107K         0K     100.00%
+        160         61         61       24433        796149      144      160     3817K        82K        19K      99.51%
+        192         64         64       21362       1335746      176      192     4005K        87K         7K      99.83%
+        224         95         96       27396        261750      208      224     5992K        77K        95K      98.44%
+        256         85         86       21686        172191      240      256     5421K        19K        58K      98.93%
+        288         58         59       13056        438913      272      288     3672K        31K        25K      99.33%
+        320         78         78       15787         49144      304      320     4933K        40K        26K      99.48%
+        384         74         74       12189        173473      336      384     4570K       148K       225K      95.25%
+        448         18         18        2535         30013      400      448     1109K        41K         8K      99.31%
+        512         45         45        5304        164699      464      512     2652K       228K       145K      94.97%
+        576         36         36        3825         74515      528      576     2151K       138K        41K      98.22%
+        640         68         68        6642         53759      592      640     4151K       184K        78K      98.21%
+        704         28         29        2504          6198      656      704     1721K        70K        48K      97.32%
+        768         11         11         817         14255      720      768      612K        90K        17K      97.59%
+        896         32         32        2294         40659      784      896     2007K        37K       102K      95.02%
+       1024         73         74        3865        133676      912     1024     3865K       807K        50K      98.93%
+       1168         40         40        2035         47382     1040     1168     2321K       234K        55K      97.85%
+       1360         39         41        1751         28724     1184     1360     2325K       162K       116K      95.35%
+       1632         42         52        1533         40342     1376     1632     2443K       235K        96K      96.43%
+       2048        152        152        4844         41785     1648     2048     9688K        40K       184K      98.11%
+       2336         70        130         909         25888     2064     2336     2073K      2399K        31K      99.31%
+       2720         43         43        1006          7473     2352     2720     2672K        70K        99K      96.40%
+       3264         89         90        1773         26863     2736     3264     5651K        23K        93K      98.37%
+       4096        222        223        3533         12529     3280     4096    14132K        76K       559K      96.07%
+       4672        112        113        1545         14306     4112     4672     7049K       105K       584K      91.85%
+       5456        146        147        1726         24446     4688     5456     9196K       139K       118K      98.74%
+       6544        106        107        1026         13727     5472     6544     6556K       219K       731K      89.22%
+       8192        126        128         962         16958     6560     8192     7696K       368K       727K      90.98%
+       9360         32         40         218          1320     8208     9360     1992K        56K        42K      97.95%
+      10912         31         32         186         12462     9376    10912     1982K         1K         5K      99.75%
+      13104         38         39         170          1010    10928    13104     2175K       257K        75K      96.92%
+      16384         69         70         270         24243    13120    16384     4320K        96K        46K      98.96%
+      21840         94         96         277          1410    16400    21840     5907K       108K       427K      92.90%
+      32768        117        166         229          5798    21856    32752     7328K       160K      1472K      80.34%
 
-193536K allocated in pools (with 6598K slack and 6649K waste). Efficiency 96.56%
-Allocations 1023575 Current / 8147582 Total (in 3024 pools)
+194560K allocated in pools (with 7491K slack and 6407K waste). Efficiency 96.71%
+Allocations 1016813 Current / 15385260 Total (in 3040 pools)
 
 Memory Stats:
 FMemStack (gamethread) current size = 0.00 MB
-FPageAllocator (all threads) allocation size [used/ unused] = [0.19 / 0.00] MB
+FPageAllocator (all threads) allocation size [used/ unused] = [0.19 / 0.12] MB
 Nametable memory usage = 9.08 MB
 AssetRegistry memory usage = 20.48 MB
                0  -  TEXTUREGROUP_Project15 - STAT_TEXTUREGROUP_Project15 - STATGROUP_TextureGroup - STATCAT_Advanced
@@ -115,33 +115,33 @@ AssetRegistry memory usage = 20.48 MB
                0  -  TEXTUREGROUP_CharacterNormalMap - STAT_TEXTUREGROUP_CharacterNormalMap - STATGROUP_TextureGroup - STATCAT_Advanced
                0  -  TEXTUREGROUP_Character - STAT_TEXTUREGROUP_Character - STATGROUP_TextureGroup - STATCAT_Advanced
                0  -  TEXTUREGROUP_WorldSpecular - STAT_TEXTUREGROUP_WorldSpecular - STATGROUP_TextureGroup - STATCAT_Advanced
-        16479012  -  TEXTUREGROUP_WorldNormalMap - STAT_TEXTUREGROUP_WorldNormalMap - STATGROUP_TextureGroup - STATCAT_Advanced
-        61134246  -  TEXTUREGROUP_World - STAT_TEXTUREGROUP_World - STATGROUP_TextureGroup - STATCAT_Advanced
+        16479044  -  TEXTUREGROUP_WorldNormalMap - STAT_TEXTUREGROUP_WorldNormalMap - STATGROUP_TextureGroup - STATCAT_Advanced
+        60975862  -  TEXTUREGROUP_World - STAT_TEXTUREGROUP_World - STATGROUP_TextureGroup - STATCAT_Advanced
            32704  -  Light interaction memory - STAT_LightInteractionMemory - STATGROUP_SceneMemory - STATCAT_Advanced
-          435584  -  Rendering mem stack memory - STAT_RenderingMemStackMemory - STATGROUP_SceneMemory - STATCAT_Advanced
+          435568  -  Rendering mem stack memory - STAT_RenderingMemStackMemory - STATGROUP_SceneMemory - STATCAT_Advanced
            56512  -  ViewState memory - STAT_ViewStateMemory - STATGROUP_SceneMemory - STATCAT_Advanced
           532688  -  Scene memory - STAT_RenderingSceneMemory - STATGROUP_SceneMemory - STATCAT_Advanced
           997012  -  Primitive memory - STAT_PrimitiveInfoMemory - STATGROUP_SceneMemory - STATCAT_Advanced
                0  -  Pixel buffer memory - STAT_PixelBufferMemory - STATGROUP_RHI - STATCAT_Advanced
             1888  -  Structured buffer memory - STAT_StructuredBufferMemory - STATGROUP_RHI - STATCAT_Advanced
-        19045216  -  Vertex buffer memory - STAT_VertexBufferMemory - STATGROUP_RHI - STATCAT_Advanced
+        19046496  -  Vertex buffer memory - STAT_VertexBufferMemory - STATGROUP_RHI - STATCAT_Advanced
         10635066  -  Index buffer memory - STAT_IndexBufferMemory - STATGROUP_RHI - STATCAT_Advanced
-         2502048  -  Uniform buffer memory - STAT_UniformBufferMemory - STATGROUP_RHI - STATCAT_Advanced
+         2502368  -  Uniform buffer memory - STAT_UniformBufferMemory - STATGROUP_RHI - STATCAT_Advanced
         20644776  -  Texture memory Cube - STAT_TextureMemoryCube - STATGROUP_RHI - STATCAT_Advanced
          1220876  -  Texture memory 3D - STAT_TextureMemory3D - STATGROUP_RHI - STATCAT_Advanced
-       106651719  -  Texture memory 2D - STAT_TextureMemory2D - STATGROUP_RHI - STATCAT_Advanced
+       106664439  -  Texture memory 2D - STAT_TextureMemory2D - STATGROUP_RHI - STATCAT_Advanced
         67239840  -  Render target memory Cube - STAT_RenderTargetMemoryCube - STATGROUP_RHI - STATCAT_Advanced
                0  -  Render target memory 3D - STAT_RenderTargetMemory3D - STATGROUP_RHI - STATCAT_Advanced
        158658772  -  Render target memory 2D - STAT_RenderTargetMemory2D - STATGROUP_RHI - STATCAT_Advanced
         25851916  -  StaticMesh Total Memory - STAT_StaticMeshTotalMemory - STATGROUP_Memory - STATCAT_Advanced
                0  -  BPComp Instancing Fast Path memory - STAT_BPCompInstancingFastPathMemory - STATGROUP_Memory - STATCAT_Advanced
-           26684  -  Persistent Uber Graph Frame memory - STAT_PersistentUberGraphFrameMemory - STATGROUP_Memory - STATCAT_Advanced
-        24707072  -  PakCache High Water - STAT_PakCacheHighWater - STATGROUP_Memory - STATCAT_Advanced
-         1376256  -  PakCache Current - STAT_PakCacheMem - STATGROUP_Memory - STATCAT_Advanced
+           26492  -  Persistent Uber Graph Frame memory - STAT_PersistentUberGraphFrameMemory - STATGROUP_Memory - STATCAT_Advanced
+        22740992  -  PakCache High Water - STAT_PakCacheHighWater - STATGROUP_Memory - STATCAT_Advanced
+         1441792  -  PakCache Current - STAT_PakCacheMem - STATGROUP_Memory - STATCAT_Advanced
                0  -  FAsyncArchive Buffers - STAT_FAsyncArchiveMem - STATGROUP_Memory - STATCAT_Advanced
                0  -  Streaming Memory Used - STAT_StreamingAllocSize - STATGROUP_Memory - STATCAT_Advanced
-          589824  -  PageAllocator Used - STAT_PageAllocatorUsed - STATGROUP_Memory - STATCAT_Advanced
-        11927552  -  PageAllocator Free - STAT_PageAllocatorFree - STATGROUP_Memory - STATCAT_Advanced
+          524288  -  PageAllocator Used - STAT_PageAllocatorUsed - STATGROUP_Memory - STATCAT_Advanced
+          458752  -  PageAllocator Free - STAT_PageAllocatorFree - STATGROUP_Memory - STATCAT_Advanced
                0  -  MemStack Large Block - STAT_MemStackLargeBLock - STATGROUP_Memory - STATCAT_Advanced
                0  -  Reflection Capture Memory - STAT_ReflectionCaptureMemory - STATGROUP_Memory - STATCAT_Advanced
                0  -  Reflection Capture Texture Memory - STAT_ReflectionCaptureTextureMemory - STATGROUP_Memory - STATCAT_Advanced
@@ -149,22 +149,22 @@ AssetRegistry memory usage = 20.48 MB
                0  -  PixelShader Memory - STAT_PixelShaderMemory - STATGROUP_Memory - STATCAT_Advanced
                0  -  VertexShader Memory - STAT_VertexShaderMemory - STATGROUP_Memory - STATCAT_Advanced
                0  -  SkeletalMesh M.BlurSkinning Memory - STAT_SkeletalMeshMotionBlurSkinningMemory - STATGROUP_Memory - STATCAT_Advanced
-          773934  -  SkeletalMesh Index Memory - STAT_SkeletalMeshIndexMemory - STATGROUP_Memory - STATCAT_Advanced
-         3690440  -  SkeletalMesh Vertex Memory - STAT_SkeletalMeshVertexMemory - STATGROUP_Memory - STATCAT_Advanced
+         1908714  -  SkeletalMesh Index Memory - STAT_SkeletalMeshIndexMemory - STATGROUP_Memory - STATCAT_Advanced
+         8277856  -  SkeletalMesh Vertex Memory - STAT_SkeletalMeshVertexMemory - STATGROUP_Memory - STATCAT_Advanced
           102512  -  Precomputed Visibility Memory - STAT_PrecomputedVisibilityMemory - STATGROUP_Memory - STATCAT_Advanced
           908528  -  ICU Data File Memory Used - STAT_MemoryICUDataFileAllocationSize - STATGROUP_Memory - STATCAT_Advanced
                0  -  ICU Memory Used - STAT_MemoryICUTotalAllocationSize - STATGROUP_Memory - STATCAT_Advanced
                0  -  PhysX Memory Used - STAT_MemoryPhysXTotalAllocationSize - STATGROUP_Memory - STATCAT_Advanced
-       143923126  -  Texture Memory Used - STAT_TextureMemory - STATGROUP_Memory - STATCAT_Advanced
+       143764774  -  Texture Memory Used - STAT_TextureMemory - STATGROUP_Memory - STATCAT_Advanced
           144144  -  Audio Memory Used - STAT_AudioMemory - STATGROUP_Memory - STATCAT_Advanced
-        63750279  -  Used Streaming Pool [Wanted] - MCR_UsedStreamingPool - STATGROUP_Memory - STATCAT_Advanced
-       323873135  -  Streaming Texture Pool [Streaming] - MCR_StreamingPool - STATGROUP_Memory - STATCAT_Advanced
+        67080494  -  Used Streaming Pool [Wanted] - MCR_UsedStreamingPool - STATGROUP_Memory - STATCAT_Advanced
+       323963375  -  Streaming Texture Pool [Streaming] - MCR_StreamingPool - STATGROUP_Memory - STATCAT_Advanced
        419430400  -  Texture Memory Pool [Texture] - MCR_TexturePool - STATGROUP_Memory - STATCAT_Advanced
                0  -  GPU Memory Pool [GPU] - MCR_GPU - STATGROUP_Memory - STATCAT_Advanced
                0  -  Total Physical Memory Pool (CPU + GPU) [PhysicalLLM] - MCR_PhysicalLLM - STATGROUP_Memory - STATCAT_Advanced
                0  -  Physical Memory Pool [Physical] - MCR_Physical - STATGROUP_Memory - STATCAT_Advanced
                0  -  Mapped File Handle Memory - STAT_MappedFileMemory - STATGROUP_Memory - STATCAT_Advanced
-        13277915  -  Async File Handle Memory - STAT_AsyncFileMemory - STATGROUP_Memory - STATCAT_Advanced
+        19210538  -  Async File Handle Memory - STAT_AsyncFileMemory - STATGROUP_Memory - STATCAT_Advanced
                0  -  Lock Free List Links - STAT_LockFreeListLinks - STATGROUP_Memory - STATCAT_Advanced
 
 
@@ -205,7 +205,7 @@ Objects:
                                                                          AnimCurveCompressionSettings        1       0.05       0.05       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                           AnimMontage       30      17.81      17.81       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                  AnimNotify_AkEvent_C       38       4.16       4.16       0.00            0.00            0.00            0.00            0.00            0.00
-                                                                                         AnimSequence      155    3741.05    3778.59       0.00            0.00            0.00            0.00            0.00            0.00
+                                                                                         AnimSequence      155    3742.26    3779.80       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                AnimSingleNodeInstance        2       1.55       1.56       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                          AssetManager        1       1.09       1.09       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                    AssetTagsSubsystem        1       0.05       0.05       0.00            0.00            0.00            0.00            0.00            0.00
@@ -217,7 +217,7 @@ Objects:
                                                                                            BlendSpace        9       6.15       6.38       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                          BlendSpace1D        1       0.55       0.56       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                        BlockingVolume      326     191.02     191.02       0.00            0.00            0.00            0.00            0.00            0.00
-                                                                              BlueprintGeneratedClass       55      55.17      60.23       0.00            0.00            0.00            0.00            0.00            0.00
+                                                                              BlueprintGeneratedClass       55      55.20      60.23       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                            BodyConfig        2       0.44       0.46       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                             BodySetup      731    1746.22    1827.86   12672.60        12672.60            0.00            0.00            0.00            0.00
                                                                                 BodySkeletalComponent        1      19.75      21.27      16.95            3.03            0.00            0.00            0.00           13.91
@@ -262,11 +262,11 @@ Objects:
                                                                                      CapsuleComponent        3       3.56       4.22       1.85            1.85            0.00            0.00            0.00            0.00
                                                                                   CapsuleSDFComponent        2       1.00       1.00       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                          CheatManager        1       0.12       0.12       0.00            0.00            0.00            0.00            0.00            0.00
-                                                                                                Class     3218    2293.62    2584.70       0.00            0.00            0.00            0.00            0.00            0.00
+                                                                                                Class     3218    2293.64    2584.70       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                    CMEventPoolManager        1       0.08       0.08       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                     CMShowAsyncLoader       12       1.03       1.03       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                   CMShowAvatarManager        3       0.96       1.01       0.00            0.00            0.00            0.00            0.00            0.00
-                                                                        CMShowFirstPersonDressManager        1       2.90       3.09       0.00            0.00            0.00            0.00            0.00            0.00
+                                                                        CMShowFirstPersonDressManager        1       2.90       3.12       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                   CMShowHttpConnector        2       0.27       0.27       0.00            0.00            0.00            0.00            0.00            0.00
                                                                              ComponentDelegateBinding        7       0.76       0.76       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                               Console        1       0.30       0.30       0.00            0.00            0.00            0.00            0.00            0.00
@@ -281,7 +281,7 @@ Objects:
                                                                                            DecalActor        4       2.16       2.16       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                        DecalComponent        6       3.38       3.38       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                  DefaultPhysicsVolume        1       0.60       0.60       0.00            0.00            0.00            0.00            0.00            0.00
-                                                                                     DelegateFunction      489     106.97     106.97       0.00            0.00            0.00            0.00            0.00            0.00
+                                                                                     DelegateFunction      487     106.53     106.53       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                         DeviceProfile        3      16.56      18.24       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                  DeviceProfileManager        1       0.20       0.20       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                      DirectionalLight        3       1.64       1.64       0.00            0.00            0.00            0.00            0.00            0.00
@@ -300,10 +300,10 @@ Objects:
                                                                                     EyeLidVertexAsset        1       1.10       1.10       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                            FaceConfig        2       0.55       0.55       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                FaceCustomizationAsset        1       0.16       0.16       0.00            0.00            0.00            0.00            0.00            0.00
-                                                                                FaceSkeletalComponent        1      21.23      24.95     422.91            1.18            0.00            0.00            0.00          421.73
+                                                                                FaceSkeletalComponent        1      21.23      24.95     420.28            1.18            0.00            0.00            0.00          419.10
                                                                                                  Font        5      12.80      13.58       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                              FontFace        7       1.46       1.57    5784.00         5784.00            0.00            0.00            0.00            0.00
-                                                                                             Function    10737    2406.84    2581.22       0.00            0.00            0.00            0.00            0.00            0.00
+                                                                                             Function    10739    2407.28    2581.66       0.00            0.00            0.00            0.00            0.00            0.00
                                                                            FX_BP_Guanghuan_002_Mask_C        1       0.61       0.62       0.00            0.00            0.00            0.00            0.00            0.00
                                                                               FX_BP_VR_Biaoqing_001_C        2       1.16       1.17       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                            GameEngine        1       8.05       9.32       0.00            0.00            0.00            0.00            0.00            0.00
@@ -346,7 +346,7 @@ Objects:
                                                                                   KawaiiRuntimeLimits        1       0.09       0.09       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                      LandscapeInfoMap       10       1.25       1.25       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                    LandscapeSubsystem        1       0.07       0.07       0.00            0.00            0.00            0.00            0.00            0.00
-                                                                                                Level        9     115.08     123.52       0.00            0.00            0.00            0.00            0.00            0.00
+                                                                                                Level        9     115.07     123.52       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                 LevelStreamingDynamic        8       2.62       2.62       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                     LightMapTexture2D      116      37.16      37.16   36739.38            0.00            0.00        36739.38            0.00            0.00
                                                                             LightmassImportanceVolume        1       0.59       0.59       0.00            0.00            0.00            0.00            0.00            0.00
@@ -382,7 +382,7 @@ Objects:
                                                                                  MovieSceneFloatTrack       34       6.91       7.17       0.00            0.00            0.00            0.00            0.00            0.00
                                                                            MovieSceneParameterSection        4       3.78       3.78       0.00            0.00            0.00            0.00            0.00            0.00
                                                                         MovieSceneWidgetMaterialTrack        4       0.84       0.91       0.00            0.00            0.00            0.00            0.00            0.00
-                                                                       MultiDrawSkeletalMeshComponent        7      39.18      43.05     151.53            8.26            0.00            0.00            0.00          143.27
+                                                                       MultiDrawSkeletalMeshComponent        7      39.18      43.21     147.28            8.26            0.00            0.00            0.00          139.02
                                                                         Native_ConcertBoundary_Lamp_C        1      18.95      20.75       0.00            0.00            0.00            0.00            0.00            0.00
                                                                 Native_ConcertCenterBottom_Lamp_CNY_C        1      17.07      18.58       0.00            0.00            0.00            0.00            0.00            0.00
                                                                    Native_ConcertCenterTop_Lamp_CNY_C        1      21.41      23.64       0.00            0.00            0.00            0.00            0.00            0.00
@@ -474,7 +474,7 @@ Objects:
                                                                                     SkeletalBodySetup       50      61.59      61.79     171.60          171.60            0.00            0.00            0.00            0.00
                                                                                          SkeletalMesh       17     190.51     202.14    4616.71          256.96            0.00            0.00            0.00         4359.74
                                                                                     SkeletalMeshActor        2       1.33       1.33       0.00            0.00            0.00            0.00            0.00            0.00
-                                                                                SkeletalMeshComponent       35     139.43     141.27      36.04            8.37            0.00            0.00            0.00           27.67
+                                                                                SkeletalMeshComponent       35     139.43     141.27      32.98            8.37            0.00            0.00            0.00           24.61
                                                                                    SkeletalMeshSocket        4       0.38       0.38       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                              Skeleton       10      61.59      68.66       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                          SkillPanel_C        1       0.71       0.71       0.00            0.00            0.00            0.00            0.00            0.00
@@ -509,7 +509,7 @@ Objects:
                                                                            SystemTimeTimecodeProvider        1       0.06       0.06       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                TerrianApproxSubsystem        1       0.07       0.07       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                             TextBlock      118      80.20      80.20       0.00            0.00            0.00            0.00            0.00            0.00
-                                                                                            texture2d      582     181.88     181.88   60494.09            0.00            0.00        60494.09            0.00            0.00
+                                                                                            texture2d      582     181.88     181.88   60509.21            0.00            0.00        60509.21            0.00            0.00
                                                                                           TextureCube       23       8.27       8.27    3776.86            0.00            0.00         3776.86            0.00            0.00
                                                                                 TextureRenderTarget2D        1       0.33       0.33     128.00            0.00            0.00            0.00            0.00          128.00
                                                                                     TimelineComponent       33      12.77      18.58       0.00            0.00            0.00            0.00            0.00            0.00
@@ -548,86 +548,86 @@ Objects:
                                                                                                 World        9      18.46      21.56       0.00            0.00            0.00            0.00            0.00            0.00
                                                                                         WorldSettings        9       8.87       8.89       0.00            0.00            0.00            0.00            0.00            0.00
 
-29462 Objects (Total: 31.728M / Max: 34.225M / Res: 177.725M | ResDedSys: 36.949M / ResShrSys: 0.000M / ResDedVid: 98.648M / ResShrVid: 0.000M / ResUnknown: 42.128M)
+29462 Objects (Total: 31.730M / Max: 34.227M / Res: 177.731M | ResDedSys: 36.949M / ResShrSys: 0.000M / ResDedVid: 98.663M / ResShrVid: 0.000M / ResUnknown: 42.118M)
 
 
 RHI resource memory (not tracked by our allocator)
                0  -  Pixel buffer memory - STAT_PixelBufferMemory - STATGROUP_RHI - STATCAT_Advanced
             1888  -  Structured buffer memory - STAT_StructuredBufferMemory - STATGROUP_RHI - STATCAT_Advanced
-        19045216  -  Vertex buffer memory - STAT_VertexBufferMemory - STATGROUP_RHI - STATCAT_Advanced
+        19046496  -  Vertex buffer memory - STAT_VertexBufferMemory - STATGROUP_RHI - STATCAT_Advanced
         10635066  -  Index buffer memory - STAT_IndexBufferMemory - STATGROUP_RHI - STATCAT_Advanced
-         2502048  -  Uniform buffer memory - STAT_UniformBufferMemory - STATGROUP_RHI - STATCAT_Advanced
+         2502368  -  Uniform buffer memory - STAT_UniformBufferMemory - STATGROUP_RHI - STATCAT_Advanced
         20644776  -  Texture memory Cube - STAT_TextureMemoryCube - STATGROUP_RHI - STATCAT_Advanced
          1220876  -  Texture memory 3D - STAT_TextureMemory3D - STATGROUP_RHI - STATCAT_Advanced
-       106651719  -  Texture memory 2D - STAT_TextureMemory2D - STATGROUP_RHI - STATCAT_Advanced
+       106664439  -  Texture memory 2D - STAT_TextureMemory2D - STATGROUP_RHI - STATCAT_Advanced
         67239840  -  Render target memory Cube - STAT_RenderTargetMemoryCube - STATGROUP_RHI - STATCAT_Advanced
                0  -  Render target memory 3D - STAT_RenderTargetMemory3D - STATGROUP_RHI - STATCAT_Advanced
        158658772  -  Render target memory 2D - STAT_RenderTargetMemory2D - STATGROUP_RHI - STATCAT_Advanced
-368.691MB total
+368.704MB total
 
 
 Levels:
     /Game/Paradise/z1concert/Maps/Map_Concert
-->  /Game/Paradise/z1concert/Maps/Map_Concert_01 -  0.6 sec 		red loaded and visible
+->  /Game/Paradise/z1concert/Maps/Map_Concert_01 -  0.7 sec 		red loaded and visible
     /Game/Paradise/z1concert/Maps/Map_Concert_Audio01 -  0.0 sec 		red loaded and visible
     /Game/Paradise/z1concert/Maps/Map_Concert_Audio02 -  0.0 sec 		red loaded and visible
     /Game/Paradise/z1concert/Maps/Map_Concert_Blockingvolume -  0.0 sec 		red loaded and visible
     /Game/Paradise/z1concert/Maps/Map_Concert_Effects01 -  0.0 sec 		red loaded and visible
     /Game/Paradise/z1concert/Maps/Map_Concert_high -  0.0 sec 		red loaded and visible
-    /Game/Paradise/z1concert/Maps/Map_Concert_Interaction -  0.0 sec 		red loaded and visible
+    /Game/Paradise/z1concert/Maps/Map_Concert_Interaction -  0.1 sec 		red loaded and visible
     /Game/Paradise/z1concert/Maps/Map_Concert_medium -  0.0 sec 		red loaded and visible
 
 
 Listing spawned actors in persistent level:
 Total: 81
 TimeUnseen,TimeAlive,Distance,Class,Name,Owner
- 23.17, 23.17,    4284,AbstractNavData,AbstractNavData-Default,None
- 23.17, 23.17,       0,ALS_PlayerCameraManager_C,ALS_PlayerCameraManager_C_2147482205,BP_AvatarRoomPlayerController_C_2147482207
-  0.00, 21.30,     304,BP_AvatarRoomMainPlayer_C,BP_AvatarRoomMainPlayer_C_2147482062,BP_AvatarRoomPlayerController_C_2147482207
- 23.17, 23.17,    4284,BP_AvatarRoomPlayerController_C,BP_AvatarRoomPlayerController_C_2147482207,None
- 23.17, 23.17,    4284,BP_ConcertGameMode_C,BP_ConcertGameMode_C_2147482222,None
- 23.17, 21.30,     304,BP_FieldOfViewCulling_C,BP_FieldOfViewCulling_C_2147482049,None
- 23.17, 22.00,    4284,BP_WwiseHelper_C,BP_WwiseHelper_C_2147482092,None
- 23.17, 23.17,    4284,CameraActor,CameraActor_2147482186,BP_ConcertGameMode_C_2147482222
- 23.17, 23.17,    4284,CameraActor,CameraActor_2147482194,ALS_PlayerCameraManager_C_2147482205
- 23.17, 23.17,    4284,GameNetworkManager,GameNetworkManager_2147482217,None
- 23.17, 23.17,    4284,GameplayDebuggerCategoryReplicator,GameplayDebuggerCategoryReplicator_2147482187,None
- 23.17, 23.17,    4284,GameSession,GameSession_2147482221,None
- 23.17, 23.17,    4284,GameState,GameState_2147482218,None
- 23.17, 23.17,    4284,HUD,HUD_2147482190,BP_AvatarRoomPlayerController_C_2147482207
- 23.17, 23.17,    4284,ParticleEventManager,ParticleEventManager_2147482220,WorldSettings
- 23.17, 23.17,    4284,PlayerState,PlayerState_2147482206,BP_AvatarRoomPlayerController_C_2147482207
- 23.17, 23.17,    4284,RecastNavMesh,RecastNavMesh-Default,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482093,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482094,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482095,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482096,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482097,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482098,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482099,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482100,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482101,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482102,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482103,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482104,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482105,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482106,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482107,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482108,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482109,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482110,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482111,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482112,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482113,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482114,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482115,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482116,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482117,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482118,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482119,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482120,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482121,None
- 23.17, 22.00,    4284,RedPacket_C,RedPacket_C_2147482123,None
+118.27,118.27,    4284,AbstractNavData,AbstractNavData-Default,None
+118.27,118.27,       0,ALS_PlayerCameraManager_C,ALS_PlayerCameraManager_C_2147482205,BP_AvatarRoomPlayerController_C_2147482207
+  0.00,117.00,     304,BP_AvatarRoomMainPlayer_C,BP_AvatarRoomMainPlayer_C_2147482061,BP_AvatarRoomPlayerController_C_2147482207
+118.27,118.27,    4284,BP_AvatarRoomPlayerController_C,BP_AvatarRoomPlayerController_C_2147482207,None
+118.27,118.27,    4284,BP_ConcertGameMode_C,BP_ConcertGameMode_C_2147482222,None
+118.27,117.00,     304,BP_FieldOfViewCulling_C,BP_FieldOfViewCulling_C_2147482047,None
+118.27,117.10,    4284,BP_WwiseHelper_C,BP_WwiseHelper_C_2147482092,None
+118.27,118.27,    4284,CameraActor,CameraActor_2147482186,BP_ConcertGameMode_C_2147482222
+118.27,118.27,    4284,CameraActor,CameraActor_2147482194,ALS_PlayerCameraManager_C_2147482205
+118.27,118.27,    4284,GameNetworkManager,GameNetworkManager_2147482217,None
+118.27,118.27,    4284,GameplayDebuggerCategoryReplicator,GameplayDebuggerCategoryReplicator_2147482187,None
+118.27,118.27,    4284,GameSession,GameSession_2147482221,None
+118.27,118.27,    4284,GameState,GameState_2147482218,None
+118.27,118.27,    4284,HUD,HUD_2147482190,BP_AvatarRoomPlayerController_C_2147482207
+118.27,118.27,    4284,ParticleEventManager,ParticleEventManager_2147482220,WorldSettings
+118.27,118.27,    4284,PlayerState,PlayerState_2147482206,BP_AvatarRoomPlayerController_C_2147482207
+118.27,118.27,    4284,RecastNavMesh,RecastNavMesh-Default,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482093,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482094,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482095,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482096,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482097,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482098,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482099,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482100,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482101,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482102,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482103,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482104,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482105,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482106,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482107,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482108,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482109,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482110,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482111,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482112,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482113,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482114,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482115,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482116,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482117,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482118,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482119,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482120,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482121,None
+118.27,117.10,    4284,RedPacket_C,RedPacket_C_2147482123,None
 
 
 Particle Dynamic Memory Stats
@@ -669,7 +669,7 @@ Particle Order Pool Stats
 
 Config cache memory usage:
                                                           FileName         NumBytes         MaxBytes
-                      ../../../UE4/Saved/Config/Android/Engine.ini           700076           833832
+                      ../../../UE4/Saved/Config/Android/Engine.ini           700072           833832
               ../../../UE4/Saved/Config/Android/DeviceProfiles.ini           249460           342520
                        ../../../UE4/Saved/Config/Android/Input.ini           136106           153080
                         ../../../UE4/Saved/Config/Android/Game.ini           104988           131408
@@ -698,7 +698,7 @@ Config cache memory usage:
                     ../../../UE4/Saved/Config/Android/ProjectG.ini             5370             7488
                       ../../../UE4/Config/DefaultToolKitConfig.ini              628              728
                        ../../../Engine/Config/ConsoleVariables.ini              504              632
-                                                             Total          1630746          2028712
+                                                             Total          1630742          2028712
 
 
 Pooled Render Targets:
@@ -951,13 +951,18 @@ Cooked/OnDisk: Width x Height (Size in KB, Authored Bias), Current/InMem: Width 
 512x128 (40 KB, ?), 512x128 (40 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Effects/YCH/Texture/FX_Tex_Line_006.FX_Tex_Line_006, YES, 2
 512x128 (40 KB, ?), 512x128 (40 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Effects/YCH/Texture/FX_Tex_Line_007.FX_Tex_Line_007, YES, 2
 256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /DynamicSky/Textures/Moon_Masks.Moon_Masks, YES, 2
+256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Bottom/Textures/T_CH_N_Bottom_0000_LOD_N.T_CH_N_Bottom_0000_LOD_N, YES, 0
 256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Bottom/Textures/T_CH_N_Bottom_0000_N.T_CH_N_Bottom_0000_N, YES, 1
+256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Top/Textures/T_CH_N_TOP_0000_LOD_ARM.T_CH_N_Top_0000_LOD_ARM, YES, 0
+256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Top/Textures/T_CH_N_Top_0000_LOD_D.T_CH_N_Top_0000_LOD_D, YES, 0
+256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Top/Textures/T_CH_N_Top_0000_LOD_DM.T_CH_N_Top_0000_LOD_DM, YES, 0
+256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Top/Textures/T_CH_N_TOP_0000_LOD_N.T_CH_N_Top_0000_LOD_N, YES, 0
 512x512 (155 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Torso/Sock/Textures/T_CH_N_Sock_D.T_CH_N_Sock_D, YES, 10
 512x512 (155 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/CMShow/Assets/Character/Avatar/Torso/Sock/Textures/T_CH_N_Sock_N.T_CH_N_Sock_N, YES, 10
 512x512 (155 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Torso/Sock/Textures/T_CH_N_Sock_RAC.T_CH_N_Sock_RAC, YES, 10
-1024x1024 (612 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Torso/Top/Textures/T_CH_N_Top_D.T_CH_N_Top_D, YES, 2
-1024x1024 (612 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Torso/Top/Textures/T_CH_Top_N.T_CH_Top_N, YES, 2
-1024x1024 (612 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Torso/Top/Textures/T_CH_Top_RAC.T_CH_Top_RAC, YES, 2
+1024x1024 (612 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Torso/Top/Textures/T_CH_N_Top_D.T_CH_N_Top_D, YES, 3
+1024x1024 (612 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Torso/Top/Textures/T_CH_Top_N.T_CH_Top_N, YES, 3
+1024x1024 (612 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Torso/Top/Textures/T_CH_Top_RAC.T_CH_Top_RAC, YES, 3
 256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/Paradise/z1concert/Effects/LightBeams/Textures/TX_Concert_Lamp01_256_N.TX_Concert_Lamp01_256_N, YES, 8
 256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Effects/LightBeams/Textures/TX_Concert_Lamp_256_ARME.TX_Concert_Lamp_256_ARME, YES, 8
 256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Effects/LightBeams/Textures/TX_GaussianNoise_256.TX_GaussianNoise_256, YES, 3
@@ -970,8 +975,6 @@ Cooked/OnDisk: Width x Height (Size in KB, Authored Bias), Current/InMem: Width 
 512x512 (155 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Effects/YCH/Texture/FX_Tex_UI_Juese_001.FX_Tex_UI_Juese_001, YES, 1
 512x512 (155 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Effects/YCH/Texture/FX_Tex_UI_Juese_002.FX_Tex_UI_Juese_002, YES, 1
 256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Effects/YCH/Texture/Mask/FX_Tex_Mask_019.FX_Tex_Mask_019, YES, 1
-256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Effects/YCH/Texture/Object/FX_Tex_VR_Face_001.FX_Tex_VR_Face_001, YES, 3
-256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Effects/YCH/Texture/Object/FX_Tex_VR_Face_003.FX_Tex_VR_Face_003, YES, 3
 256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Building04_ARME.T_Concert_Building04_ARME, YES, 2
 256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Building04_D.T_Concert_Building04_D, YES, 2
 256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Building07_ARME.T_Concert_Building07_ARME, YES, 1
@@ -993,9 +996,6 @@ Cooked/OnDisk: Width x Height (Size in KB, Authored Bias), Current/InMem: Width 
 256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Gatefloor01_ARME.T_Concert_Gatefloor01_ARME, YES, 1
 256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Gatefloor01_D.T_Concert_Gatefloor01_D, YES, 1
 256x256 (39 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Gatefloor01_N.T_Concert_Gatefloor01_N, YES, 1
-512x512 (155 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Milkteashop01_ARME.T_Concert_Milkteashop01_ARME, YES, 1
-512x512 (155 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Milkteashop01_D.T_Concert_Milkteashop01_D, YES, 1
-512x512 (155 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Milkteashop01_N.T_Concert_Milkteashop01_N, YES, 1
 1024x1024 (612 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Milkteashop02_ARME.T_Concert_Milkteashop02_ARME, YES, 1
 1024x1024 (612 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Milkteashop02_D.T_Concert_Milkteashop02_D, YES, 1
 1024x1024 (612 KB, ?), 256x256 (39 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Milkteashop02_N.T_Concert_Milkteashop02_N, YES, 1
@@ -1133,10 +1133,9 @@ Cooked/OnDisk: Width x Height (Size in KB, Authored Bias), Current/InMem: Width 
 128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Bottom/Textures/T_CH_N_Bottom_0000_ARM.T_CH_N_Bottom_0000_ARM, YES, 1
 128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Bottom/Textures/T_CH_N_Bottom_0000_D.T_CH_N_Bottom_0000_D, YES, 1
 128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Bottom/Textures/T_CH_N_Bottom_0000_DM.T_CH_N_Bottom_0000_DM, YES, 1
-128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Shoes/Textures/T_CH_N_Shoes_0000_ARM.T_CH_N_Shoes_0000_ARM, YES, 1
-128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Shoes/Textures/T_CH_N_Shoes_0000_D.T_CH_N_Shoes_0000_D, YES, 1
-128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Shoes/Textures/T_CH_N_Shoes_0000_DM.T_CH_N_Shoes_0000_DM, YES, 1
-256x256 (39 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Shoes/Textures/T_CH_N_Shoes_0000_N.T_CH_N_Shoes_0000_N, YES, 1
+128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Bottom/Textures/T_CH_N_Bottom_0000_LOD_ARM.T_CH_N_Bottom_0000_LOD_ARM, YES, 0
+128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Bottom/Textures/T_CH_N_Bottom_0000_LOD_D.T_CH_N_Bottom_0000_LOD_D, YES, 0
+128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Bottom/Textures/T_CH_N_Bottom_0000_LOD_DM.T_CH_N_Bottom_0000_LOD_DM, YES, 0
 256x256 (39 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Top/Textures/T_CH_N_Top_0000_ARM.T_CH_N_Top_0000_ARM, YES, 1
 256x256 (39 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Top/Textures/T_CH_N_TOP_0000_D.T_CH_N_Top_0000_D, YES, 1
 128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Top/Textures/T_CH_N_Top_0000_DM.T_CH_N_Top_0000_DM, YES, 1
@@ -1147,15 +1146,15 @@ Cooked/OnDisk: Width x Height (Size in KB, Authored Bias), Current/InMem: Width 
 512x512 (155 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Torso/Face/Textures/T_CH_Face_RAC.T_CH_Face_RAC, YES, 1
 128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/CosCommon/Textures/DetailNormal/04_normals.04_normals, YES, 1
 128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/CosCommon/Textures/DetailNormal/05_normals.05_normals, YES, 1
-128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/CMShow/CosCommon/Textures/DetailNormal/DetailNormal_37.DetailNormal_37, YES, 1
-128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/CosCommon/Textures/DetailNormal/Industrial_rope_00_normal.Industrial_rope_00_normal, YES, 1
 128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/CMShow/CosCommon/Textures/DetailNormal/Knit_11.Knit_11, YES, 1
 512x512 (155 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/CMShow/CosCommon/Textures/Hair/DN3.DN3, YES, 1
 128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/CosCommon/Textures/Hair/verticalnoise.verticalnoise, YES, 1
 128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Effects/LightBeams/Textures/TX_LampMask_64_E.TX_LampMask_64_E, YES, 8
 256x256 (39 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Effects/YCH/Texture/FX_Tex_Line_005.FX_Tex_Line_005, YES, 2
 128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Effects/YCH/Texture/FX_Tex_UI_006.FX_Tex_UI_006, YES, 3
+256x256 (39 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Effects/YCH/Texture/Object/FX_Tex_VR_Face_001.FX_Tex_VR_Face_001, YES, 3
 128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Effects/YCH/Texture/Object/FX_Tex_VR_Face_002.FX_Tex_VR_Face_002, YES, 3
+256x256 (39 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Effects/YCH/Texture/Object/FX_Tex_VR_Face_003.FX_Tex_VR_Face_003, YES, 3
 256x256 (39 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_Effects, /Game/Paradise/z1concert/Effects/YCH/Texture/Scanlines_T.Scanlines_T, YES, 5
 128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Effects/YCH/Texture/TX_Scanlines_128.TX_Scanlines_128, YES, 2
 128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Block01_ARME.T_Concert_Block01_ARME, YES, 24
@@ -1169,6 +1168,9 @@ Cooked/OnDisk: Width x Height (Size in KB, Authored Bias), Current/InMem: Width 
 128x128 (10 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Concert01_C11_N.T_Concert_Concert01_C11_N, YES, 3
 512x512 (155 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Distant04_ARME.T_Concert_Distant04_ARME, YES, 1
 512x512 (155 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Distant04_D.T_Concert_Distant04_D, YES, 1
+512x512 (155 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Milkteashop01_ARME.T_Concert_Milkteashop01_ARME, YES, 1
+512x512 (155 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Milkteashop01_D.T_Concert_Milkteashop01_D, YES, 1
+512x512 (155 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Milkteashop01_N.T_Concert_Milkteashop01_N, YES, 1
 256x256 (39 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Prospect02_ARME.T_Concert_Prospect02_ARME, YES, 1
 256x256 (39 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Prospect02_D.T_Concert_Prospect02_D, YES, 1
 1024x1024 (612 KB, ?), 128x128 (10 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Environment/Building/Textures/T_Concert_Shop01_ARME.T_Concert_Shop01_ARME, YES, 3
@@ -1265,15 +1267,11 @@ Cooked/OnDisk: Width x Height (Size in KB, Authored Bias), Current/InMem: Width 
 512x512 (155 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Engine/EngineMaterials/InvalidLightmapSettings.InvalidLightmapSettings, YES, 0
 512x512 (155 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Engine/EngineMaterials/T_Default_Material_Grid_M.T_Default_Material_Grid_M, YES, 0
 256x256 (39 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Engine/EngineMaterials/T_Default_Material_Grid_N.T_Default_Material_Grid_N, YES, 0
-128x128 (10 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Bottom/Textures/T_CH_N_Bottom_0000_LOD_ARM.T_CH_N_Bottom_0000_LOD_ARM, YES, 0
-128x128 (10 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Bottom/Textures/T_CH_N_Bottom_0000_LOD_D.T_CH_N_Bottom_0000_LOD_D, YES, 0
-128x128 (10 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Bottom/Textures/T_CH_N_Bottom_0000_LOD_DM.T_CH_N_Bottom_0000_LOD_DM, YES, 0
-256x256 (39 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Bottom/Textures/T_CH_N_Bottom_0000_LOD_N.T_CH_N_Bottom_0000_LOD_N, YES, 0
 256x256 (39 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Hair_M/Textures/T_CH_M_Hair_0000_M.T_CH_M_Hair_0000_M, YES, 0
-256x256 (39 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Top/Textures/T_CH_N_TOP_0000_LOD_ARM.T_CH_N_Top_0000_LOD_ARM, YES, 0
-256x256 (39 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Top/Textures/T_CH_N_Top_0000_LOD_D.T_CH_N_Top_0000_LOD_D, YES, 0
-256x256 (39 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Top/Textures/T_CH_N_Top_0000_LOD_DM.T_CH_N_Top_0000_LOD_DM, YES, 0
-256x256 (39 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Top/Textures/T_CH_N_TOP_0000_LOD_N.T_CH_N_Top_0000_LOD_N, YES, 0
+128x128 (10 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Shoes/Textures/T_CH_N_Shoes_0000_ARM.T_CH_N_Shoes_0000_ARM, YES, 1
+128x128 (10 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Shoes/Textures/T_CH_N_Shoes_0000_D.T_CH_N_Shoes_0000_D, YES, 1
+128x128 (10 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Shoes/Textures/T_CH_N_Shoes_0000_DM.T_CH_N_Shoes_0000_DM, YES, 1
+256x256 (39 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/CMShow/Assets/Character/Avatar/Costume/CH_N_0000/Shoes/Textures/T_CH_N_Shoes_0000_N.T_CH_N_Shoes_0000_N, YES, 1
 512x512 (155 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/CustomFace/FaceTemplate/Default/CH_Cons01_D.CH_Cons01_D, YES, 2
 256x256 (39 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/CustomFace/FaceTemplate/Default/CH_Eyelash_0002_N.CH_Eyelash_0002_N, YES, 1
 256x256 (39 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Makeup/Textures/CH_Eyelash/CH_Eyelash_0001_N.CH_Eyelash_0001_N, YES, 0
@@ -1282,6 +1280,8 @@ Cooked/OnDisk: Width x Height (Size in KB, Authored Bias), Current/InMem: Width 
 512x512 (155 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/CMShow/Assets/Character/Avatar/Torso/Eyes/Textures/T_Eye2_N_1.T_Eye2_N_1, YES, 2
 512x512 (155 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/Assets/Character/Avatar/Torso/Teeth/Textures/T_CH_Teeth_D.T_CH_Teeth_D, YES, 1
 512x512 (155 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/CMShow/Assets/Character/Avatar/Torso/Teeth/Textures/T_CH_Teeth_N.T_CH_Teeth_N, YES, 1
+128x128 (10 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_WorldNormalMap, /Game/CMShow/CosCommon/Textures/DetailNormal/DetailNormal_37.DetailNormal_37, YES, 1
+128x128 (10 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/CosCommon/Textures/DetailNormal/Industrial_rope_00_normal.Industrial_rope_00_normal, YES, 1
 512x512 (155 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/CMShow/CosCommon/Textures/TA_Texture/TX_Neck_Worldpos.TX_Neck_Worldpos, YES, 0
 256x256 (39 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Effects/Movies/HU_ScreenLEDPatterns_output.HU_ScreenLEDPatterns_output, YES, 11
 256x256 (39 KB, ?), 64x64 (3 KB), PF_ASTC_6x6, TEXTUREGROUP_World, /Game/Paradise/z1concert/Effects/YCH/Texture/FX_Tex_Glow_001.FX_Tex_Glow_001, YES, 0
@@ -1493,9 +1493,9 @@ Cooked/OnDisk: Width x Height (Size in KB, Authored Bias), Current/InMem: Width 
 1x1 (0 KB, ?), 1x1 (0 KB), PF_B8G8R8A8, TEXTUREGROUP_WorldNormalMap, /Engine/EngineMaterials/BaseFlattenNormalMap.BaseFlattenNormalMap, NO, 0
 0x0 (0 KB, ?), 0x0 (0 KB), PF_Unknown, TEXTUREGROUP_World, /Game/Paradise/z1concert/GamePlay/LiveVideo/Media/MediaPlayer_Video_1.MediaPlayer_Video_1, NO, 0
 0x0 (0 KB, ?), 0x0 (0 KB), PF_Unknown, TEXTUREGROUP_World, /Game/Paradise/z1concert/GamePlay/LiveVideo/Media/MediaPlayer_Video_2.MediaPlayer_Video_2, NO, 0
-0x0 (0 KB, ?), 0x0 (0 KB), PF_Unknown, TEXTUREGROUP_RenderTarget, /Game/Paradise/z1concert/Maps/Map_Concert.Map_Concert:PersistentLevel.BP_AvatarRoomMainPlayer_C_2147482062.NickNamePanel.TextureRenderTarget2D_2147482026, NO, 0
+0x0 (0 KB, ?), 0x0 (0 KB), PF_Unknown, TEXTUREGROUP_RenderTarget, /Game/Paradise/z1concert/Maps/Map_Concert.Map_Concert:PersistentLevel.BP_AvatarRoomMainPlayer_C_2147482061.NickNamePanel.TextureRenderTarget2D_2147482027, NO, 0
 0x0 (0 KB, ?), 0x0 (0 KB), PF_Unknown, TEXTUREGROUP_World, /Script/LevelSequence.Default__LevelSequenceMediaController:MediaComponent.MediaTexture, NO, 0
-Total size: InMem= 99.77 MB  OnDisk= 137.11 MB  Count=730, CountApplicableToMin=593
+Total size: InMem= 99.79 MB  OnDisk= 137.11 MB  Count=730, CountApplicableToMin=593
 Total PF_Unknown size: InMem= 1.13 MB  OnDisk= 1.13 MB 
 Total PF_B8G8R8A8 size: InMem= 24.43 MB  OnDisk= 24.43 MB 
 Total PF_G8 size: InMem= 0.55 MB  OnDisk= 0.88 MB 
@@ -1503,10 +1503,10 @@ Total PF_FloatRGBA size: InMem= 5.12 MB  OnDisk= 5.12 MB
 Total PF_R8G8 size: InMem= 0.17 MB  OnDisk= 0.17 MB 
 Total PF_ETC2_RGBA size: InMem= 2.63 MB  OnDisk= 2.63 MB 
 Total PF_ASTC_4x4 size: InMem= 1.00 MB  OnDisk= 1.00 MB 
-Total PF_ASTC_6x6 size: InMem= 64.07 MB  OnDisk= 101.08 MB 
+Total PF_ASTC_6x6 size: InMem= 64.09 MB  OnDisk= 101.08 MB 
 Total PF_ASTC_8x8 size: InMem= 0.67 MB  OnDisk= 0.67 MB 
-Total TEXTUREGROUP_World size: InMem= 32.81 MB  OnDisk= 58.16 MB 
-Total TEXTUREGROUP_WorldNormalMap size: InMem= 7.80 MB  OnDisk= 15.72 MB 
+Total TEXTUREGROUP_World size: InMem= 32.79 MB  OnDisk= 58.16 MB 
+Total TEXTUREGROUP_WorldNormalMap size: InMem= 7.84 MB  OnDisk= 15.72 MB 
 Total TEXTUREGROUP_Weapon size: InMem= 0.12 MB  OnDisk= 0.12 MB 
 Total TEXTUREGROUP_Effects size: InMem= 0.02 MB  OnDisk= 0.30 MB 
 Total TEXTUREGROUP_Skybox size: InMem= 0.15 MB  OnDisk= 0.15 MB 
@@ -1912,7 +1912,7 @@ Obj List: class=Level -alphasort
 Objects:
 
                                                                                                                                       Object      NumKB      MaxKB   ResExcKB  ResExcDedSysKB  ResExcShrSysKB  ResExcDedVidKB  ResExcShrVidKB     ResExcUnkKB
-                                                                 Level /Game/Paradise/z1concert/Maps/Map_Concert.Map_Concert:PersistentLevel      94.85     102.34       0.00            0.00            0.00            0.00            0.00            0.00
+                                                                 Level /Game/Paradise/z1concert/Maps/Map_Concert.Map_Concert:PersistentLevel      94.84     102.34       0.00            0.00            0.00            0.00            0.00            0.00
                                                            Level /Game/Paradise/z1concert/Maps/Map_Concert_01.Map_Concert_01:PersistentLevel       9.36      10.04       0.00            0.00            0.00            0.00            0.00            0.00
                                                  Level /Game/Paradise/z1concert/Maps/Map_Concert_Audio01.Map_Concert_Audio01:PersistentLevel       0.85       0.88       0.00            0.00            0.00            0.00            0.00            0.00
                                                  Level /Game/Paradise/z1concert/Maps/Map_Concert_Audio02.Map_Concert_Audio02:PersistentLevel       0.79       0.80       0.00            0.00            0.00            0.00            0.00            0.00
@@ -1923,7 +1923,7 @@ Objects:
                                                    Level /Game/Paradise/z1concert/Maps/Map_Concert_medium.Map_Concert_medium:PersistentLevel       1.46       1.48       0.00            0.00            0.00            0.00            0.00            0.00
 
                                                                                                 Class    Count      NumKB      MaxKB   ResExcKB  ResExcDedSysKB  ResExcShrSysKB  ResExcDedVidKB  ResExcShrVidKB     ResExcUnkKB
-                                                                                                Level        9     115.08     123.52       0.00            0.00            0.00            0.00            0.00            0.00
+                                                                                                Level        9     115.07     123.52       0.00            0.00            0.00            0.00            0.00            0.00
 
 9 Objects (Total: 0.112M / Max: 0.121M / Res: 0.000M | ResDedSys: 0.000M / ResShrSys: 0.000M / ResDedVid: 0.000M / ResShrVid: 0.000M / ResUnknown: 0.000M)
 
@@ -1969,7 +1969,7 @@ StaticMeshComponent /Game/Paradise/z1concert/Effects/YCH/Particle/FX_BP_VR_Biaoq
 StaticMeshComponent /Game/Paradise/z1concert/Effects/YCH/Particle/FX_BP_VR_Biaoqing_001.FX_BP_VR_Biaoqing_001_C:FX_Mesh_Plane_100x100_003_GEN_VARIABLE       1.21       1.22       0.00            0.00            0.00            0.00            0.00            0.00
                           StaticMeshComponent /Game/Paradise/z1concert/Maps/Map_Concert.Map_Concert:PersistentLevel.167.StaticMeshComponent0       1.51       1.51       1.79            1.79            0.00            0.00            0.00            0.00
                           StaticMeshComponent /Game/Paradise/z1concert/Maps/Map_Concert.Map_Concert:PersistentLevel.170.StaticMeshComponent0       1.51       1.51       1.79            1.79            0.00            0.00            0.00            0.00
-   StaticMeshComponent /Game/Paradise/z1concert/Maps/Map_Concert.Map_Concert:PersistentLevel.BP_AvatarRoomMainPlayer_C_2147482062.StaticMesh       1.23       1.23       0.00            0.00            0.00            0.00            0.00            0.00
+   StaticMeshComponent /Game/Paradise/z1concert/Maps/Map_Concert.Map_Concert:PersistentLevel.BP_AvatarRoomMainPlayer_C_2147482061.StaticMesh       1.23       1.23       0.00            0.00            0.00            0.00            0.00            0.00
         StaticMeshComponent /Game/Paradise/z1concert/Maps/Map_Concert.Map_Concert:PersistentLevel.FX_BP_VR_Biaoqing_001_2.FX_Mesh_Object_004       1.21       1.22       1.61            1.61            0.00            0.00            0.00            0.00
  StaticMeshComponent /Game/Paradise/z1concert/Maps/Map_Concert.Map_Concert:PersistentLevel.FX_BP_VR_Biaoqing_001_2.FX_Mesh_Plane_100x100_003       1.21       1.22       1.99            1.99            0.00            0.00            0.00            0.00
                       StaticMeshComponent /Game/Paradise/z1concert/Maps/Map_Concert.Map_Concert:PersistentLevel.Plane13.StaticMeshComponent0       1.50       1.51       1.41            1.41            0.00            0.00            0.00            0.00
