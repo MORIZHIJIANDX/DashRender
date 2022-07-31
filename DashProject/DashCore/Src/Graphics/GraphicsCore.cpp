@@ -76,8 +76,6 @@ namespace Dash
 
     DXGI_FORMAT BackBufferFormat = DXGI_FORMAT::DXGI_FORMAT_R10G10B10A2_UNORM;
 
-    FPerspectiveCamera PrespectiveCamera;
-
     D3D12_VIEWPORT ViewPort;
     RECT ScissorRect;
 
@@ -205,8 +203,11 @@ namespace Dash
     {
         if (FrameConstantBuffer)
         {
-            FrameConstantBuffer->ProjectionMatrix = PrespectiveCamera.GetProjectionMatrix();
-            FrameConstantBuffer->ViewMatrix = PrespectiveCamera.GetViewMatrix();
+            if (e.mCamera)
+            {
+                FrameConstantBuffer->ProjectionMatrix = e.mCamera->GetProjectionMatrix();
+                FrameConstantBuffer->ViewMatrix = e.mCamera->GetViewMatrix();
+            }
             FrameConstantBuffer->Time = static_cast<float>(e.mTotalTime);
         }
 
@@ -719,17 +720,8 @@ namespace Dash
 
         WaitForGpu();
 
-
-
-
         //Create Camera &&  ViewPort
         {
-            float fov = 45.0f;
-            float aspect = IGameApp::GetInstance()->GetWindowWidth() / (float)IGameApp::GetInstance()->GetWindowHeight();
-
-            PrespectiveCamera.SetCameraParams(aspect, fov, 0.1f, 100.0f);
-            PrespectiveCamera.SetPosition(FVector3f{ 0.0f, 0.0f, -2.0f });
-
             ViewPort.Width = (FLOAT)IGameApp::GetInstance()->GetWindowWidth();
             ViewPort.Height = (FLOAT)IGameApp::GetInstance()->GetWindowHeight();
             ViewPort.TopLeftX = 0;

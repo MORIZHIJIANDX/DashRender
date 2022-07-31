@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Graphics/GameApp.h"
+#include <Graphics/Camera.h>
 
 namespace Dash
 {
@@ -21,6 +22,9 @@ namespace Dash
 		{
 			LOG_INFO << "Window Resized, Wdith : " << e.mWidth << ", Height : " << e.mHeight << " , Minimized : " << e.mMinimized;
 		}
+
+	private: 
+		std::shared_ptr<FPerspectiveCamera> Camera;
 	};
 }
 
