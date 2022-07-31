@@ -23,8 +23,14 @@ namespace Dash
 			LOG_INFO << "Window Resized, Wdith : " << e.mWidth << ", Height : " << e.mHeight << " , Minimized : " << e.mMinimized;
 		}
 
+		void OnMouseWheelDown(FMouseWheelEventArgs& e);
+		void OnMouseWheelUp(FMouseWheelEventArgs& e);
+
 	private: 
 		std::shared_ptr<FPerspectiveCamera> Camera;
+
+		FMouseWheelEventDelegate OnMouseWheelDownDelegate;
+		FMouseWheelEventDelegate OnMouseWheelUpDelegate;
 	};
 }
 

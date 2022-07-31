@@ -87,7 +87,7 @@ namespace Dash
 		} //operator +=
 
 		TMulticastDelegate& operator -=(const TDelegate<RET(PARAMS...)>& another) {
-			if (another.IsNull()) return *this;
+			if (another.IsNull() || this->IsNull()) return *this;
 
 			auto it = mInvocation.begin();
 			for (; it != mInvocation.end(); ++it)

@@ -3,6 +3,7 @@
 #include "TestApplication.h"
 #include "Utility/LogManager.h"
 #include "Utility/Keyboard.h"
+#include "Utility/Mouse.h"
 
 #include "Graphics/GraphicsCore.h"
 
@@ -29,11 +30,20 @@ namespace Dash
 		Camera->SetCameraParams(aspect, fov, 0.1f, 100.0f);
 		Camera->SetPosition(FVector3f{ 0.0f, 0.0f, -2.0f });
 
+		OnMouseWheelDownDelegate = FMouseWheelEventDelegate::Create<TestApplication, &TestApplication::OnMouseWheelDown>(this);
+		OnMouseWheelUpDelegate = FMouseWheelEventDelegate::Create<TestApplication, &TestApplication::OnMouseWheelUp>(this);
+
+		FMouse::Get().MouseWheelDown += OnMouseWheelDownDelegate;
+		FMouse::Get().MouseWheelUp += OnMouseWheelUpDelegate;
+
 		LOG_INFO << "Startup";
 	}
 
 	void TestApplication::Cleanup(void)
 	{
+		FMouse::Get().MouseWheelDown -= OnMouseWheelDownDelegate;
+		FMouse::Get().MouseWheelUp -= OnMouseWheelUpDelegate;
+
 		LOG_INFO << "Cleanup";
 	}
 	 
@@ -68,5 +78,18 @@ namespace Dash
 		FRenderEventArgs Args = e;
 		Args.mCamera = Camera;
 		Graphics::OnRender(Args);
+	}
+
+	void TestApplication::OnMouseWheelDown(FMouseWheelEventArgs& e)
+	{
+		Camera->ZoomIn();
+		LOG_INFO << "OnMouseWheelDown -- ";
+	}
+
+	void TestApplication::OnMouseWheelUp(FMouseWheelEventArgs& e)
+	{
+		Camera->ZoomOut();
+
+		LOG_INFO << "OnMouseWheelUp ++ ";
 	}
 }
