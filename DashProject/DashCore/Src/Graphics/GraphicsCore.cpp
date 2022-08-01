@@ -677,6 +677,7 @@ namespace Dash
             PipelineStateDesc.VS = CD3DX12_SHADER_BYTECODE{ VertexShader };
             PipelineStateDesc.PS = CD3DX12_SHADER_BYTECODE{ PixelShader };
             PipelineStateDesc.RasterizerState = CD3DX12_RASTERIZER_DESC{D3D12_DEFAULT};
+            PipelineStateDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
             PipelineStateDesc.BlendState = CD3DX12_BLEND_DESC{ D3D12_DEFAULT };
             PipelineStateDesc.DepthStencilState.DepthEnable = TRUE;
             PipelineStateDesc.DepthStencilState.StencilEnable = FALSE;

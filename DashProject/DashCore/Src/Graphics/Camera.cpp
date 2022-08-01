@@ -198,16 +198,28 @@ namespace Dash
 
 	void FCamera::AddPitch(Scalar angle)
 	{
-		FQuaternion rotation = FMath::FromAxisAngle(FMath::Mul(mTransform.GetRotation(), FVector3f(FUnit<0>{})), FMath::Radians(angle)) * mTransform.GetRotation();
-		mTransform.SetRotation(rotation);
+		//FQuaternion rotation = FMath::FromAxisAngle(FMath::Mul(mTransform.GetRotation(), FVector3f(FUnit<0>{})), FMath::Radians(angle)) * mTransform.GetRotation();
+
+		FVector3f OriginEuler;
+		FMath::ToEuler(OriginEuler, mTransform.GetRotation());
+		OriginEuler.x += FMath::Radians(angle);
+		FQuaternion Rotation = FMath::FromEuler(OriginEuler);
+		
+		mTransform.SetRotation(Rotation);
 
 		MakeWorldMatrixDirty();
 	}
 
 	void FCamera::AddYaw(Scalar angle)
 	{
-		FQuaternion rotation = FMath::FromAxisAngle(FMath::Mul(mTransform.GetRotation(), FVector3f(FUnit<1>{})), FMath::Radians(angle))* mTransform.GetRotation();
-		mTransform.SetRotation(rotation);
+		//FQuaternion rotation = FMath::FromAxisAngle(FMath::Mul(mTransform.GetRotation(), FVector3f(FUnit<1>{})), FMath::Radians(angle))* mTransform.GetRotation();
+
+		FVector3f OriginEuler;
+		FMath::ToEuler(OriginEuler, mTransform.GetRotation());
+		OriginEuler.y += FMath::Radians(angle);
+		FQuaternion Rotation = FMath::FromEuler(OriginEuler);
+
+		mTransform.SetRotation(Rotation);
 
 		MakeWorldMatrixDirty();
 	}

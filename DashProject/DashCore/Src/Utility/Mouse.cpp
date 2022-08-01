@@ -81,19 +81,19 @@ namespace Dash
 
 	void FMouse::OnMouseButtonReleased(FMouseButtonEventArgs& e)
 	{
-		mCurrentMouseButtonStates[static_cast<unsigned int>(EMouseButton::Left)].Pressed = !e.mLeftButton;
+		mCurrentMouseButtonStates[static_cast<unsigned int>(EMouseButton::Left)].Pressed = e.mLeftButton;
 		mCurrentMouseButtonStates[static_cast<unsigned int>(EMouseButton::Left)].RisingEdge =
 			mCurrentMouseButtonStates[static_cast<unsigned int>(EMouseButton::Left)].Pressed && !mPrevMouseButtonStates[static_cast<unsigned int>(EMouseButton::Left)].Pressed;
 		mCurrentMouseButtonStates[static_cast<unsigned int>(EMouseButton::Left)].FallingEdge =
 			!mCurrentMouseButtonStates[static_cast<unsigned int>(EMouseButton::Left)].Pressed && mPrevMouseButtonStates[static_cast<unsigned int>(EMouseButton::Left)].Pressed;
 
-		mCurrentMouseButtonStates[static_cast<unsigned int>(EMouseButton::Middle)].Pressed = !e.mMiddleButton;
+		mCurrentMouseButtonStates[static_cast<unsigned int>(EMouseButton::Middle)].Pressed = e.mMiddleButton;
 		mCurrentMouseButtonStates[static_cast<unsigned int>(EMouseButton::Middle)].RisingEdge =
 			mCurrentMouseButtonStates[static_cast<unsigned int>(EMouseButton::Middle)].Pressed && !mPrevMouseButtonStates[static_cast<unsigned int>(EMouseButton::Middle)].Pressed;
 		mCurrentMouseButtonStates[static_cast<unsigned int>(EMouseButton::Middle)].FallingEdge =
 			!mCurrentMouseButtonStates[static_cast<unsigned int>(EMouseButton::Middle)].Pressed && mPrevMouseButtonStates[static_cast<unsigned int>(EMouseButton::Middle)].Pressed;
 
-		mCurrentMouseButtonStates[static_cast<unsigned int>(EMouseButton::Right)].Pressed = !e.mRightButton;
+		mCurrentMouseButtonStates[static_cast<unsigned int>(EMouseButton::Right)].Pressed = e.mRightButton;
 		mCurrentMouseButtonStates[static_cast<unsigned int>(EMouseButton::Right)].RisingEdge =
 			mCurrentMouseButtonStates[static_cast<unsigned int>(EMouseButton::Right)].Pressed && !mPrevMouseButtonStates[static_cast<unsigned int>(EMouseButton::Right)].Pressed;
 		mCurrentMouseButtonStates[static_cast<unsigned int>(EMouseButton::Right)].FallingEdge =

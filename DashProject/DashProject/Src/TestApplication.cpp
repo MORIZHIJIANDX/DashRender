@@ -32,9 +32,11 @@ namespace Dash
 
 		OnMouseWheelDownDelegate = FMouseWheelEventDelegate::Create<TestApplication, &TestApplication::OnMouseWheelDown>(this);
 		OnMouseWheelUpDelegate = FMouseWheelEventDelegate::Create<TestApplication, &TestApplication::OnMouseWheelUp>(this);
+		OnMouseMoveDelegate = FMouseMotionEventDelegate::Create<TestApplication, &TestApplication::OnMouseMove>(this);
 
 		FMouse::Get().MouseWheelDown += OnMouseWheelDownDelegate;
 		FMouse::Get().MouseWheelUp += OnMouseWheelUpDelegate;
+		FMouse::Get().MouseMoved += OnMouseMoveDelegate;
 
 		LOG_INFO << "Startup";
 	}
@@ -43,6 +45,7 @@ namespace Dash
 	{
 		FMouse::Get().MouseWheelDown -= OnMouseWheelDownDelegate;
 		FMouse::Get().MouseWheelUp -= OnMouseWheelUpDelegate;
+		FMouse::Get().MouseMoved -= OnMouseMoveDelegate;
 
 		LOG_INFO << "Cleanup";
 	}
@@ -64,12 +67,12 @@ namespace Dash
 
 		if (FKeyboard::Get().IsKeyPressed(EKeyCode::W))
 		{
-			Camera->TranslateUp(Translate);
+			Camera->TranslateForward(Translate);
 		}
 
 		if (FKeyboard::Get().IsKeyPressed(EKeyCode::S))
 		{
-			Camera->TranslateDown(Translate);
+			Camera->TranslateBack(Translate);
 		}
 	}
 
@@ -82,14 +85,23 @@ namespace Dash
 
 	void TestApplication::OnMouseWheelDown(FMouseWheelEventArgs& e)
 	{
-		Camera->ZoomIn();
+		Camera->TranslateForward(0.1f * e.mWheelDelta);
 		LOG_INFO << "OnMouseWheelDown -- ";
 	}
 
 	void TestApplication::OnMouseWheelUp(FMouseWheelEventArgs& e)
 	{
-		Camera->ZoomOut();
-
+		Camera->TranslateForward(0.1f * e.mWheelDelta);
 		LOG_INFO << "OnMouseWheelUp ++ ";
+	}
+
+	void TestApplication::OnMouseMove(FMouseMotionEventArgs& e)
+	{
+		float RotationSpeed = 0.1f;
+		if (FMouse::Get().GetButtonState(EMouseButton::Left).Pressed)
+		{
+			Camera->AddPitch(e.mRelY * RotationSpeed);
+			Camera->AddYaw(e.mRelX * RotationSpeed);
+		}
 	}
 }

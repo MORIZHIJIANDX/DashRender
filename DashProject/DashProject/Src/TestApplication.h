@@ -26,11 +26,14 @@ namespace Dash
 		void OnMouseWheelDown(FMouseWheelEventArgs& e);
 		void OnMouseWheelUp(FMouseWheelEventArgs& e);
 
+		void OnMouseMove(FMouseMotionEventArgs& e);
+
 	private: 
 		std::shared_ptr<FPerspectiveCamera> Camera;
 
 		FMouseWheelEventDelegate OnMouseWheelDownDelegate;
 		FMouseWheelEventDelegate OnMouseWheelUpDelegate;
+		FMouseMotionEventDelegate OnMouseMoveDelegate;
 	};
 }
 
