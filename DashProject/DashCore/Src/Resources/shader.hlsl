@@ -12,6 +12,7 @@ struct PSInput
 {
 	float4 Position : SV_POSITION;
 	float2 UV : TEXCOORD;
+	float4 Color : COLOR;
 };
 
 Texture2D g_texture : register(t0);
@@ -36,6 +37,8 @@ PSInput VSMain(VSInput input)
 
 	output.UV = input.UV;
 
+	output.Color = input.Color;
+
 	return output;
 }
 
@@ -43,5 +46,7 @@ float4 PSMain(PSInput input) : SV_TARGET
 {
 	//return g_texture.Sample(g_sampler, input.UV);
 
-	return float4( (sin(TotalTime) + 1.0f) /2.0f, (cos(TotalTime) + 1.0f) / 2.0f, 0.5f, 1.0f);
+	//return float4( (sin(TotalTime) + 1.0f) /2.0f, (cos(TotalTime) + 1.0f) / 2.0f, 0.5f, 1.0f);
+
+	return float4(input.Color.xyz, 1.0f);
 }

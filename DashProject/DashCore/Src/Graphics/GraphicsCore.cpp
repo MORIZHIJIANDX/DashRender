@@ -572,7 +572,7 @@ namespace Dash
 
         //Create Vertex Buffer & Index Buffer
         {
-            MeshData boxMesh = CreateBoxMesh(1, 1, 1, FVector4f{ 0.5f, 0.5f, 0.5f, 1.0f });
+            MeshData boxMesh = CreateBoxMesh(1, 1, 1, FVector4f{ 0.8f, 0.5f, 1.0f, 1.0f });
 
             const UINT vertexBufferSize = (UINT)boxMesh.VertexData.size() * sizeof(Vertex);
             const UINT indexBufferSize = (UINT)boxMesh.IndexData.size() * sizeof(UINT);
@@ -610,13 +610,13 @@ namespace Dash
 
             //Copy Index Data
             UINT8* indexDataBegin = nullptr;
-            HR(VertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&indexDataBegin)));
+            HR(IndexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&indexDataBegin)));
             memcpy(indexDataBegin, boxMesh.IndexData.data(), indexBufferSize);
-            VertexBuffer->Unmap(0, nullptr);
+            IndexBuffer->Unmap(0, nullptr);
 
             //Create Index Buffer View
-            IndexBufferView.BufferLocation = VertexBuffer->GetGPUVirtualAddress();
-            IndexBufferView.SizeInBytes = vertexBufferSize;
+            IndexBufferView.BufferLocation = IndexBuffer->GetGPUVirtualAddress();
+            IndexBufferView.SizeInBytes = indexBufferSize;
             IndexBufferView.Format = DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
 
             IndexCount = (UINT)boxMesh.IndexData.size();
@@ -677,7 +677,7 @@ namespace Dash
             PipelineStateDesc.VS = CD3DX12_SHADER_BYTECODE{ VertexShader };
             PipelineStateDesc.PS = CD3DX12_SHADER_BYTECODE{ PixelShader };
             PipelineStateDesc.RasterizerState = CD3DX12_RASTERIZER_DESC{D3D12_DEFAULT};
-            PipelineStateDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+            //PipelineStateDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
             PipelineStateDesc.BlendState = CD3DX12_BLEND_DESC{ D3D12_DEFAULT };
             PipelineStateDesc.DepthStencilState.DepthEnable = TRUE;
             PipelineStateDesc.DepthStencilState.StencilEnable = FALSE;
