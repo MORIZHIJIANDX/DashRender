@@ -85,13 +85,13 @@ namespace Dash
 
 	void TestApplication::OnMouseWheelDown(FMouseWheelEventArgs& e)
 	{
-		Camera->TranslateForward(0.1f * e.mWheelDelta);
+		Camera->TranslateForward(0.001f * e.mWheelDelta);
 		LOG_INFO << "OnMouseWheelDown -- ";
 	}
 
 	void TestApplication::OnMouseWheelUp(FMouseWheelEventArgs& e)
 	{
-		Camera->TranslateForward(0.1f * e.mWheelDelta);
+		Camera->TranslateForward(0.001f * e.mWheelDelta);
 		LOG_INFO << "OnMouseWheelUp ++ ";
 	}
 

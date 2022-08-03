@@ -25,6 +25,10 @@ namespace Dash
     {
         FMatrix4x4 ViewMatrix;
         FMatrix4x4 ProjectionMatrix;
+        FMatrix4x4 WorldMatrix;
+        FMatrix4x4 InversetransposedWorldMatrix;
+        FVector4f LightDirection;
+        FVector4f LightColor;
         float Time;
         FVector2f Speed;
     };
@@ -78,6 +82,8 @@ namespace Dash
 
     D3D12_VIEWPORT ViewPort;
     RECT ScissorRect;
+
+    FTransform CubeTransform;
 
     struct Vertex
     {
@@ -208,6 +214,12 @@ namespace Dash
                 FrameConstantBuffer->ProjectionMatrix = e.mCamera->GetProjectionMatrix();
                 FrameConstantBuffer->ViewMatrix = e.mCamera->GetViewMatrix();
             }
+            FrameConstantBuffer->LightDirection = FMath::Normalize(FVector4f(1.0f, 1.0f, -1.0f, 0.0f));
+            FrameConstantBuffer->LightColor = FVector4f(0.95f, 0.89f, 0.95f, 0.0f);
+
+            FrameConstantBuffer->WorldMatrix = CubeTransform.GetMatrix();
+            FrameConstantBuffer->InversetransposedWorldMatrix = FMath::Transpose(CubeTransform.GetInverseMatrix());
+
             FrameConstantBuffer->Time = static_cast<float>(e.mTotalTime);
         }
 
@@ -734,6 +746,11 @@ namespace Dash
             ScissorRect.right = (LONG)IGameApp::GetInstance()->GetWindowWidth();;
             ScissorRect.top = 0;
             ScissorRect.bottom = (LONG)IGameApp::GetInstance()->GetWindowHeight();
+        }
+
+        //Init Cube Transform
+        {
+            CubeTransform = FTransform(FIdentity());
         }
 	}
 
