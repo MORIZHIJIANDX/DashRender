@@ -13,6 +13,7 @@ namespace Dash
 	void CreateApplicationWindow(IGameApp* app, HINSTANCE hInstance)
 	{
 		IGameApp::mAppInstance = app;
+		std::string WindowClassName = app->GetWindowClassName();
 
 		// Initialize the window class.
 		WNDCLASSEX windowClass = { 0 };
@@ -21,7 +22,7 @@ namespace Dash
 		windowClass.lpfnWndProc = WindowProc;
 		windowClass.hInstance = hInstance;
 		windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-		windowClass.lpszClassName = "DashGameApp";
+		windowClass.lpszClassName = WindowClassName.c_str();
 		RegisterClassEx(&windowClass);
 
 		RECT windowRect = { 0, 0, static_cast<LONG>(app->GetWindowWidth()), static_cast<LONG>(app->GetWindowHeight()) };
@@ -57,6 +58,9 @@ namespace Dash
 		Graphics::Initialize();
 
 		app->Startup();
+
+		::ShowWindow(app->GetWindowHandle(), SW_SHOWDEFAULT);
+		::UpdateWindow(app->GetWindowHandle());
 	}
 
 	void TerminateApplication(IGameApp* app)
@@ -64,6 +68,10 @@ namespace Dash
 		app->Cleanup();
 		Graphics::Shutdown();
 		FLogManager::Get()->Shutdown();
+
+		std::string WindowClassName = app->GetWindowClassName();
+		::UnregisterClassA(WindowClassName.c_str(),
+			(HINSTANCE)::GetModuleHandle(NULL));
 	}
 
 	void UpdateApplication(IGameApp* app, size_t& frameCount, FCpuTimer& timer)
@@ -349,8 +357,6 @@ int CALLBACK WinMain(
 	Dash::CreateApplicationWindow(app, hInstance);
 
 	Dash::InitializeApplication(app);
-
-	::ShowWindow(app->GetWindowHandle(), SW_SHOWDEFAULT);
 
 	int retureCode = Dash::RunApplication(app);
 	Dash::TerminateApplication(app);

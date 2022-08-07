@@ -147,14 +147,10 @@ namespace Dash
 	void FMouse::OnMouseWheelDown(FMouseWheelEventArgs& e)
 	{
 		MouseWheelDown(e);
-
-		LOG_INFO << "FMouse Wheel Down";
 	}
 
 	void FMouse::OnMouseWheelUp(FMouseWheelEventArgs& e)
 	{
 		MouseWheelUp(e);
-
-		LOG_INFO << "FMouse Wheel Up";
 	}
 }

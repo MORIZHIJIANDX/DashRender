@@ -10,7 +10,7 @@ namespace Dash
     friend void CreateApplicationWindow(IGameApp* app, HINSTANCE hInstance);
 
 	public:
-        IGameApp(UINT width = 1080, UINT height = 720, const std::string& title = "Sample");
+        IGameApp(UINT width = 1080, UINT height = 720, const std::string& title = "Sample", const std::string& winClassName = "DashGameApp");
         virtual ~IGameApp() {};
 
         static IGameApp* GetInstance() { return  mAppInstance; }
@@ -32,9 +32,11 @@ namespace Dash
 
         UINT GetWindowWidth() const { return mWindowWidth; }
         UINT GetWindowHeight() const { return mWindowHeight; }
+        
+        void SetWindowTitle(const std::string& title);
         std::string GetWindowTitle() const { return mWindowTitle; }
 
-        void SetWindowTitle(const std::string& title);
+        std::string GetWindowClassName() const;
 
     private:
         void SetWindowHandle(HWND handle) { mWindowHandle = handle; }
@@ -47,5 +49,6 @@ namespace Dash
         UINT mWindowWidth;
         UINT mWindowHeight;
         std::string mWindowTitle;
+        std::string mWindowClassName;
 	};
 }

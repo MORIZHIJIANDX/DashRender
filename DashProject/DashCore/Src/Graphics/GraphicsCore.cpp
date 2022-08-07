@@ -743,7 +743,7 @@ namespace Dash
             ViewPort.MaxDepth = 1;
             
             ScissorRect.left = 0;
-            ScissorRect.right = (LONG)IGameApp::GetInstance()->GetWindowWidth();;
+            ScissorRect.right = (LONG)IGameApp::GetInstance()->GetWindowWidth();
             ScissorRect.top = 0;
             ScissorRect.bottom = (LONG)IGameApp::GetInstance()->GetWindowHeight();
         }

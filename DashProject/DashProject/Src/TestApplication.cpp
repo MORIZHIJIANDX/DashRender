@@ -26,9 +26,9 @@ namespace Dash
 		float fov = 45.0f;
 		float aspect = IGameApp::GetInstance()->GetWindowWidth() / (float)IGameApp::GetInstance()->GetWindowHeight();
 
-		Camera = std::make_shared<FPerspectiveCamera>();
-		Camera->SetCameraParams(aspect, fov, 0.1f, 100.0f);
-		Camera->SetPosition(FVector3f{ 0.0f, 0.0f, -2.0f });
+		mCamera = std::make_shared<FPerspectiveCamera>();
+		mCamera->SetCameraParams(aspect, fov, 0.1f, 100.0f);
+		mCamera->SetPosition(FVector3f{ 0.0f, 0.0f, -2.0f });
 
 		OnMouseWheelDownDelegate = FMouseWheelEventDelegate::Create<TestApplication, &TestApplication::OnMouseWheelDown>(this);
 		OnMouseWheelUpDelegate = FMouseWheelEventDelegate::Create<TestApplication, &TestApplication::OnMouseWheelUp>(this);
@@ -53,46 +53,50 @@ namespace Dash
 	void TestApplication::OnUpdate(const FUpdateEventArgs& e)
 	{
 		Scalar Speed = 1.0f;
+
+		if (FKeyboard::Get().IsKeyPressed(EKeyCode::ShiftKey))
+		{
+			Speed *= 2.0f;
+		}
+
 		Scalar Translate = Scalar(Speed * e.mElapsedTime);
 
 		if (FKeyboard::Get().IsKeyPressed(EKeyCode::A))
 		{
-			Camera->TranslateLeft(Translate);
+			mCamera->TranslateLeft(Translate);
 		}
 
 		if (FKeyboard::Get().IsKeyPressed(EKeyCode::D))
 		{
-			Camera->TranslateRight(Translate);
+			mCamera->TranslateRight(Translate);
 		}
 
 		if (FKeyboard::Get().IsKeyPressed(EKeyCode::W))
 		{
-			Camera->TranslateForward(Translate);
+			mCamera->TranslateForward(Translate);
 		}
 
 		if (FKeyboard::Get().IsKeyPressed(EKeyCode::S))
 		{
-			Camera->TranslateBack(Translate);
+			mCamera->TranslateBack(Translate);
 		}
 	}
 
 	void TestApplication::OnRenderScene(const FRenderEventArgs& e)
 	{
 		FRenderEventArgs Args = e;
-		Args.mCamera = Camera;
+		Args.mCamera = mCamera;
 		Graphics::OnRender(Args);
 	}
 
 	void TestApplication::OnMouseWheelDown(FMouseWheelEventArgs& e)
 	{
-		Camera->TranslateForward(0.001f * e.mWheelDelta);
-		LOG_INFO << "OnMouseWheelDown -- ";
+		mCamera->TranslateForward(0.001f * e.mWheelDelta);
 	}
 
 	void TestApplication::OnMouseWheelUp(FMouseWheelEventArgs& e)
 	{
-		Camera->TranslateForward(0.001f * e.mWheelDelta);
-		LOG_INFO << "OnMouseWheelUp ++ ";
+		mCamera->TranslateForward(0.001f * e.mWheelDelta);
 	}
 
 	void TestApplication::OnMouseMove(FMouseMotionEventArgs& e)
@@ -100,8 +104,8 @@ namespace Dash
 		float RotationSpeed = 0.1f;
 		if (FMouse::Get().GetButtonState(EMouseButton::Left).Pressed)
 		{
-			Camera->AddPitch(e.mRelY * RotationSpeed);
-			Camera->AddYaw(e.mRelX * RotationSpeed);
+			mCamera->AddPitch(e.mRelY * RotationSpeed);
+			mCamera->AddYaw(e.mRelX * RotationSpeed);
 		}
 	}
 }

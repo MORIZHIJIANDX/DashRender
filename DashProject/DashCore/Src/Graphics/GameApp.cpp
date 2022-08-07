@@ -7,11 +7,12 @@ namespace Dash
 {
 	IGameApp* IGameApp::mAppInstance = nullptr;
 
-	IGameApp::IGameApp(UINT width, UINT height, const std::string& title)
+	IGameApp::IGameApp(UINT width, UINT height, const std::string& title, const std::string& winClassName)
 		: mWindowHandle(NULL)
 		, mWindowWidth(width)
 		, mWindowHeight(height)
 		, mWindowTitle(title)
+		, mWindowClassName(winClassName)
 	{
 	}
 
@@ -27,5 +28,11 @@ namespace Dash
 
 		::SetWindowText(mWindowHandle, title.c_str());
 	}
+
+	std::string IGameApp::GetWindowClassName() const
+	{
+		return mWindowClassName;
+	}
+
 }
 

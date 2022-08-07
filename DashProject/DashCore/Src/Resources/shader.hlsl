@@ -57,6 +57,8 @@ float4 PSMain(PSInput input) : SV_TARGET
 
 	//return float4(input.Color.xyz * 0.5f + 0.5f, 1.0f);
 
-	float4 Color = max(dot(normalize(input.Normal.xyz), LightDirection.xyz), 0.0f) * LightColor * input.Color;
+	//float4 Color = max(dot(normalize(input.Normal.xyz), LightDirection.xyz), 0.0f) * LightColor * input.Color;
+	float TimeMul = (sin(TotalTime) + 1.0f) * 0.5f;
+	float4 Color = float4((input.Normal.xyz * 0.5f + 0.5f) * LightColor * input.Color * TimeMul, 1.0f);
 	return Color;
 }
