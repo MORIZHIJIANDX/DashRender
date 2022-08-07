@@ -16,6 +16,15 @@
     <Filter Include="PCH">
       <UniqueIdentifier>{2010880B-8C19-887C-1595-9E7C819D937C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ThirdParty">
+      <UniqueIdentifier>{107145F9-FC28-8746-6530-60A251072237}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\imgui">
+      <UniqueIdentifier>{7A0AC6D2-6603-E524-8F35-CAA97B8DC430}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\imgui\backends">
+      <UniqueIdentifier>{E4EDCF95-50B0-0320-9960-92AC0562DCFD}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Utility">
       <UniqueIdentifier>{594615A9-C525-9444-CE3D-1F1B3A9CFAA5}</UniqueIdentifier>
     </Filter>
@@ -136,6 +145,30 @@
     <ClInclude Include="Src\PCH\PCH.h">
       <Filter>PCH</Filter>
     </ClInclude>
+    <ClInclude Include="Src\ThirdParty\imgui\backends\imgui_impl_dx12.h">
+      <Filter>ThirdParty\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\imgui\backends\imgui_impl_win32.h">
+      <Filter>ThirdParty\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\imgui\imconfig.h">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\imgui\imgui.h">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\imgui\imgui_internal.h">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\imgui\imstb_rectpack.h">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\imgui\imstb_textedit.h">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\imgui\imstb_truetype.h">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Utility\Assert.h">
       <Filter>Utility</Filter>
     </ClInclude>
@@ -201,6 +234,27 @@
     </ClCompile>
     <ClCompile Include="Src\PCH\PCH.cpp">
       <Filter>PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\imgui\backends\imgui_impl_dx12.cpp">
+      <Filter>ThirdParty\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\imgui\backends\imgui_impl_win32.cpp">
+      <Filter>ThirdParty\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\imgui\imgui.cpp">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\imgui\imgui_demo.cpp">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\imgui\imgui_draw.cpp">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\imgui\imgui_tables.cpp">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\imgui\imgui_widgets.cpp">
+      <Filter>ThirdParty\imgui</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\Assert.cpp">
       <Filter>Utility</Filter>

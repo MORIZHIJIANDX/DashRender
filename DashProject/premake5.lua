@@ -35,7 +35,8 @@ project "DashCore"
 
     includedirs
     {
-        "%{prj.name}/Src/PCH"
+        "%{prj.name}/Src/PCH",
+        "%{prj.name}/Src/ThirdParty/imgui"
     }
 
     filter "system:windows"
