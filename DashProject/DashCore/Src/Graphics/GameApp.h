@@ -24,14 +24,17 @@ namespace Dash
 
         virtual void OnRenderUI(const FRenderEventArgs& e) {};
 
-        virtual void OnWindowResize(const FResizeEventArgs& e) {};
+        virtual void OnWindowResize(const FResizeEventArgs& e) = 0;
 
         virtual bool IsDone(void);
 
         HWND GetWindowHandle() const { return mWindowHandle; }
 
-        UINT GetWindowWidth() const { return mWindowWidth; }
-        UINT GetWindowHeight() const { return mWindowHeight; }
+		void SetWindowWidth(int width) { mWindowWidth = width; }
+        void SetWindowHeight(int height) { mWindowHeight = height; }
+
+        int GetWindowWidth() const { return mWindowWidth; }
+        int GetWindowHeight() const { return mWindowHeight; }
         
         void SetWindowTitle(const std::string& title);
         std::string GetWindowTitle() const { return mWindowTitle; }
@@ -44,10 +47,10 @@ namespace Dash
     protected:
         static IGameApp* mAppInstance;
 
-    private:
+    //private:
         HWND mWindowHandle;
-        UINT mWindowWidth;
-        UINT mWindowHeight;
+        int mWindowWidth;
+        int mWindowHeight;
         std::string mWindowTitle;
         std::string mWindowClassName;
 	};

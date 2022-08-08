@@ -18,10 +18,7 @@ namespace Dash
 
 		virtual void OnRenderScene(const FRenderEventArgs& e) override;
 		
-		virtual void OnWindowResize(const FResizeEventArgs& e) override
-		{
-			LOG_INFO << "Window Resized, Wdith : " << e.mWidth << ", Height : " << e.mHeight << " , Minimized : " << e.mMinimized;
-		}
+		virtual void OnWindowResize(const FResizeEventArgs& e) override;
 
 		void OnMouseWheelDown(FMouseWheelEventArgs& e);
 		void OnMouseWheelUp(FMouseWheelEventArgs& e);

@@ -8,6 +8,11 @@
 
 namespace Dash
 {
+	bool AppPaused = false;
+	bool Minimized = false;
+	bool Maximized = false;
+	bool Resizing = false;
+
 	LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 	void CreateApplicationWindow(IGameApp* app, HINSTANCE hInstance)
@@ -178,15 +183,89 @@ namespace Dash
 				return 0;
 			}
 
-			RECT clientRect = {};
-			GetClientRect(hWnd, &clientRect);
+			// Save the new client area dimensions.
+			int ClientWidth = LOWORD(lParam);
+			int ClientHeight = HIWORD(lParam);
 
-			FResizeEventArgs windowResizeArgs{ clientRect.right - clientRect.left, clientRect.bottom - clientRect.top, wParam == SIZE_MINIMIZED };
+			LOG_INFO << "Window Event, Wdith : " << ClientWidth << ", Height : " << ClientHeight;
 
-			app->OnWindowResize(windowResizeArgs);
-			break;
+			//if (app)
+			{
+				app->SetWindowWidth(ClientWidth);
+				app->SetWindowHeight(ClientHeight);
+
+				if (wParam == SIZE_MINIMIZED)
+				{
+					AppPaused = true;
+					Minimized = true;
+					Maximized = false;
+				}
+				else if (wParam == SIZE_MAXIMIZED)
+				{
+					AppPaused = false;
+					Minimized = false;
+					Maximized = true;
+					app->OnWindowResize(FResizeEventArgs{ app->GetWindowWidth(), app->GetWindowHeight(), Minimized });
+				}
+				else if (wParam == SIZE_RESTORED)
+				{
+
+					// Restoring from minimized state?
+					if (Minimized)
+					{
+						AppPaused = false;
+						Minimized = false;
+						app->OnWindowResize(FResizeEventArgs{ app->GetWindowWidth(), app->GetWindowHeight(), Minimized });
+					}
+
+					// Restoring from maximized state?
+					else if (Maximized)
+					{
+						AppPaused = false;
+						Maximized = false;
+						app->OnWindowResize(FResizeEventArgs{ app->GetWindowWidth(), app->GetWindowHeight(), Minimized });
+					}
+					else if (Resizing)
+					{
+						// If user is dragging the resize bars, we do not resize 
+						// the buffers here because as the user continuously 
+						// drags the resize bars, a stream of WM_SIZE messages are
+						// sent to the window, and it would be pointless (and slow)
+						// to resize for each WM_SIZE message received from dragging
+						// the resize bars.  So instead, we reset after the user is 
+						// done resizing the window and releases the resize bars, which 
+						// sends a WM_EXITSIZEMOVE message.
+					}
+					else // API call such as SetWindowPos or mSwapChain->SetFullscreenState.
+					{
+						app->OnWindowResize(FResizeEventArgs{ app->GetWindowWidth(), app->GetWindowHeight(), Minimized });
+					}
+				}
+			}
+			//break;
+
+			return 0;
 		}
-		
+		// WM_EXITSIZEMOVE is sent when the user grabs the resize bars.
+		case WM_ENTERSIZEMOVE:
+		{
+			AppPaused = true;
+			Resizing = true;
+			//mTimer.Stop();
+			//break;
+			return 0;
+		}
+		// WM_EXITSIZEMOVE is sent when the user releases the resize bars.
+		// Here we reset everything based on the new window dimensions.
+		case WM_EXITSIZEMOVE:
+		{
+			AppPaused = false;
+			Resizing = false;
+			//mTimer.Start();
+			app->OnWindowResize(FResizeEventArgs{ app->GetWindowWidth(), app->GetWindowHeight(), Minimized });
+			//break;
+			return 0;
+		}
 			/*********** KEYBOARD MESSAGES ***********/
 		case WM_KEYDOWN:
 			// syskey commands need to be handled to track ALT key (VK_MENU) and F10

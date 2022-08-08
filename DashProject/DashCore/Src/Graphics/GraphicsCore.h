@@ -16,6 +16,8 @@ namespace Dash
 
 		static void OnRender(const FRenderEventArgs& e);
 
+		static void OnResize(const FResizeEventArgs& e);
+
 		static ID3D12Device* Device;
 
 		static ID3D12CommandQueue* CommandQueue;

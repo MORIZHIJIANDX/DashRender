@@ -89,6 +89,20 @@ namespace Dash
 		Graphics::OnRender(Args);
 	}
 
+	void TestApplication::OnWindowResize(const FResizeEventArgs& e)
+	{
+		mWindowWidth = e.mWidth;
+		mWindowHeight = e.mHeight;
+
+		float aspect = mWindowWidth / (float)mWindowHeight;
+		float fov = 45.0f;
+		mCamera->SetCameraParams(aspect, fov, 0.1f, 100.0f);
+
+		Graphics::OnResize(e);
+
+		LOG_INFO << "Window Resized, Wdith : " << e.mWidth << ", Height : " << e.mHeight << " , Minimized : " << e.mMinimized;
+	}
+
 	void TestApplication::OnMouseWheelDown(FMouseWheelEventArgs& e)
 	{
 		mCamera->TranslateForward(0.001f * e.mWheelDelta);

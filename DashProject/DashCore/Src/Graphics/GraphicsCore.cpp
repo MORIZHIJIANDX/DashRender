@@ -818,4 +818,91 @@ namespace Dash
 
         ++FrameIndex;
     }
+
+    void Graphics::OnResize(const FResizeEventArgs& e)
+    {
+        WaitForGpu();
+
+        CommandList->Reset(CommandAllocator, nullptr);
+
+        for (int Index = 0; Index < Graphics::BackBufferCount; ++Index)
+        {
+            BackBuffers[Index]->Release();
+        }
+        DepthBuffer->Release();
+
+        HR(SwapChain->ResizeBuffers(Graphics::BackBufferCount, e.mWidth, e.mHeight, BackBufferFormat, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH));
+
+        FrameIndex = 0;
+
+		//Create Render Targe View
+		{
+			RTVDescriptorSize = Graphics::Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+			CD3DX12_CPU_DESCRIPTOR_HANDLE descriptorHandle(RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+			for (UINT i = 0; i < Graphics::BackBufferCount; i++)
+			{
+				SwapChain->GetBuffer(i, IID_PPV_ARGS(&BackBuffers[i]));
+				Graphics::Device->CreateRenderTargetView(BackBuffers[i], nullptr, descriptorHandle);
+				descriptorHandle.Offset(1, RTVDescriptorSize);
+			}
+		}
+
+		//Create Depth Buffer
+		{
+			D3D12_RESOURCE_DESC depthStencilDesc{};
+			depthStencilDesc.MipLevels = 1;
+			depthStencilDesc.Format = DXGI_FORMAT_D32_FLOAT;
+			depthStencilDesc.Width = e.mWidth;
+			depthStencilDesc.Height = e.mHeight;
+			depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+			depthStencilDesc.DepthOrArraySize = 1;
+			depthStencilDesc.MipLevels = 0;
+			depthStencilDesc.SampleDesc.Count = 1;
+			depthStencilDesc.SampleDesc.Quality = 0;
+			depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+
+			D3D12_CLEAR_VALUE depthClearValue;
+			depthClearValue.DepthStencil.Depth = 1.0f;
+			depthClearValue.DepthStencil.Stencil = 0;
+			depthClearValue.Format = depthStencilDesc.Format;
+
+			Graphics::Device->CreateCommittedResource(
+				&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_DEFAULT),
+				D3D12_HEAP_FLAGS::D3D12_HEAP_FLAG_NONE,
+				&depthStencilDesc,
+				D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_DEPTH_WRITE,
+				&depthClearValue,
+				IID_PPV_ARGS(&DepthBuffer)
+			);
+		}
+
+		//Create Depth Descriptor Heap & Depth Stencil View
+		{
+			CD3DX12_CPU_DESCRIPTOR_HANDLE descriptorHandle(DSVDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+			Graphics::Device->CreateDepthStencilView(DepthBuffer, nullptr, descriptorHandle);
+		}
+
+		// Execute the resize commands.
+        HR(CommandList->Close());
+		ID3D12CommandList* commands[] = { CommandList };
+		CommandQueue->ExecuteCommandLists(_countof(commands), commands);
+
+        WaitForGpu();
+
+		//Create Camera &&  ViewPort
+		{
+			ViewPort.Width = (FLOAT)e.mWidth;
+			ViewPort.Height = (FLOAT)e.mHeight;
+			ViewPort.TopLeftX = 0;
+			ViewPort.TopLeftY = 0;
+			ViewPort.MinDepth = 0;
+			ViewPort.MaxDepth = 1;
+
+			ScissorRect.left = 0;
+			ScissorRect.right = (LONG)e.mWidth;
+			ScissorRect.top = 0;
+			ScissorRect.bottom = (LONG)e.mHeight;
+		}
+    }
 }
