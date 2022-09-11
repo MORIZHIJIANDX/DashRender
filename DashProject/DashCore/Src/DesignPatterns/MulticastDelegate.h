@@ -28,8 +28,7 @@ namespace Dash
 
 		TMulticastDelegate() = default;
 		~TMulticastDelegate() {
-			for (auto& element : mInvocation) delete element;
-			mInvocation.clear();
+			Clear();
 		} //~TMulticastDelegate
 
 		bool IsNull() const { return mInvocation.size() < 1; }
@@ -40,7 +39,13 @@ namespace Dash
 			return (ptr != nullptr) || (!this->IsNull());
 		} //operator !=
 
-		size_t size() const { return mInvocation.size(); }
+		size_t Num() const { return mInvocation.size(); }
+
+		void Clear() 
+		{
+			for (auto& element : mInvocation) delete element;
+			mInvocation.clear();
+		};
 
 		TMulticastDelegate& operator =(const TMulticastDelegate&) = delete;
 		TMulticastDelegate(const TMulticastDelegate&) = delete;
@@ -56,7 +61,7 @@ namespace Dash
 
 		bool operator ==(const TDelegate<RET(PARAMS...)>& another) const {
 			if (IsNull() && another.IsNull()) return true;
-			if (another.IsNull() || (size() != 1)) return false;
+			if (another.IsNull() || (Num() != 1)) return false;
 			return (another.mInvocation == **mInvocation.begin());
 		} //==
 		bool operator !=(const TDelegate<RET(PARAMS...)>& another) const { return !(*this == another); }
