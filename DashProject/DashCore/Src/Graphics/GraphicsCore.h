@@ -1,27 +1,20 @@
 #pragma once
 
-#include "d3dx12.h"
+#include <d3d12.h>
 
 namespace Dash
 {
-	// CommandAllocatorPool		分配和管理command allocator
-	// CommandQueue				代表一个硬件队列( Direct, Compute or Copy )
-	// CommandListManager		拥有 Direct, Compute 和 Copy Queue, 负责创建新的Command List
-	// GpuResource
 	class Graphics
 	{
 	public:
 		static void Initialize();
 		static void Shutdown();
 
-		static void OnRender(const FRenderEventArgs& e);
-
-		static void OnResize(const FResizeEventArgs& e);
-
 		static ID3D12Device* Device;
-
-		static ID3D12CommandQueue* CommandQueue;
-
 		static constexpr int BackBufferCount = 3;
+	private:
+		static bool mTypedUAVLoadSupport_R11G11B10_FLOAT;
+		static bool mTypedUAVLoadSupport_R16G16B16A16_FLOAT;
+		static D3D_ROOT_SIGNATURE_VERSION mHighestRootSignatureVersion;
 	};
 }

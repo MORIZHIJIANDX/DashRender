@@ -86,7 +86,7 @@ namespace Dash
 	{
 		FRenderEventArgs Args = e;
 		Args.mCamera = mCamera;
-		Graphics::OnRender(Args);
+		//Graphics::OnRender(Args);
 	}
 
 	void TestApplication::OnWindowResize(const FResizeEventArgs& e)
@@ -98,7 +98,7 @@ namespace Dash
 		float fov = 45.0f;
 		mCamera->SetCameraParams(aspect, fov, 0.1f, 100.0f);
 
-		Graphics::OnResize(e);
+		//Graphics::OnResize(e);
 
 		LOG_INFO << "Window Resized, Wdith : " << e.mWidth << ", Height : " << e.mHeight << " , Minimized : " << e.mMinimized;
 	}

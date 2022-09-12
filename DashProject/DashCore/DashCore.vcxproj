@@ -141,6 +141,7 @@
     <ClInclude Include="Src\Graphics\Camera.h" />
     <ClInclude Include="Src\Graphics\DX12Helper.h" />
     <ClInclude Include="Src\Graphics\GameApp.h" />
+    <ClInclude Include="Src\Graphics\GpuResource.h" />
     <ClInclude Include="Src\Graphics\GraphicsCore.h" />
     <ClInclude Include="Src\Graphics\Viewport.h" />
     <ClInclude Include="Src\Graphics\d3dx12.h" />
