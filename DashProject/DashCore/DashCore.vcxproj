@@ -142,6 +142,7 @@
     <ClInclude Include="Src\Graphics\DX12Helper.h" />
     <ClInclude Include="Src\Graphics\GameApp.h" />
     <ClInclude Include="Src\Graphics\GpuResource.h" />
+    <ClInclude Include="Src\Graphics\GpuResourcesStateTracker.h" />
     <ClInclude Include="Src\Graphics\GraphicsCore.h" />
     <ClInclude Include="Src\Graphics\Viewport.h" />
     <ClInclude Include="Src\Graphics\d3dx12.h" />
@@ -200,6 +201,7 @@
     <ClCompile Include="Src\Graphics\Camera.cpp" />
     <ClCompile Include="Src\Graphics\DX12Helper.cpp" />
     <ClCompile Include="Src\Graphics\GameApp.cpp" />
+    <ClCompile Include="Src\Graphics\GpuResourcesStateTracker.cpp" />
     <ClCompile Include="Src\Graphics\GraphicsCore.cpp" />
     <ClCompile Include="Src\Math\Color.cpp" />
     <ClCompile Include="Src\PCH\PCH.cpp">

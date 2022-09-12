@@ -217,6 +217,9 @@
     <ClInclude Include="Src\Graphics\GpuResource.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\GpuResourcesStateTracker.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\EntryPoint.cpp" />
@@ -288,6 +291,9 @@
     </ClCompile>
     <ClCompile Include="Src\Utility\SystemTimer.cpp">
       <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\GpuResourcesStateTracker.cpp">
+      <Filter>Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
