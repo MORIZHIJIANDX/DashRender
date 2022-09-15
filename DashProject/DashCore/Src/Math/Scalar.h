@@ -102,6 +102,22 @@ namespace Dash {
 
 		template <typename Scalar> constexpr Scalar ModAngle(Scalar rad) noexcept;
 
+		template <typename T> T AlignUpWithMask(T value, size_t mask) noexcept;
+
+		template <typename T> T AlignDownWithMask(T value, size_t mask) noexcept;
+
+		template <typename T> T AlignUp(T value, size_t alignment) noexcept;
+
+		template <typename T> T AlignDown(T value, size_t alignment) noexcept;
+
+		template <typename T> bool IsAligned(T value, size_t alignment) noexcept;
+
+		template <typename T> T DivideByMultiple(T value, size_t alignment) noexcept;
+
+		template <typename T> bool IsPowerOfTwo(T value) noexcept;
+
+		template <typename T> bool IsDivisible(T value, T divisor) noexcept;
+
 		static FORCEINLINE int Rand() { return rand(); }
 
 		/** Seeds global random number functions Rand() and FRand() */
@@ -534,6 +550,52 @@ namespace Dash {
 			return fTemp;
 		}
 
+		template <typename T> 
+		FORCEINLINE T AlignUpWithMask(T value, size_t mask) noexcept
+		{
+			return (T)(((size_t)value + mask) & ~mask);
+		}
 
+		template <typename T> 
+		FORCEINLINE T AlignDownWithMask(T value, size_t mask) noexcept
+		{
+			return (T)((size_t)value & ~mask);
+		}
+
+		template <typename T> 
+		FORCEINLINE T AlignUp(T value, size_t alignment) noexcept
+		{
+			return AlignUpWithMask(value, alignment - 1);
+		}
+
+		template <typename T> 
+		FORCEINLINE T AlignDown(T value, size_t alignment) noexcept
+		{
+			return AlignDownWithMask(value, alignment - 1);
+		}
+
+		template <typename T> 
+		FORCEINLINE bool IsAligned(T value, size_t alignment) noexcept
+		{
+			return 0 == ((size_t)value & (alignment - 1));
+		}
+
+		template <typename T> 
+		FORCEINLINE T DivideByMultiple(T value, size_t alignment) noexcept
+		{
+			return (T)((value + alignment - 1) / alignment);
+		}
+
+		template <typename T> 
+		FORCEINLINE bool IsPowerOfTwo(T value) noexcept
+		{
+			return 0 == (value & (value - 1));
+		}
+
+		template <typename T> 
+		FORCEINLINE bool IsDivisible(T value, T divisor) noexcept
+		{
+			return (value / divisor) * divisor == value;
+		}
 	}
 }

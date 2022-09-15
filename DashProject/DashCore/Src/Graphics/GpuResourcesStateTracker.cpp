@@ -86,9 +86,12 @@ namespace Dash
 	}
 
 
-	void GpuResourcesStateTracker::TransitionResource(const GpuResource& resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
+	void GpuResourcesStateTracker::TransitionResource(GpuResource& resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
 	{
-
+		if (resource.GetResource())
+		{
+			ResourceBarrier(CD3DX12_RESOURCE_BARRIER::Transition(resource.GetResource(), D3D12_RESOURCE_STATE_COMMON, stateAfter, subResource));
+		}
 	}
 
 	void GpuResourcesStateTracker::UAVBarrier(ID3D12Resource* resource /*= nullptr*/)
@@ -227,9 +230,14 @@ namespace Dash
 		}
 	}
 
-	void GpuResourcesStateTracker::AddGlobalResourceState(const GpuResource& resource, D3D12_RESOURCE_STATES state)
+	void GpuResourcesStateTracker::AddGlobalResourceState(GpuResource& resource, D3D12_RESOURCE_STATES state)
 	{
+		if (resource.GetResource())
+		{
+			std::lock_guard<std::mutex> lock(GlobalMutex);
 
+			GlobalResourceStates[resource.GetResource()].SetSubResourceState(D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, state);
+		}
 	}
 
 	void GpuResourcesStateTracker::RemoveGlobalResourceState(ID3D12Resource* resource)
@@ -242,9 +250,14 @@ namespace Dash
 		}
 	}
 
-	void GpuResourcesStateTracker::RemoveGlobalResourceState(const GpuResource& resource)
+	void GpuResourcesStateTracker::RemoveGlobalResourceState(GpuResource& resource)
 	{
+		if (resource.GetResource())
+		{
+			std::lock_guard<std::mutex> lock(GlobalMutex);
 
+			GlobalResourceStates.erase(resource.GetResource());
+		}
 	}
 
 }

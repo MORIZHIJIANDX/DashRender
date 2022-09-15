@@ -1,10 +1,10 @@
 #pragma once
 #include <d3d12.h>
-#include <stdint.h>
-#include <vector>
-#include <map>
-#include <unordered_map>
-#include <mutex>
+//#include <stdint.h>
+//#include <vector>
+//#include <map>
+//#include <unordered_map>
+//#include <mutex>
 
 namespace Dash
 {
@@ -32,7 +32,7 @@ namespace Dash
 		 * which indicates that all subresources should be transitioned to the same state.
 		 */
 		void TransitionResource(ID3D12Resource* resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
-		void TransitionResource(const GpuResource& resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+		void TransitionResource(GpuResource& resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 
 		/**
 		 * Push a UAV resource barrier for the given resource.
@@ -96,14 +96,14 @@ namespace Dash
 		 * This should be done when the resource is created for the first time.
 		 */
 		static void AddGlobalResourceState(ID3D12Resource* resource, D3D12_RESOURCE_STATES state);
-		static void AddGlobalResourceState(const GpuResource& resource, D3D12_RESOURCE_STATES state);
+		static void AddGlobalResourceState(GpuResource& resource, D3D12_RESOURCE_STATES state);
 
 		/**
 		 * Remove a resource from the global resource state array (map).
 		 * This should only be done when the resource is destroyed.
 		 */
 		static void RemoveGlobalResourceState(ID3D12Resource* resource);
-		static void RemoveGlobalResourceState(const GpuResource& resource);
+		static void RemoveGlobalResourceState(GpuResource& resource);
 
 	private:
 		// An array (vector) of resource barriers.

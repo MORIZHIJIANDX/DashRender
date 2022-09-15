@@ -58,6 +58,12 @@
     <ClInclude Include="Src\Graphics\GameApp.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\GpuResource.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\GpuResourcesStateTracker.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\GraphicsCore.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -214,10 +220,7 @@
     <ClInclude Include="Src\Utility\ThreadSafeQueue.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\GpuResource.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Graphics\GpuResourcesStateTracker.h">
+    <ClInclude Include="Src\Graphics\GpuLinearAllocator.h">
       <Filter>Graphics</Filter>
     </ClInclude>
   </ItemGroup>
@@ -230,6 +233,9 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\GameApp.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\GpuResourcesStateTracker.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\GraphicsCore.cpp">
@@ -292,7 +298,7 @@
     <ClCompile Include="Src\Utility\SystemTimer.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Graphics\GpuResourcesStateTracker.cpp">
+    <ClCompile Include="Src\Graphics\GpuLinearAllocator.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
   </ItemGroup>
