@@ -195,7 +195,7 @@ namespace Dash
 
         std::filesystem::path shaderPath = currentPath.parent_path() / "DashCore\\Src\\Resources\\generateMips.hlsl";
 
-        HR(D3DCompileFromFile(shaderPath.c_str(), nullptr, nullptr, "CSMain", "cs_5_0", shaderCompileFlag, 0, &generateMipsShader, nullptr));
+        DX_CALL(D3DCompileFromFile(shaderPath.c_str(), nullptr, nullptr, "CSMain", "cs_5_0", shaderCompileFlag, 0, &generateMipsShader, nullptr));
 
         mRootSignature = CreateGenMipsRootSignature();
         mPipelineState = CreateGenMipsPipelineState(mRootSignature, generateMipsShader->GetBufferPointer(), generateMipsShader->GetBufferSize());
@@ -1251,7 +1251,7 @@ namespace Dash
 
         // Create a temporary buffer
         Microsoft::WRL::ComPtr<ID3D12Resource> scratchResource = nullptr;
-        HR(mD3DDevice->CreateCommittedResource(
+        DX_CALL(mD3DDevice->CreateCommittedResource(
             &heapProps,
             D3D12_HEAP_FLAG_NONE,
             &resDesc,
@@ -1305,25 +1305,25 @@ namespace Dash
 
     void FTextureHelper::Begin()
     {
-        HR(mD3DDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&mCommandAllocator)));
+        DX_CALL(mD3DDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&mCommandAllocator)));
 
         SetDebugObjectName(mCommandAllocator.Get(), L"Mips Command Allocator");
 
-        HR(mD3DDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, mCommandAllocator.Get(), mPipelineState.Get(), IID_PPV_ARGS(&mCommandList)));
+        DX_CALL(mD3DDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, mCommandAllocator.Get(), mPipelineState.Get(), IID_PPV_ARGS(&mCommandList)));
 
         SetDebugObjectName(mCommandList.Get(), L"Mips Command List");
     }
 
     void FTextureHelper::End(Microsoft::WRL::ComPtr<ID3D12CommandQueue>& commandQueue)
     {
-        HR(mCommandList->Close());
+        DX_CALL(mCommandList->Close());
 
         ID3D12CommandList* commands[] = { mCommandList.Get() };
         commandQueue->ExecuteCommandLists(_countof(commands), commands);
 
         // Set an event so we get notified when the GPU has completed all its work
         Microsoft::WRL::ComPtr<ID3D12Fence> fence;
-        HR(mD3DDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(fence.GetAddressOf())));
+        DX_CALL(mD3DDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(fence.GetAddressOf())));
 
         SetDebugObjectName(fence.Get(), L"Mips Fence");
 
@@ -1331,8 +1331,8 @@ namespace Dash
         if (!gpuCompletedEvent)
             throw std::exception("CreateEventEx");
 
-        HR(commandQueue->Signal(fence.Get(), 1ULL));
-        HR(fence->SetEventOnCompletion(1ULL, gpuCompletedEvent));
+        DX_CALL(commandQueue->Signal(fence.Get(), 1ULL));
+        DX_CALL(fence->SetEventOnCompletion(1ULL, gpuCompletedEvent));
 
         // Wait on the GPU-complete notification
         DWORD wr = WaitForSingleObject(gpuCompletedEvent, INFINITE);
@@ -1340,7 +1340,7 @@ namespace Dash
         {
             if (wr == WAIT_FAILED)
             {
-                HR(HRESULT_FROM_WIN32(GetLastError()));
+                DX_CALL(HRESULT_FROM_WIN32(GetLastError()));
             }
             else
             {
@@ -2178,7 +2178,7 @@ namespace Dash
         rsigDesc.Init(_countof(rootParameters), rootParameters, 1, &sampler, rootSignatureFlags);
 
         Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
-        HR(CreateRootSignature(mD3DDevice, &rsigDesc, rootSignature));
+        DX_CALL(CreateRootSignature(mD3DDevice, &rsigDesc, rootSignature));
 
         return rootSignature;
     }
@@ -2191,7 +2191,7 @@ namespace Dash
         desc.pRootSignature = rootSignature.Get();
 
         Microsoft::WRL::ComPtr<ID3D12PipelineState> pso;
-        HR(mD3DDevice->CreateComputePipelineState(&desc, IID_PPV_ARGS(&pso)));
+        DX_CALL(mD3DDevice->CreateComputePipelineState(&desc, IID_PPV_ARGS(&pso)));
 
         return pso;
     }
@@ -2217,7 +2217,7 @@ namespace Dash
             stagingDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
             stagingDesc.Format = ConvertSRVtoResourceFormat(desc.Format);
 
-            HR(mD3DDevice->CreateCommittedResource(
+            DX_CALL(mD3DDevice->CreateCommittedResource(
                 &defaultHeapProperties,
                 D3D12_HEAP_FLAG_NONE,
                 &stagingDesc,
@@ -2402,7 +2402,7 @@ namespace Dash
 
         // Create a resource with the same description, but without SRGB, and with UAV flags
         Microsoft::WRL::ComPtr<ID3D12Resource> resourceCopy;
-        HR(mD3DDevice->CreateCommittedResource(
+        DX_CALL(mD3DDevice->CreateCommittedResource(
             &heapProperties,
             D3D12_HEAP_FLAG_NONE,
             &copyDesc,
@@ -2474,12 +2474,12 @@ namespace Dash
         heapDesc.Properties.Type = D3D12_HEAP_TYPE_DEFAULT;
 
         Microsoft::WRL::ComPtr<ID3D12Heap> heap;
-        HR(mD3DDevice->CreateHeap(&heapDesc, IID_PPV_ARGS(heap.GetAddressOf())));
+        DX_CALL(mD3DDevice->CreateHeap(&heapDesc, IID_PPV_ARGS(heap.GetAddressOf())));
 
         SetDebugObjectName(heap.Get(), L"GenerateMips Heap");
 
         Microsoft::WRL::ComPtr<ID3D12Resource> resourceCopy;
-        HR(mD3DDevice->CreatePlacedResource(
+        DX_CALL(mD3DDevice->CreatePlacedResource(
             heap.Get(),
             0,
             &copyDesc,
@@ -2495,7 +2495,7 @@ namespace Dash
         aliasDesc.Layout = copyDesc.Layout;
 
         Microsoft::WRL::ComPtr<ID3D12Resource> aliasCopy;
-        HR(mD3DDevice->CreatePlacedResource(
+        DX_CALL(mD3DDevice->CreatePlacedResource(
             heap.Get(),
             0,
             &aliasDesc,

@@ -40,8 +40,8 @@ HRESULT WINAPI DXTraceW(_In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRE
 // ------------------------------
 // Debug模式下的错误提醒与追踪
 #if defined(DEBUG) | defined(DASH_DEBUG)
-#ifndef HR
-#define HR(x)												\
+#ifndef DX_CALL
+#define DX_CALL(x)												\
 	{															\
 		HRESULT hr = (x);										\
 		if(FAILED(hr))											\
@@ -51,8 +51,8 @@ HRESULT WINAPI DXTraceW(_In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRE
 	}
 #endif
 #else
-#ifndef HR
-#define HR(x) (x)
+#ifndef DX_CALL
+#define DX_CALL(x) (x)
 #endif 
 #endif
  

@@ -72,7 +72,7 @@ namespace Dash
 		
 		//Create DXGI Factory
 		ComPtr<IDXGIFactory6> dxgiFactory;
-		HR(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&dxgiFactory)));
+		DX_CALL(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&dxgiFactory)));
 
 		//Enumerate adapter and create device
 		ComPtr<IDXGIAdapter1> dxgiAdapter;

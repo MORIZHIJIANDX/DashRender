@@ -2,10 +2,10 @@
 
 #include "GpuResource.h"
 
-#include <vector>
-#include <queue>
-#include <memory>
-#include <mutex>
+//#include <vector>
+//#include <queue>
+//#include <memory>
+//#include <mutex>
 
 // Constant blocks must be multiples of 16 constants @ 16 bytes each
 namespace Dash
@@ -27,7 +27,7 @@ namespace Dash
 		enum
 		{
 			GpuDefaultPageSize = 0x10000,	// 64K
-			CpuDefaultPageSize = 0x200000	// 64K
+			CpuDefaultPageSize = 0x200000	// 2MB
 		};
 
 		struct Allocation
@@ -82,10 +82,11 @@ namespace Dash
 			PageManager();
 
 			Page* RequestPage();
+			Page* RequestLargePage(size_t pageSize = 0);
+
 			Page* CreateNewPage(size_t pageSize = 0);
 
-			void DiscardPages(uint64_t fenceID, const std::vector<Page*>& pages);
-			void DiscardLargePages(uint64_t fenceID, const std::vector<Page*>& pages);
+			void DiscardPages(uint64_t fenceID, const std::vector<Page*>& pages, bool isLargePage = false);
 
 			void Destroy();
 

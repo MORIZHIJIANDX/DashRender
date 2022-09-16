@@ -186,7 +186,7 @@ namespace Dash
 
         BYTE* resourceData = nullptr;
 
-        HR(uploadBuffer->Map(0, nullptr, reinterpret_cast<void**>(&resourceData)));
+        DX_CALL(uploadBuffer->Map(0, nullptr, reinterpret_cast<void**>(&resourceData)));
 
         size_t textureRowPitch = texture.GetRowPitch();
         const uint8_t* textureData = texture.GetRawData();
