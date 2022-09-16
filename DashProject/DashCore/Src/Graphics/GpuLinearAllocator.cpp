@@ -165,4 +165,29 @@ namespace Dash
 		mPagePool.clear();
 		mLargePagePool.clear();
 	}
+
+	GpuLinearAllocator::Allocation GpuLinearAllocator::Allocate(size_t sizeInBytes, size_t alignment)
+	{
+		if (sizeInBytes > mDefaultPageSize)
+		{
+			Page* newPage = AllocatorPageManger[mAllocatorType].RequestLargePage(sizeInBytes);
+			mRetiredLargePages.push_back(newPage);
+			Allocation allocation(*newPage, 0, sizeInBytes);
+			return allocation;
+		}
+
+		if (mCurrentPage == nullptr)
+		{
+			mCurrentPage = AllocatorPageManger->RequestPage();
+		}
+
+		if (mCurrentPage->HasSpace(sizeInBytes, alignment))
+		{
+			
+		}
+		else
+		{
+
+		}
+	}
 }

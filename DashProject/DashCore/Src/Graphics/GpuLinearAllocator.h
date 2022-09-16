@@ -123,7 +123,7 @@ namespace Dash
 		AllocatorType mAllocatorType;
 		size_t mDefaultPageSize;
 
-		Page* mCurrentPage;
+		Page* mCurrentPage = nullptr;
 		std::vector<Page*> mRetiredPages;	
 		std::vector<Page*> mRetiredLargePages;
 
