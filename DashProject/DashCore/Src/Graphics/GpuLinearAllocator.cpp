@@ -79,7 +79,11 @@ namespace Dash
 		while (!mRetiredLargePages.empty() && IsFenceCompleted(mRetiredLargePages.front().first))
 		{
 			Page* pageToFree = mRetiredLargePages.front().second;
-			auto iter = std::find_if(mLargePagePool.begin(), mLargePagePool.end(),[&pageToFree](std::unique_ptr<GpuLinearAllocator::Page> page){ page.get() == pageToFree; });
+			auto iter = std::find_if(mLargePagePool.begin(), mLargePagePool.end(),[&pageToFree](std::unique_ptr<GpuLinearAllocator::Page>& page)
+			{ 
+				return page.get() == pageToFree; 
+			});
+
 			if (iter != mLargePagePool.end())
 			{
 				mLargePagePool.erase(iter);
@@ -168,26 +172,61 @@ namespace Dash
 
 	GpuLinearAllocator::Allocation GpuLinearAllocator::Allocate(size_t sizeInBytes, size_t alignment)
 	{
-		if (sizeInBytes > mDefaultPageSize)
+		const size_t alignmentMask = alignment - 1;
+
+		// Assert that it's a power of two.
+		ASSERT((alignmentMask & alignment) == 0);
+
+		// Align the allocation
+		const size_t alignedSize = FMath::AlignUpWithMask(sizeInBytes, alignmentMask);
+
+		if (alignedSize > mDefaultPageSize)
 		{
-			Page* newPage = AllocatorPageManger[mAllocatorType].RequestLargePage(sizeInBytes);
+			Page* newPage = AllocatorPageManger[mAllocatorType].RequestLargePage(alignedSize);
 			mRetiredLargePages.push_back(newPage);
-			Allocation allocation(*newPage, 0, sizeInBytes);
+			Allocation allocation(*newPage, 0, alignedSize);
 			return allocation;
 		}
 
-		if (mCurrentPage == nullptr)
+		if (mCurrentPage == nullptr || !mCurrentPage->HasSpace(alignedSize, alignment))
 		{
+			if (mCurrentPage)
+			{
+				mRetiredPages.push_back(mCurrentPage);
+			}
+
 			mCurrentPage = AllocatorPageManger->RequestPage();
 		}
 
-		if (mCurrentPage->HasSpace(sizeInBytes, alignment))
-		{
-			
-		}
-		else
-		{
+		return mCurrentPage->Allocate(alignedSize, alignment);
+	}
 
+	void GpuLinearAllocator::RetireUsedPages(uint64_t fenceID)
+	{
+		if (mCurrentPage)
+		{
+			mRetiredPages.push_back(mCurrentPage);
+			mCurrentPage = nullptr;
+		}
+
+		if (!mRetiredPages.empty())
+		{	
+			AllocatorPageManger[mAllocatorType].DiscardPages(fenceID, mRetiredPages, false);
+			mRetiredPages.clear();
+		}
+
+		if (!mRetiredLargePages.empty())
+		{
+			AllocatorPageManger[mAllocatorType].DiscardPages(fenceID, mRetiredLargePages, true);
+			mRetiredLargePages.clear();
+		}
+	}
+
+	void GpuLinearAllocator::Destroy()
+	{
+		for (int Index = GpuExclusive; Index < NumAllocatorTypes; ++Index)
+		{
+			AllocatorPageManger[Index].Destroy();
 		}
 	}
 }

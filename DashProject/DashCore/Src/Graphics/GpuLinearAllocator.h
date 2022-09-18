@@ -2,14 +2,9 @@
 
 #include "GpuResource.h"
 
-//#include <vector>
-//#include <queue>
-//#include <memory>
-//#include <mutex>
-
-// Constant blocks must be multiples of 16 constants @ 16 bytes each
 namespace Dash
 {
+	// Constant blocks must be multiples of 16 constants @ 16 bytes each
 	#define DEFAULT_ALIGN 256
 
 	class GpuLinearAllocator
@@ -58,6 +53,8 @@ namespace Dash
 				mResource->Map(0, nullptr, &mCpuAddress);
 			}
 
+			// Check to see if the page has room to satisfy the requested
+			// allocation.
 			bool HasSpace(size_t sizeInBytes, size_t alignment) const;
 
 			Allocation Allocate(size_t sizeInBytes, size_t alignment);
@@ -86,6 +83,7 @@ namespace Dash
 
 			Page* CreateNewPage(size_t pageSize = 0);
 
+			// Discarded pages will get recycled.
 			void DiscardPages(uint64_t fenceID, const std::vector<Page*>& pages, bool isLargePage = false);
 
 			void Destroy();
@@ -128,10 +126,5 @@ namespace Dash
 		std::vector<Page*> mRetiredLargePages;
 
 		static PageManager AllocatorPageManger[2];
-
-		// 分配大内存放入 mLargePagePool 和 mRetiredLargePages
-		// RetireUsedPages 时从 调用 DiscardLargePages, 首先释放PageManager 的 mRetiredLargePages中已经完成的Page (从 PageManager 的 mLargePagePool 中移除), 然后把 GpuLinearAllocator 的 mRetiredLargePages 放入 PageManager 的 mRetiredLargePages.
-		// Destroy 的时候直接释放 PageManager 的 mLargePagePool 中所有 LargePage
-
 	};
 }
