@@ -22,6 +22,7 @@
 #include <queue>
 #include <map>
 #include <unordered_map>
+#include <set>
 
 #include "../Consolid/Consolid.h"
 #include "../Utility/LogManager.h"

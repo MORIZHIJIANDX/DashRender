@@ -139,6 +139,9 @@
     <ClInclude Include="Src\DesignPatterns\Singleton.h" />
     <ClInclude Include="Src\EntryPoint.h" />
     <ClInclude Include="Src\Graphics\Camera.h" />
+    <ClInclude Include="Src\Graphics\CpuDescriptorAllocation.h" />
+    <ClInclude Include="Src\Graphics\CpuDescriptorAllocator.h" />
+    <ClInclude Include="Src\Graphics\CpuDescriptorAllocatorPage.h" />
     <ClInclude Include="Src\Graphics\DX12Helper.h" />
     <ClInclude Include="Src\Graphics\GameApp.h" />
     <ClInclude Include="Src\Graphics\GpuLinearAllocator.h" />
@@ -200,6 +203,9 @@
   <ItemGroup>
     <ClCompile Include="Src\EntryPoint.cpp" />
     <ClCompile Include="Src\Graphics\Camera.cpp" />
+    <ClCompile Include="Src\Graphics\CpuDescriptorAllocation.cpp" />
+    <ClCompile Include="Src\Graphics\CpuDescriptorAllocator.cpp" />
+    <ClCompile Include="Src\Graphics\CpuDescriptorAllocatorPage.cpp" />
     <ClCompile Include="Src\Graphics\DX12Helper.cpp" />
     <ClCompile Include="Src\Graphics\GameApp.cpp" />
     <ClCompile Include="Src\Graphics\GpuLinearAllocator.cpp" />
