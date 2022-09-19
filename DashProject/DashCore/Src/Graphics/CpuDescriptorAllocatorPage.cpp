@@ -47,6 +47,8 @@ namespace Dash
 
 	CpuDescriptorAllocation CpuDescriptorAllocatorPage::Allocate(uint32_t numDescriptors)
 	{
+		std::lock_guard<std::mutex> lock(mAllocationMutex);
+
 		if (numDescriptors > mNumFreeHandels)
 		{
 			return CpuDescriptorAllocation();
@@ -85,11 +87,16 @@ namespace Dash
 	void CpuDescriptorAllocatorPage::Free(CpuDescriptorAllocation&& allocation)
 	{
 		OffsetType offset = ComputeOffset(allocation.GetDescriptorHandle());
+
+		std::lock_guard<std::mutex> lock(mAllocationMutex);
+
 		mStaleDescriptorQueue.emplace(offset, allocation.GetNumDescriptors());
 	}
 
 	void CpuDescriptorAllocatorPage::ReleaseStaleDescriptors()
 	{
+		std::lock_guard<std::mutex> lock(mAllocationMutex);
+
 		while (!mStaleDescriptorQueue.empty())
 		{
 			StaleDescriptorInfo& info = mStaleDescriptorQueue.front();	

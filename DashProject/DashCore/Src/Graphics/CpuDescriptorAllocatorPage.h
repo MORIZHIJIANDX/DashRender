@@ -74,5 +74,7 @@ namespace Dash
 		uint32_t mDescriptorHandelIncrementSize = 0;
 		uint32_t mNumFreeHandels = 0;
 		uint32_t mNumDescriptorsInHeap = 0;
+
+		std::mutex mAllocationMutex;
 	};
 }
