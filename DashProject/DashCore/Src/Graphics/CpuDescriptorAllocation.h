@@ -23,7 +23,7 @@ namespace Dash
 
 		// Move is allowed.
 		CpuDescriptorAllocation(CpuDescriptorAllocation&& allocation) noexcept;
-		CpuDescriptorAllocation operator=(CpuDescriptorAllocation&& other) noexcept;
+		CpuDescriptorAllocation& operator=(CpuDescriptorAllocation&& other) noexcept;
 
 		// Check if this a valid descriptor.
 		bool IsNull() const;

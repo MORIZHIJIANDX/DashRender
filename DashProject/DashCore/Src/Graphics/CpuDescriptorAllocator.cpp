@@ -80,7 +80,7 @@ namespace Dash
 		std::shared_ptr<CpuDescriptorAllocatorPage> page = std::make_shared<CpuDescriptorAllocatorPage>(mType, heapSize);
 
 		mHeapPool.push_back(page);
-		mAvailableHeaps.insert(mHeapPool.size() - 1);
+		mAvailableHeaps.insert(static_cast<uint32_t>(mHeapPool.size()) - 1);
 
 		return page;
 	}
