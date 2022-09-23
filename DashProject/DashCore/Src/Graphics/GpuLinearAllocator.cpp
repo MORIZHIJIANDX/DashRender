@@ -139,7 +139,7 @@ namespace Dash
 		ID3D12Resource* Buffer;
 		DX_CALL(Graphics::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, resourceState, nullptr, IID_PPV_ARGS(&Buffer)));
 
-		return new Page(Buffer, resourceState);
+		return new Page(Buffer, resourceState, resourceDesc.Width);
 	}
 
 	void GpuLinearAllocator::PageManager::DiscardPages(uint64_t fenceID, const std::vector<Page*>& pages, bool isLargePage)

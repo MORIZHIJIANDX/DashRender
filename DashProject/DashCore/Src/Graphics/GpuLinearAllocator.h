@@ -45,7 +45,9 @@ namespace Dash
 		class Page : public GpuResource
 		{
 		public:
-			Page(ID3D12Resource* resource, D3D12_RESOURCE_STATES defaultState)
+			Page(ID3D12Resource* resource, D3D12_RESOURCE_STATES defaultState, size_t pageSize)
+				: mPageSie(pageSize)
+				, mOffset(0)
 			{
 				mResource.Attach(resource);
 				GpuResourcesStateTracker::AddGlobalResourceState(resource, defaultState);
@@ -69,8 +71,8 @@ namespace Dash
 			void* mCpuAddress = nullptr;
 			D3D12_GPU_VIRTUAL_ADDRESS mGpuAddress = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
 
-			size_t mPageSie;
-			size_t mOffset;
+			size_t mPageSie = 0;
+			size_t mOffset = 0;
 		};
 
 		class PageManager
