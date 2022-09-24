@@ -139,7 +139,7 @@
     <ClInclude Include="Src\DesignPatterns\Singleton.h" />
     <ClInclude Include="Src\EntryPoint.h" />
     <ClInclude Include="Src\Graphics\Camera.h" />
-    <ClInclude Include="Src\Graphics\CommandListPool.h" />
+    <ClInclude Include="Src\Graphics\CommandQueue.h" />
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocation.h" />
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocator.h" />
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocatorPage.h" />
@@ -205,7 +205,7 @@
   <ItemGroup>
     <ClCompile Include="Src\EntryPoint.cpp" />
     <ClCompile Include="Src\Graphics\Camera.cpp" />
-    <ClCompile Include="Src\Graphics\CommandListPool.cpp" />
+    <ClCompile Include="Src\Graphics\CommandQueue.cpp" />
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocation.cpp" />
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocator.cpp" />
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocatorPage.cpp" />

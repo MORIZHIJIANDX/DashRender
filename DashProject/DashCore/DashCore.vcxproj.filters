@@ -64,6 +64,9 @@
     <ClInclude Include="Src\Graphics\DX12Helper.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\DynamicDescriptorHeap.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\GameApp.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -232,10 +235,7 @@
     <ClInclude Include="Src\Utility\ThreadSafeQueue.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\DynamicDescriptorHeap.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Graphics\CommandListPool.h">
+    <ClInclude Include="Src\Graphics\CommandQueue.h">
       <Filter>Graphics</Filter>
     </ClInclude>
   </ItemGroup>
@@ -254,6 +254,9 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\DX12Helper.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\DynamicDescriptorHeap.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\GameApp.cpp">
@@ -325,10 +328,7 @@
     <ClCompile Include="Src\Utility\SystemTimer.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Graphics\DynamicDescriptorHeap.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Graphics\CommandListPool.cpp">
+    <ClCompile Include="Src\Graphics\CommandQueue.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
   </ItemGroup>

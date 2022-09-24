@@ -115,7 +115,7 @@ namespace Dash
 
 		Allocation Allocate(size_t sizeInBytes, size_t alignment = DEFAULT_ALIGN);
 
-		void RetireUsedPages(uint64_t fenceID);
+		void RetireUsedPages(uint64_t fenceValue);
 
 		static void Destroy();
 

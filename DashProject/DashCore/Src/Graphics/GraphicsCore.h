@@ -3,7 +3,9 @@
 #include <d3d12.h>
 
 namespace Dash
-{
+{	
+	class CommandQueueManager;
+
 	class Graphics
 	{
 	public:
@@ -11,6 +13,8 @@ namespace Dash
 		static void Shutdown();
 
 		static ID3D12Device* Device;
+		static CommandQueueManager* QueueManager;
+
 		static constexpr int BackBufferCount = 3;
 	private:
 		static bool mTypedUAVLoadSupport_R11G11B10_FLOAT;

@@ -1,5 +1,6 @@
 #include "PCH.h"
 #include "GraphicsCore.h"
+#include "CommandQueue.h"
 #include <wrl.h>
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
@@ -19,8 +20,11 @@ namespace Dash
 	static const uint32_t VendorID_Intel = 0x8086;
 
 	ID3D12Device* Graphics::Device = nullptr;
+	CommandQueueManager* Graphics::QueueManager = nullptr;
+
 	bool Graphics::mTypedUAVLoadSupport_R11G11B10_FLOAT = false;
 	bool Graphics::mTypedUAVLoadSupport_R16G16B16A16_FLOAT = false;
+
 	D3D_ROOT_SIGNATURE_VERSION Graphics::mHighestRootSignatureVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;
 
 	void Graphics::Initialize()

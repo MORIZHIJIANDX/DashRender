@@ -1,6 +1,7 @@
 #include "PCH.h"
 #include "GpuLinearAllocator.h"
 #include "GraphicsCore.h"
+#include "CommandQueue.h"
 #include "../Utility/Exception.h"
 
 namespace Dash
@@ -41,12 +42,7 @@ namespace Dash
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
-		auto IsFenceCompleted = [](int64_t fence)
-		{
-			return true;
-		};
-
-		while (!mRetiredPages.empty() && IsFenceCompleted(mRetiredPages.front().first))
+		while (!mRetiredPages.empty() && Graphics::QueueManager->IsFenceCompleted(mRetiredPages.front().first))
 		{
 			mAvailablePages.push(mRetiredPages.front().second);
 			mRetiredPages.pop();
@@ -71,12 +67,7 @@ namespace Dash
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
-		auto IsFenceCompleted = [](int64_t fence)
-		{
-			return true;
-		};
-
-		while (!mRetiredLargePages.empty() && IsFenceCompleted(mRetiredLargePages.front().first))
+		while (!mRetiredLargePages.empty() && Graphics::QueueManager->IsFenceCompleted(mRetiredLargePages.front().first))
 		{
 			Page* pageToFree = mRetiredLargePages.front().second;
 			auto iter = std::find_if(mLargePagePool.begin(), mLargePagePool.end(),[&pageToFree](std::unique_ptr<GpuLinearAllocator::Page>& page)
@@ -104,7 +95,7 @@ namespace Dash
 		heapProps.CreationNodeMask = 1;
 		heapProps.VisibleNodeMask = 1;
 
-		D3D12_RESOURCE_DESC resourceDesc;
+		D3D12_RESOURCE_DESC resourceDesc{};
 		resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
 		resourceDesc.Alignment = 0;
 		resourceDesc.Height = 1;
@@ -142,7 +133,7 @@ namespace Dash
 		return new Page(Buffer, resourceState, resourceDesc.Width);
 	}
 
-	void GpuLinearAllocator::PageManager::DiscardPages(uint64_t fenceID, const std::vector<Page*>& pages, bool isLargePage)
+	void GpuLinearAllocator::PageManager::DiscardPages(uint64_t fenceValue, const std::vector<Page*>& pages, bool isLargePage)
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
@@ -150,14 +141,14 @@ namespace Dash
 		{
 			for (Page* page : pages)
 			{
-				mRetiredLargePages.push(std::make_pair(fenceID, page));
+				mRetiredLargePages.push(std::make_pair(fenceValue, page));
 			}
 		}
 		else
 		{
 			for (Page* page : pages)
 			{
-				mRetiredPages.push(std::make_pair(fenceID, page));
+				mRetiredPages.push(std::make_pair(fenceValue, page));
 			}
 		}
 	}
@@ -201,7 +192,7 @@ namespace Dash
 		return mCurrentPage->Allocate(alignedSize, alignment);
 	}
 
-	void GpuLinearAllocator::RetireUsedPages(uint64_t fenceID)
+	void GpuLinearAllocator::RetireUsedPages(uint64_t fenceValue)
 	{
 		if (mCurrentPage)
 		{
@@ -211,13 +202,13 @@ namespace Dash
 
 		if (!mRetiredPages.empty())
 		{	
-			AllocatorPageManger[mAllocatorType].DiscardPages(fenceID, mRetiredPages, false);
+			AllocatorPageManger[mAllocatorType].DiscardPages(fenceValue, mRetiredPages, false);
 			mRetiredPages.clear();
 		}
 
 		if (!mRetiredLargePages.empty())
 		{
-			AllocatorPageManger[mAllocatorType].DiscardPages(fenceID, mRetiredLargePages, true);
+			AllocatorPageManger[mAllocatorType].DiscardPages(fenceValue, mRetiredLargePages, true);
 			mRetiredLargePages.clear();
 		}
 	}
