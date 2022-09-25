@@ -7,11 +7,11 @@ namespace Dash
 {
 	#define	COMMAND_TYPE_MASK 56
 
-	class CommandList
+	class FCommandList
 	{
 	public:
-		CommandList(D3D12_COMMAND_LIST_TYPE type);
-		~CommandList();
+		FCommandList(D3D12_COMMAND_LIST_TYPE type);
+		~FCommandList();
 
 		void Reset();
 		void Close();
@@ -21,8 +21,8 @@ namespace Dash
 			return mType;
 		}
 
-		ID3D12GraphicsCommandList* GetD3DCommandList() { return mGraphicsCommandList.Get(); }
-		const ID3D12GraphicsCommandList* GetD3DCommandList() const { return mGraphicsCommandList.Get(); }
+		ID3D12GraphicsCommandList* GetCommandList() { return mGraphicsCommandList.Get(); }
+		const ID3D12GraphicsCommandList* GetCommandList() const { return mGraphicsCommandList.Get(); }
 
 	private:
 		D3D12_COMMAND_LIST_TYPE mType;
@@ -44,18 +44,18 @@ namespace Dash
 			return mType;
 		}
 
-		CommandList* RequestCommandList();
+		FCommandList* RequestCommandList();
 
-		void RetiredUsedCommandList(uint64_t fenceID, CommandList* commandList);
+		void RetiredUsedCommandList(uint64_t fenceID, FCommandList* commandList);
 
 	private:
 		D3D12_COMMAND_LIST_TYPE mType;
 
 		std::mutex mMutex;
 
-		std::vector<std::unique_ptr<CommandList>> mCommandListPool;
-		std::queue<std::pair<uint64_t, CommandList*>> mRetiredCommandLists;
-		std::queue<CommandList*> mAvailableCommandLists;
+		std::vector<std::unique_ptr<FCommandList>> mCommandListPool;
+		std::queue<std::pair<uint64_t, FCommandList*>> mRetiredCommandLists;
+		std::queue<FCommandList*> mAvailableCommandLists;
 	};
 
 	class CommandListManager
@@ -92,8 +92,8 @@ namespace Dash
 
 		void Destroy();
 
-		uint64_t ExecuteCommandList(CommandList* commandList);
-		uint64_t ExecuteCommandLists(std::vector<CommandList*> commandLists);
+		uint64_t ExecuteCommandList(FCommandList* commandList);
+		uint64_t ExecuteCommandLists(std::vector<FCommandList*> commandLists);
 		uint64_t Signal();
 
 		bool IsFenceCompleted(uint64_t fenceValue);
