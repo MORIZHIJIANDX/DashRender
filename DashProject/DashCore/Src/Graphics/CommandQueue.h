@@ -31,11 +31,11 @@ namespace Dash
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> mCommandAllocator;
 	};
 
-	class CommandListPool
+	class FCommandListPool
 	{
 	public:
-		CommandListPool(D3D12_COMMAND_LIST_TYPE type);
-		~CommandListPool();
+		FCommandListPool(D3D12_COMMAND_LIST_TYPE type);
+		~FCommandListPool();
 
 		void Destroy();
 
@@ -58,30 +58,30 @@ namespace Dash
 		std::queue<FCommandList*> mAvailableCommandLists;
 	};
 
-	class CommandListManager
+	class FCommandListManager
 	{
 	public:
-		CommandListManager()
+		FCommandListManager()
 			: mGraphicsCommandListPool(D3D12_COMMAND_LIST_TYPE_DIRECT)
 			, mComputeCommandListPool(D3D12_COMMAND_LIST_TYPE_COMPUTE)
 			, mCopyCommandListPool(D3D12_COMMAND_LIST_TYPE_COPY)
 		{
 		}
 
-		~CommandListManager(){}
+		~FCommandListManager(){}
 
 		void Destroy();
 
-		CommandListPool& GetGraphicsCommandListPool();
-		CommandListPool& GetComputeCommandListPool();
-		CommandListPool& GetCopyCommandListPool();
+		FCommandListPool& GetGraphicsCommandListPool();
+		FCommandListPool& GetComputeCommandListPool();
+		FCommandListPool& GetCopyCommandListPool();
 
-		CommandListPool& GetCommandListPool(D3D12_COMMAND_LIST_TYPE type);
+		FCommandListPool& GetCommandListPool(D3D12_COMMAND_LIST_TYPE type);
 
 	private:
-		CommandListPool mGraphicsCommandListPool;
-		CommandListPool mComputeCommandListPool;
-		CommandListPool mCopyCommandListPool;
+		FCommandListPool mGraphicsCommandListPool;
+		FCommandListPool mComputeCommandListPool;
+		FCommandListPool mCopyCommandListPool;
 	};
 
 	class CommandQueue

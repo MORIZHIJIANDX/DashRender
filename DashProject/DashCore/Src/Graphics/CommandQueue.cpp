@@ -29,17 +29,17 @@ namespace Dash
 		DX_CALL(mGraphicsCommandList->Close());
 	}
 
-	CommandListPool::CommandListPool(D3D12_COMMAND_LIST_TYPE type)
+	FCommandListPool::FCommandListPool(D3D12_COMMAND_LIST_TYPE type)
 		: mType(type)
 	{
 	}
 
-	CommandListPool::~CommandListPool()
+	FCommandListPool::~FCommandListPool()
 	{
 		Destroy();
 	}
 
-	void CommandListPool::Destroy()
+	void FCommandListPool::Destroy()
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
@@ -49,7 +49,7 @@ namespace Dash
 		}
 	}
 
-	FCommandList* CommandListPool::RequestCommandList()
+	FCommandList* FCommandListPool::RequestCommandList()
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
@@ -77,7 +77,7 @@ namespace Dash
 		return commandList;
 	}
 
-	void CommandListPool::RetiredUsedCommandList(uint64_t fenceID, FCommandList* commandList)
+	void FCommandListPool::RetiredUsedCommandList(uint64_t fenceID, FCommandList* commandList)
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 		mRetiredCommandLists.push(std::make_pair(fenceID, commandList));
@@ -230,29 +230,29 @@ namespace Dash
 		mCopyQueue.Flush();
 	}
 
-	void CommandListManager::Destroy()
+	void FCommandListManager::Destroy()
 	{
 		mGraphicsCommandListPool.Destroy();
 		mComputeCommandListPool.Destroy();
 		mCopyCommandListPool.Destroy();
 	}
 
-	CommandListPool& CommandListManager::GetGraphicsCommandListPool()
+	FCommandListPool& FCommandListManager::GetGraphicsCommandListPool()
 	{
 		return mGraphicsCommandListPool;
 	}
 
-	CommandListPool& CommandListManager::GetComputeCommandListPool()
+	FCommandListPool& FCommandListManager::GetComputeCommandListPool()
 	{
 		return mComputeCommandListPool;
 	}
 
-	CommandListPool& CommandListManager::GetCopyCommandListPool()
+	FCommandListPool& FCommandListManager::GetCopyCommandListPool()
 	{
 		return mCopyCommandListPool;
 	}
 
-	CommandListPool& CommandListManager::GetCommandListPool(D3D12_COMMAND_LIST_TYPE type)
+	FCommandListPool& FCommandListManager::GetCommandListPool(D3D12_COMMAND_LIST_TYPE type)
 	{
 		switch (type)
 		{
