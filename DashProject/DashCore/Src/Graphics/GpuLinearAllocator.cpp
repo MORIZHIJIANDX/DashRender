@@ -42,7 +42,7 @@ namespace Dash
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
-		while (!mRetiredPages.empty() && FGraphicsCore::QueueManager->IsFenceCompleted(mRetiredPages.front().first))
+		while (!mRetiredPages.empty() && FGraphicsCore::CommandQueueManager->IsFenceCompleted(mRetiredPages.front().first))
 		{
 			mAvailablePages.push(mRetiredPages.front().second);
 			mRetiredPages.pop();
@@ -67,7 +67,7 @@ namespace Dash
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
-		while (!mRetiredLargePages.empty() && FGraphicsCore::QueueManager->IsFenceCompleted(mRetiredLargePages.front().first))
+		while (!mRetiredLargePages.empty() && FGraphicsCore::CommandQueueManager->IsFenceCompleted(mRetiredLargePages.front().first))
 		{
 			FPage* pageToFree = mRetiredLargePages.front().second;
 			auto iter = std::find_if(mLargePagePool.begin(), mLargePagePool.end(),[&pageToFree](std::unique_ptr<FGpuLinearAllocator::FPage>& page)

@@ -5,6 +5,7 @@
 namespace Dash
 {	
 	class FCommandQueueManager;
+	class FCommandListManager;
 
 	class FGraphicsCore
 	{
@@ -13,7 +14,8 @@ namespace Dash
 		static void Shutdown();
 
 		static ID3D12Device* Device;
-		static FCommandQueueManager* QueueManager;
+		static FCommandQueueManager* CommandQueueManager;
+		static FCommandListManager* CommandListManager;
 
 		static constexpr int BackBufferCount = 3;
 	private:

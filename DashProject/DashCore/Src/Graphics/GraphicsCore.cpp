@@ -20,7 +20,8 @@ namespace Dash
 	static const uint32_t VendorID_Intel = 0x8086;
 
 	ID3D12Device* FGraphicsCore::Device = nullptr;
-	FCommandQueueManager* FGraphicsCore::QueueManager = nullptr;
+	FCommandQueueManager* FGraphicsCore::CommandQueueManager = nullptr;
+	FCommandListManager* FGraphicsCore::CommandListManager = nullptr;
 
 	bool FGraphicsCore::mTypedUAVLoadSupport_R11G11B10_FLOAT = false;
 	bool FGraphicsCore::mTypedUAVLoadSupport_R16G16B16A16_FLOAT = false;

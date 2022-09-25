@@ -53,7 +53,7 @@ namespace Dash
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
-		while (!mRetiredCommandLists.empty() && FGraphicsCore::QueueManager->IsFenceCompleted(mRetiredCommandLists.front().first))
+		while (!mRetiredCommandLists.empty() && FGraphicsCore::CommandQueueManager->IsFenceCompleted(mRetiredCommandLists.front().first))
 		{
 			mAvailableCommandLists.push(mRetiredCommandLists.front().second);
 			mRetiredCommandLists.pop();
