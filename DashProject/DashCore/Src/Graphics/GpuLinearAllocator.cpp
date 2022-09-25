@@ -6,10 +6,10 @@
 
 namespace Dash
 {
-	FGpuLinearAllocator::AllocatorType FGpuLinearAllocator::PageManager::AutoAllocatorType = CpuExclusive;
-	FGpuLinearAllocator::PageManager FGpuLinearAllocator::AllocatorPageManger[2];
+	FGpuLinearAllocator::AllocatorType FGpuLinearAllocator::FPageManager::AutoAllocatorType = CpuExclusive;
+	FGpuLinearAllocator::FPageManager FGpuLinearAllocator::AllocatorPageManger[2];
 	 
-	bool FGpuLinearAllocator::Page::HasSpace(size_t sizeInBytes, size_t alignment) const
+	bool FGpuLinearAllocator::FPage::HasSpace(size_t sizeInBytes, size_t alignment) const
 	{
 		size_t alignedSize = FMath::AlignUp(sizeInBytes, alignment);
 		size_t alignedOffset = FMath::AlignUp(mOffset, alignment);
@@ -17,12 +17,12 @@ namespace Dash
 		return alignedOffset + alignedSize <= mPageSie;
 	}
 
-	FGpuLinearAllocator::Allocation FGpuLinearAllocator::Page::Allocate(size_t sizeInBytes, size_t alignment)
+	FGpuLinearAllocator::FAllocation FGpuLinearAllocator::FPage::Allocate(size_t sizeInBytes, size_t alignment)
 	{
 		size_t alignedSize = FMath::AlignUp(sizeInBytes, alignment);
 		mOffset = FMath::AlignUp(mOffset, alignment);
 
-		FGpuLinearAllocator::Allocation allocation{*this, mOffset, alignedSize};
+		FGpuLinearAllocator::FAllocation allocation{*this, mOffset, alignedSize};
 		allocation.CpuAddress = static_cast<uint8_t*>(mCpuAddress) + mOffset;
 		allocation.GpuAddress = mGpuAddress + mOffset;
 
@@ -31,14 +31,14 @@ namespace Dash
 		return allocation;
 	} 
 
-	FGpuLinearAllocator::PageManager::PageManager()
+	FGpuLinearAllocator::FPageManager::FPageManager()
 	{
 		mAllocatorType = AutoAllocatorType;
 		AutoAllocatorType = (FGpuLinearAllocator::AllocatorType)(AutoAllocatorType + 1);
 		ASSERT(AutoAllocatorType <= NumAllocatorTypes);
 	}
 
-	FGpuLinearAllocator::Page* FGpuLinearAllocator::PageManager::RequestPage()
+	FGpuLinearAllocator::FPage* FGpuLinearAllocator::FPageManager::RequestPage()
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
@@ -48,7 +48,7 @@ namespace Dash
 			mRetiredPages.pop();
 		}
 
-		FGpuLinearAllocator::Page* newPage = nullptr;
+		FGpuLinearAllocator::FPage* newPage = nullptr;
 
 		if (!mAvailablePages.empty())
 		{
@@ -63,14 +63,14 @@ namespace Dash
 		return newPage;
 	}
 
-	FGpuLinearAllocator::Page* FGpuLinearAllocator::PageManager::RequestLargePage(size_t pageSize)
+	FGpuLinearAllocator::FPage* FGpuLinearAllocator::FPageManager::RequestLargePage(size_t pageSize)
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
 		while (!mRetiredLargePages.empty() && Graphics::QueueManager->IsFenceCompleted(mRetiredLargePages.front().first))
 		{
-			Page* pageToFree = mRetiredLargePages.front().second;
-			auto iter = std::find_if(mLargePagePool.begin(), mLargePagePool.end(),[&pageToFree](std::unique_ptr<FGpuLinearAllocator::Page>& page)
+			FPage* pageToFree = mRetiredLargePages.front().second;
+			auto iter = std::find_if(mLargePagePool.begin(), mLargePagePool.end(),[&pageToFree](std::unique_ptr<FGpuLinearAllocator::FPage>& page)
 			{ 
 				return page.get() == pageToFree; 
 			});
@@ -81,13 +81,13 @@ namespace Dash
 			}
 		}
 
-		Page* newPage = CreateNewPage(pageSize);
+		FPage* newPage = CreateNewPage(pageSize);
 		mLargePagePool.emplace_back(newPage);
 
 		return nullptr;
 	}
 
-	FGpuLinearAllocator::Page* FGpuLinearAllocator::PageManager::CreateNewPage(size_t pageSize /*= 0*/)
+	FGpuLinearAllocator::FPage* FGpuLinearAllocator::FPageManager::CreateNewPage(size_t pageSize /*= 0*/)
 	{
 		D3D12_HEAP_PROPERTIES heapProps;
 		heapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
@@ -130,30 +130,30 @@ namespace Dash
 		ID3D12Resource* Buffer;
 		DX_CALL(Graphics::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, resourceState, nullptr, IID_PPV_ARGS(&Buffer)));
 
-		return new Page(Buffer, resourceState, resourceDesc.Width);
+		return new FPage(Buffer, resourceState, resourceDesc.Width);
 	}
 
-	void FGpuLinearAllocator::PageManager::DiscardPages(uint64_t fenceValue, const std::vector<Page*>& pages, bool isLargePage)
+	void FGpuLinearAllocator::FPageManager::DiscardPages(uint64_t fenceValue, const std::vector<FPage*>& pages, bool isLargePage)
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
 		if (isLargePage)
 		{
-			for (Page* page : pages)
+			for (FPage* page : pages)
 			{
 				mRetiredLargePages.push(std::make_pair(fenceValue, page));
 			}
 		}
 		else
 		{
-			for (Page* page : pages)
+			for (FPage* page : pages)
 			{
 				mRetiredPages.push(std::make_pair(fenceValue, page));
 			}
 		}
 	}
 
-	void FGpuLinearAllocator::PageManager::Destroy()
+	void FGpuLinearAllocator::FPageManager::Destroy()
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
@@ -161,7 +161,7 @@ namespace Dash
 		mLargePagePool.clear();
 	}
 
-	FGpuLinearAllocator::Allocation FGpuLinearAllocator::Allocate(size_t sizeInBytes, size_t alignment)
+	FGpuLinearAllocator::FAllocation FGpuLinearAllocator::Allocate(size_t sizeInBytes, size_t alignment)
 	{
 		const size_t alignmentMask = alignment - 1;
 
@@ -173,9 +173,9 @@ namespace Dash
 
 		if (alignedSize > mDefaultPageSize)
 		{
-			Page* newPage = AllocatorPageManger[mAllocatorType].RequestLargePage(alignedSize);
+			FPage* newPage = AllocatorPageManger[mAllocatorType].RequestLargePage(alignedSize);
 			mRetiredLargePages.push_back(newPage);
-			Allocation allocation(*newPage, 0, alignedSize);
+			FAllocation allocation(*newPage, 0, alignedSize);
 			return allocation;
 		}
 

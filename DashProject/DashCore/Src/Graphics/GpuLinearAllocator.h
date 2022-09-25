@@ -25,9 +25,9 @@ namespace Dash
 			CpuDefaultPageSize = 0x200000	// 2MB
 		};
 
-		struct Allocation
+		struct FAllocation
 		{
-			Allocation(FGpuResource& resource, size_t thisOffset, size_t thisSize)
+			FAllocation(FGpuResource& resource, size_t thisOffset, size_t thisSize)
 				: Resource(resource)
 				, Offset(thisOffset)
 				, Size(thisSize)
@@ -42,10 +42,10 @@ namespace Dash
 		};
 
 	protected:
-		class Page : public FGpuResource
+		class FPage : public FGpuResource
 		{
 		public:
-			Page(ID3D12Resource* resource, D3D12_RESOURCE_STATES defaultState, size_t pageSize)
+			FPage(ID3D12Resource* resource, D3D12_RESOURCE_STATES defaultState, size_t pageSize)
 				: mPageSie(pageSize)
 				, mOffset(0)
 			{
@@ -59,9 +59,9 @@ namespace Dash
 			// allocation.
 			bool HasSpace(size_t sizeInBytes, size_t alignment) const;
 
-			Allocation Allocate(size_t sizeInBytes, size_t alignment);
+			FAllocation Allocate(size_t sizeInBytes, size_t alignment);
 
-			~Page()
+			~FPage()
 			{
 				mResource->Unmap(0, nullptr);
 				mCpuAddress = nullptr;
@@ -75,18 +75,18 @@ namespace Dash
 			size_t mOffset = 0;
 		};
 
-		class PageManager
+		class FPageManager
 		{
 		public:
-			PageManager();
+			FPageManager();
 
-			Page* RequestPage();
-			Page* RequestLargePage(size_t pageSize = 0);
+			FPage* RequestPage();
+			FPage* RequestLargePage(size_t pageSize = 0);
 
-			Page* CreateNewPage(size_t pageSize = 0);
+			FPage* CreateNewPage(size_t pageSize = 0);
 
 			// Discarded pages will get recycled.
-			void DiscardPages(uint64_t fenceID, const std::vector<Page*>& pages, bool isLargePage = false);
+			void DiscardPages(uint64_t fenceID, const std::vector<FPage*>& pages, bool isLargePage = false);
 
 			void Destroy();
 
@@ -94,11 +94,11 @@ namespace Dash
 			static AllocatorType AutoAllocatorType;
 
 			AllocatorType mAllocatorType;
-			std::vector<std::unique_ptr<Page>> mPagePool;
-			std::vector<std::unique_ptr<Page>> mLargePagePool;
-			std::queue<std::pair<uint64_t, Page*>> mRetiredPages;
-			std::queue<std::pair<uint64_t, Page*>> mRetiredLargePages; //DeletionQueue
-			std::queue<Page*> mAvailablePages;
+			std::vector<std::unique_ptr<FPage>> mPagePool;
+			std::vector<std::unique_ptr<FPage>> mLargePagePool;
+			std::queue<std::pair<uint64_t, FPage*>> mRetiredPages;
+			std::queue<std::pair<uint64_t, FPage*>> mRetiredLargePages; //DeletionQueue
+			std::queue<FPage*> mAvailablePages;
 			std::mutex mMutex;
 		};
 
@@ -113,7 +113,7 @@ namespace Dash
 			mDefaultPageSize = type == GpuExclusive ? GpuDefaultPageSize : CpuDefaultPageSize;
 		}
 
-		Allocation Allocate(size_t sizeInBytes, size_t alignment = DEFAULT_ALIGN);
+		FAllocation Allocate(size_t sizeInBytes, size_t alignment = DEFAULT_ALIGN);
 
 		void RetireUsedPages(uint64_t fenceValue);
 
@@ -123,10 +123,10 @@ namespace Dash
 		AllocatorType mAllocatorType;
 		size_t mDefaultPageSize;
 
-		Page* mCurrentPage = nullptr;
-		std::vector<Page*> mRetiredPages;	
-		std::vector<Page*> mRetiredLargePages;
+		FPage* mCurrentPage = nullptr;
+		std::vector<FPage*> mRetiredPages;	
+		std::vector<FPage*> mRetiredLargePages;
 
-		static PageManager AllocatorPageManger[2];
+		static FPageManager AllocatorPageManger[2];
 	};
 }
