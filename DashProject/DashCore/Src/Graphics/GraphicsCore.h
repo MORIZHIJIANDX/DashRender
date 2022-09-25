@@ -4,7 +4,7 @@
 
 namespace Dash
 {	
-	class CommandQueueManager;
+	class FCommandQueueManager;
 
 	class Graphics
 	{
@@ -13,7 +13,7 @@ namespace Dash
 		static void Shutdown();
 
 		static ID3D12Device* Device;
-		static CommandQueueManager* QueueManager;
+		static FCommandQueueManager* QueueManager;
 
 		static constexpr int BackBufferCount = 3;
 	private:

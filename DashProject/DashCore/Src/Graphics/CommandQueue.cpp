@@ -83,7 +83,7 @@ namespace Dash
 		mRetiredCommandLists.push(std::make_pair(fenceID, commandList));
 	}
 
-	CommandQueue::CommandQueue(D3D12_COMMAND_LIST_TYPE type)
+	FCommandQueue::FCommandQueue(D3D12_COMMAND_LIST_TYPE type)
 	{
 		D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
 		commandQueueDesc.Type = type;
@@ -98,7 +98,7 @@ namespace Dash
 		mNextFenceValue = initFenceValue + 1;
 	}
 
-	void CommandQueue::Destroy()
+	void FCommandQueue::Destroy()
 	{
 		if (mCommandQueue)
 		{
@@ -109,7 +109,7 @@ namespace Dash
 		}
 	}
 
-	uint64_t CommandQueue::ExecuteCommandList(FCommandList* commandList)
+	uint64_t FCommandQueue::ExecuteCommandList(FCommandList* commandList)
 	{
 		commandList->Close();
 
@@ -119,7 +119,7 @@ namespace Dash
 		return Signal();
 	}
 
-	uint64_t CommandQueue::ExecuteCommandLists(std::vector<FCommandList*> commandLists)
+	uint64_t FCommandQueue::ExecuteCommandLists(std::vector<FCommandList*> commandLists)
 	{
 		if (commandLists.empty())
 		{
@@ -139,18 +139,18 @@ namespace Dash
 		return Signal();
 	}
 
-	uint64_t CommandQueue::Signal()
+	uint64_t FCommandQueue::Signal()
 	{
 		DX_CALL(mCommandQueue->Signal(mFence.Get(), mNextFenceValue));
 		return mNextFenceValue++;
 	}
 
-	bool CommandQueue::IsFenceCompleted(uint64_t fenceValue)
+	bool FCommandQueue::IsFenceCompleted(uint64_t fenceValue)
 	{
 		return fenceValue <= mFence->GetCompletedValue();
 	}
 
-	void CommandQueue::WaitForFence(uint64_t fenceValue)
+	void FCommandQueue::WaitForFence(uint64_t fenceValue)
 	{
 		if (IsFenceCompleted(fenceValue))
 		{
@@ -168,39 +168,39 @@ namespace Dash
 		}
 	}
 
-	void CommandQueue::WaitForCommandQueue(const CommandQueue& queue)
+	void FCommandQueue::WaitForCommandQueue(const FCommandQueue& queue)
 	{
 		DX_CALL(mCommandQueue->Wait(queue.mFence.Get(), queue.mNextFenceValue - 1));
 	}
 
-	void CommandQueue::Flush()
+	void FCommandQueue::Flush()
 	{
 		WaitForFence(Signal());
 	}
 
-	void CommandQueueManager::Destroy()
+	void FCommandQueueManager::Destroy()
 	{
 		mGraphicsQueue.Destroy();
 		mComputeQueue.Destroy();
 		mCopyQueue.Destroy();
 	}
 
-	CommandQueue& CommandQueueManager::GetGraphicsQueue()
+	FCommandQueue& FCommandQueueManager::GetGraphicsQueue()
 	{
 		return mGraphicsQueue;
 	}
 
-	CommandQueue& CommandQueueManager::GetComputeQueue()
+	FCommandQueue& FCommandQueueManager::GetComputeQueue()
 	{
 		return mComputeQueue;
 	}
 
-	CommandQueue& CommandQueueManager::GetCopyQueue()
+	FCommandQueue& FCommandQueueManager::GetCopyQueue()
 	{
 		return mCopyQueue;
 	}
 
-	CommandQueue& CommandQueueManager::GetQueue(D3D12_COMMAND_LIST_TYPE type)
+	FCommandQueue& FCommandQueueManager::GetQueue(D3D12_COMMAND_LIST_TYPE type)
 	{
 		switch (type)
 		{
@@ -213,17 +213,17 @@ namespace Dash
 		}
 	}
 
-	bool CommandQueueManager::IsFenceCompleted(uint64_t fenceValue)
+	bool FCommandQueueManager::IsFenceCompleted(uint64_t fenceValue)
 	{
 		return GetQueue(D3D12_COMMAND_LIST_TYPE(fenceValue >> COMMAND_TYPE_MASK)).IsFenceCompleted(fenceValue);
 	}
 
-	void CommandQueueManager::WaitForFence(uint64_t fenceValue)
+	void FCommandQueueManager::WaitForFence(uint64_t fenceValue)
 	{
 		GetQueue(D3D12_COMMAND_LIST_TYPE(fenceValue >> COMMAND_TYPE_MASK)).WaitForFence(fenceValue);
 	}
 
-	void CommandQueueManager::Flush()
+	void FCommandQueueManager::Flush()
 	{
 		mGraphicsQueue.Flush();
 		mComputeQueue.Flush();

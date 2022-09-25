@@ -84,11 +84,11 @@ namespace Dash
 		FCommandListPool mCopyCommandListPool;
 	};
 
-	class CommandQueue
+	class FCommandQueue
 	{
 	public:
-		CommandQueue(D3D12_COMMAND_LIST_TYPE type);
-		~CommandQueue() { Destroy(); };
+		FCommandQueue(D3D12_COMMAND_LIST_TYPE type);
+		~FCommandQueue() { Destroy(); };
 
 		void Destroy();
 
@@ -99,7 +99,7 @@ namespace Dash
 		bool IsFenceCompleted(uint64_t fenceValue);
 
 		void WaitForFence(uint64_t fenceValue);
-		void WaitForCommandQueue(const CommandQueue& queue);
+		void WaitForCommandQueue(const FCommandQueue& queue);
 
 		void Flush();
 
@@ -112,33 +112,33 @@ namespace Dash
 		Microsoft::WRL::ComPtr<ID3D12CommandQueue> mCommandQueue;
 	};
 
-	class CommandQueueManager
+	class FCommandQueueManager
 	{
 	public:
-		CommandQueueManager()
+		FCommandQueueManager()
 			: mGraphicsQueue(D3D12_COMMAND_LIST_TYPE_DIRECT)
 			, mComputeQueue(D3D12_COMMAND_LIST_TYPE_COMPUTE)
 			, mCopyQueue(D3D12_COMMAND_LIST_TYPE_COPY)
 		{
 		}
 
-		~CommandQueueManager(){}
+		~FCommandQueueManager(){}
 
 		void Destroy();
 
-		CommandQueue& GetGraphicsQueue();
-		CommandQueue& GetComputeQueue();
-		CommandQueue& GetCopyQueue();
+		FCommandQueue& GetGraphicsQueue();
+		FCommandQueue& GetComputeQueue();
+		FCommandQueue& GetCopyQueue();
 
-		CommandQueue& GetQueue(D3D12_COMMAND_LIST_TYPE type);
+		FCommandQueue& GetQueue(D3D12_COMMAND_LIST_TYPE type);
 
 		bool IsFenceCompleted(uint64_t fenceValue);
 		void WaitForFence(uint64_t fenceValue);
 
 		void Flush();
 	private:
-		CommandQueue mGraphicsQueue;
-		CommandQueue mComputeQueue;
-		CommandQueue mCopyQueue;
+		FCommandQueue mGraphicsQueue;
+		FCommandQueue mComputeQueue;
+		FCommandQueue mCopyQueue;
 	};
 }
