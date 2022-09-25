@@ -27,14 +27,14 @@ namespace Dash
 
 		struct Allocation
 		{
-			Allocation(GpuResource& resource, size_t thisOffset, size_t thisSize)
+			Allocation(FGpuResource& resource, size_t thisOffset, size_t thisSize)
 				: Resource(resource)
 				, Offset(thisOffset)
 				, Size(thisSize)
 			{
 			}
 
-			GpuResource& Resource;
+			FGpuResource& Resource;
 			size_t Offset;
 			size_t Size;
 			void* CpuAddress = nullptr;
@@ -42,7 +42,7 @@ namespace Dash
 		};
 
 	protected:
-		class Page : public GpuResource
+		class Page : public FGpuResource
 		{
 		public:
 			Page(ID3D12Resource* resource, D3D12_RESOURCE_STATES defaultState, size_t pageSize)

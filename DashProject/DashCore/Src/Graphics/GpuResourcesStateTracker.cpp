@@ -86,7 +86,7 @@ namespace Dash
 	}
 
 
-	void GpuResourcesStateTracker::TransitionResource(GpuResource& resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
+	void GpuResourcesStateTracker::TransitionResource(FGpuResource& resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
 	{
 		if (resource.GetResource())
 		{
@@ -230,7 +230,7 @@ namespace Dash
 		}
 	}
 
-	void GpuResourcesStateTracker::AddGlobalResourceState(GpuResource& resource, D3D12_RESOURCE_STATES state)
+	void GpuResourcesStateTracker::AddGlobalResourceState(FGpuResource& resource, D3D12_RESOURCE_STATES state)
 	{
 		if (resource.GetResource())
 		{
@@ -250,7 +250,7 @@ namespace Dash
 		}
 	}
 
-	void GpuResourcesStateTracker::RemoveGlobalResourceState(GpuResource& resource)
+	void GpuResourcesStateTracker::RemoveGlobalResourceState(FGpuResource& resource)
 	{
 		if (resource.GetResource())
 		{

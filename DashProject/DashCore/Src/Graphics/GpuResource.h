@@ -5,10 +5,10 @@
 
 namespace Dash
 {
-	class GpuResource
+	class FGpuResource
 	{
 	public:
-		~GpuResource()
+		~FGpuResource()
 		{
 			Destroy();
 		}
@@ -35,11 +35,11 @@ namespace Dash
 		uint32_t GetVersionID() const { return mVersionID; }
 
 	protected:
-		GpuResource()
+		FGpuResource()
 		{
 		}
 
-		GpuResource(ID3D12Resource* resource)
+		FGpuResource(ID3D12Resource* resource)
 		: mResource(resource)
 		{
 		}
