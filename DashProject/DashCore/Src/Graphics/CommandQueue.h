@@ -16,10 +16,13 @@ namespace Dash
 		void Reset();
 		void Close();
 
-		D3D12_COMMAND_LIST_TYPE GetType() const;
+		D3D12_COMMAND_LIST_TYPE GetType() const 
+		{
+			return mType;
+		}
 
-		ID3D12GraphicsCommandList* GetGraphicsCommandList() { return mGraphicsCommandList.Get(); }
-		const ID3D12GraphicsCommandList* GetGraphicsCommandList() const { return mGraphicsCommandList.Get(); }
+		ID3D12GraphicsCommandList* GetD3DCommandList() { return mGraphicsCommandList.Get(); }
+		const ID3D12GraphicsCommandList* GetD3DCommandList() const { return mGraphicsCommandList.Get(); }
 
 	private:
 		D3D12_COMMAND_LIST_TYPE mType;
@@ -36,6 +39,11 @@ namespace Dash
 
 		void Destroy();
 
+		D3D12_COMMAND_LIST_TYPE GetType() const
+		{
+			return mType;
+		}
+
 		CommandList* RequestCommandList();
 
 		void RetiredUsedCommandList(uint64_t fenceID, CommandList* commandList);
@@ -48,6 +56,32 @@ namespace Dash
 		std::vector<std::unique_ptr<CommandList>> mCommandListPool;
 		std::queue<std::pair<uint64_t, CommandList*>> mRetiredCommandLists;
 		std::queue<CommandList*> mAvailableCommandLists;
+	};
+
+	class CommandListManager
+	{
+	public:
+		CommandListManager()
+			: mGraphicsCommandListPool(D3D12_COMMAND_LIST_TYPE_DIRECT)
+			, mComputeCommandListPool(D3D12_COMMAND_LIST_TYPE_COMPUTE)
+			, mCopyCommandListPool(D3D12_COMMAND_LIST_TYPE_COPY)
+		{
+		}
+
+		~CommandListManager(){}
+
+		void Destroy();
+
+		CommandListPool& GetGraphicsCommandListPool();
+		CommandListPool& GetComputeCommandListPool();
+		CommandListPool& GetCopyCommandListPool();
+
+		CommandListPool& GetCommandListPool(D3D12_COMMAND_LIST_TYPE type);
+
+	private:
+		CommandListPool mGraphicsCommandListPool;
+		CommandListPool mComputeCommandListPool;
+		CommandListPool mCopyCommandListPool;
 	};
 
 	class CommandQueue
@@ -68,6 +102,9 @@ namespace Dash
 		void WaitForCommandQueue(const CommandQueue& queue);
 
 		void Flush();
+
+		ID3D12CommandQueue* GetD3DCommandQueue() { return mCommandQueue.Get(); }
+		const ID3D12CommandQueue* GetD3DCommandQueue() const { return mCommandQueue.Get(); }
 	private:
 		uint64_t mNextFenceValue;
 
@@ -78,10 +115,15 @@ namespace Dash
 	class CommandQueueManager
 	{
 	public:
-		CommandQueueManager() {};
-		~CommandQueueManager();
+		CommandQueueManager()
+			: mGraphicsQueue(D3D12_COMMAND_LIST_TYPE_DIRECT)
+			, mComputeQueue(D3D12_COMMAND_LIST_TYPE_COMPUTE)
+			, mCopyQueue(D3D12_COMMAND_LIST_TYPE_COPY)
+		{
+		}
 
-		void Init();
+		~CommandQueueManager(){}
+
 		void Destroy();
 
 		CommandQueue& GetGraphicsQueue();
@@ -95,8 +137,8 @@ namespace Dash
 
 		void Flush();
 	private:
-		std::unique_ptr<CommandQueue> mGraphicsQueue;
-		std::unique_ptr<CommandQueue> mComputeQueue;
-		std::unique_ptr<CommandQueue> mCopyQueue;
+		CommandQueue mGraphicsQueue;
+		CommandQueue mComputeQueue;
+		CommandQueue mCopyQueue;
 	};
 }

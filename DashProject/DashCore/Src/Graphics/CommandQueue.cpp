@@ -29,11 +29,6 @@ namespace Dash
 		DX_CALL(mGraphicsCommandList->Close());
 	}
 
-	D3D12_COMMAND_LIST_TYPE CommandList::GetType() const
-	{
-		return mType;
-	}
-
 	CommandListPool::CommandListPool(D3D12_COMMAND_LIST_TYPE type)
 		: mType(type)
 	{
@@ -139,7 +134,7 @@ namespace Dash
 			d3dCommandLists.push_back(List->GetGraphicsCommandList());
 		}
 
-		mCommandQueue->ExecuteCommandLists(d3dCommandLists.size(), d3dCommandLists.data());
+		mCommandQueue->ExecuteCommandLists(static_cast<UINT>(d3dCommandLists.size()), d3dCommandLists.data());
 
 		return Signal();
 	}
@@ -183,45 +178,26 @@ namespace Dash
 		WaitForFence(Signal());
 	}
 
-	CommandQueueManager::~CommandQueueManager()
-	{
-		Destroy();
-	}
-
-	void CommandQueueManager::Init()
-	{
-		mGraphicsQueue = std::make_unique<CommandQueue>(D3D12_COMMAND_LIST_TYPE_DIRECT);
-		mComputeQueue = std::make_unique<CommandQueue>(D3D12_COMMAND_LIST_TYPE_COMPUTE);
-		mCopyQueue = std::make_unique<CommandQueue>(D3D12_COMMAND_LIST_TYPE_COPY);
-	}
-
 	void CommandQueueManager::Destroy()
 	{
-		if (mGraphicsQueue)
-		{
-			mGraphicsQueue->Destroy();
-			mComputeQueue->Destroy();
-			mCopyQueue->Destroy();
-
-			mGraphicsQueue.reset();
-			mComputeQueue.reset();
-			mCopyQueue.reset();
-		}
+		mGraphicsQueue.Destroy();
+		mComputeQueue.Destroy();
+		mCopyQueue.Destroy();
 	}
 
 	CommandQueue& CommandQueueManager::GetGraphicsQueue()
 	{
-		return *mGraphicsQueue;
+		return mGraphicsQueue;
 	}
 
 	CommandQueue& CommandQueueManager::GetComputeQueue()
 	{
-		return *mComputeQueue;
+		return mComputeQueue;
 	}
 
 	CommandQueue& CommandQueueManager::GetCopyQueue()
 	{
-		return *mCopyQueue;
+		return mCopyQueue;
 	}
 
 	CommandQueue& CommandQueueManager::GetQueue(D3D12_COMMAND_LIST_TYPE type)
@@ -229,11 +205,11 @@ namespace Dash
 		switch (type)
 		{
 		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
-			return *mComputeQueue;
+			return mComputeQueue;
 		case D3D12_COMMAND_LIST_TYPE_COPY:
-			return *mCopyQueue;
+			return mCopyQueue;
 		default:
-			return *mGraphicsQueue;
+			return mGraphicsQueue;
 		}
 	}
 
@@ -249,9 +225,44 @@ namespace Dash
 
 	void CommandQueueManager::Flush()
 	{
-		mGraphicsQueue->Flush();
-		mComputeQueue->Flush();
-		mCopyQueue->Flush();
+		mGraphicsQueue.Flush();
+		mComputeQueue.Flush();
+		mCopyQueue.Flush();
+	}
+
+	void CommandListManager::Destroy()
+	{
+		mGraphicsCommandListPool.Destroy();
+		mComputeCommandListPool.Destroy();
+		mCopyCommandListPool.Destroy();
+	}
+
+	CommandListPool& CommandListManager::GetGraphicsCommandListPool()
+	{
+		return mGraphicsCommandListPool;
+	}
+
+	CommandListPool& CommandListManager::GetComputeCommandListPool()
+	{
+		return mComputeCommandListPool;
+	}
+
+	CommandListPool& CommandListManager::GetCopyCommandListPool()
+	{
+		return mCopyCommandListPool;
+	}
+
+	CommandListPool& CommandListManager::GetCommandListPool(D3D12_COMMAND_LIST_TYPE type)
+	{
+		switch (type)
+		{
+		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
+			return mComputeCommandListPool;
+		case D3D12_COMMAND_LIST_TYPE_COPY:
+			return mCopyCommandListPool;
+		default:
+			return mGraphicsCommandListPool;
+		}
 	}
 
 }
