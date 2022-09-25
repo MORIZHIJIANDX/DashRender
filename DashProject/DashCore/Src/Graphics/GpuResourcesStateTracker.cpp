@@ -5,15 +5,15 @@
 
 namespace Dash
 {
-	GpuResourcesStateTracker::GpuResourcesStateTracker()
+	FGpuResourcesStateTracker::FGpuResourcesStateTracker()
 	{
 	}
 
-	GpuResourcesStateTracker::~GpuResourcesStateTracker()
+	FGpuResourcesStateTracker::~FGpuResourcesStateTracker()
 	{
 	}
 
-	void GpuResourcesStateTracker::ResourceBarrier(const D3D12_RESOURCE_BARRIER& barrier)
+	void FGpuResourcesStateTracker::ResourceBarrier(const D3D12_RESOURCE_BARRIER& barrier)
 	{
 		if (barrier.Type == D3D12_RESOURCE_BARRIER_TYPE_TRANSITION)
 		{
@@ -77,7 +77,7 @@ namespace Dash
 		}
 	}
 
-	void GpuResourcesStateTracker::TransitionResource(ID3D12Resource* resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
+	void FGpuResourcesStateTracker::TransitionResource(ID3D12Resource* resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
 	{
 		if (resource)
 		{
@@ -86,7 +86,7 @@ namespace Dash
 	}
 
 
-	void GpuResourcesStateTracker::TransitionResource(FGpuResource& resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
+	void FGpuResourcesStateTracker::TransitionResource(FGpuResource& resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
 	{
 		if (resource.GetResource())
 		{
@@ -94,17 +94,17 @@ namespace Dash
 		}
 	}
 
-	void GpuResourcesStateTracker::UAVBarrier(ID3D12Resource* resource /*= nullptr*/)
+	void FGpuResourcesStateTracker::UAVBarrier(ID3D12Resource* resource /*= nullptr*/)
 	{
 		ResourceBarrier(CD3DX12_RESOURCE_BARRIER::UAV(resource));
 	}
 
-	void GpuResourcesStateTracker::AliasBarrier(ID3D12Resource* resourceBefore /*= nullptr*/, ID3D12Resource* resourceAfter /*= nullptr*/)
+	void FGpuResourcesStateTracker::AliasBarrier(ID3D12Resource* resourceBefore /*= nullptr*/, ID3D12Resource* resourceAfter /*= nullptr*/)
 	{
 		ResourceBarrier(CD3DX12_RESOURCE_BARRIER::Aliasing(resourceBefore, resourceAfter));
 	}
 
-	uint32_t GpuResourcesStateTracker::FlushPendingResourceBarriers(ID3D12GraphicsCommandList2* commandList)
+	uint32_t FGpuResourcesStateTracker::FlushPendingResourceBarriers(ID3D12GraphicsCommandList2* commandList)
 	{
 		ASSERT(IsLocked == true);
 		ASSERT(commandList != nullptr);
@@ -177,7 +177,7 @@ namespace Dash
 		return num;
 	}
 
-	uint32_t GpuResourcesStateTracker::FlushResourceBarriers(ID3D12GraphicsCommandList2* commandList)
+	uint32_t FGpuResourcesStateTracker::FlushResourceBarriers(ID3D12GraphicsCommandList2* commandList)
 	{
 		ASSERT(commandList != nullptr);
 
@@ -191,7 +191,7 @@ namespace Dash
 		return num;
 	}
 
-	void GpuResourcesStateTracker::CommitFinalResourceStates()
+	void FGpuResourcesStateTracker::CommitFinalResourceStates()
 	{
 		ASSERT(IsLocked == true);
 
@@ -201,26 +201,26 @@ namespace Dash
 		}
 	}
 
-	void GpuResourcesStateTracker::Reset()
+	void FGpuResourcesStateTracker::Reset()
 	{
 		mPendingResourceBarriers.clear();
 		mResourceBarriers.clear();
 		mFinalResourceStates.clear();
 	}
 
-	void GpuResourcesStateTracker::Lock()
+	void FGpuResourcesStateTracker::Lock()
 	{
 		GlobalMutex.lock();
 		IsLocked = true;
 	}
 
-	void GpuResourcesStateTracker::Unlock()
+	void FGpuResourcesStateTracker::Unlock()
 	{
 		GlobalMutex.unlock();
 		IsLocked = false;
 	}
 
-	void GpuResourcesStateTracker::AddGlobalResourceState(ID3D12Resource* resource, D3D12_RESOURCE_STATES state)
+	void FGpuResourcesStateTracker::AddGlobalResourceState(ID3D12Resource* resource, D3D12_RESOURCE_STATES state)
 	{
 		if (resource)
 		{
@@ -230,7 +230,7 @@ namespace Dash
 		}
 	}
 
-	void GpuResourcesStateTracker::AddGlobalResourceState(FGpuResource& resource, D3D12_RESOURCE_STATES state)
+	void FGpuResourcesStateTracker::AddGlobalResourceState(FGpuResource& resource, D3D12_RESOURCE_STATES state)
 	{
 		if (resource.GetResource())
 		{
@@ -240,7 +240,7 @@ namespace Dash
 		}
 	}
 
-	void GpuResourcesStateTracker::RemoveGlobalResourceState(ID3D12Resource* resource)
+	void FGpuResourcesStateTracker::RemoveGlobalResourceState(ID3D12Resource* resource)
 	{
 		if (resource)
 		{
@@ -250,7 +250,7 @@ namespace Dash
 		}
 	}
 
-	void GpuResourcesStateTracker::RemoveGlobalResourceState(FGpuResource& resource)
+	void FGpuResourcesStateTracker::RemoveGlobalResourceState(FGpuResource& resource)
 	{
 		if (resource.GetResource())
 		{

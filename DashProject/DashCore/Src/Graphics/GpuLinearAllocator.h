@@ -7,7 +7,7 @@ namespace Dash
 	// Constant blocks must be multiples of 16 constants @ 16 bytes each
 	#define DEFAULT_ALIGN 256
 
-	class GpuLinearAllocator
+	class FGpuLinearAllocator
 	{
 	public:
 		enum AllocatorType
@@ -50,7 +50,7 @@ namespace Dash
 				, mOffset(0)
 			{
 				mResource.Attach(resource);
-				GpuResourcesStateTracker::AddGlobalResourceState(resource, defaultState);
+				FGpuResourcesStateTracker::AddGlobalResourceState(resource, defaultState);
 				mGpuAddress = mResource->GetGPUVirtualAddress();
 				mResource->Map(0, nullptr, &mCpuAddress);
 			}
@@ -104,7 +104,7 @@ namespace Dash
 
 	public:
 		
-		GpuLinearAllocator(AllocatorType type) 
+		FGpuLinearAllocator(AllocatorType type) 
 		: mAllocatorType(type)
 		, mDefaultPageSize(0)
 		, mCurrentPage(nullptr)

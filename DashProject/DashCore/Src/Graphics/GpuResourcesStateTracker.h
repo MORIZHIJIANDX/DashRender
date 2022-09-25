@@ -10,11 +10,11 @@ namespace Dash
 {
 	class FGpuResource;
 
-	class GpuResourcesStateTracker
+	class FGpuResourcesStateTracker
 	{
 	public:
-		GpuResourcesStateTracker();
-		~GpuResourcesStateTracker();
+		FGpuResourcesStateTracker();
+		~FGpuResourcesStateTracker();
 
 		/**
 		 * Push a resource barrier to the resource state tracker.

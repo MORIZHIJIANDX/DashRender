@@ -6,10 +6,10 @@
 
 namespace Dash
 {
-	GpuLinearAllocator::AllocatorType GpuLinearAllocator::PageManager::AutoAllocatorType = CpuExclusive;
-	GpuLinearAllocator::PageManager GpuLinearAllocator::AllocatorPageManger[2];
+	FGpuLinearAllocator::AllocatorType FGpuLinearAllocator::PageManager::AutoAllocatorType = CpuExclusive;
+	FGpuLinearAllocator::PageManager FGpuLinearAllocator::AllocatorPageManger[2];
 	 
-	bool GpuLinearAllocator::Page::HasSpace(size_t sizeInBytes, size_t alignment) const
+	bool FGpuLinearAllocator::Page::HasSpace(size_t sizeInBytes, size_t alignment) const
 	{
 		size_t alignedSize = FMath::AlignUp(sizeInBytes, alignment);
 		size_t alignedOffset = FMath::AlignUp(mOffset, alignment);
@@ -17,12 +17,12 @@ namespace Dash
 		return alignedOffset + alignedSize <= mPageSie;
 	}
 
-	GpuLinearAllocator::Allocation GpuLinearAllocator::Page::Allocate(size_t sizeInBytes, size_t alignment)
+	FGpuLinearAllocator::Allocation FGpuLinearAllocator::Page::Allocate(size_t sizeInBytes, size_t alignment)
 	{
 		size_t alignedSize = FMath::AlignUp(sizeInBytes, alignment);
 		mOffset = FMath::AlignUp(mOffset, alignment);
 
-		GpuLinearAllocator::Allocation allocation{*this, mOffset, alignedSize};
+		FGpuLinearAllocator::Allocation allocation{*this, mOffset, alignedSize};
 		allocation.CpuAddress = static_cast<uint8_t*>(mCpuAddress) + mOffset;
 		allocation.GpuAddress = mGpuAddress + mOffset;
 
@@ -31,14 +31,14 @@ namespace Dash
 		return allocation;
 	} 
 
-	GpuLinearAllocator::PageManager::PageManager()
+	FGpuLinearAllocator::PageManager::PageManager()
 	{
 		mAllocatorType = AutoAllocatorType;
-		AutoAllocatorType = (GpuLinearAllocator::AllocatorType)(AutoAllocatorType + 1);
+		AutoAllocatorType = (FGpuLinearAllocator::AllocatorType)(AutoAllocatorType + 1);
 		ASSERT(AutoAllocatorType <= NumAllocatorTypes);
 	}
 
-	GpuLinearAllocator::Page* GpuLinearAllocator::PageManager::RequestPage()
+	FGpuLinearAllocator::Page* FGpuLinearAllocator::PageManager::RequestPage()
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
@@ -48,7 +48,7 @@ namespace Dash
 			mRetiredPages.pop();
 		}
 
-		GpuLinearAllocator::Page* newPage = nullptr;
+		FGpuLinearAllocator::Page* newPage = nullptr;
 
 		if (!mAvailablePages.empty())
 		{
@@ -63,14 +63,14 @@ namespace Dash
 		return newPage;
 	}
 
-	GpuLinearAllocator::Page* GpuLinearAllocator::PageManager::RequestLargePage(size_t pageSize)
+	FGpuLinearAllocator::Page* FGpuLinearAllocator::PageManager::RequestLargePage(size_t pageSize)
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
 		while (!mRetiredLargePages.empty() && Graphics::QueueManager->IsFenceCompleted(mRetiredLargePages.front().first))
 		{
 			Page* pageToFree = mRetiredLargePages.front().second;
-			auto iter = std::find_if(mLargePagePool.begin(), mLargePagePool.end(),[&pageToFree](std::unique_ptr<GpuLinearAllocator::Page>& page)
+			auto iter = std::find_if(mLargePagePool.begin(), mLargePagePool.end(),[&pageToFree](std::unique_ptr<FGpuLinearAllocator::Page>& page)
 			{ 
 				return page.get() == pageToFree; 
 			});
@@ -87,7 +87,7 @@ namespace Dash
 		return nullptr;
 	}
 
-	GpuLinearAllocator::Page* GpuLinearAllocator::PageManager::CreateNewPage(size_t pageSize /*= 0*/)
+	FGpuLinearAllocator::Page* FGpuLinearAllocator::PageManager::CreateNewPage(size_t pageSize /*= 0*/)
 	{
 		D3D12_HEAP_PROPERTIES heapProps;
 		heapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
@@ -133,7 +133,7 @@ namespace Dash
 		return new Page(Buffer, resourceState, resourceDesc.Width);
 	}
 
-	void GpuLinearAllocator::PageManager::DiscardPages(uint64_t fenceValue, const std::vector<Page*>& pages, bool isLargePage)
+	void FGpuLinearAllocator::PageManager::DiscardPages(uint64_t fenceValue, const std::vector<Page*>& pages, bool isLargePage)
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
@@ -153,7 +153,7 @@ namespace Dash
 		}
 	}
 
-	void GpuLinearAllocator::PageManager::Destroy()
+	void FGpuLinearAllocator::PageManager::Destroy()
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
@@ -161,7 +161,7 @@ namespace Dash
 		mLargePagePool.clear();
 	}
 
-	GpuLinearAllocator::Allocation GpuLinearAllocator::Allocate(size_t sizeInBytes, size_t alignment)
+	FGpuLinearAllocator::Allocation FGpuLinearAllocator::Allocate(size_t sizeInBytes, size_t alignment)
 	{
 		const size_t alignmentMask = alignment - 1;
 
@@ -192,7 +192,7 @@ namespace Dash
 		return mCurrentPage->Allocate(alignedSize, alignment);
 	}
 
-	void GpuLinearAllocator::RetireUsedPages(uint64_t fenceValue)
+	void FGpuLinearAllocator::RetireUsedPages(uint64_t fenceValue)
 	{
 		if (mCurrentPage)
 		{
@@ -213,7 +213,7 @@ namespace Dash
 		}
 	}
 
-	void GpuLinearAllocator::Destroy()
+	void FGpuLinearAllocator::Destroy()
 	{
 		for (int Index = GpuExclusive; Index < NumAllocatorTypes; ++Index)
 		{

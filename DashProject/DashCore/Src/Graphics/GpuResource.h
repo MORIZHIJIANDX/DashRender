@@ -15,7 +15,7 @@ namespace Dash
 
 		virtual void Destroy()
 		{
-			GpuResourcesStateTracker::RemoveGlobalResourceState(*this);
+			FGpuResourcesStateTracker::RemoveGlobalResourceState(*this);
 
 			mResource = nullptr;
 			mGpuVirtualAddress = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
