@@ -8,8 +8,8 @@ namespace Dash
 	FCommandList::FCommandList(D3D12_COMMAND_LIST_TYPE type)
 		: mType(type)
 	{
-		DX_CALL(Graphics::Device->CreateCommandAllocator(type, IID_PPV_ARGS(&mCommandAllocator)));
-		DX_CALL(Graphics::Device->CreateCommandList(0, type, mCommandAllocator.Get(), nullptr, IID_PPV_ARGS(&mGraphicsCommandList)));
+		DX_CALL(FGraphicsCore::Device->CreateCommandAllocator(type, IID_PPV_ARGS(&mCommandAllocator)));
+		DX_CALL(FGraphicsCore::Device->CreateCommandList(0, type, mCommandAllocator.Get(), nullptr, IID_PPV_ARGS(&mGraphicsCommandList)));
 	}
 
 	FCommandList::~FCommandList()
@@ -53,7 +53,7 @@ namespace Dash
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
-		while (!mRetiredCommandLists.empty() && Graphics::QueueManager->IsFenceCompleted(mRetiredCommandLists.front().first))
+		while (!mRetiredCommandLists.empty() && FGraphicsCore::QueueManager->IsFenceCompleted(mRetiredCommandLists.front().first))
 		{
 			mAvailableCommandLists.push(mRetiredCommandLists.front().second);
 			mRetiredCommandLists.pop();
@@ -90,10 +90,10 @@ namespace Dash
 		commandQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 		commandQueueDesc.NodeMask = 0;
 
-		DX_CALL(Graphics::Device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&mCommandQueue)));
+		DX_CALL(FGraphicsCore::Device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&mCommandQueue)));
 
 		uint64_t initFenceValue = ((uint64_t)type) << COMMAND_TYPE_MASK;
-		DX_CALL(Graphics::Device->CreateFence(initFenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&mFence)));
+		DX_CALL(FGraphicsCore::Device->CreateFence(initFenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&mFence)));
 
 		mNextFenceValue = initFenceValue + 1;
 	}

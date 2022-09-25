@@ -4,14 +4,14 @@
 
 namespace Dash
 {
-	CpuDescriptorAllocation::CpuDescriptorAllocation()
+	FCpuDescriptorAllocation::FCpuDescriptorAllocation()
 		: mDescriptorHandle{0}
 		, mNumDescriptors(0)
 		, mDescriptorSize(0)
 	{
 	}
 
-	CpuDescriptorAllocation::CpuDescriptorAllocation(D3D12_CPU_DESCRIPTOR_HANDLE descriptor, uint32_t numDecriptors, uint32_t descriptorSize, std::shared_ptr<CpuDescriptorAllocatorPage> page)
+	FCpuDescriptorAllocation::FCpuDescriptorAllocation(D3D12_CPU_DESCRIPTOR_HANDLE descriptor, uint32_t numDecriptors, uint32_t descriptorSize, std::shared_ptr<FCpuDescriptorAllocatorPage> page)
 		: mDescriptorHandle(descriptor)
 		, mNumDescriptors(numDecriptors)
 		, mDescriptorSize(descriptorSize)
@@ -19,12 +19,12 @@ namespace Dash
 	{
 	}
 
-	CpuDescriptorAllocation::~CpuDescriptorAllocation()
+	FCpuDescriptorAllocation::~FCpuDescriptorAllocation()
 	{
 		Free();
 	}
 
-	CpuDescriptorAllocation::CpuDescriptorAllocation(CpuDescriptorAllocation&& allocation) noexcept
+	FCpuDescriptorAllocation::FCpuDescriptorAllocation(FCpuDescriptorAllocation&& allocation) noexcept
 		: mDescriptorHandle(allocation.mDescriptorHandle)
 		, mNumDescriptors(allocation.mNumDescriptors)
 		, mDescriptorSize(allocation.mDescriptorSize)
@@ -35,7 +35,7 @@ namespace Dash
 		allocation.mDescriptorSize = 0;
 	}
 
-	CpuDescriptorAllocation& CpuDescriptorAllocation::operator=(CpuDescriptorAllocation&& other) noexcept
+	FCpuDescriptorAllocation& FCpuDescriptorAllocation::operator=(FCpuDescriptorAllocation&& other) noexcept
 	{
 		Free();
 
@@ -51,23 +51,23 @@ namespace Dash
 		return *this;
 	}
 
-	bool CpuDescriptorAllocation::IsNull() const
+	bool FCpuDescriptorAllocation::IsNull() const
 	{
 		return mNumDescriptors == 0 || mDescriptorHandle.ptr == 0;
 	}
 
-	D3D12_CPU_DESCRIPTOR_HANDLE CpuDescriptorAllocation::GetDescriptorHandle(uint32_t offset) const
+	D3D12_CPU_DESCRIPTOR_HANDLE FCpuDescriptorAllocation::GetDescriptorHandle(uint32_t offset) const
 	{
 		ASSERT(offset < mNumDescriptors);
 		return D3D12_CPU_DESCRIPTOR_HANDLE{mDescriptorHandle.ptr + mDescriptorSize * offset};
 	}
 
-	uint32_t CpuDescriptorAllocation::GetNumDescriptors() const
+	uint32_t FCpuDescriptorAllocation::GetNumDescriptors() const
 	{
 		return mNumDescriptors;
 	}
 
-	D3D12_DESCRIPTOR_HEAP_TYPE CpuDescriptorAllocation::GetDescriptorType() const
+	D3D12_DESCRIPTOR_HEAP_TYPE FCpuDescriptorAllocation::GetDescriptorType() const
 	{
 		if (mPage)
 		{	
@@ -77,7 +77,7 @@ namespace Dash
 		return D3D12_DESCRIPTOR_HEAP_TYPE(-1);
 	}
 
-	void CpuDescriptorAllocation::Free()
+	void FCpuDescriptorAllocation::Free()
 	{
 		if (IsValid() && mPage)
 		{

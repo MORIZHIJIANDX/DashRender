@@ -19,17 +19,17 @@ namespace Dash
 	static const uint32_t VendorID_AMD = 0x1002;
 	static const uint32_t VendorID_Intel = 0x8086;
 
-	ID3D12Device* Graphics::Device = nullptr;
-	FCommandQueueManager* Graphics::QueueManager = nullptr;
+	ID3D12Device* FGraphicsCore::Device = nullptr;
+	FCommandQueueManager* FGraphicsCore::QueueManager = nullptr;
 
-	bool Graphics::mTypedUAVLoadSupport_R11G11B10_FLOAT = false;
-	bool Graphics::mTypedUAVLoadSupport_R16G16B16A16_FLOAT = false;
+	bool FGraphicsCore::mTypedUAVLoadSupport_R11G11B10_FLOAT = false;
+	bool FGraphicsCore::mTypedUAVLoadSupport_R16G16B16A16_FLOAT = false;
 
-	D3D_ROOT_SIGNATURE_VERSION Graphics::mHighestRootSignatureVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;
+	D3D_ROOT_SIGNATURE_VERSION FGraphicsCore::mHighestRootSignatureVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;
 
-	void Graphics::Initialize()
+	void FGraphicsCore::Initialize()
 	{
-		ASSERT_MSG(Graphics::Device == nullptr, "Graphics Has Already Been Initialized!");
+		ASSERT_MSG(FGraphicsCore::Device == nullptr, "FGraphicsCore Has Already Been Initialized!");
 
 		UINT dxgiFactoryFlags = 0;
 		
@@ -93,7 +93,7 @@ namespace Dash
 				continue;
 			}
 
-			if (SUCCEEDED(D3D12CreateDevice(dxgiAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&Graphics::Device))))
+			if (SUCCEEDED(D3D12CreateDevice(dxgiAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&FGraphicsCore::Device))))
 			{
 				LOG_INFO << "Create Device With Adapter : " << desc.Description;
 				LOG_INFO << "Adapter Memory " << desc.DedicatedVideoMemory / (1024 * 1024) << " MB";
@@ -120,7 +120,7 @@ namespace Dash
 			}
 		}
 
-		if (Graphics::Device == nullptr)
+		if (FGraphicsCore::Device == nullptr)
 		{
 			LOG_ERROR << "Failed To Create D3D12 Device!";
 		}
@@ -149,14 +149,14 @@ namespace Dash
 		
 			// Prevent the GPU from overclocking or underclocking to get consistent timings
 			if (developerModeEnabled)
-				Graphics::Device->SetStablePowerState(TRUE);
+				FGraphicsCore::Device->SetStablePowerState(TRUE);
 		}
 	#endif // !DASH_RELEASE
 
 	#if DASH_DEBUG
 		// Enable debug messages (only works if the debug layer has already been enabled).
 		ID3D12InfoQueue* d3dInfoQueue = nullptr; 
-		if (SUCCEEDED(Graphics::Device->QueryInterface(IID_PPV_ARGS(&d3dInfoQueue))))
+		if (SUCCEEDED(FGraphicsCore::Device->QueryInterface(IID_PPV_ARGS(&d3dInfoQueue))))
 		{
 			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
 			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_ERROR, true);
@@ -207,7 +207,7 @@ namespace Dash
 			// decode an R32_UINT representation of the same buffer.  This code determines if we get the hardware
 			// load support.
 			D3D12_FEATURE_DATA_D3D12_OPTIONS featureDataOptions = {};
-			if (SUCCEEDED(Graphics::Device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS, &featureDataOptions, sizeof(featureDataOptions))))
+			if (SUCCEEDED(FGraphicsCore::Device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS, &featureDataOptions, sizeof(featureDataOptions))))
 			{
 				if (featureDataOptions.TypedUAVLoadAdditionalFormats)
 				{
@@ -216,7 +216,7 @@ namespace Dash
 						DXGI_FORMAT_R11G11B10_FLOAT, D3D12_FORMAT_SUPPORT1_NONE, D3D12_FORMAT_SUPPORT2_NONE
 					};
 
-					if (SUCCEEDED(Graphics::Device->CheckFeatureSupport(D3D12_FEATURE_FORMAT_SUPPORT, &Support, sizeof(Support))) &&
+					if (SUCCEEDED(FGraphicsCore::Device->CheckFeatureSupport(D3D12_FEATURE_FORMAT_SUPPORT, &Support, sizeof(Support))) &&
 						(Support.Support2 & D3D12_FORMAT_SUPPORT2_UAV_TYPED_LOAD) != 0)
 					{
 						mTypedUAVLoadSupport_R11G11B10_FLOAT = true;
@@ -224,7 +224,7 @@ namespace Dash
 
 					Support.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
 
-					if (SUCCEEDED(Graphics::Device->CheckFeatureSupport(D3D12_FEATURE_FORMAT_SUPPORT, &Support, sizeof(Support))) &&
+					if (SUCCEEDED(FGraphicsCore::Device->CheckFeatureSupport(D3D12_FEATURE_FORMAT_SUPPORT, &Support, sizeof(Support))) &&
 						(Support.Support2 & D3D12_FORMAT_SUPPORT2_UAV_TYPED_LOAD) != 0)
 					{
 						mTypedUAVLoadSupport_R16G16B16A16_FLOAT = true;
@@ -234,7 +234,7 @@ namespace Dash
 
 			D3D12_FEATURE_DATA_ROOT_SIGNATURE featureDataSignature;
 			featureDataSignature.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;
-			if (FAILED(Graphics::Device->CheckFeatureSupport(D3D12_FEATURE_ROOT_SIGNATURE, &featureDataSignature,
+			if (FAILED(FGraphicsCore::Device->CheckFeatureSupport(D3D12_FEATURE_ROOT_SIGNATURE, &featureDataSignature,
 				sizeof(D3D12_FEATURE_DATA_ROOT_SIGNATURE))))
 			{
 				featureDataSignature.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_0;
@@ -245,7 +245,7 @@ namespace Dash
 			
 	}
 
-	void Graphics::Shutdown()
+	void FGraphicsCore::Shutdown()
 	{
 #if DASH_DEBUG
 		ID3D12InfoQueue* d3dInfoQueue = nullptr;

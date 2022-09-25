@@ -6,7 +6,7 @@ namespace Dash
 {	
 	class FCommandQueueManager;
 
-	class Graphics
+	class FGraphicsCore
 	{
 	public:
 		static void Initialize();

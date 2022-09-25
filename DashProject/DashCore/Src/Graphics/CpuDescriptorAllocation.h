@@ -4,26 +4,26 @@
 
 namespace Dash
 {
-	class CpuDescriptorAllocatorPage;
+	class FCpuDescriptorAllocatorPage;
 
-	class CpuDescriptorAllocation
+	class FCpuDescriptorAllocation
 	{
 	public:
 		// Creates a NULL descriptor.
-		CpuDescriptorAllocation();
+		FCpuDescriptorAllocation();
 
-		CpuDescriptorAllocation(D3D12_CPU_DESCRIPTOR_HANDLE descriptor, uint32_t numDecriptors, uint32_t descriptorSize, std::shared_ptr<CpuDescriptorAllocatorPage> page);
+		FCpuDescriptorAllocation(D3D12_CPU_DESCRIPTOR_HANDLE descriptor, uint32_t numDecriptors, uint32_t descriptorSize, std::shared_ptr<FCpuDescriptorAllocatorPage> page);
 
 		// The destructor will automatically free the allocation.
-		~CpuDescriptorAllocation();
+		~FCpuDescriptorAllocation();
 
 		// Copies are not allowed.
-		CpuDescriptorAllocation(const CpuDescriptorAllocation&) = delete;
-		CpuDescriptorAllocation operator=(const CpuDescriptorAllocation&) = delete;
+		FCpuDescriptorAllocation(const FCpuDescriptorAllocation&) = delete;
+		FCpuDescriptorAllocation operator=(const FCpuDescriptorAllocation&) = delete;
 
 		// Move is allowed.
-		CpuDescriptorAllocation(CpuDescriptorAllocation&& allocation) noexcept;
-		CpuDescriptorAllocation& operator=(CpuDescriptorAllocation&& other) noexcept;
+		FCpuDescriptorAllocation(FCpuDescriptorAllocation&& allocation) noexcept;
+		FCpuDescriptorAllocation& operator=(FCpuDescriptorAllocation&& other) noexcept;
 
 		// Check if this a valid descriptor.
 		bool IsNull() const;
@@ -55,6 +55,6 @@ namespace Dash
 		uint32_t mDescriptorSize;
 
 		// A pointer back to the original page where this allocation came from.
-		std::shared_ptr<CpuDescriptorAllocatorPage> mPage;
+		std::shared_ptr<FCpuDescriptorAllocatorPage> mPage;
 	};
 }

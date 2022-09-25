@@ -5,7 +5,7 @@
 
 namespace Dash
 {
-	CpuDescriptorAllocatorPage::CpuDescriptorAllocatorPage(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors)
+	FCpuDescriptorAllocatorPage::FCpuDescriptorAllocatorPage(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors)
 	: mDescriptorHeapType(type)
 	, mNumFreeHandels(numDescriptors)
 	, mNumDescriptorsInHeap(numDescriptors)
@@ -15,49 +15,49 @@ namespace Dash
 		desc.NumDescriptors = numDescriptors;
 		desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 
-		DX_CALL(Graphics::Device->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&mDescriptorHeap)));
+		DX_CALL(FGraphicsCore::Device->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&mDescriptorHeap)));
 
 		mBaseDescriptor = mDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-		mDescriptorHandelIncrementSize = Graphics::Device->GetDescriptorHandleIncrementSize(type);
+		mDescriptorHandelIncrementSize = FGraphicsCore::Device->GetDescriptorHandleIncrementSize(type);
 
 		AddNewBlock(0, numDescriptors);
 	}
 
-	CpuDescriptorAllocatorPage::~CpuDescriptorAllocatorPage()
+	FCpuDescriptorAllocatorPage::~FCpuDescriptorAllocatorPage()
 	{
 		mNumFreeHandels = 0;
 		mNumDescriptorsInHeap = 0;
 		mDescriptorHeap = nullptr;
 	}
 
-	D3D12_DESCRIPTOR_HEAP_TYPE CpuDescriptorAllocatorPage::GetHeapType() const
+	D3D12_DESCRIPTOR_HEAP_TYPE FCpuDescriptorAllocatorPage::GetHeapType() const
 	{
 		return mDescriptorHeapType;
 	}
 
-	bool CpuDescriptorAllocatorPage::HasSpace(uint32_t numDescriptors) const
+	bool FCpuDescriptorAllocatorPage::HasSpace(uint32_t numDescriptors) const
 	{
 		return mFreeListBySize.lower_bound(numDescriptors) != mFreeListBySize.end();
 	}
 
-	uint32_t CpuDescriptorAllocatorPage::NumFreeHandles() const
+	uint32_t FCpuDescriptorAllocatorPage::NumFreeHandles() const
 	{
 		return mNumFreeHandels;
 	}
 
-	CpuDescriptorAllocation CpuDescriptorAllocatorPage::Allocate(uint32_t numDescriptors)
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorPage::Allocate(uint32_t numDescriptors)
 	{
 		std::lock_guard<std::mutex> lock(mAllocationMutex);
 
 		if (numDescriptors > mNumFreeHandels)
 		{
-			return CpuDescriptorAllocation();
+			return FCpuDescriptorAllocation();
 		}
 
 		auto bestFitBlockIter = mFreeListBySize.lower_bound(numDescriptors);
 		if (bestFitBlockIter == mFreeListBySize.end())
 		{
-			return CpuDescriptorAllocation();
+			return FCpuDescriptorAllocation();
 		}
 
 		SizeType blockSize = bestFitBlockIter->first;
@@ -78,13 +78,13 @@ namespace Dash
 
 		mNumFreeHandels -= numDescriptors;
 
-		return CpuDescriptorAllocation(CD3DX12_CPU_DESCRIPTOR_HANDLE(mBaseDescriptor, blockOffset, mDescriptorHandelIncrementSize), 
+		return FCpuDescriptorAllocation(CD3DX12_CPU_DESCRIPTOR_HANDLE(mBaseDescriptor, blockOffset, mDescriptorHandelIncrementSize), 
 										numDescriptors, 
 										mDescriptorHandelIncrementSize, 
 										shared_from_this());
 	}
 
-	void CpuDescriptorAllocatorPage::Free(CpuDescriptorAllocation&& allocation)
+	void FCpuDescriptorAllocatorPage::Free(FCpuDescriptorAllocation&& allocation)
 	{
 		OffsetType offset = ComputeOffset(allocation.GetDescriptorHandle());
 
@@ -93,24 +93,24 @@ namespace Dash
 		mStaleDescriptorQueue.emplace(offset, allocation.GetNumDescriptors());
 	}
 
-	void CpuDescriptorAllocatorPage::ReleaseStaleDescriptors()
+	void FCpuDescriptorAllocatorPage::ReleaseStaleDescriptors()
 	{
 		std::lock_guard<std::mutex> lock(mAllocationMutex);
 
 		while (!mStaleDescriptorQueue.empty())
 		{
-			StaleDescriptorInfo& info = mStaleDescriptorQueue.front();	
+			FStaleDescriptorInfo& info = mStaleDescriptorQueue.front();	
 			AddNewBlock(info.Offset, info.Size);
 			mStaleDescriptorQueue.pop();
 		}
 	}
 
-	uint32_t CpuDescriptorAllocatorPage::ComputeOffset(D3D12_CPU_DESCRIPTOR_HANDLE descriptor) const
+	uint32_t FCpuDescriptorAllocatorPage::ComputeOffset(D3D12_CPU_DESCRIPTOR_HANDLE descriptor) const
 	{
 		return static_cast<OffsetType>(descriptor.ptr - mBaseDescriptor.ptr)/mDescriptorHandelIncrementSize;
 	}
 
-	void CpuDescriptorAllocatorPage::AddNewBlock(uint32_t offset, uint32_t numDescriptors)
+	void FCpuDescriptorAllocatorPage::AddNewBlock(uint32_t offset, uint32_t numDescriptors)
 	{
 		auto offsetIter = mFreeListByOffset.emplace(offset, numDescriptors);
 		auto sizeIter = mFreeListBySize.emplace(numDescriptors, offsetIter.first);
@@ -118,7 +118,7 @@ namespace Dash
 		offsetIter.first->second.FreeListBySizeIter = sizeIter;
 	}
 
-	void CpuDescriptorAllocatorPage::FreeBlock(uint32_t offset, uint32_t numDescriptors)
+	void FCpuDescriptorAllocatorPage::FreeBlock(uint32_t offset, uint32_t numDescriptors)
 	{
 		auto nextBlockIter = mFreeListByOffset.upper_bound(offset);
 		

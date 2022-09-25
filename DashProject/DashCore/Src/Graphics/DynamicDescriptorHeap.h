@@ -2,11 +2,11 @@
 
 namespace Dash
 {
-	class DynamicDescriptorHeap
+	class FDynamicDescriptorHeap
 	{
 	public:
-		DynamicDescriptorHeap();
-		~DynamicDescriptorHeap();
+		FDynamicDescriptorHeap();
+		~FDynamicDescriptorHeap();
 
 	private:
 

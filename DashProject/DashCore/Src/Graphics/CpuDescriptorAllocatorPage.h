@@ -5,11 +5,11 @@
 
 namespace Dash
 {
-	class CpuDescriptorAllocatorPage : public std::enable_shared_from_this<CpuDescriptorAllocatorPage>
+	class FCpuDescriptorAllocatorPage : public std::enable_shared_from_this<FCpuDescriptorAllocatorPage>
 	{
 	public:
-		CpuDescriptorAllocatorPage(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors);
-		~CpuDescriptorAllocatorPage();
+		FCpuDescriptorAllocatorPage(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors);
+		~FCpuDescriptorAllocatorPage();
 
 		D3D12_DESCRIPTOR_HEAP_TYPE GetHeapType() const;
 
@@ -17,9 +17,9 @@ namespace Dash
 
 		uint32_t NumFreeHandles() const;
 
-		CpuDescriptorAllocation Allocate(uint32_t numDescriptors);
+		FCpuDescriptorAllocation Allocate(uint32_t numDescriptors);
 
-		void Free(CpuDescriptorAllocation&& allocation);
+		void Free(FCpuDescriptorAllocation&& allocation);
 
 		void ReleaseStaleDescriptors();
 
@@ -34,15 +34,15 @@ namespace Dash
 		using OffsetType = uint32_t;
 		using SizeType = uint32_t;
 
-		struct FreeBlockInfo;
+		struct FFreeBlockInfo;
 
-		using FreeListByOffset = std::map<OffsetType, FreeBlockInfo>;
+		using FreeListByOffset = std::map<OffsetType, FFreeBlockInfo>;
 
 		using FreeListBySize = std::multimap<SizeType, FreeListByOffset::iterator>;
 
-		struct FreeBlockInfo
+		struct FFreeBlockInfo
 		{
-			FreeBlockInfo(SizeType size)
+			FFreeBlockInfo(SizeType size)
 				: Size(size)
 			{}
 
@@ -50,9 +50,9 @@ namespace Dash
 			FreeListBySize::iterator FreeListBySizeIter;
 		};
 
-		struct StaleDescriptorInfo
+		struct FStaleDescriptorInfo
 		{
-			StaleDescriptorInfo(OffsetType offset, SizeType size)
+			FStaleDescriptorInfo(OffsetType offset, SizeType size)
 			: Offset(offset)
 			, Size(size)
 			{}
@@ -61,7 +61,7 @@ namespace Dash
 			SizeType Size;
 		};
 
-		using StaleDescriptorQueue = std::queue<StaleDescriptorInfo>;
+		using StaleDescriptorQueue = std::queue<FStaleDescriptorInfo>;
 
 		FreeListByOffset mFreeListByOffset;
 		FreeListBySize mFreeListBySize;

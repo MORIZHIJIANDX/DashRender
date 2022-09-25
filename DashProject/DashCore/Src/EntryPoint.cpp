@@ -60,7 +60,7 @@ namespace Dash
 		FMouse::Get().Initialize(app->GetWindowHandle());
 		FSystemTimer::Initialize();
 
-		Graphics::Initialize();
+		FGraphicsCore::Initialize();
 
 		app->Startup();
 
@@ -71,7 +71,7 @@ namespace Dash
 	void TerminateApplication(IGameApp* app)
 	{
 		app->Cleanup();
-		Graphics::Shutdown();
+		FGraphicsCore::Shutdown();
 		FLogManager::Get()->Shutdown();
 
 		std::string WindowClassName = app->GetWindowClassName();

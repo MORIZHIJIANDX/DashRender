@@ -4,24 +4,24 @@
 
 namespace Dash
 {
-	class CpuDescriptorAllocatorPage;
+	class FCpuDescriptorAllocatorPage;
 		
-	class CpuDescriptorAllocator
+	class FCpuDescriptorAllocator
 	{
 	public:
-		CpuDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t defaultHeapSize = 256);
-		~CpuDescriptorAllocator();
+		FCpuDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t defaultHeapSize = 256);
+		~FCpuDescriptorAllocator();
 
-		CpuDescriptorAllocation Allocate(uint32_t numDescriptors);
+		FCpuDescriptorAllocation Allocate(uint32_t numDescriptors);
 
 		void ReleaseStaleDescriptors();
 
 		void Destroy();
 	private:
-		std::shared_ptr<CpuDescriptorAllocatorPage> RequestNewHeap(uint32_t heapSize = 0);
+		std::shared_ptr<FCpuDescriptorAllocatorPage> RequestNewHeap(uint32_t heapSize = 0);
 		
 	private:
-		using DescriptorHeapPool = std::vector<std::shared_ptr<CpuDescriptorAllocatorPage>>;
+		using DescriptorHeapPool = std::vector<std::shared_ptr<FCpuDescriptorAllocatorPage>>;
 
 		D3D12_DESCRIPTOR_HEAP_TYPE mType;
 		uint32_t mDefaultHeapSize;

@@ -5,27 +5,27 @@
 namespace Dash
 {
 
-	CpuDescriptorAllocator::CpuDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t defaultHeapSize /*= 256*/)
+	FCpuDescriptorAllocator::FCpuDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t defaultHeapSize /*= 256*/)
 	: mType(type)
 	, mDefaultHeapSize(defaultHeapSize)
 	{	
 	}
 
-	CpuDescriptorAllocator::~CpuDescriptorAllocator()
+	FCpuDescriptorAllocator::~FCpuDescriptorAllocator()
 	{
 		Destroy();
 	}
 
-	Dash::CpuDescriptorAllocation CpuDescriptorAllocator::Allocate(uint32_t numDescriptors)
+	FCpuDescriptorAllocation FCpuDescriptorAllocator::Allocate(uint32_t numDescriptors)
 	{
 		std::lock_guard lock(mAllocationMutex);
 
-		CpuDescriptorAllocation allocation;
+		FCpuDescriptorAllocation allocation;
 
 		auto iter = mAvailableHeaps.begin();
 		while (iter != mAvailableHeaps.end())
 		{
-			std::shared_ptr<CpuDescriptorAllocatorPage> page = mHeapPool[*iter];
+			std::shared_ptr<FCpuDescriptorAllocatorPage> page = mHeapPool[*iter];
 			allocation = page->Allocate(numDescriptors);
 
 			if (allocation.GetNumDescriptors() == 0)
@@ -45,14 +45,14 @@ namespace Dash
 
 		if (allocation.IsNull())
 		{
-			std::shared_ptr<CpuDescriptorAllocatorPage> page = RequestNewHeap(FMath::Max(numDescriptors, mDefaultHeapSize));
+			std::shared_ptr<FCpuDescriptorAllocatorPage> page = RequestNewHeap(FMath::Max(numDescriptors, mDefaultHeapSize));
 			allocation = page->Allocate(numDescriptors);
 		}
 
 		return allocation;
 	}
 
-	void CpuDescriptorAllocator::ReleaseStaleDescriptors()
+	void FCpuDescriptorAllocator::ReleaseStaleDescriptors()
 	{
 		std::lock_guard lock(mAllocationMutex);
 
@@ -67,7 +67,7 @@ namespace Dash
 		}
 	}
 
-	void CpuDescriptorAllocator::Destroy()
+	void FCpuDescriptorAllocator::Destroy()
 	{
 		std::lock_guard lock(mAllocationMutex);
 
@@ -75,9 +75,9 @@ namespace Dash
 		mHeapPool.clear();
 	}
 
-	std::shared_ptr<CpuDescriptorAllocatorPage> CpuDescriptorAllocator::RequestNewHeap(uint32_t heapSize /*= 0*/)
+	std::shared_ptr<FCpuDescriptorAllocatorPage> FCpuDescriptorAllocator::RequestNewHeap(uint32_t heapSize /*= 0*/)
 	{
-		std::shared_ptr<CpuDescriptorAllocatorPage> page = std::make_shared<CpuDescriptorAllocatorPage>(mType, heapSize);
+		std::shared_ptr<FCpuDescriptorAllocatorPage> page = std::make_shared<FCpuDescriptorAllocatorPage>(mType, heapSize);
 
 		mHeapPool.push_back(page);
 		mAvailableHeaps.insert(static_cast<uint32_t>(mHeapPool.size()) - 1);

@@ -42,7 +42,7 @@ namespace Dash
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
-		while (!mRetiredPages.empty() && Graphics::QueueManager->IsFenceCompleted(mRetiredPages.front().first))
+		while (!mRetiredPages.empty() && FGraphicsCore::QueueManager->IsFenceCompleted(mRetiredPages.front().first))
 		{
 			mAvailablePages.push(mRetiredPages.front().second);
 			mRetiredPages.pop();
@@ -67,7 +67,7 @@ namespace Dash
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
-		while (!mRetiredLargePages.empty() && Graphics::QueueManager->IsFenceCompleted(mRetiredLargePages.front().first))
+		while (!mRetiredLargePages.empty() && FGraphicsCore::QueueManager->IsFenceCompleted(mRetiredLargePages.front().first))
 		{
 			FPage* pageToFree = mRetiredLargePages.front().second;
 			auto iter = std::find_if(mLargePagePool.begin(), mLargePagePool.end(),[&pageToFree](std::unique_ptr<FGpuLinearAllocator::FPage>& page)
@@ -128,7 +128,7 @@ namespace Dash
 		}
 
 		ID3D12Resource* Buffer;
-		DX_CALL(Graphics::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, resourceState, nullptr, IID_PPV_ARGS(&Buffer)));
+		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, resourceState, nullptr, IID_PPV_ARGS(&Buffer)));
 
 		return new FPage(Buffer, resourceState, resourceDesc.Width);
 	}
