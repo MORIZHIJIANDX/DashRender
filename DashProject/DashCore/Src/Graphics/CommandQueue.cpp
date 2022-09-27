@@ -265,4 +265,14 @@ namespace Dash
 		}
 	}
 
+	FCommandList* FCommandListManager::RequestCommandList(D3D12_COMMAND_LIST_TYPE type)
+	{
+		return GetCommandListPool(type).RequestCommandList();
+	}
+
+	void FCommandListManager::RetiredUsedCommandList(uint64_t fenceID, FCommandList* commandList)
+	{
+		GetCommandListPool(commandList->GetType()).RetiredUsedCommandList(fenceID, commandList);
+	}
+
 }

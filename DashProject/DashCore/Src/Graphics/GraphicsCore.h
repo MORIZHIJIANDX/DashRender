@@ -18,6 +18,10 @@ namespace Dash
 		static FCommandListManager* CommandListManager;
 
 		static constexpr int BackBufferCount = 3;
+
+	private:
+		static void InitD3DDevice();
+
 	private:
 		static bool mTypedUAVLoadSupport_R11G11B10_FLOAT;
 		static bool mTypedUAVLoadSupport_R16G16B16A16_FLOAT;

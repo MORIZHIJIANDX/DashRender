@@ -45,7 +45,6 @@ namespace Dash
 		}
 
 		FCommandList* RequestCommandList();
-
 		void RetiredUsedCommandList(uint64_t fenceID, FCommandList* commandList);
 
 	private:
@@ -77,6 +76,9 @@ namespace Dash
 		FCommandListPool& GetCopyCommandListPool();
 
 		FCommandListPool& GetCommandListPool(D3D12_COMMAND_LIST_TYPE type);
+
+		FCommandList* RequestCommandList(D3D12_COMMAND_LIST_TYPE type);
+		void RetiredUsedCommandList(uint64_t fenceID, FCommandList* commandList);
 
 	private:
 		FCommandListPool mGraphicsCommandListPool;

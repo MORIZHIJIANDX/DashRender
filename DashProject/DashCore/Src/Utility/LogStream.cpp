@@ -7,8 +7,8 @@
 namespace Dash
 {
 	// ******************
-// FLogStreamFile
-//
+	// FLogStreamFile
+	//
 
 	FLogStreamFile::FLogStreamFile(std::wstring fileName)
 		: mFileStream(fileName, std::fstream::out)
@@ -125,7 +125,10 @@ namespace Dash
 
 	void FLogStreamVS::Write(ELogLevel level, std::wstring logInfo)
 	{
-		OutputDebugStringW(logInfo.c_str());
+		const std::wstring prefix = L"Dash --";
+		std::wstring vsLogInfo = prefix + logInfo;
+
+		OutputDebugStringW(vsLogInfo.c_str());
 	}
 
 

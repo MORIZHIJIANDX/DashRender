@@ -30,11 +30,80 @@ namespace Dash
 
 	void FGraphicsCore::Initialize()
 	{
+		LOG_INFO << "FGraphicsCore::Initialize Begin.";
+
+		FGraphicsCore::InitD3DDevice();
+
+		CommandQueueManager = new FCommandQueueManager();
+		CommandListManager = new FCommandListManager();
+
+		LOG_INFO << "FGraphicsCore::Initialize End.";
+	}
+
+	void FGraphicsCore::Shutdown()
+	{
+		LOG_INFO << "FGraphicsCore::Shutdown Begin.";
+
+#if DASH_DEBUG
+		ID3D12InfoQueue* d3dInfoQueue = nullptr;
+		if (SUCCEEDED(Device->QueryInterface(IID_PPV_ARGS(&d3dInfoQueue))))
+		{
+			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_CORRUPTION, false);
+			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_ERROR, false);
+			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_WARNING, false);
+			d3dInfoQueue->Release();
+		}
+
+		ID3D12DebugDevice* debugInterface;
+		if (SUCCEEDED(Device->QueryInterface(&debugInterface)))
+		{
+			debugInterface->ReportLiveDeviceObjects(D3D12_RLDO_FLAGS(D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL));
+			debugInterface->Release();
+		}
+#endif
+		
+		if (CommandQueueManager)
+		{
+			CommandQueueManager->Destroy();
+			delete CommandQueueManager;
+
+			LOG_INFO << "Destroy Command Queue Manager.";
+		}
+
+		if (CommandListManager)
+		{
+			CommandListManager->Destroy();
+			delete CommandListManager;
+
+			LOG_INFO << "Destroy Command List Manager.";
+		}
+
+		if (Device != nullptr)
+		{
+			Device->Release();
+			Device = nullptr;
+
+			LOG_INFO << "Destroy D3D Device.";
+		}
+
+#if DASH_DEBUG
+		ComPtr<IDXGIDebug1> dxgiDebug;
+		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
+		{
+			dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_FLAGS(DXGI_DEBUG_RLO_SUMMARY | DXGI_DEBUG_RLO_IGNORE_INTERNAL));
+		}
+#endif
+	
+		LOG_INFO << "FGraphicsCore::Shutdown End.";
+	}
+
+	void FGraphicsCore::InitD3DDevice()
+	{
 		ASSERT_MSG(FGraphicsCore::Device == nullptr, "FGraphicsCore Has Already Been Initialized!");
 
 		UINT dxgiFactoryFlags = 0;
-		
-	#if DASH_DEBUG
+
+#if DASH_DEBUG
 		//Enable debug layer
 		{
 			ComPtr<ID3D12Debug> debugInterface;
@@ -73,8 +142,8 @@ namespace Dash
 				dxgiInfoQueue->AddStorageFilterEntries(DXGI_DEBUG_DXGI, &infoFiter);
 			}
 		}
-	#endif // DASH_DEBUG
-		
+#endif // DASH_DEBUG
+
 		//Create DXGI Factory
 		ComPtr<IDXGIFactory6> dxgiFactory;
 		DX_CALL(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&dxgiFactory)));
@@ -126,7 +195,7 @@ namespace Dash
 			LOG_ERROR << "Failed To Create D3D12 Device!";
 		}
 
-	#ifndef DASH_RELEASE
+#ifndef DASH_RELEASE
 		//Enable stable power state
 		{
 			bool developerModeEnabled = false;
@@ -147,16 +216,16 @@ namespace Dash
 			{
 				LOG_WARNING << "Enable Developer Mode on Windows 10 to get consistent profiling results";
 			}
-		
+
 			// Prevent the GPU from overclocking or underclocking to get consistent timings
 			if (developerModeEnabled)
 				FGraphicsCore::Device->SetStablePowerState(TRUE);
 		}
-	#endif // !DASH_RELEASE
+#endif // !DASH_RELEASE
 
-	#if DASH_DEBUG
+#if DASH_DEBUG
 		// Enable debug messages (only works if the debug layer has already been enabled).
-		ID3D12InfoQueue* d3dInfoQueue = nullptr; 
+		ID3D12InfoQueue* d3dInfoQueue = nullptr;
 		if (SUCCEEDED(FGraphicsCore::Device->QueryInterface(IID_PPV_ARGS(&d3dInfoQueue))))
 		{
 			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
@@ -199,7 +268,7 @@ namespace Dash
 			d3dInfoQueue->PushStorageFilter(&newFilter);
 			d3dInfoQueue->Release();
 		}
-	#endif // DASH_DEBUG
+#endif // DASH_DEBUG
 
 		// Check features
 		{
@@ -242,42 +311,5 @@ namespace Dash
 			}
 			mHighestRootSignatureVersion = featureDataSignature.HighestVersion;
 		}
-
-			
-	}
-
-	void FGraphicsCore::Shutdown()
-	{
-#if DASH_DEBUG
-		ID3D12InfoQueue* d3dInfoQueue = nullptr;
-		if (SUCCEEDED(Device->QueryInterface(IID_PPV_ARGS(&d3dInfoQueue))))
-		{
-			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_CORRUPTION, false);
-			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_ERROR, false);
-			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_WARNING, false);
-			d3dInfoQueue->Release();
-		}
-
-		ID3D12DebugDevice* debugInterface;
-		if (SUCCEEDED(Device->QueryInterface(&debugInterface)))
-		{
-			debugInterface->ReportLiveDeviceObjects(D3D12_RLDO_FLAGS(D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL));
-			debugInterface->Release();
-		}
-#endif
-
-		if (Device != nullptr)
-		{
-			Device->Release();
-			Device = nullptr;
-		}
-
-#if DASH_DEBUG
-		ComPtr<IDXGIDebug1> dxgiDebug;
-		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
-		{
-			dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_FLAGS(DXGI_DEBUG_RLO_SUMMARY | DXGI_DEBUG_RLO_IGNORE_INTERNAL));
-		}
-#endif
 	}
 }
