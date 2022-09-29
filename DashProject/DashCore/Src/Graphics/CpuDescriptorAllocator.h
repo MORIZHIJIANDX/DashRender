@@ -31,4 +31,15 @@ namespace Dash
 
 		std::mutex mAllocationMutex;
 	};
+
+	class FCpuDescriptorAllocatorManager
+	{
+	public:
+		FCpuDescriptorAllocatorManager();
+		~FCpuDescriptorAllocatorManager();
+
+	private:
+		FCpuDescriptorAllocator mCbvSrvUavAllocator;
+		FCpuDescriptorAllocator mSamplerAllocator;
+	};
 }

@@ -5,8 +5,8 @@ namespace Dash
 	class FDynamicDescriptorHeap
 	{
 	public:
-		FDynamicDescriptorHeap();
-		~FDynamicDescriptorHeap();
+		FDynamicDescriptorHeap() {};
+		~FDynamicDescriptorHeap() {};
 
 	private:
 
