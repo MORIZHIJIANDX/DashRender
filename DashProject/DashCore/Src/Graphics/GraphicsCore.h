@@ -6,6 +6,7 @@ namespace Dash
 {	
 	class FCommandQueueManager;
 	class FCommandListManager;
+	class FCpuDescriptorAllocatorManager;
 
 	class FGraphicsCore
 	{
@@ -16,6 +17,7 @@ namespace Dash
 		static ID3D12Device* Device;
 		static FCommandQueueManager* CommandQueueManager;
 		static FCommandListManager* CommandListManager;
+		static FCpuDescriptorAllocatorManager* DescriptorAllocator;
 
 		static constexpr int BackBufferCount = 3;
 

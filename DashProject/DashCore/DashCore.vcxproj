@@ -150,6 +150,7 @@
     <ClInclude Include="Src\Graphics\GpuResource.h" />
     <ClInclude Include="Src\Graphics\GpuResourcesStateTracker.h" />
     <ClInclude Include="Src\Graphics\GraphicsCore.h" />
+    <ClInclude Include="Src\Graphics\PixelBuffer.h" />
     <ClInclude Include="Src\Graphics\Viewport.h" />
     <ClInclude Include="Src\Graphics\d3dx12.h" />
     <ClInclude Include="Src\Math\AABB.h" />
@@ -215,6 +216,7 @@
     <ClCompile Include="Src\Graphics\GpuLinearAllocator.cpp" />
     <ClCompile Include="Src\Graphics\GpuResourcesStateTracker.cpp" />
     <ClCompile Include="Src\Graphics\GraphicsCore.cpp" />
+    <ClCompile Include="Src\Graphics\PixelBuffer.cpp" />
     <ClCompile Include="Src\Math\Color.cpp" />
     <ClCompile Include="Src\PCH\PCH.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

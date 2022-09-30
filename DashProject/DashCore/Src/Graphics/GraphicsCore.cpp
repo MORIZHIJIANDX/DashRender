@@ -1,6 +1,7 @@
 #include "PCH.h"
 #include "GraphicsCore.h"
 #include "CommandQueue.h"
+#include "CpuDescriptorAllocator.h"
 #include <wrl.h>
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
@@ -22,6 +23,7 @@ namespace Dash
 	ID3D12Device* FGraphicsCore::Device = nullptr;
 	FCommandQueueManager* FGraphicsCore::CommandQueueManager = nullptr;
 	FCommandListManager* FGraphicsCore::CommandListManager = nullptr;
+	FCpuDescriptorAllocatorManager* FGraphicsCore::DescriptorAllocator = nullptr;
 
 	bool FGraphicsCore::mTypedUAVLoadSupport_R11G11B10_FLOAT = false;
 	bool FGraphicsCore::mTypedUAVLoadSupport_R16G16B16A16_FLOAT = false;
@@ -36,6 +38,7 @@ namespace Dash
 
 		CommandQueueManager = new FCommandQueueManager();
 		CommandListManager = new FCommandListManager();
+		DescriptorAllocator = new FCpuDescriptorAllocatorManager();
 
 		LOG_INFO << "FGraphicsCore::Initialize End.";
 	}
@@ -76,6 +79,14 @@ namespace Dash
 			delete CommandListManager;
 
 			LOG_INFO << "Destroy Command List Manager.";
+		}
+
+		if (DescriptorAllocator)
+		{
+			DescriptorAllocator->Destroy();
+			delete DescriptorAllocator;
+
+			LOG_INFO << "Destroy Cpu Descriptor Allocator.";
 		}
 
 		if (Device != nullptr)

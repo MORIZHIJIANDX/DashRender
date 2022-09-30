@@ -85,4 +85,48 @@ namespace Dash
 		return page;
 	}
 
+	FCpuDescriptorAllocatorManager::FCpuDescriptorAllocatorManager()
+		: mCbvSrvUavAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
+		, mSamplerAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER)
+	{
+	}
+
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::Allocate(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors)
+	{
+		if (type == D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
+		{
+			return mCbvSrvUavAllocator.Allocate(numDescriptors);
+		}
+		else
+		{
+			return mSamplerAllocator.Allocate(numDescriptors);
+		}
+	}
+
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateCbvDescriptor(uint32_t numDescriptors)
+	{
+		return mCbvSrvUavAllocator.Allocate(numDescriptors);
+	}
+
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateSrvDescriptor(uint32_t numDescriptors)
+	{
+		return mCbvSrvUavAllocator.Allocate(numDescriptors);
+	}
+
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateUavDescriptor(uint32_t numDescriptors)
+	{
+		return mCbvSrvUavAllocator.Allocate(numDescriptors);
+	}
+
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateSamplerDescriptor(uint32_t numDescriptors)
+	{
+		return mSamplerAllocator.Allocate(numDescriptors);
+	}
+
+	void FCpuDescriptorAllocatorManager::Destroy()
+	{
+		mCbvSrvUavAllocator.Destroy();
+		mSamplerAllocator.Destroy();
+	}
+
 }

@@ -10,6 +10,12 @@ namespace Dash
 	{
 		DX_CALL(FGraphicsCore::Device->CreateCommandAllocator(type, IID_PPV_ARGS(&mCommandAllocator)));
 		DX_CALL(FGraphicsCore::Device->CreateCommandList(0, type, mCommandAllocator.Get(), nullptr, IID_PPV_ARGS(&mGraphicsCommandList)));
+
+#ifdef DASH_DEBUG
+		mCommandAllocator->SetName(L"CommandAllocator");
+		mGraphicsCommandList->SetName(L"CommandList");
+#endif // DASH_DEBUG
+
 	}
 
 	FCommandList::~FCommandList()
@@ -94,6 +100,30 @@ namespace Dash
 
 		uint64_t initFenceValue = ((uint64_t)type) << COMMAND_TYPE_MASK;
 		DX_CALL(FGraphicsCore::Device->CreateFence(initFenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&mFence)));
+
+#ifdef DASH_DEBUG
+		switch (type)
+		{
+		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
+			{
+				mCommandQueue->SetName(L"ComputeQueue");
+				mFence->SetName(L"ComputeFence");
+				break;
+			}
+		case D3D12_COMMAND_LIST_TYPE_COPY:
+			{
+				mCommandQueue->SetName(L"CopyQueue");
+				mFence->SetName(L"CopyFence");
+				break;
+			}
+		default:
+			{
+				mCommandQueue->SetName(L"GraphicsQueue");
+				mFence->SetName(L"GraphicsFence");
+				break;
+			}
+		}
+#endif // DASH_DEBUG
 
 		mNextFenceValue = initFenceValue + 1;
 	}
