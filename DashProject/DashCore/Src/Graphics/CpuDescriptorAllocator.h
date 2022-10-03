@@ -40,16 +40,22 @@ namespace Dash
 
 		FCpuDescriptorAllocation Allocate(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors = 1);
 
-		FCpuDescriptorAllocation AllocateCbvDescriptor(uint32_t numDescriptors = 1);
-		FCpuDescriptorAllocation AllocateSrvDescriptor(uint32_t numDescriptors = 1);
-		FCpuDescriptorAllocation AllocateUavDescriptor(uint32_t numDescriptors = 1);
+		FCpuDescriptorAllocation AllocateCBVDescriptor(uint32_t numDescriptors = 1);
+		FCpuDescriptorAllocation AllocateSRVDescriptor(uint32_t numDescriptors = 1);
+		FCpuDescriptorAllocation AllocateUAVDescriptor(uint32_t numDescriptors = 1);
+		FCpuDescriptorAllocation AllocateRTVDescriptor(uint32_t numDescriptors = 1);
+		FCpuDescriptorAllocation AllocateDSVDescriptor(uint32_t numDescriptors = 1);
 
 		FCpuDescriptorAllocation AllocateSamplerDescriptor(uint32_t numDescriptors = 1);
+
+		void ReleaseStaleDescriptors();
 
 		void Destroy();
 
 	private:
 		FCpuDescriptorAllocator mCbvSrvUavAllocator;
+		FCpuDescriptorAllocator mRTVAllocator;
+		FCpuDescriptorAllocator mDSVAllocator;
 		FCpuDescriptorAllocator mSamplerAllocator;
 	};
 }

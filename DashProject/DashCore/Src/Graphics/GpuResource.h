@@ -34,6 +34,19 @@ namespace Dash
 
 		uint32_t GetVersionID() const { return mVersionID; }
 
+		void SetName(const std::wstring& name) 
+		{  
+			mResourceName = name;
+#ifdef DASH_DEBUG
+			if (mResource)
+			{	
+				mResource->SetName(name.c_str());
+			}
+#endif
+		}
+
+		const std::wstring& GetName() const { return mResourceName; }
+
 	protected:
 		FGpuResource()
 		{

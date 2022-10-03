@@ -87,6 +87,8 @@ namespace Dash
 
 	FCpuDescriptorAllocatorManager::FCpuDescriptorAllocatorManager()
 		: mCbvSrvUavAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
+		, mRTVAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_RTV)
+		, mDSVAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_DSV)
 		, mSamplerAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER)
 	{
 	}
@@ -103,19 +105,29 @@ namespace Dash
 		}
 	}
 
-	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateCbvDescriptor(uint32_t numDescriptors)
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateCBVDescriptor(uint32_t numDescriptors)
 	{
 		return mCbvSrvUavAllocator.Allocate(numDescriptors);
 	}
 
-	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateSrvDescriptor(uint32_t numDescriptors)
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateSRVDescriptor(uint32_t numDescriptors)
 	{
 		return mCbvSrvUavAllocator.Allocate(numDescriptors);
 	}
 
-	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateUavDescriptor(uint32_t numDescriptors)
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateUAVDescriptor(uint32_t numDescriptors)
 	{
 		return mCbvSrvUavAllocator.Allocate(numDescriptors);
+	}
+
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateRTVDescriptor(uint32_t numDescriptors)
+	{
+		return mRTVAllocator.Allocate(numDescriptors);
+	}
+
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateDSVDescriptor(uint32_t numDescriptors)
+	{
+		return mDSVAllocator.Allocate(numDescriptors);
 	}
 
 	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateSamplerDescriptor(uint32_t numDescriptors)
@@ -123,9 +135,19 @@ namespace Dash
 		return mSamplerAllocator.Allocate(numDescriptors);
 	}
 
+	void FCpuDescriptorAllocatorManager::ReleaseStaleDescriptors()
+	{
+		mCbvSrvUavAllocator.ReleaseStaleDescriptors();
+		mRTVAllocator.ReleaseStaleDescriptors();
+		mDSVAllocator.ReleaseStaleDescriptors();
+		mSamplerAllocator.ReleaseStaleDescriptors();
+	}
+
 	void FCpuDescriptorAllocatorManager::Destroy()
 	{
 		mCbvSrvUavAllocator.Destroy();
+		mRTVAllocator.Destroy();
+		mDSVAllocator.Destroy();
 		mSamplerAllocator.Destroy();
 	}
 

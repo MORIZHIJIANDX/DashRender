@@ -76,6 +76,26 @@ namespace Dash
 #endif // DASH_DEBUG
 	}
 
+	void FPixelBuffer::CheckFeatureSupport()
+	{
+		if (mResource)
+		{
+			D3D12_RESOURCE_DESC desc = mResource->GetDesc();
+			mFormatSupport.Format = desc.Format;
+			DX_CALL(FGraphicsCore::Device->CheckFeatureSupport(D3D12_FEATURE_FORMAT_SUPPORT, &mFormatSupport, sizeof(D3D12_FEATURE_DATA_FORMAT_SUPPORT)));
+		}
+	}
+
+	bool FPixelBuffer::CheckFormatSupport(D3D12_FORMAT_SUPPORT1 formatSupport) const
+	{
+		return (mFormatSupport.Support1 & formatSupport) != 0;
+	}
+
+	bool FPixelBuffer::CheckFormatSupport(D3D12_FORMAT_SUPPORT2 formatSupport) const
+	{
+		return (mFormatSupport.Support2 & formatSupport) != 0;
+	}
+
 	DXGI_FORMAT FPixelBuffer::GetBaseFormat(DXGI_FORMAT format)
 	{
 		switch (format)

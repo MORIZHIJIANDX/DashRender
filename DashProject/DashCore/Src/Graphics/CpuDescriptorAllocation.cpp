@@ -59,7 +59,7 @@ namespace Dash
 	D3D12_CPU_DESCRIPTOR_HANDLE FCpuDescriptorAllocation::GetDescriptorHandle(uint32_t offset) const
 	{
 		ASSERT(offset < mNumDescriptors);
-		return D3D12_CPU_DESCRIPTOR_HANDLE{mDescriptorHandle.ptr + mDescriptorSize * offset};
+		return D3D12_CPU_DESCRIPTOR_HANDLE{mDescriptorHandle.ptr + (static_cast<size_t>(mDescriptorSize) * static_cast<size_t>(offset))};
 	}
 
 	uint32_t FCpuDescriptorAllocation::GetNumDescriptors() const
