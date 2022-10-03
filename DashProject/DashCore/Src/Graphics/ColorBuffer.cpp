@@ -146,7 +146,7 @@ namespace Dash
 
             if ((desc.SampleDesc.Count <= 1) && (desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) != 0 && CheckUAVSupport())
             {
-                mUnorderedAccessView = FGraphicsCore::DescriptorAllocator->AllocateUAVDescriptor();
+                mUnorderedAccessView = FGraphicsCore::DescriptorAllocator->AllocateUAVDescriptor(desc.MipLevels);
 
                 for (uint32_t i = 0; i < desc.MipLevels; i++)
                 {

@@ -26,10 +26,11 @@ namespace Dash
 		D3D12_CPU_DESCRIPTOR_HANDLE GetUnorderedAccessView(uint32_t mipIndex = 0) const;
 
 		void SetClearColor(const FLinearColor& clearColor);
+		FLinearColor GetClearColor() const { return mClearColor; }
 
 		void SetMsaaMode(uint32_t numSamples, uint32_t quality = 0);
 
-		FLinearColor GetClearColor() const { return mClearColor; }
+		uint32_t GetNumMips() const { return mNumMips; }
 
 	protected:
 		

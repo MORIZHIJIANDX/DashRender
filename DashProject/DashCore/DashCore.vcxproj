@@ -144,6 +144,7 @@
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocation.h" />
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocator.h" />
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocatorPage.h" />
+    <ClInclude Include="Src\Graphics\DepthBuffer.h" />
     <ClInclude Include="Src\Graphics\DX12Helper.h" />
     <ClInclude Include="Src\Graphics\DynamicDescriptorHeap.h" />
     <ClInclude Include="Src\Graphics\GameApp.h" />
@@ -212,6 +213,7 @@
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocation.cpp" />
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocator.cpp" />
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocatorPage.cpp" />
+    <ClCompile Include="Src\Graphics\DepthBuffer.cpp" />
     <ClCompile Include="Src\Graphics\DX12Helper.cpp" />
     <ClCompile Include="Src\Graphics\DynamicDescriptorHeap.cpp" />
     <ClCompile Include="Src\Graphics\GameApp.cpp" />
@@ -244,4 +246,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project> 
+</Project>

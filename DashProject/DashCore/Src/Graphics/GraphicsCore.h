@@ -23,6 +23,7 @@ namespace Dash
 
 	private:
 		static void InitD3DDevice();
+		static void DestroyD3Device();
 
 	private:
 		static bool mTypedUAVLoadSupport_R11G11B10_FLOAT;
