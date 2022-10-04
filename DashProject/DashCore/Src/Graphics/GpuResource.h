@@ -28,6 +28,8 @@ namespace Dash
 		ID3D12Resource* GetResource() { return mResource.Get(); }
 		const ID3D12Resource* GetResource() const { return mResource.Get(); }
 
+		Microsoft::WRL::ComPtr<ID3D12Resource> GetResourceComPtr() const { return mResource; }
+
 		ID3D12Resource** GetAddressOf() { return mResource.GetAddressOf(); }
 
 		D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress() { return mGpuVirtualAddress; };
