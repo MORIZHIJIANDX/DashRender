@@ -55,6 +55,9 @@
     <ClInclude Include="Src\Graphics\ColorBuffer.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\CommandContext.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\CommandQueue.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -68,6 +71,9 @@
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\DX12Helper.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\DepthBuffer.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\DynamicDescriptorHeap.h">
@@ -89,6 +95,9 @@
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\PixelBuffer.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\RootSignature.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\Viewport.h">
@@ -244,10 +253,7 @@
     <ClInclude Include="Src\Utility\ThreadSafeQueue.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\DepthBuffer.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Graphics\CommandContext.h">
+    <ClInclude Include="Src\Graphics\SamplerDesc.h">
       <Filter>Graphics</Filter>
     </ClInclude>
   </ItemGroup>
@@ -257,6 +263,9 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\ColorBuffer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\CommandContext.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\CommandQueue.cpp">
@@ -272,6 +281,9 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\DX12Helper.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\DepthBuffer.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\DynamicDescriptorHeap.cpp">
@@ -290,6 +302,9 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\PixelBuffer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\RootSignature.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Math\Color.cpp">
@@ -349,10 +364,7 @@
     <ClCompile Include="Src\Utility\SystemTimer.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Graphics\DepthBuffer.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Graphics\CommandContext.cpp">
+    <ClCompile Include="Src\Graphics\SamplerDesc.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
   </ItemGroup>
