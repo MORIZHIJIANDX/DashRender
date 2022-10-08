@@ -2,7 +2,8 @@
 #include "GpuLinearAllocator.h"
 #include "GraphicsCore.h"
 #include "CommandQueue.h"
-#include "../Utility/Exception.h"
+#include "DX12Helper.h"
+
 
 namespace Dash
 {

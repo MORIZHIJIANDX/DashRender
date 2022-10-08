@@ -2,7 +2,7 @@
 #include "PixelBuffer.h"
 #include "d3dx12.h"
 #include "GraphicsCore.h"
-#include "../Utility/Exception.h"
+#include "DX12Helper.h"
 
 namespace Dash
 {	

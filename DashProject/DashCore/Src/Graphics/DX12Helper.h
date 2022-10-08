@@ -6,7 +6,7 @@
 #include <strsafe.h>
 //#include "../Utility/Image.h"
 //#include "../Utility/ImageHelper.h"
-//#include "../Utility/Exception.h"
+//#include "DX12Helper.h"
 //#include "../DesignPatterns/Singleton.h"
 
 
@@ -70,11 +70,45 @@ namespace Dash
         {
         }
     #endif
+
     #define DASH_SET_DXGI_DEBUGNAME(x)                      SetDXGIDebugName(x, L#x)
     #define DASH_SET_DXGI_DEBUGNAME_INDEXED(x, n)        SetDXGIDebugNameIndexed(x[n], L#x, n)
     #define DASH_SET_DXGI_DEBUGNAME_COMPTR(x)               SetDXGIDebugName(x.Get(), L#x)
     #define DASH_SET_DXGI_DEBUGNAME_INDEXED_COMPTR(x, n)      SetDXGIDebugNameIndexed(x[n].Get(), L#x, n)
 
+
+        // ------------------------------
+    // DXTraceW函数
+    // ------------------------------
+    // 在调试输出窗口中输出格式化错误信息，可选的错误窗口弹出(已汉化)
+    // [In]strFile			当前文件名，通常传递宏__FILEW__
+    // [In]hlslFileName     当前行号，通常传递宏__LINE__
+    // [In]hr				函数执行出现问题时返回的HRESULT值
+    // [In]strMsg			用于帮助调试定位的字符串，通常传递L#x(可能为NULL)
+    // [In]bPopMsgBox       如果为TRUE，则弹出一个消息弹窗告知错误信息
+    // 返回值: 形参hr
+    HRESULT WINAPI DXTraceW(_In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRESULT hr, _In_opt_ const WCHAR* strMsg, _In_ bool bPopMsgBox);
+
+        // ------------------------------
+        // HR宏
+        // ------------------------------
+        // Debug模式下的错误提醒与追踪
+#if defined(DEBUG) | defined(DASH_DEBUG)
+    #ifndef DX_CALL
+    #define DX_CALL(x)												\
+	    {															\
+		    HRESULT hr = (x);										\
+		    if(FAILED(hr))											\
+		    {														\
+			    DXTraceW(__FILEW__, (DWORD)__LINE__, hr, L#x, true);\
+		    }														\
+	    }
+    #endif
+#else
+    #ifndef DX_CALL
+    #define DX_CALL(x) (x)
+    #endif 
+#endif
 }
 /*
 Create Mips

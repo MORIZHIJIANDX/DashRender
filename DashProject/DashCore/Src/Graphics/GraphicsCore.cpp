@@ -5,7 +5,7 @@
 #include <wrl.h>
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
-#include "../Utility/Exception.h"
+#include "DX12Helper.h"
 
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxgi.lib")

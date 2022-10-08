@@ -53,7 +53,6 @@ namespace Dash
 				staticSamplerDec.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
 			}
 		}
-
 	}
 
 	void FRootSignature::Finalize(const std::wstring& name, D3D12_ROOT_SIGNATURE_FLAGS flag)
@@ -69,7 +68,8 @@ namespace Dash
 		desc.Flags = flag;
 		desc.NumParameters = mNumParameters;
 		desc.NumStaticSamplers = mNumStaticSamplers;
-		
+		desc.pParameters = reinterpret_cast<const D3D12_ROOT_PARAMETER*>(mParameterArray.get());
+		desc.pStaticSamplers = static_cast<const D3D12_STATIC_SAMPLER_DESC*>(mSamplerArray.get());
 
 		mFinalized = true;
 	}

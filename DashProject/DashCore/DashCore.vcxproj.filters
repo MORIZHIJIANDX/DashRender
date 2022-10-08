@@ -100,6 +100,9 @@
     <ClInclude Include="Src\Graphics\RootSignature.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\SamplerDesc.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\Viewport.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -253,9 +256,6 @@
     <ClInclude Include="Src\Utility\ThreadSafeQueue.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\SamplerDesc.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\EntryPoint.cpp" />
@@ -305,6 +305,9 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\RootSignature.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\SamplerDesc.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Math\Color.cpp">
@@ -363,9 +366,6 @@
     </ClCompile>
     <ClCompile Include="Src\Utility\SystemTimer.cpp">
       <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Graphics\SamplerDesc.cpp">
-      <Filter>Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
