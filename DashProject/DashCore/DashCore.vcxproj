@@ -195,8 +195,8 @@
     <ClInclude Include="Src\Utility\Assert.h" />
     <ClInclude Include="Src\Utility\DDS.h" />
     <ClInclude Include="Src\Utility\Events.h" />
-    <ClInclude Include="Src\Utility\Exception.h" />
     <ClInclude Include="Src\Utility\FileUtility.h" />
+    <ClInclude Include="Src\Utility\Hash.h" />
     <ClInclude Include="Src\Utility\Image.h" />
     <ClInclude Include="Src\Utility\ImageHelper.h" />
     <ClInclude Include="Src\Utility\KeyCodes.h" />
@@ -239,8 +239,8 @@
     <ClCompile Include="Src\ThirdParty\imgui\imgui_tables.cpp" />
     <ClCompile Include="Src\ThirdParty\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Src\Utility\Assert.cpp" />
-    <ClCompile Include="Src\Utility\Exception.cpp" />
     <ClCompile Include="Src\Utility\FileUtility.cpp" />
+    <ClCompile Include="Src\Utility\Hash.cpp" />
     <ClCompile Include="Src\Utility\Image.cpp" />
     <ClCompile Include="Src\Utility\ImageHelper.cpp" />
     <ClCompile Include="Src\Utility\Keyboard.cpp" />
@@ -252,4 +252,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project> 
+</Project>

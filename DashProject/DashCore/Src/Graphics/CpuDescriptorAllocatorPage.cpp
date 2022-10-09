@@ -1,7 +1,7 @@
 #include "PCH.h"
 #include "CpuDescriptorAllocatorPage.h"
 #include "GraphicsCore.h"
-#include "..\Utility\Exception.h"
+#include "DX12Helper.h"
 
 namespace Dash
 {

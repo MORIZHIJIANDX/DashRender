@@ -14,6 +14,8 @@ namespace Dash
 		static void Initialize();
 		static void Shutdown();
 
+		static D3D_ROOT_SIGNATURE_VERSION GetRootSignatureVersion() { return FGraphicsCore::mHighestRootSignatureVersion; }
+
 		static ID3D12Device* Device;
 		static FCommandQueueManager* CommandQueueManager;
 		static FCommandListManager* CommandListManager;
