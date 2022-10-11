@@ -56,7 +56,7 @@ namespace Dash
 		FComputeCommandContext& GetComputeCommandContext();
 
 		FCommandList* GetCommandList();
-		ID3D12CommandList* GetD3DCommandList();
+		ID3D12GraphicsCommandList* GetD3DCommandList();
 
 		void TransitionBarrier(FGpuResource& resource, D3D12_RESOURCE_STATES newState, bool flushImmediate = false);
 		void UAVBarrier(FGpuResource& resource, bool flushImmediate = false);

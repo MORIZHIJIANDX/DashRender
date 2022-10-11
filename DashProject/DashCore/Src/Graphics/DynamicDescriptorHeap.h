@@ -36,7 +36,7 @@ namespace Dash
 		uint32_t ComputeStaleDescriptorCount() const;
 
 		void CommitDescriptorTables(FCommandContext& context, std::function<void(ID3D12GraphicsCommandList*, UINT, D3D12_GPU_DESCRIPTOR_HANDLE)> setFunc);
-		void CommitInlineDescriptors(FCommandContext& context, std::function<void(ID3D12GraphicsCommandList*, UINT, D3D12_GPU_VIRTUAL_ADDRESS)> setFunc);
+		void CommitInlineDescriptors(FCommandContext& context, const D3D12_GPU_VIRTUAL_ADDRESS* gpuAddressArray, uint32_t& bitMask, std::function<void(ID3D12GraphicsCommandList*, UINT, D3D12_GPU_VIRTUAL_ADDRESS)> setFunc);
 
 		static const uint32_t MaxDescriptorTables = 32;
 
@@ -65,7 +65,7 @@ namespace Dash
 
 		std::unique_ptr<D3D12_CPU_DESCRIPTOR_HANDLE[]> mDescriptorHandleCache;
 
-		FDescriptorTableCache mDescriptorTableCache[MaxDescriptorTables];
+		FDescriptorTableCache mRootSignatureDescriptorTableCache[MaxDescriptorTables];
 
 		D3D12_GPU_VIRTUAL_ADDRESS mInlineCBV[MaxDescriptorTables];
 
@@ -91,5 +91,7 @@ namespace Dash
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mCurrentDescriptorHeap;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE mCurrentGpuDescriptorHandle;
 		CD3DX12_CPU_DESCRIPTOR_HANDLE mCurrentCpuDescriptorHandle;
+
+		uint32_t mNumFreeHandles;
 	};
 }

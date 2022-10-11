@@ -1,10 +1,5 @@
 #pragma once
 #include <d3d12.h>
-//#include <stdint.h>
-//#include <vector>
-//#include <map>
-//#include <unordered_map>
-//#include <mutex>
 
 namespace Dash
 {

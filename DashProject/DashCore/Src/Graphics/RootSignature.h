@@ -149,6 +149,8 @@ namespace Dash
 			return mParameterArray.get()[parameterIndex];
 		}
 
+		bool IsFinalized() const { return mFinalized; }
+
 	protected:
 		std::atomic<bool> mFinalized;
 		UINT mNumParameters;

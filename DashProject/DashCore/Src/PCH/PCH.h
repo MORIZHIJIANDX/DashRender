@@ -31,9 +31,6 @@
 
 #include "../Math/MathType.h"
 
-#define D3D12_GPU_VIRTUAL_ADDRESS_NULL      ((D3D12_GPU_VIRTUAL_ADDRESS)0)
-#define D3D12_GPU_VIRTUAL_ADDRESS_UNKNOWN   ((D3D12_GPU_VIRTUAL_ADDRESS)-1)
-
 static void SetThreadName(std::thread& thread, const char* threadName)
 {
 	THREADNAME_INFO info;

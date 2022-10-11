@@ -223,6 +223,9 @@
     <ClInclude Include="Src\Utility\FileUtility.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Utility\Hash.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Utility\Image.h">
       <Filter>Utility</Filter>
     </ClInclude>
@@ -251,9 +254,6 @@
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\ThreadSafeQueue.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Utility\Hash.h">
       <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>
@@ -343,6 +343,9 @@
     <ClCompile Include="Src\Utility\FileUtility.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Utility\Hash.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Utility\Image.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
@@ -362,9 +365,6 @@
       <Filter>Utility</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\SystemTimer.cpp">
-      <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Utility\Hash.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
   </ItemGroup>

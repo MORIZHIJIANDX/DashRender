@@ -9,10 +9,11 @@
 //#include "DX12Helper.h"
 //#include "../DesignPatterns/Singleton.h"
 
-
-
 namespace Dash
 {
+#define D3D12_GPU_VIRTUAL_ADDRESS_NULL      ((D3D12_GPU_VIRTUAL_ADDRESS)0)
+#define D3D12_GPU_VIRTUAL_ADDRESS_UNKNOWN   ((D3D12_GPU_VIRTUAL_ADDRESS)-1)
+
     // 为了调试加入下面的内联函数和宏定义，为每个接口对象设置名称，方便查看调试输出
     #if defined(DASH_DEBUG)
         FORCEINLINE void SetD3D12DebugName(ID3D12Object* pObject, LPCWSTR name)

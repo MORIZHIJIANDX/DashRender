@@ -44,12 +44,10 @@ namespace Dash
 
 		FGpuResourcesStateTracker::AddGlobalResourceState(*this, currentState);
 
-#ifdef DASH_DEBUG
 		if (!name.empty())
 		{
-			mResource->SetName(name.c_str());
-		}	
-#endif // DASH_DEBUG
+			SetD3D12DebugName(mResource.Get(), name.c_str());
+		}		
 	}
 
 	void FPixelBuffer::CreateTextureResource(const D3D12_RESOURCE_DESC& resourceDesc, D3D12_CLEAR_VALUE clearValue, const std::wstring& name)
@@ -68,12 +66,10 @@ namespace Dash
 		mArraySize = resourceDesc.DepthOrArraySize;
 		mFormat = resourceDesc.Format;
 
-#ifdef DASH_DEBUG
 		if (!name.empty())
 		{
-			mResource->SetName(name.c_str());
+			SetD3D12DebugName(mResource.Get(), name.c_str());
 		}
-#endif // DASH_DEBUG
 	}
 
 	void FPixelBuffer::CheckFeatureSupport()
