@@ -94,6 +94,9 @@
     <ClInclude Include="Src\Graphics\GraphicsCore.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\PipelineStateObject.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\PixelBuffer.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -256,9 +259,6 @@
     <ClInclude Include="Src\Utility\ThreadSafeQueue.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\PipelineStateObject.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\EntryPoint.cpp" />
@@ -302,6 +302,9 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\GraphicsCore.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\PipelineStateObject.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\PixelBuffer.cpp">
@@ -369,9 +372,6 @@
     </ClCompile>
     <ClCompile Include="Src\Utility\SystemTimer.cpp">
       <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Graphics\PipelineStateObject.cpp">
-      <Filter>Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
