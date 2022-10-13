@@ -2,6 +2,7 @@
 
 #include "CommandQueue.h"
 #include "ColorBuffer.h"
+#include "DynamicDescriptorHeap.h"
 
 namespace Dash
 {
@@ -29,8 +30,15 @@ namespace Dash
 		friend FCommandContextManager;
 	private:
 		
+		FCommandContext(D3D12_COMMAND_LIST_TYPE type);
+
+		/**
+		 * Reset the command list. This should only be called by the CommandQueue
+		 * before the command list is returned from CommandQueue::GetCommandList.
+		 */
+		void Reset();
+
 	public:
-		FCommandContext();
 		~FCommandContext();
 
 		//Disable Copy
@@ -45,12 +53,6 @@ namespace Dash
 
 		// Prepare to render by reserving a command list and command allocator
 		void Initialize();
-
-		/**
-		 * Reset the command list. This should only be called by the CommandQueue
-		 * before the command list is returned from CommandQueue::GetCommandList.
-		 */
-		void Reset();
 
 		FGraphicsCommandContext& GetGraphicsCommandContext();
 		FComputeCommandContext& GetComputeCommandContext();
@@ -75,7 +77,12 @@ namespace Dash
 
 		std::shared_ptr<FGpuResourcesStateTracker> mResourceStateTracker;
 
+		// Keep track of the currently bound descriptor heaps. Only change descriptor
+		// heaps if they are different than the currently bound descriptor heaps.
 		ID3D12DescriptorHeap* mDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES];
+
+		FDynamicDescriptorHeap mDynamicViewDescriptor;
+		FDynamicDescriptorHeap mDynamicSamplerDescriptor;
 
 		using FTrackedObjects = std::vector<Microsoft::WRL::ComPtr<ID3D12Object>>;
 		FTrackedObjects mTrackedObjects;

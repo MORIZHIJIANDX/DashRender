@@ -149,6 +149,8 @@ namespace Dash
 			return mParameterArray.get()[parameterIndex];
 		}
 
+		ID3D12RootSignature* GetSignature() const { return mRootSignature; }
+
 		bool IsFinalized() const { return mFinalized; }
 
 	protected:

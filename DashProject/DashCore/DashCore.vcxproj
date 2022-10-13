@@ -153,6 +153,7 @@
     <ClInclude Include="Src\Graphics\GpuResource.h" />
     <ClInclude Include="Src\Graphics\GpuResourcesStateTracker.h" />
     <ClInclude Include="Src\Graphics\GraphicsCore.h" />
+    <ClInclude Include="Src\Graphics\PipelineStateObject.h" />
     <ClInclude Include="Src\Graphics\PixelBuffer.h" />
     <ClInclude Include="Src\Graphics\RootSignature.h" />
     <ClInclude Include="Src\Graphics\SamplerDesc.h" />
@@ -224,6 +225,7 @@
     <ClCompile Include="Src\Graphics\GpuLinearAllocator.cpp" />
     <ClCompile Include="Src\Graphics\GpuResourcesStateTracker.cpp" />
     <ClCompile Include="Src\Graphics\GraphicsCore.cpp" />
+    <ClCompile Include="Src\Graphics\PipelineStateObject.cpp" />
     <ClCompile Include="Src\Graphics\PixelBuffer.cpp" />
     <ClCompile Include="Src\Graphics\RootSignature.cpp" />
     <ClCompile Include="Src\Graphics\SamplerDesc.cpp" />
@@ -252,4 +254,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project> 
+</Project>
