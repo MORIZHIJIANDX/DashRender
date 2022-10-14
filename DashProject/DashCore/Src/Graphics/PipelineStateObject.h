@@ -26,12 +26,16 @@ namespace Dash
 
 		virtual void Finalize() = 0;
 
+		bool IsFinalized() const { return mIsFinalized; }
+
 	protected:
 		std::wstring mName;
 
-		FRootSignature* mRootSignature;
+		bool mIsFinalized = false;
 
-		ID3D12PipelineState* mPSO;
+		const FRootSignature* mRootSignature = nullptr;
+
+		ID3D12PipelineState* mPSO = nullptr;
 	};
 
 	class FGraphicsPSO : public FPipelineStateObject
@@ -44,9 +48,9 @@ namespace Dash
 		void SetRasterizerState(const D3D12_RASTERIZER_DESC& rasterDesc);
 		void SetDepthStencilState(const D3D12_DEPTH_STENCIL_DESC& depthStencilDesc);
 		void SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopologyType);
-		void SetDepthTargetFormat(DXGI_FORMAT depthTargetFormat, UINT massCount = 1, UINT msaaQuality = 0);
-		void SetRenderTargetFormat(DXGI_FORMAT renderTargetFormat, DXGI_FORMAT depthTargetFormat, UINT massCount = 1, UINT msaaQuality = 0);
-		void SetRenderTargetFormats(UINT numRTVs, const DXGI_FORMAT* renderTargetFormats, DXGI_FORMAT depthTargetFormat, UINT massCount = 1, UINT msaaQuality = 0);
+		void SetDepthTargetFormat(DXGI_FORMAT depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
+		void SetRenderTargetFormat(DXGI_FORMAT renderTargetFormat, DXGI_FORMAT depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
+		void SetRenderTargetFormats(UINT numRTVs, const DXGI_FORMAT* renderTargetFormats, DXGI_FORMAT depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
 		void SetInputLayout(UINT numElements, const D3D12_INPUT_ELEMENT_DESC* inputElementDescs);
 		void SetPrimitiveRestart(D3D12_INDEX_BUFFER_STRIP_CUT_VALUE indexBufferProps);
 

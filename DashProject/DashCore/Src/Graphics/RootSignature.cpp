@@ -6,7 +6,6 @@
 
 namespace Dash
 {
-
 	static std::map<size_t, Microsoft::WRL::ComPtr<ID3D12RootSignature>> RootSignatureHashMap;
 
 	void FRootSignature::DestroyAll()
@@ -131,48 +130,46 @@ namespace Dash
 			}
 		}
 
+		static std::mutex signatureMutex;
+		ID3D12RootSignature** signatureRef = nullptr;
+		bool firstTimeCompile = false;
 		{
-			static std::mutex signatureMutex;
-			ID3D12RootSignature** signatureRef = nullptr;
-			bool firstTimeCompile = false;
+			std::lock_guard<std::mutex> lock(signatureMutex);
+
+			auto iter = RootSignatureHashMap.find(hashCode);
+			if (iter == RootSignatureHashMap.end())
 			{
-				std::lock_guard<std::mutex> lock(signatureMutex);
-
-				auto iter = RootSignatureHashMap.find(hashCode);
-				if (iter == RootSignatureHashMap.end())
-				{
-					signatureRef = RootSignatureHashMap[hashCode].GetAddressOf();
-					firstTimeCompile = true;
-				}
-				else
-				{
-					signatureRef = iter->second.GetAddressOf();
-				}
-			}
-			
-			if (firstTimeCompile == true)
-			{
-				Microsoft::WRL::ComPtr<ID3DBlob> outBlob, errorBlob;
-
-				DX_CALL(D3D12SerializeRootSignature(&desc, FGraphicsCore::GetRootSignatureVersion(), outBlob.GetAddressOf(), errorBlob.GetAddressOf()));
-
-				DX_CALL(FGraphicsCore::Device->CreateRootSignature(0, outBlob->GetBufferPointer(), outBlob->GetBufferSize(), IID_PPV_ARGS(&mRootSignature)));
-
-				SetD3D12DebugName(mRootSignature, name.c_str());
-
-				RootSignatureHashMap[hashCode].Attach(mRootSignature);
-
-				ASSERT(*signatureRef == mRootSignature);
+				signatureRef = RootSignatureHashMap[hashCode].GetAddressOf();
+				firstTimeCompile = true;
 			}
 			else
 			{
-				while (*signatureRef == nullptr)
-				{	
-					std::this_thread::yield();
-				}
-
-				mRootSignature = *signatureRef;
+				signatureRef = iter->second.GetAddressOf();
 			}
+		}
+
+		if (firstTimeCompile == true)
+		{
+			Microsoft::WRL::ComPtr<ID3DBlob> outBlob, errorBlob;
+
+			DX_CALL(D3D12SerializeRootSignature(&desc, FGraphicsCore::GetRootSignatureVersion(), outBlob.GetAddressOf(), errorBlob.GetAddressOf()));
+
+			DX_CALL(FGraphicsCore::Device->CreateRootSignature(0, outBlob->GetBufferPointer(), outBlob->GetBufferSize(), IID_PPV_ARGS(&mRootSignature)));
+
+			SetD3D12DebugName(mRootSignature, name.c_str());
+
+			RootSignatureHashMap[hashCode].Attach(mRootSignature);
+
+			ASSERT(*signatureRef == mRootSignature);
+		}
+		else
+		{
+			while (*signatureRef == nullptr)
+			{
+				std::this_thread::yield();
+			}
+
+			mRootSignature = *signatureRef;
 		}
 
 		mFinalized = true;
