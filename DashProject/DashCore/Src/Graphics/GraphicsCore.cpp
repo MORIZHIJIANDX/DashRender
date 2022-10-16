@@ -6,6 +6,9 @@
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
 #include "DX12Helper.h"
+#include "CommandContext.h"
+#include "RootSignature.h"
+#include "SamplerDesc.h"
 
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -24,6 +27,7 @@ namespace Dash
 	FCommandQueueManager* FGraphicsCore::CommandQueueManager = nullptr;
 	FCommandListManager* FGraphicsCore::CommandListManager = nullptr;
 	FCpuDescriptorAllocatorManager* FGraphicsCore::DescriptorAllocator = nullptr;
+	FCommandContextManager* FGraphicsCore::ContextManager = nullptr;
 
 	bool FGraphicsCore::mTypedUAVLoadSupport_R11G11B10_FLOAT = false;
 	bool FGraphicsCore::mTypedUAVLoadSupport_R16G16B16A16_FLOAT = false;
@@ -39,6 +43,7 @@ namespace Dash
 		CommandQueueManager = new FCommandQueueManager();
 		CommandListManager = new FCommandListManager();
 		DescriptorAllocator = new FCpuDescriptorAllocatorManager();
+		ContextManager = new FCommandContextManager();
 
 		LOG_INFO << "FGraphicsCore::Initialize End.";
 	}
@@ -52,7 +57,15 @@ namespace Dash
 			CommandQueueManager->Destroy();
 			delete CommandQueueManager;
 
-			LOG_INFO << "Destroy Command Queue Manager.";
+			LOG_INFO << "Flush Command Queue, Destroy Command Queue Manager.";
+		}
+
+		if (ContextManager)
+		{
+			ContextManager->Destroy();
+			delete ContextManager;
+
+			LOG_INFO << "Destroy Command Context Manager.";
 		}
 
 		if (CommandListManager)
@@ -70,6 +83,10 @@ namespace Dash
 
 			LOG_INFO << "Destroy Cpu Descriptor Allocator.";
 		}
+
+		FPipelineStateObject::DestroyAll();
+		FRootSignature::DestroyAll();
+		FSamplerDesc::DestroyAll();
 
 		DestroyD3Device();
 	

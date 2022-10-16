@@ -7,6 +7,7 @@ namespace Dash
 	class FCommandQueueManager;
 	class FCommandListManager;
 	class FCpuDescriptorAllocatorManager;
+	class FCommandContextManager;
 
 	class FGraphicsCore
 	{
@@ -20,6 +21,7 @@ namespace Dash
 		static FCommandQueueManager* CommandQueueManager;
 		static FCommandListManager* CommandListManager;
 		static FCpuDescriptorAllocatorManager* DescriptorAllocator;
+		static FCommandContextManager* ContextManager;
 
 		static constexpr int BackBufferCount = 3;
 

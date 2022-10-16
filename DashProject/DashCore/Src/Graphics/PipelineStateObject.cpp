@@ -16,7 +16,8 @@ namespace Dash
 
 	void FPipelineStateObject::DestroyAll()
 	{
-
+		GraphicsPipelineStateHashMap.clear();
+		ComputePipelineStateHashMap.clear();
 	}
 
 	void FPipelineStateObject::SetRootSignature(const FRootSignature& rootSignature)

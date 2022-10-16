@@ -1,6 +1,6 @@
 #pragma once
 #include <wrl.h>
-#include <d3d12.h>
+#include "DX12Helper.h"
 #include "GpuResourcesStateTracker.h"
 
 namespace Dash
@@ -8,7 +8,7 @@ namespace Dash
 	class FGpuResource
 	{
 	public:
-		~FGpuResource()
+		virtual ~FGpuResource()
 		{
 			Destroy();
 		}
@@ -32,7 +32,7 @@ namespace Dash
 
 		ID3D12Resource** GetAddressOf() { return mResource.GetAddressOf(); }
 
-		D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress() { return mGpuVirtualAddress; };
+		//D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress() { return mGpuVirtualAddress; };
 
 		uint32_t GetVersionID() const { return mVersionID; }
 

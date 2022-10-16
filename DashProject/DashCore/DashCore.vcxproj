@@ -149,6 +149,7 @@
     <ClInclude Include="Src\Graphics\DepthBuffer.h" />
     <ClInclude Include="Src\Graphics\DynamicDescriptorHeap.h" />
     <ClInclude Include="Src\Graphics\GameApp.h" />
+    <ClInclude Include="Src\Graphics\GpuBuffer.h" />
     <ClInclude Include="Src\Graphics\GpuLinearAllocator.h" />
     <ClInclude Include="Src\Graphics\GpuResource.h" />
     <ClInclude Include="Src\Graphics\GpuResourcesStateTracker.h" />
@@ -222,6 +223,7 @@
     <ClCompile Include="Src\Graphics\DepthBuffer.cpp" />
     <ClCompile Include="Src\Graphics\DynamicDescriptorHeap.cpp" />
     <ClCompile Include="Src\Graphics\GameApp.cpp" />
+    <ClCompile Include="Src\Graphics\GpuBuffer.cpp" />
     <ClCompile Include="Src\Graphics\GpuLinearAllocator.cpp" />
     <ClCompile Include="Src\Graphics\GpuResourcesStateTracker.cpp" />
     <ClCompile Include="Src\Graphics\GraphicsCore.cpp" />

@@ -29,6 +29,11 @@ namespace Dash
 		}
 	}
 
+	FDynamicDescriptorHeap::~FDynamicDescriptorHeap()
+	{
+		Destroy();
+	}
+
 	void FDynamicDescriptorHeap::StageDescriptors(uint32_t rootParameterIndex, uint32_t offset, uint32_t numDescriptors, const D3D12_CPU_DESCRIPTOR_HANDLE srcDescriptors)
 	{
 		ASSERT(rootParameterIndex < MaxDescriptorTables && numDescriptors < mNumDescriptorsPerHeap);
@@ -143,6 +148,11 @@ namespace Dash
 			mInlineSRV[index] = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
 			mInlineUAV[index] = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
 		}
+	}
+
+	void FDynamicDescriptorHeap::Destroy()
+	{
+		mDescriptorHeapPool = {};
 	}
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> FDynamicDescriptorHeap::RequestDescriptorHeap()

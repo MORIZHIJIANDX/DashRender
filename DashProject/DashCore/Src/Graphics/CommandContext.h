@@ -6,6 +6,7 @@
 #include "PipelineStateObject.h"
 #include "DepthBuffer.h"
 #include "Viewport.h"
+#include "GpuBuffer.h"
 
 namespace Dash
 {
@@ -73,6 +74,8 @@ namespace Dash
 
 		void SetPipelineState(const FPipelineStateObject& pso);
 
+		static void InitializeBuffer(FGpuBuffer& dest, const void* bufferData, size_t numBytes, size_t offset = 0);
+
 	protected:
 
 		void BindDescriptorHeaps();
@@ -109,11 +112,11 @@ namespace Dash
 
 		void SetRootSignature(const FRootSignature& rootSignature);
 
-		void SetRenderTargets(UINT numRTVs, const D3D12_CPU_DESCRIPTOR_HANDLE rtvs[]);
-		void SetRenderTargets(UINT numRTVs, const D3D12_CPU_DESCRIPTOR_HANDLE rtvs[], D3D12_CPU_DESCRIPTOR_HANDLE dsv);
-		void SetRenderTarget(D3D12_CPU_DESCRIPTOR_HANDLE rtv) { SetRenderTargets(1, &rtv); }
-		void SetRenderTarget(D3D12_CPU_DESCRIPTOR_HANDLE rtv, D3D12_CPU_DESCRIPTOR_HANDLE dsv) { SetRenderTargets(1, &rtv, dsv); }
-		void SetDepthStencilTarget(D3D12_CPU_DESCRIPTOR_HANDLE dsv) { SetRenderTargets(1, nullptr, dsv); }
+		void SetRenderTargets(UINT numRTVs, const FColorBuffer* rtvs);
+		void SetRenderTargets(UINT numRTVs, const FColorBuffer* rtvs, const FDepthBuffer& depthBuffer);
+		void SetRenderTarget(const FColorBuffer& colorBuffer) { SetRenderTargets(1, &colorBuffer); }
+		void SetRenderTarget(const FColorBuffer& colorBuffer, const FDepthBuffer& depthBuffer) { SetRenderTargets(1, &colorBuffer, depthBuffer); }
+		void SetDepthStencilTarget(const FDepthBuffer& depthBuffer) { SetRenderTargets(1, nullptr, depthBuffer); }
 
 		void SetViewport(const FViewport& vp);
 		void SetViewport(Scalar x, Scalar y, Scalar w, Scalar h, Scalar minDepth = 0.0f, Scalar maxDepth = 0.0f);
@@ -121,6 +124,9 @@ namespace Dash
 		void SetScissor(UINT left, UINT top, UINT right, UINT bottom);
 		void SetStencilRef(UINT stencilRef);
 		void SetBlendFactor(const FLinearColor& color);
+		void SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY_TYPE type);
+
+		//Set Root Parameters
 
 		void Set32BitConstants(UINT rootIndex, UINT numConstants, const void* constants);
 		template<typename T>
@@ -137,6 +143,59 @@ namespace Dash
 			SetRootConstantBufferView(rootIndex, sizeof(T), &constants);
 		}
 
-	private:
+		void SetRootShaderResourceView(UINT rootIndex, size_t sizeInBytes, const void* constants);
+		template<typename T>
+		void SetRootShaderResourceView(UINT rootIndex, const T& constants)
+		{
+			SetRootShaderResourceView(rootIndex, sizeof(T), &constants);
+		}
+
+		// FGpuConstantBuffer 初始状态 D3D12_RESOURCE_STATE_COMMON 不可直接作为 SRV 和 UAV，需要转换为 D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER (D3D12_RESOURCE_STATE_GENERIC_READ) 状态
+		void SetRootConstantBufferView(UINT rootIndex, const FGpuConstantBuffer& constantBuffer, size_t bufferOffset = 0, 
+			D3D12_RESOURCE_STATES stateAfter = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+
+		void SetRootShaderResourceView(UINT rootIndex, const FGpuConstantBuffer& constantBuffer, size_t bufferOffset = 0,
+			D3D12_RESOURCE_STATES stateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+
+		void SetRootUnorderAccessView(UINT rootIndex, const FGpuConstantBuffer& constantBuffer, size_t bufferOffset = 0,
+			D3D12_RESOURCE_STATES stateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+
+		// Set descriptor table parameters
+
+		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, const FGpuConstantBuffer& buffer,
+			D3D12_RESOURCE_STATES stateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+
+		void SetUnorderAccessView(UINT rootIndex, UINT descriptorOffset, const FGpuConstantBuffer& buffer,
+			D3D12_RESOURCE_STATES stateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, const FColorBuffer& buffer,
+			D3D12_RESOURCE_STATES stateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, UINT firstSubResource = 0, 
+			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+
+		void SetUnorderAccessView(UINT rootIndex, UINT descriptorOffset, const FColorBuffer& buffer,
+			D3D12_RESOURCE_STATES stateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS, UINT firstSubResource = 0,
+			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+
+		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, const FDepthBuffer& buffer,
+			D3D12_RESOURCE_STATES stateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, UINT firstSubResource = 0,
+			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+
+		void SetDynamicSampler(UINT rootIndex, UINT descriptorOffset, D3D12_CPU_DESCRIPTOR_HANDLE handle);
+		void SetDynamicSampler(UINT rootIndex, UINT descriptorOffset, UINT count, D3D12_CPU_DESCRIPTOR_HANDLE handles[]);
+
+		void SetIndexBuffer(const FGpuIndexBuffer& indexBuffer);
+		void SetVertexBuffer(UINT slot, const FGpuVertexBuffer& vertexBuffer);
+		void SetVertexBuffers(UINT startSlot, UINT count, const FGpuVertexBuffer* vertexBuffer);
+
+		void SetDynamicIndexBuffer(size_t indexCount, const uint16_t* data);
+		void SetDynamicVertexBuffer(UINT slot, size_t vertexCount, size_t vertexStride, const void* data);
+
+		void Draw(UINT vertexCount, UINT vertexStartOffset = 0);
+		void DrawIndexed(UINT indexCount, UINT startIndexLocation = 0, UINT baseVertexLocation = 0);
+		void DrawInstanced(UINT vertexCountPerInstance, UINT instanceCount,
+			UINT startVertexLocation = 0, UINT startInstanceLocation = 0);
+		void DrawIndexedInstanced(UINT indexCountPerInstance, UINT instanceCount, UINT startIndexLocation,
+			INT baseVertexLocation, UINT startInstanceLocation);
 	};
 }

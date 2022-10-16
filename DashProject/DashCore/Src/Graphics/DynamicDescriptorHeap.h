@@ -12,7 +12,7 @@ namespace Dash
 	{
 	public:
 		FDynamicDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptorsPerHeap = 1024);
-		~FDynamicDescriptorHeap() {};
+		~FDynamicDescriptorHeap();
 
 		void StageDescriptors(uint32_t rootParameterIndex, uint32_t offset, uint32_t numDescriptors, const D3D12_CPU_DESCRIPTOR_HANDLE srcDescriptors);
 
@@ -28,6 +28,8 @@ namespace Dash
 		void ParseRootSignature(const FRootSignature& rootSignature);
 
 		void Reset();
+
+		void Destroy();
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> RequestDescriptorHeap();

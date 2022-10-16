@@ -32,6 +32,8 @@ namespace Dash
 	void FPixelBuffer::AssociateWithResource(ID3D12Resource* resource, const D3D12_RESOURCE_STATES& currentState, const std::wstring& name)
 	{
 		ASSERT(resource != nullptr);
+		
+		Destroy();
 
 		mResource.Attach(resource);
 
