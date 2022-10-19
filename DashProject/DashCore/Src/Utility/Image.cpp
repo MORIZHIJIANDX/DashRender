@@ -26,7 +26,7 @@ namespace Dash
 		//扩展为1字节(8 bit)的倍数
 		size_t picRowPitch = (size_t(mWidth) * size_t(mBitPerPixel) + (mRowAlignment * 8) - 1) / (mRowAlignment * 8);
 
-		mData.resize(picRowPitch * height);
+		mByteArray.resize(picRowPitch * height);
 	}
 
 	FTexture::FTexture(const FTexture& other)
@@ -35,7 +35,7 @@ namespace Dash
 		, mFormat(other.mFormat)
 		, mBitPerPixel(other.mBitPerPixel)
 		, mRowAlignment(other.mRowAlignment)
-		, mData(other.mData)
+		, mByteArray(other.mByteArray)
 	{
 	}
 
@@ -45,7 +45,7 @@ namespace Dash
 		, mFormat(std::exchange(other.mFormat, EDASH_FORMAT::UnKwon))
 		, mBitPerPixel(std::exchange(other.mBitPerPixel, 0))
 		, mRowAlignment(std::exchange(other.mRowAlignment, 1))
-		, mData(std::move(other.mData))
+		, mByteArray(std::move(other.mByteArray))
 	{
 	}
 
@@ -58,7 +58,7 @@ namespace Dash
 			mFormat = other.mFormat;
 			mBitPerPixel = other.mBitPerPixel;
 			mRowAlignment = other.mRowAlignment;
-			mData = other.mData;
+			mByteArray = other.mByteArray;
 		}
 		return *this;
 	}
@@ -72,7 +72,7 @@ namespace Dash
 			mFormat = std::exchange(other.mFormat, EDASH_FORMAT::UnKwon);
 			mBitPerPixel = std::exchange(other.mBitPerPixel, 0);
 			mRowAlignment = std::exchange(other.mRowAlignment, 1);
-			mData = std::move(other.mData);
+			mByteArray = std::move(other.mByteArray);
 		}
 		return *this;
 	}
@@ -88,7 +88,7 @@ namespace Dash
 		mHeight = y;
 
 		size_t picRowPitch = (size_t(mWidth) * size_t(mBitPerPixel) + (mRowAlignment * 8) - 1) / (mRowAlignment * 8);
-		mData.resize(picRowPitch * mHeight);
+		mByteArray.resize(picRowPitch * mHeight);
 	}
 
 	void FTexture::Resize(const FVector2i& size)

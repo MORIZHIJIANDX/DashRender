@@ -27,13 +27,15 @@ namespace Dash
 
 		void ParseRootSignature(const FRootSignature& rootSignature);
 
+		D3D12_GPU_DESCRIPTOR_HANDLE CopyAndSetDescriptor(FCommandContext& context, D3D12_CPU_DESCRIPTOR_HANDLE srcDescriptor);
+
 		void Reset();
 
 		void Destroy();
 
 	private:
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> RequestDescriptorHeap();
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap();
+		ID3D12DescriptorHeap* RequestDescriptorHeap();
+		ID3D12DescriptorHeap* CreateDescriptorHeap();
 
 		uint32_t ComputeStaleDescriptorCount() const;
 
@@ -90,7 +92,7 @@ namespace Dash
 		DescriptorHeapPool mDescriptorHeapPool;
 		DescriptorHeapPool mAvailableDescriptorHeaps;
 
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mCurrentDescriptorHeap;
+		ID3D12DescriptorHeap* mCurrentDescriptorHeap = nullptr;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE mCurrentGpuDescriptorHandle;
 		CD3DX12_CPU_DESCRIPTOR_HANDLE mCurrentCpuDescriptorHandle;
 

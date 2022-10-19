@@ -96,7 +96,7 @@ namespace Dash
 	{
 	public:
 		D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView(size_t offset, uint32_t size, uint32_t stride) const;
-		D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView(size_t baseVertexIndex) const
+		D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView(size_t baseVertexIndex = 0) const
 		{
 			ASSERT(baseVertexIndex < mElementCount);
 			size_t offset = baseVertexIndex * mElementSize;
@@ -111,7 +111,7 @@ namespace Dash
 	{
 	public:
 		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView(size_t offset, uint32_t size, bool is32Bit = false) const;
-		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView(size_t startIndex) const
+		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView(size_t startIndex = 0) const
 		{
 			ASSERT(startIndex < mElementCount);
 			size_t offset = startIndex * mElementSize;

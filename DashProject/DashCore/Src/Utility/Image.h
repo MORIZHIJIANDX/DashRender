@@ -31,9 +31,9 @@ namespace Dash
 
 		size_t GetHeight() const { return mHeight; }
 
-		const uint8_t* GetRawData() const { return mData.data(); }
+		const uint8_t* GetRawData() const { return mByteArray.data(); }
 
-		uint8_t* GetRawData() { return mData.data(); }
+		uint8_t* GetRawData() { return mByteArray.data(); }
 
 		template<typename T>
 		void SetPixel(const T& value, size_t x, size_t y);
@@ -62,14 +62,14 @@ namespace Dash
 		size_t mRowAlignment;
 		size_t mBitPerPixel;
 		EDASH_FORMAT mFormat;
-		std::vector<uint8_t> mData;
+		std::vector<uint8_t> mByteArray;
 	};
 
 	template<typename T>
 	FORCEINLINE void FTexture::SetPixel(const T& value, size_t x, size_t y)
 	{
 		ASSERT(x < mWidth&& y < mHeight);
-		reinterpret_cast<T&>(mData[x + y * mWidth]) = value;
+		reinterpret_cast<T&>(mByteArray[x + y * mWidth]) = value;
 	}
 
 	template<typename T>
@@ -85,7 +85,7 @@ namespace Dash
 
 		ASSERT(mFormat == GetFormatForType<T>());
 
-		return reinterpret_cast<const T&>(mData[x + y * mWidth]);
+		return reinterpret_cast<const T&>(mByteArray[x + y * mWidth]);
 	}
 
 	template<typename T>

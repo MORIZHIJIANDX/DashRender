@@ -54,10 +54,9 @@ namespace Dash
 
 		if (CommandQueueManager)
 		{
-			CommandQueueManager->Destroy();
-			delete CommandQueueManager;
+			CommandQueueManager->Flush();
 
-			LOG_INFO << "Flush Command Queue, Destroy Command Queue Manager.";
+			LOG_INFO << "Flush Command Queue.";
 		}
 
 		if (ContextManager)
@@ -66,6 +65,14 @@ namespace Dash
 			delete ContextManager;
 
 			LOG_INFO << "Destroy Command Context Manager.";
+		}
+
+		if (CommandQueueManager)
+		{
+			CommandQueueManager->Destroy();
+			delete CommandQueueManager;
+
+			LOG_INFO << "Destroy Command Queue Manager.";
 		}
 
 		if (CommandListManager)
@@ -81,7 +88,7 @@ namespace Dash
 			DescriptorAllocator->Destroy();
 			delete DescriptorAllocator;
 
-			LOG_INFO << "Destroy Cpu Descriptor Allocator.";
+			LOG_INFO << "Destroy CPU Descriptor Allocator.";
 		}
 
 		FPipelineStateObject::DestroyAll();

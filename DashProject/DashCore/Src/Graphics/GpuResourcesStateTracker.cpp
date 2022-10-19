@@ -99,12 +99,28 @@ namespace Dash
 		ResourceBarrier(CD3DX12_RESOURCE_BARRIER::UAV(resource));
 	}
 
+	void FGpuResourcesStateTracker::UAVBarrier(FGpuResource& resource)
+	{
+		if (resource.GetResource())
+		{
+			ResourceBarrier(CD3DX12_RESOURCE_BARRIER::UAV(resource.GetResource()));
+		}
+	}
+
 	void FGpuResourcesStateTracker::AliasBarrier(ID3D12Resource* resourceBefore /*= nullptr*/, ID3D12Resource* resourceAfter /*= nullptr*/)
 	{
 		ResourceBarrier(CD3DX12_RESOURCE_BARRIER::Aliasing(resourceBefore, resourceAfter));
 	}
 
-	uint32_t FGpuResourcesStateTracker::FlushPendingResourceBarriers(ID3D12GraphicsCommandList2* commandList)
+	void FGpuResourcesStateTracker::AliasBarrier(FGpuResource& resourceBefore, FGpuResource& resourceAfter)
+	{
+		if (resourceBefore.GetResource() && resourceAfter.GetResource())
+		{
+			ResourceBarrier(CD3DX12_RESOURCE_BARRIER::Aliasing(resourceBefore.GetResource(), resourceAfter.GetResource()));
+		}
+	}
+
+	uint32_t FGpuResourcesStateTracker::FlushPendingResourceBarriers(ID3D12GraphicsCommandList* commandList)
 	{
 		ASSERT(IsLocked == true);
 		ASSERT(commandList != nullptr);
@@ -177,7 +193,7 @@ namespace Dash
 		return num;
 	}
 
-	uint32_t FGpuResourcesStateTracker::FlushResourceBarriers(ID3D12GraphicsCommandList2* commandList)
+	uint32_t FGpuResourcesStateTracker::FlushResourceBarriers(ID3D12GraphicsCommandList* commandList)
 	{
 		ASSERT(commandList != nullptr);
 

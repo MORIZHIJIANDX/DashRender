@@ -36,7 +36,7 @@ namespace Dash
 		union
 		{
 			struct { float r, g, b, a; };
-			float mData[4];
+			float Data[4];
 		};
 		
 
@@ -83,12 +83,12 @@ namespace Dash
 
 		FORCEINLINE float& operator[](int32_t Index)
 		{
-			return mData[Index];
+			return Data[Index];
 		}
 
 		FORCEINLINE const float& operator[](int32_t Index) const
 		{
-			return mData[Index];
+			return Data[Index];
 		}
 
 		FORCEINLINE FLinearColor operator+(const FLinearColor& ColorB) const

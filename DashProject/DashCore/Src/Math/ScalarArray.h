@@ -77,7 +77,7 @@ namespace Dash
 		constexpr ConstIterator End() const noexcept;
 
 	private:
-		DataType mData;
+		DataType Data;
 	};
 
 
@@ -212,14 +212,14 @@ namespace Dash
 
 	template<typename T, std::size_t N>
 	FORCEINLINE constexpr TScalarArray<T, N>::TScalarArray() noexcept
-		: mData{}
+		: Data{}
 	{
 	}
 
 	template<typename Scalar, std::size_t N>
 	FORCEINLINE constexpr TScalarArray<Scalar, N>::TScalarArray(FZero) noexcept
 	{
-		mData.fill(Scalar{ 0 });
+		Data.fill(Scalar{ 0 });
 	}
 
 	template<typename Scalar, std::size_t N>
@@ -228,8 +228,8 @@ namespace Dash
 	{
 		ASSERT(GetSize() >= I);
 
-		mData.fill(Scalar{ 0 });
-		mData[I] = Scalar{ 1 };
+		Data.fill(Scalar{ 0 });
+		Data[I] = Scalar{ 1 };
 	}
 
 	template<typename Scalar, std::size_t N>
@@ -240,7 +240,7 @@ namespace Dash
 
 		for (SizeType i = 0; i < GetSize(); ++i)
 		{
-			mData[i] = static_cast<Scalar>(v[i]);
+			Data[i] = static_cast<Scalar>(v[i]);
 		}
 	}
 
@@ -250,9 +250,9 @@ namespace Dash
 		ASSERT(GetSize() >= list.size());
 
 		auto listIter = list.begin();
-		auto arrayIter = mData.begin();
+		auto arrayIter = Data.begin();
 
-		for (; listIter != list.end() && arrayIter != mData.end(); ++listIter, ++arrayIter)
+		for (; listIter != list.end() && arrayIter != Data.end(); ++listIter, ++arrayIter)
 		{
 			*arrayIter = *listIter;
 		}
@@ -264,10 +264,10 @@ namespace Dash
 	{
 		for (SizeType i = 0; i < GetSize() - 1; ++i)
 		{
-			mData[i] = static_cast<Scalar>(v[i]);
+			Data[i] = static_cast<Scalar>(v[i]);
 		}
 
-		mData[GetSize() - 1] = Scalar{};
+		Data[GetSize() - 1] = Scalar{};
 	}
 
 	template<typename Scalar, std::size_t N>
@@ -276,26 +276,26 @@ namespace Dash
 	{
 		for (SizeType i = 0; i < GetSize(); ++i)
 		{
-			mData[i] = static_cast<Scalar>(v[i]);
+			Data[i] = static_cast<Scalar>(v[i]);
 		}
 	}
 
 	template<typename Scalar, std::size_t N>
 	FORCEINLINE TScalarArray<Scalar, N>::operator ConstPointer() const noexcept
 	{
-		return mData.data();
+		return Data.data();
 	}
 
 	template<typename Scalar, std::size_t N>
 	FORCEINLINE TScalarArray<Scalar, N>::operator Pointer() noexcept
 	{
-		return mData.data();
+		return Data.data();
 	}
 
 	template<typename Scalar, std::size_t N>
 	FORCEINLINE TScalarArray<Scalar, N>& TScalarArray<Scalar, N>::operator=(FZero) noexcept
 	{
-		mData.fill(Scalar{});
+		Data.fill(Scalar{});
 		return *this;
 	}
 
@@ -314,7 +314,7 @@ namespace Dash
 	template<typename Scalar, std::size_t N>
 	FORCEINLINE TScalarArray<Scalar, N>& TScalarArray<Scalar, N>::operator*=(FZero) noexcept
 	{
-		mData.fill(Scalar{});
+		Data.fill(Scalar{});
 		return *this;
 	}
 
@@ -322,8 +322,8 @@ namespace Dash
 	template<std::size_t I>
 	FORCEINLINE TScalarArray<Scalar, N>& TScalarArray<Scalar, N>::operator=(FUnit<I>) noexcept
 	{
-		mData.fill(Scalar{});
-		mData[I] = Scalar{ 1 };
+		Data.fill(Scalar{});
+		Data[I] = Scalar{ 1 };
 		return *this;
 	}
 
@@ -335,7 +335,7 @@ namespace Dash
 
 		for (SizeType i = 0; i < GetSize(); ++i)
 		{
-			mData[i] = static_cast<Scalar>(v[i]);
+			Data[i] = static_cast<Scalar>(v[i]);
 		}
 
 		return *this;
@@ -347,7 +347,7 @@ namespace Dash
 	{
 		for (SizeType i = 0; i < GetSize(); ++i)
 		{
-			mData[i] = static_cast<Scalar>(v[i]);
+			Data[i] = static_cast<Scalar>(v[i]);
 		}
 
 		return *this;
@@ -359,7 +359,7 @@ namespace Dash
 	{
 		for (SizeType i = 0; i < GetSize(); ++i)
 		{
-			mData[i] += static_cast<Scalar>(v[i]);
+			Data[i] += static_cast<Scalar>(v[i]);
 		}
 
 		return *this;
@@ -371,7 +371,7 @@ namespace Dash
 	{
 		for (SizeType i = 0; i < GetSize(); ++i)
 		{
-			mData[i] -= static_cast<Scalar>(v[i]);
+			Data[i] -= static_cast<Scalar>(v[i]);
 		}
 
 		return *this;
@@ -383,7 +383,7 @@ namespace Dash
 	{
 		for (SizeType i = 0; i < GetSize(); ++i)
 		{
-			mData[i] *= static_cast<Scalar>(v[i]);
+			Data[i] *= static_cast<Scalar>(v[i]);
 		}
 
 		return *this;
@@ -394,7 +394,7 @@ namespace Dash
 	{
 		for (SizeType i = 0; i < GetSize(); ++i)
 		{
-			mData[i] *= s;
+			Data[i] *= s;
 		}
 
 		return *this;
@@ -412,35 +412,35 @@ namespace Dash
 	template<typename Scalar2>
 	FORCEINLINE void TScalarArray<Scalar, N>::Fill(Scalar2 s) noexcept
 	{
-		mData.fill(static_cast<Scalar>(s));
+		Data.fill(static_cast<Scalar>(s));
 	}
 
 	template<typename Scalar, std::size_t N>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, N>::Iterator TScalarArray<Scalar, N>::Begin() noexcept
 	{
 		using Iterator = typename TScalarArray<Scalar, N>::Iterator;
-		return mData.begin();
+		return Data.begin();
 	}
 
 	template<typename Scalar, std::size_t N>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, N>::ConstIterator TScalarArray<Scalar, N>::Begin() const noexcept
 	{
 		using ConstIterator = typename TScalarArray<Scalar, N>::ConstIterator;
-		return mData.begin();
+		return Data.begin();
 	}
 
 	template<typename Scalar, std::size_t N>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, N>::Iterator TScalarArray<Scalar, N>::End() noexcept
 	{
 		using Iterator = typename TScalarArray<Scalar, N>::Iterator;
-		return mData.end();
+		return Data.end();
 	}
 
 	template<typename Scalar, std::size_t N>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, N>::ConstIterator TScalarArray<Scalar, N>::End() const noexcept
 	{
 		using ConstIterator = typename TScalarArray<Scalar, N>::ConstIterator;
-		return mData.end();
+		return Data.end();
 	}
 
 

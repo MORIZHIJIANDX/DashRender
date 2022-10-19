@@ -21,9 +21,12 @@ namespace Dash
 		mCommandAllocator = nullptr;
 	}
 
-	void FCommandList::Reset()
+	void FCommandList::Reset(bool resetAllocator)
 	{
-		DX_CALL(mCommandAllocator->Reset());
+		if (resetAllocator)
+		{
+			DX_CALL(mCommandAllocator->Reset());
+		}	
 		DX_CALL(mGraphicsCommandList->Reset(mCommandAllocator.Get(), nullptr));
 	}
 

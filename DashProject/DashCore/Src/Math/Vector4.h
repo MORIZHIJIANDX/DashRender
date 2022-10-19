@@ -62,7 +62,7 @@ namespace Dash
 		union
 		{
 			struct { Scalar x, y, z, w; };
-			DataType mData;
+			DataType Data;
 			TScalarArray<Scalar, 3> xyz;
 		};
 	};
@@ -190,13 +190,13 @@ namespace Dash
 	template<typename Scalar>
 	FORCEINLINE TScalarArray<Scalar, 4>::operator ConstPointer() const noexcept
 	{
-		return mData.data();
+		return Data.data();
 	}
 
 	template<typename Scalar>
 	FORCEINLINE TScalarArray<Scalar, 4>::operator Pointer() noexcept
 	{
-		return mData.data();
+		return Data.data();
 	}
 
 	template<typename Scalar>
@@ -339,35 +339,35 @@ namespace Dash
 	template<typename Scalar2>
 	FORCEINLINE void TScalarArray<Scalar, 4>::Fill(Scalar2 s) noexcept
 	{
-		mData.fill(static_cast<Scalar>(s));
+		Data.fill(static_cast<Scalar>(s));
 	}
 
 	template<typename Scalar>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, 4>::Iterator TScalarArray<Scalar, 4>::Begin() noexcept
 	{
 		using Iterator = typename TScalarArray<Scalar, 4>::Iterator;
-		return mData.begin();
+		return Data.begin();
 	}
 
 	template<typename Scalar>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, 4>::ConstIterator TScalarArray<Scalar, 4>::Begin() const noexcept
 	{
 		using ConstIterator = typename TScalarArray<Scalar, 4>::ConstIterator;
-		return mData.begin();
+		return Data.begin();
 	}
 
 	template<typename Scalar>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, 4>::Iterator TScalarArray<Scalar, 4>::End() noexcept
 	{
 		using Iterator = typename TScalarArray<Scalar, 4>::Iterator;
-		return mData.end();
+		return Data.end();
 	}
 
 	template<typename Scalar>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, 4>::ConstIterator TScalarArray<Scalar, 4>::End() const noexcept
 	{
 		using ConstIterator = typename TScalarArray<Scalar, 4>::ConstIterator;
-		return mData.end();
+		return Data.end();
 	}
 
 

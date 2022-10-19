@@ -36,6 +36,7 @@ namespace Dash
 		 * indicates that any UAV access could require the barrier.
 		 */
 		void UAVBarrier(ID3D12Resource* resource = nullptr);
+		void UAVBarrier(FGpuResource& resource);
 
 		/**
 		 * Push an aliasing barrier for the given resource.
@@ -47,19 +48,20 @@ namespace Dash
 		 * indicates that any placed or reserved resource could cause aliasing.
 		 */
 		void AliasBarrier(ID3D12Resource* resourceBefore = nullptr, ID3D12Resource* resourceAfter = nullptr);
+		void AliasBarrier(FGpuResource& resourceBefore, FGpuResource& resourceAfter);
 
 		/**
 		 * Flush any pending resource barriers to the command list.
 		 *
 		 * @return The number of resource barriers that were flushed to the command list.
 		 */
-		uint32_t FlushPendingResourceBarriers(ID3D12GraphicsCommandList2* commandList);
+		uint32_t FlushPendingResourceBarriers(ID3D12GraphicsCommandList* commandList);
 
 		/**
 		 * Flush any (non-pending) resource barriers that have been pushed to the resource state
 		 * tracker.
 		 */
-		uint32_t FlushResourceBarriers(ID3D12GraphicsCommandList2* commandList);
+		uint32_t FlushResourceBarriers(ID3D12GraphicsCommandList* commandList);
 
 		/**
 		 * Commit final resource states to the global resource state map.

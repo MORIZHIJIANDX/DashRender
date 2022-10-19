@@ -103,7 +103,7 @@ namespace Dash
 		union
 		{
 			struct { float x, y, z, w; };
-			DataType mData;
+			DataType Data;
 			TScalarArray<float, 3> xyz;
 			__m128 mVec;
 		};
@@ -217,12 +217,12 @@ namespace Dash
 
 	FORCEINLINE TScalarArray<float, 4>::operator ConstPointer() const noexcept
 	{
-		return mData.data();
+		return Data.data();
 	}
 
 	FORCEINLINE TScalarArray<float, 4>::operator Pointer() noexcept
 	{
-		return mData.data();
+		return Data.data();
 	}
 
 	FORCEINLINE TScalarArray<float, 4>::operator __m128() const noexcept
@@ -350,22 +350,22 @@ namespace Dash
 
 	FORCEINLINE constexpr TScalarArray<float, 4>::Iterator TScalarArray<float, 4>::Begin() noexcept
 	{
-		return mData.begin();
+		return Data.begin();
 	}
 
 	FORCEINLINE constexpr TScalarArray<float, 4>::ConstIterator TScalarArray<float, 4>::Begin() const noexcept
 	{
-		return mData.begin();
+		return Data.begin();
 	}
 
 	FORCEINLINE constexpr TScalarArray<float, 4>::Iterator TScalarArray<float, 4>::End() noexcept
 	{
-		return mData.end();
+		return Data.end();
 	}
 
 	FORCEINLINE constexpr TScalarArray<float, 4>::ConstIterator TScalarArray<float, 4>::End() const noexcept
 	{
-		return mData.end();
+		return Data.end();
 	}
 
 

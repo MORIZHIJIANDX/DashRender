@@ -42,7 +42,7 @@ namespace Dash
 			"Number of descriptors exceeds the number of descriptors in the root signature descriptor table.");
 
 		D3D12_CPU_DESCRIPTOR_HANDLE* descriptorHandlePtr = mRootSignatureDescriptorTableCache[rootParameterIndex].BaseDescriptor + offset;
-		for (int32_t index = 0; index < numDescriptors; ++index)
+		for (UINT index = 0; index < numDescriptors; ++index)
 		{
 			descriptorHandlePtr[index] = CD3DX12_CPU_DESCRIPTOR_HANDLE(srcDescriptors, index, mDescriptorHandleIncrementSize);
 		}
@@ -126,10 +126,33 @@ namespace Dash
 			"The root signature requires more than the maximum number of descriptors per descriptor heap. Consider increasing the maximum number of descriptors per descriptor heap.");
 	}
 
+	D3D12_GPU_DESCRIPTOR_HANDLE FDynamicDescriptorHeap::CopyAndSetDescriptor(FCommandContext& context, D3D12_CPU_DESCRIPTOR_HANDLE srcDescriptor)
+	{
+		if (mCurrentDescriptorHeap == nullptr || mNumFreeHandles < 1)
+		{
+			mCurrentDescriptorHeap = RequestDescriptorHeap();
+			mCurrentCpuDescriptorHandle = mCurrentDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+			mCurrentGpuDescriptorHandle = mCurrentDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
+			mNumFreeHandles = mNumDescriptorsPerHeap;
+
+			mStaleDescriptorTableBitMask = mDescriptorTableBitMask;
+		}
+
+		context.SetDescriptorHeap(mDescriptorHeapType, mCurrentDescriptorHeap);
+
+		D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = mCurrentGpuDescriptorHandle;
+		FGraphicsCore::Device->CopyDescriptorsSimple(1, mCurrentCpuDescriptorHandle, srcDescriptor, mDescriptorHeapType);
+
+		mCurrentCpuDescriptorHandle.Offset(1, mDescriptorHandleIncrementSize);
+		mCurrentGpuDescriptorHandle.Offset(1, mDescriptorHandleIncrementSize);
+
+		return gpuHandle;
+	}
+
 	void FDynamicDescriptorHeap::Reset()
 	{
 		mAvailableDescriptorHeaps = mDescriptorHeapPool;
-		mCurrentDescriptorHeap.Reset();
+		mCurrentDescriptorHeap = nullptr;
 
 		mCurrentGpuDescriptorHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(D3D12_DEFAULT);
 		mCurrentCpuDescriptorHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(D3D12_DEFAULT);
@@ -152,16 +175,17 @@ namespace Dash
 
 	void FDynamicDescriptorHeap::Destroy()
 	{
+		mAvailableDescriptorHeaps = {};
 		mDescriptorHeapPool = {};
 	}
 
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> FDynamicDescriptorHeap::RequestDescriptorHeap()
+	ID3D12DescriptorHeap* FDynamicDescriptorHeap::RequestDescriptorHeap()
 	{
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap;
+		ID3D12DescriptorHeap* descriptorHeap = nullptr;
 
 		if (!mAvailableDescriptorHeaps.empty())
 		{
-			descriptorHeap = mAvailableDescriptorHeaps.front();
+			descriptorHeap = mAvailableDescriptorHeaps.front().Get();
 			mAvailableDescriptorHeaps.pop();
 		}
 		else
@@ -172,7 +196,7 @@ namespace Dash
 		return descriptorHeap;
 	}
 
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> FDynamicDescriptorHeap::CreateDescriptorHeap()
+	ID3D12DescriptorHeap* FDynamicDescriptorHeap::CreateDescriptorHeap()
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC desc{};
 		desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
@@ -186,7 +210,7 @@ namespace Dash
 
 		SetD3D12DebugName(descriptorHeap.Get(), L"DynamicDescriptorHeap");
 
-		return descriptorHeap;
+		return descriptorHeap.Get();
 	}
 
 	uint32_t FDynamicDescriptorHeap::ComputeStaleDescriptorCount() const
@@ -220,7 +244,7 @@ namespace Dash
 				mCurrentGpuDescriptorHandle = mCurrentDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
 				mNumFreeHandles = mNumDescriptorsPerHeap;
 
-				context.SetDescriptorHeap(mDescriptorHeapType, mCurrentDescriptorHeap.Get());
+				context.SetDescriptorHeap(mDescriptorHeapType, mCurrentDescriptorHeap);
 				mStaleDescriptorTableBitMask = mDescriptorTableBitMask;
 			}
 

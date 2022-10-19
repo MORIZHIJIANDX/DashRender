@@ -13,7 +13,7 @@ namespace Dash
 		FCommandList(D3D12_COMMAND_LIST_TYPE type);
 		~FCommandList();
 
-		void Reset();
+		void Reset(bool resetAllocator = true);
 		void Close();
 
 		D3D12_COMMAND_LIST_TYPE GetType() const 

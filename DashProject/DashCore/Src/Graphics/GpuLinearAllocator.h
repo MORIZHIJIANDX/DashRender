@@ -13,8 +13,8 @@ namespace Dash
 		enum AllocatorType
 		{
 			Invalid = -1,
-			GpuExclusive = 0,	// DEFAULT GPU-writeable (via UAV)
-			CpuExclusive = 1,	// UPLOAD CPU-writeable (but write combined)
+			GpuExclusive = 0,	// DEFAULT GPU - writable (via UAV)
+			CpuExclusive = 1,	// UPLOAD CPU - writable (but write combined)
 
 			NumAllocatorTypes
 		};
@@ -109,8 +109,8 @@ namespace Dash
 		, mDefaultPageSize(0)
 		, mCurrentPage(nullptr)
 		{
-			ASSERT(type > Invalid && type < NumAllocatorTypes);
-			mDefaultPageSize = type == GpuExclusive ? GpuDefaultPageSize : CpuDefaultPageSize;
+			ASSERT(type > AllocatorType::Invalid && type < AllocatorType::NumAllocatorTypes);
+			mDefaultPageSize = type == AllocatorType::GpuExclusive ? GpuDefaultPageSize : CpuDefaultPageSize;
 		}
 
 		FAllocation Allocate(size_t sizeInBytes, size_t alignment = DEFAULT_ALIGN);

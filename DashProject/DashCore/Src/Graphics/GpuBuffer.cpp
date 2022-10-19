@@ -12,7 +12,7 @@ namespace Dash
 
 		mElementCount = numElements;
 		mElementSize = elementSize;
-		mBufferSize = numElements * elementSize;
+		mBufferSize = static_cast<size_t>(numElements * elementSize);
 		mResourceFlag |= flags;
 
 		D3D12_RESOURCE_DESC resourceDesc = DescribeBuffer();
@@ -58,6 +58,7 @@ namespace Dash
 
 		FGpuResourcesStateTracker::AddGlobalResourceState(*this, D3D12_RESOURCE_STATE_COMMON);
 
+		//GetGPUVirtualAddress is only useful for buffer resources, it will return zero for all texture resources.
 		mGpuVirtualAddress = mResource->GetGPUVirtualAddress();
 	}
 
