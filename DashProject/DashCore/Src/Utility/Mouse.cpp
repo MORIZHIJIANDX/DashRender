@@ -2,7 +2,6 @@
 
 #include "Mouse.h"
 #include "LogManager.h"
-#include "LogStream.h"
 
 namespace Dash
 {

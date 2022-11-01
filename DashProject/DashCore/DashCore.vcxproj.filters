@@ -259,9 +259,6 @@
     <ClInclude Include="Src\Utility\LogManager.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Utility\LogStream.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Utility\Mouse.h">
       <Filter>Utility</Filter>
     </ClInclude>
@@ -383,9 +380,6 @@
       <Filter>Utility</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\LogManager.cpp">
-      <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Utility\LogStream.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\Mouse.cpp">

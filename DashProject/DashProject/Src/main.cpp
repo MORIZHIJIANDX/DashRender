@@ -4,7 +4,6 @@
 #include "Consolid/Consolid.h"
 #include "Utility/Events.h"
 #include "Utility/LogManager.h"
-#include "Utility/LogStream.h"
 
 #include "TestApplication.h"
 

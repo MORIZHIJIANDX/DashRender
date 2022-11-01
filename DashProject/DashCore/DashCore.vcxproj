@@ -207,7 +207,6 @@
     <ClInclude Include="Src\Utility\Keyboard.h" />
     <ClInclude Include="Src\Utility\LogEnums.h" />
     <ClInclude Include="Src\Utility\LogManager.h" />
-    <ClInclude Include="Src\Utility\LogStream.h" />
     <ClInclude Include="Src\Utility\Mouse.h" />
     <ClInclude Include="Src\Utility\SystemTimer.h" />
     <ClInclude Include="Src\Utility\ThreadSafeQueue.h" />
@@ -253,7 +252,6 @@
     <ClCompile Include="Src\Utility\ImageHelper.cpp" />
     <ClCompile Include="Src\Utility\Keyboard.cpp" />
     <ClCompile Include="Src\Utility\LogManager.cpp" />
-    <ClCompile Include="Src\Utility\LogStream.cpp" />
     <ClCompile Include="Src\Utility\Mouse.cpp" />
     <ClCompile Include="Src\Utility\SystemTimer.cpp" />
   </ItemGroup>
