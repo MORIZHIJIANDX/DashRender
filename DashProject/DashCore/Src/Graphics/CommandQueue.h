@@ -16,6 +16,8 @@ namespace Dash
 		void Reset(bool resetAllocator = true);
 		void Close();
 
+		void SetName(int32_t name){ mName = name; }
+
 		D3D12_COMMAND_LIST_TYPE GetType() const 
 		{
 			return mType;
@@ -24,11 +26,14 @@ namespace Dash
 		ID3D12GraphicsCommandList* GetCommandList() { return mGraphicsCommandList.Get(); }
 		const ID3D12GraphicsCommandList* GetCommandList() const { return mGraphicsCommandList.Get(); }
 
+		int32_t mName;
+
 	private:
 		D3D12_COMMAND_LIST_TYPE mType;
 
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mGraphicsCommandList;
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> mCommandAllocator;
+
 	};
 
 	class FCommandListPool

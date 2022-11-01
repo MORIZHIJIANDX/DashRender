@@ -9,6 +9,8 @@
 #include "CommandContext.h"
 #include "RootSignature.h"
 #include "SamplerDesc.h"
+#include "Display.h"
+#include "GameApp.h"
 
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -28,6 +30,7 @@ namespace Dash
 	FCommandListManager* FGraphicsCore::CommandListManager = nullptr;
 	FCpuDescriptorAllocatorManager* FGraphicsCore::DescriptorAllocator = nullptr;
 	FCommandContextManager* FGraphicsCore::ContextManager = nullptr;
+	FDisplay* FGraphicsCore::Display = nullptr;
 
 	bool FGraphicsCore::mTypedUAVLoadSupport_R11G11B10_FLOAT = false;
 	bool FGraphicsCore::mTypedUAVLoadSupport_R16G16B16A16_FLOAT = false;
@@ -44,6 +47,7 @@ namespace Dash
 		CommandListManager = new FCommandListManager();
 		DescriptorAllocator = new FCpuDescriptorAllocatorManager();
 		ContextManager = new FCommandContextManager();
+		Display = new FDisplay(IGameApp::GetInstance()->GetWindowWidth(), IGameApp::GetInstance()->GetWindowHeight());
 
 		LOG_INFO << "FGraphicsCore::Initialize End.";
 	}
@@ -89,6 +93,14 @@ namespace Dash
 			delete DescriptorAllocator;
 
 			LOG_INFO << "Destroy CPU Descriptor Allocator.";
+		}
+
+		if(Display)
+		{
+			Display->Destroy();
+			delete Display;
+
+			LOG_INFO << "Destroy Swap Chain.";
 		}
 
 		FPipelineStateObject::DestroyAll();
@@ -171,20 +183,20 @@ namespace Dash
 				LOG_INFO << "Create Device With Adapter : " << desc.Description;
 				LOG_INFO << "Adapter Memory " << desc.DedicatedVideoMemory / (1024 * 1024) << " MB";
 
-				std::wstring vendorType = L"Adapter Type : ";
+				std::string vendorType = "Adapter Type : ";
 				switch (desc.VendorId)
 				{
 				case VendorID_Nvidia:
-					vendorType += L"Nvidia";
+					vendorType += "Nvidia";
 					break;
 				case VendorID_AMD:
-					vendorType += L"AMD";
+					vendorType += "AMD";
 					break;
 				case VendorID_Intel:
-					vendorType += L"Intel";
+					vendorType += "Intel";
 					break;
 				default:
-					vendorType += L"Unknown";
+					vendorType += "Unknown";
 					break;
 				}
 

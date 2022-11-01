@@ -1,65 +1,33 @@
 #pragma once
 
-#include <sstream>
-#include "LogEnums.h"
-#include "../DesignPatterns/Singleton.h"
+#define LOGURU_FILENAME_WIDTH  16
+#define LOGURU_WITH_STREAMS     1
+#define LOGURU_REDEFINE_ASSERT  1
+#define LOGURU_USE_FMTLIB       0
+#define LOGURU_WITH_FILEABS     0
 
-#define LOG_SIMPLE 1;
+#include <sstream>
+#include "../DesignPatterns/Singleton.h"
+#include "../ThirdParty/loguru/loguru.h"
 
 namespace Dash
 {
-	class FLogManager;
-	class FLogStream;
-
-	class FLogString : public std::wostringstream
-	{
-	public:
-		FLogString(FLogManager& logger, ELogLevel level)
-			: mLogger(logger), mLogLevel(level)
-		{}
-
-		FLogString(const FLogString& ls)
-			: mLogger(ls.mLogger), mLogLevel(ls.mLogLevel)
-		{}
-
-		~FLogString();
-
-	private:
-		FLogManager& mLogger;
-		ELogLevel mLogLevel;
-	};
-
 	class FLogManager : public TSingleton<FLogManager>
 	{
-		friend class FLogString;
 	public:
 		FLogManager() {}
 
 		virtual ~FLogManager() {};
 
-		FLogString operator()(ELogLevel level);
-
 		void Init();
 		void Shutdown();
-
-		void RegisterLogStream(std::shared_ptr<FLogStream> logStream);
-		void UnregisterLogStream(std::shared_ptr<FLogStream> logStream);
-		void UnregisterAllStreams();
-
-	private:
-		void Log(ELogLevel level, std::wstring logInfo);
 	};
 }
 
-#ifdef LOG_SIMPLE
-	#define LOG_INFO (Dash::FLogManager::Get()->operator()(Dash::ELogLevel::Info)) << "  [Info]: "
-	#define LOG_WARNING (Dash::FLogManager::Get()->operator()(Dash::ELogLevel::Warning)) << "  [Warning]: "
-	#define LOG_ERROR (Dash::FLogManager::Get()->operator()(Dash::ELogLevel::Error)) << "[File]: " << __FILE__ << "  [Line]: " << __LINE__ << "  [Function]: " << __FUNCTION__ << "  [Error]: "
-#else
-	#define LOG_INFO (Dash::FLogManager::Get()->operator()(Dash::ELogLevel::Info)) << "[File]: " << __FILE__ << "  [Line]: " << __LINE__ << "  [Function]: " << __FUNCTION__ << "  [Info]: "
-	#define LOG_WARNING (Dash::FLogManager::Get()->operator()(Dash::ELogLevel::Warning)) << "[File]: " << __FILE__ << "  [Line]: " << __LINE__ << "  [Function]: " << __FUNCTION__ << "  [Warning]: "
-	#define LOG_ERROR (Dash::FLogManager::Get()->operator()(Dash::ELogLevel::Error)) << "[File]: " << __FILE__ << "  [Line]: " << __LINE__ << "  [Function]: " << __FUNCTION__ << "  [Error]: "
-#endif // LOG_SIMPLE
+#define LOG_INFO LOG_S(INFO)
+#define LOG_WARNING LOG_S(WARNING)
+#define LOG_ERROR LOG_S(ERROR)
+
 
 
 

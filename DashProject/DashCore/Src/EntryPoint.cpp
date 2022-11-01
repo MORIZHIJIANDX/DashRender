@@ -54,8 +54,6 @@ namespace Dash
 	void InitializeApplication(IGameApp* app)
 	{
 		FLogManager::Get()->Init();
-		FLogManager::Get()->RegisterLogStream(std::make_shared<FLogStreamConsole>());
-		FLogManager::Get()->RegisterLogStream(std::make_shared<FLogStreamVS>());
 
 		FMouse::Get().Initialize(app->GetWindowHandle());
 		FSystemTimer::Initialize();

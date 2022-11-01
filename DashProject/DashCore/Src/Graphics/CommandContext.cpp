@@ -9,7 +9,7 @@ namespace Dash
 	{
 		ASSERT(type < D3D12_COMMAND_LIST_TYPE_VIDEO_DECODE && type >= 0);
 
-		if (type <= 0 || type > D3D12_COMMAND_LIST_TYPE_VIDEO_DECODE)
+		if (type < 0 || type > D3D12_COMMAND_LIST_TYPE_VIDEO_DECODE)
 		{
 			return nullptr;
 		}
@@ -27,6 +27,7 @@ namespace Dash
 		else
 		{	
 			context = availableContext.front();
+			context->Reset();
 			availableContext.pop();
 		}
 
@@ -43,9 +44,20 @@ namespace Dash
 		ASSERT(context != nullptr);
 		std::lock_guard<std::mutex> lock(mAllocationMutex);
 		FGraphicsCore::CommandListManager->RetiredUsedCommandList(fenceValue, context->GetCommandList());
-		context->mCommandList = nullptr;
-		context->mD3DCommandList = nullptr;
 		mAvailableContexts[context->mType].push(context);
+	}
+
+	void FCommandContextManager::ReleaseAllTrackObjects()
+	{
+		std::lock_guard<std::mutex> lock(mAllocationMutex);
+
+		for (int32_t index = 0; index < 4; ++index)
+		{
+			for (auto& contextPtr : mContextPool[index])
+			{
+				contextPtr->ReleaseTrackedObjects();
+			}
+		}
 	}
 
 	void FCommandContextManager::Destroy()
@@ -58,8 +70,6 @@ namespace Dash
 
 	FCommandContext::~FCommandContext()
 	{
-		Reset();
-
 		mDynamicViewDescriptor.Destroy();
 		mDynamicSamplerDescriptor.Destroy();
 		mLinearAllocator.Destroy();
@@ -138,7 +148,7 @@ namespace Dash
 	FGraphicsCommandContext& FCommandContext::GetGraphicsCommandContext()
 	{
 		ASSERT(mType == D3D12_COMMAND_LIST_TYPE_DIRECT);
-		return dynamic_cast<FGraphicsCommandContext&>(*this);
+		return reinterpret_cast<FGraphicsCommandContext&>(*this);
 	}
 
 	void FCommandContext::TransitionBarrier(FGpuResource& resource, D3D12_RESOURCE_STATES newState, UINT subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/, bool flushImmediate /*= false*/)
@@ -265,17 +275,16 @@ namespace Dash
 		FGpuResourcesStateTracker::Lock();
 
 		FCommandList* flushBarrierCommand = FGraphicsCore::CommandListManager->RequestCommandList(mType);
+
 		uint32_t flushedBarrierCount = mResourceStateTracker.FlushPendingResourceBarriers(flushBarrierCommand->GetCommandList());
-		uint64_t barrierContexFenceValue = ((uint64_t)mType) << COMMAND_TYPE_MASK;
-		if (flushedBarrierCount)
-		{
-			barrierContexFenceValue = FGraphicsCore::CommandQueueManager->GetQueue(mType).ExecuteCommandList(flushBarrierCommand);
-		}
-		FGraphicsCore::CommandListManager->RetiredUsedCommandList(barrierContexFenceValue, flushBarrierCommand);
 
 		mResourceStateTracker.CommitFinalResourceStates();
 		
-		uint64_t fenceValue = FGraphicsCore::CommandQueueManager->GetQueue(mType).ExecuteCommandList(mCommandList);
+		std::vector<FCommandList*> commandListsToExecute{ flushBarrierCommand , mCommandList};
+
+		uint64_t fenceValue = FGraphicsCore::CommandQueueManager->GetQueue(mType).ExecuteCommandLists(commandListsToExecute);
+
+		FGraphicsCore::CommandListManager->RetiredUsedCommandList(fenceValue, flushBarrierCommand);
 
 		FGpuResourcesStateTracker::Unlock();
 
@@ -290,7 +299,6 @@ namespace Dash
 
 	void FCommandContext::Reset()
 	{
-		mCommandList->Reset();
 		mResourceStateTracker.Reset();
 		mDynamicViewDescriptor.Reset();
 		mDynamicSamplerDescriptor.Reset();
@@ -298,6 +306,8 @@ namespace Dash
 
 		mCurrentRootSignature = nullptr;
 		mCurrentPipelineState = nullptr;
+		mCommandList = nullptr;
+		mD3DCommandList = nullptr;
 	}
 
 	void FGraphicsCommandContext::ClearUAV(FGpuConstantBuffer& target)

@@ -7,7 +7,7 @@
 
 namespace Dash
 {
-	FGpuLinearAllocator::AllocatorType FGpuLinearAllocator::FPageManager::AutoAllocatorType = CpuExclusive;
+	FGpuLinearAllocator::AllocatorType FGpuLinearAllocator::FPageManager::AutoAllocatorType = GpuExclusive;
 	FGpuLinearAllocator::FPageManager FGpuLinearAllocator::AllocatorPageManger[2];
 	 
 	bool FGpuLinearAllocator::FPage::HasSpace(size_t sizeInBytes, size_t alignment) const

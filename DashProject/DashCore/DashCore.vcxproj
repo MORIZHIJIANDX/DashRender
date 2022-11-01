@@ -145,9 +145,9 @@
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocation.h" />
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocator.h" />
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocatorPage.h" />
-    <ClInclude Include="Src\Graphics\Display.h" />
     <ClInclude Include="Src\Graphics\DX12Helper.h" />
     <ClInclude Include="Src\Graphics\DepthBuffer.h" />
+    <ClInclude Include="Src\Graphics\Display.h" />
     <ClInclude Include="Src\Graphics\DynamicDescriptorHeap.h" />
     <ClInclude Include="Src\Graphics\GameApp.h" />
     <ClInclude Include="Src\Graphics\GpuBuffer.h" />
@@ -195,6 +195,7 @@
     <ClInclude Include="Src\ThirdParty\imgui\imstb_rectpack.h" />
     <ClInclude Include="Src\ThirdParty\imgui\imstb_textedit.h" />
     <ClInclude Include="Src\ThirdParty\imgui\imstb_truetype.h" />
+    <ClInclude Include="Src\ThirdParty\loguru\loguru.h" />
     <ClInclude Include="Src\Utility\Assert.h" />
     <ClInclude Include="Src\Utility\DDS.h" />
     <ClInclude Include="Src\Utility\Events.h" />
@@ -220,9 +221,9 @@
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocation.cpp" />
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocator.cpp" />
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocatorPage.cpp" />
-    <ClCompile Include="Src\Graphics\Display.cpp" />
     <ClCompile Include="Src\Graphics\DX12Helper.cpp" />
     <ClCompile Include="Src\Graphics\DepthBuffer.cpp" />
+    <ClCompile Include="Src\Graphics\Display.cpp" />
     <ClCompile Include="Src\Graphics\DynamicDescriptorHeap.cpp" />
     <ClCompile Include="Src\Graphics\GameApp.cpp" />
     <ClCompile Include="Src\Graphics\GpuBuffer.cpp" />
@@ -244,6 +245,7 @@
     <ClCompile Include="Src\ThirdParty\imgui\imgui_draw.cpp" />
     <ClCompile Include="Src\ThirdParty\imgui\imgui_tables.cpp" />
     <ClCompile Include="Src\ThirdParty\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Src\ThirdParty\loguru\loguru.cpp" />
     <ClCompile Include="Src\Utility\Assert.cpp" />
     <ClCompile Include="Src\Utility\FileUtility.cpp" />
     <ClCompile Include="Src\Utility\Hash.cpp" />

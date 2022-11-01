@@ -59,6 +59,8 @@ namespace Dash
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
+		static int32_t commandListIndex = 0;
+
 		while (!mRetiredCommandLists.empty() && FGraphicsCore::CommandQueueManager->IsFenceCompleted(mRetiredCommandLists.front().first))
 		{
 			mAvailableCommandLists.push(mRetiredCommandLists.front().second);
@@ -72,12 +74,13 @@ namespace Dash
 			commandList = mAvailableCommandLists.front();
 			mAvailableCommandLists.pop();
 
-			commandList->Reset();
+			commandList->Reset();	
 		}
 		else
 		{
 			commandList = new FCommandList(mType);
 			mCommandListPool.emplace_back(commandList);
+			commandList->SetName(commandListIndex++);
 		}
 
 		return commandList;
@@ -175,7 +178,7 @@ namespace Dash
 
 	bool FCommandQueue::IsFenceCompleted(uint64_t fenceValue)
 	{
-		return fenceValue <= mFence->GetCompletedValue();
+		return fenceValue < mFence->GetCompletedValue();
 	}
 
 	void FCommandQueue::WaitForFence(uint64_t fenceValue)

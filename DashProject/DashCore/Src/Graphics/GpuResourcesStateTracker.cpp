@@ -5,6 +5,10 @@
 
 namespace Dash
 {
+	FGpuResourcesStateTracker::ResourceStateMap FGpuResourcesStateTracker::GlobalResourceStates = {};
+	std::mutex FGpuResourcesStateTracker::GlobalMutex;
+	bool FGpuResourcesStateTracker::IsLocked = false;
+
 	FGpuResourcesStateTracker::FGpuResourcesStateTracker()
 	{
 	}

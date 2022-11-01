@@ -9,6 +9,7 @@
 
 
 #include <string>
+#include "Graphics/Display.h"
 
 namespace Dash
 {
@@ -86,7 +87,7 @@ namespace Dash
 	{
 		FRenderEventArgs Args = e;
 		Args.mCamera = mCamera;
-		//FGraphicsCore::OnRender(Args);
+		FGraphicsCore::Display->Present();
 	}
 
 	void TestApplication::OnWindowResize(const FResizeEventArgs& e)
@@ -98,9 +99,9 @@ namespace Dash
 		float fov = 45.0f;
 		mCamera->SetCameraParams(aspect, fov, 0.1f, 100.0f);
 
-		//FGraphicsCore::OnResize(e);
+		FGraphicsCore::Display->Resize(mWindowWidth, mWindowHeight);
 
-		LOG_INFO << "Window Resized, Wdith : " << e.mWidth << ", Height : " << e.mHeight << " , Minimized : " << e.mMinimized;
+		LOG_INFO << "Window Resized, width : " << e.mWidth << ", Height : " << e.mHeight << " , Minimized : " << e.mMinimized;
 	}
 
 	void TestApplication::OnMouseWheelDown(FMouseWheelEventArgs& e)

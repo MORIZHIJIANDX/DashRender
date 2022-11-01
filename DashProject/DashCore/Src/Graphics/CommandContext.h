@@ -22,6 +22,7 @@ namespace Dash
 
 		FCommandContext* AllocateContext(D3D12_COMMAND_LIST_TYPE type);
 		void FreeContext(uint64_t fenceValue, FCommandContext* context);
+		void ReleaseAllTrackObjects();
 		void Destroy();
 
 	private:
@@ -115,6 +116,11 @@ namespace Dash
 	class FGraphicsCommandContext : public FCommandContext
 	{
 	public:
+		static FGraphicsCommandContext& Begin(const std::wstring& id = L"")
+		{
+			return FCommandContext::Begin(id, D3D12_COMMAND_LIST_TYPE_DIRECT).GetGraphicsCommandContext();
+		}
+
 		void ClearUAV(FGpuConstantBuffer& target);
 		void ClearUAV(FColorBuffer& target);
 		void ClearColor(FColorBuffer& target, D3D12_RECT* rect = nullptr);

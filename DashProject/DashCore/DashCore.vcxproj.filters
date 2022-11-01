@@ -25,6 +25,9 @@
     <Filter Include="ThirdParty\imgui\backends">
       <UniqueIdentifier>{E4EDCF95-50B0-0320-9960-92AC0562DCFD}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ThirdParty\loguru">
+      <UniqueIdentifier>{3D06AB32-A91C-A9C8-F293-34EA5EE97950}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Utility">
       <UniqueIdentifier>{594615A9-C525-9444-CE3D-1F1B3A9CFAA5}</UniqueIdentifier>
     </Filter>
@@ -74,6 +77,9 @@
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\DepthBuffer.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\Display.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\DynamicDescriptorHeap.h">
@@ -217,6 +223,9 @@
     <ClInclude Include="Src\ThirdParty\imgui\imstb_truetype.h">
       <Filter>ThirdParty\imgui</Filter>
     </ClInclude>
+    <ClInclude Include="Src\ThirdParty\loguru\loguru.h">
+      <Filter>ThirdParty\loguru</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Utility\Assert.h">
       <Filter>Utility</Filter>
     </ClInclude>
@@ -262,9 +271,6 @@
     <ClInclude Include="Src\Utility\ThreadSafeQueue.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\Display.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\EntryPoint.cpp" />
@@ -293,6 +299,9 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\DepthBuffer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\Display.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\DynamicDescriptorHeap.cpp">
@@ -352,6 +361,9 @@
     <ClCompile Include="Src\ThirdParty\imgui\imgui_widgets.cpp">
       <Filter>ThirdParty\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="Src\ThirdParty\loguru\loguru.cpp">
+      <Filter>ThirdParty\loguru</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Utility\Assert.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
@@ -381,9 +393,6 @@
     </ClCompile>
     <ClCompile Include="Src\Utility\SystemTimer.cpp">
       <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Graphics\Display.cpp">
-      <Filter>Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

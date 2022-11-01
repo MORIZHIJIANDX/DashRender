@@ -19,6 +19,7 @@ namespace Dash
 
 			mResource = nullptr;
 			mGpuVirtualAddress = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
+
 			++mVersionID;
 		}
 
