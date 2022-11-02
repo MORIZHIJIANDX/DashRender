@@ -16,7 +16,8 @@ project "DashCore"
     location "DashCore"
     kind "StaticLib"
 	language "C++"
-	cppdialect "C++17"
+	cppdialect "C++20"
+    cdialect "C17"
 	staticruntime "on"
 
     targetdir ("Bin/"..outputdir.."/%{prj.name}")
@@ -36,7 +37,7 @@ project "DashCore"
     includedirs
     {
         "%{prj.name}/Src/PCH",
-        "%{prj.name}/Src/ThirdParty/imgui"
+        "%{prj.name}/Src",
     }
 
     filter "system:windows"
@@ -63,7 +64,8 @@ project "DashProject"
     location "DashProject"
     kind "WindowedApp"
     language "C++"
-    cppdialect "C++17"
+    cppdialect "C++20"
+    cdialect "C17"
     staticruntime "on"
 
     targetdir ("Bin/"..outputdir.."/%{prj.name}")

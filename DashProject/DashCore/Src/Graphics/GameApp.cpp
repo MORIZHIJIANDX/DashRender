@@ -1,7 +1,7 @@
 #include "PCH.h"
 #include "GameApp.h"
 
-#include "../Utility/Keyboard.h"
+#include "Utility/Keyboard.h"
 
 namespace Dash
 {

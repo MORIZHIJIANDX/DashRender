@@ -1,9 +1,9 @@
 #include "PCH.h"
 #include "PipelineStateObject.h"
 #include "RootSignature.h"
-#include "../Utility/Hash.h"
 #include "GraphicsCore.h"
 #include "DX12Helper.h"
+#include "Utility/Hash.h"
 
 namespace Dash
 {

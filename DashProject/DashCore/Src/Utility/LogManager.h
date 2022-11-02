@@ -6,9 +6,8 @@
 #define LOGURU_USE_FMTLIB       0
 #define LOGURU_WITH_FILEABS     0
 
-#include <sstream>
-#include "../DesignPatterns/Singleton.h"
-#include "../ThirdParty/loguru/loguru.h"
+#include "DesignPatterns/Singleton.h"
+#include "ThirdParty/loguru/loguru.h"
 
 namespace Dash
 {

@@ -408,7 +408,8 @@ namespace Dash
 			TrackResource(rtvs[index]);
 		}
 
-		mD3DCommandList->OMSetRenderTargets(numRTVs, rtvHandels.data(), false, &depthBuffer.GetDepthStencilView());
+		std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> handles = { depthBuffer.GetDepthStencilView() };
+		mD3DCommandList->OMSetRenderTargets(numRTVs, rtvHandels.data(), false, handles.data());
 		TrackResource(depthBuffer);
 	}
 
@@ -547,12 +548,13 @@ namespace Dash
 
 	void FGraphicsCommandContext::SetIndexBuffer(FGpuIndexBuffer& indexBuffer)
 	{
-		mD3DCommandList->IASetIndexBuffer(&indexBuffer.GetIndexBufferView());	
+		std::vector<D3D12_INDEX_BUFFER_VIEW> indexBufferViews = { indexBuffer.GetIndexBufferView() };
+		mD3DCommandList->IASetIndexBuffer(indexBufferViews.data());
 	}
 
 	void FGraphicsCommandContext::SetVertexBuffer(UINT slot, FGpuVertexBuffer& vertexBuffer)
 	{
-		mD3DCommandList->IASetVertexBuffers(slot, 1, &vertexBuffer.GetVertexBufferView());
+		SetVertexBuffers(slot, 1, &vertexBuffer);
 	}
 
 	void FGraphicsCommandContext::SetVertexBuffers(UINT startSlot, UINT count, FGpuVertexBuffer* vertexBuffer)

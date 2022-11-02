@@ -1,8 +1,8 @@
 #include "PCH.h"
 #include "RootSignature.h"
-#include "../Utility/Hash.h"
 #include "DX12Helper.h"
 #include "GraphicsCore.h"
+#include "Utility/Hash.h"
 
 namespace Dash
 {
