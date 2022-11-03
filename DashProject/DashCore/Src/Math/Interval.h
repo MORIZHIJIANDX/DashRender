@@ -12,7 +12,7 @@
 namespace Dash
 {
 	template<typename Scalar>
-	class TInterval
+	struct TInterval
 	{
 	public:
 		constexpr TInterval() noexcept;

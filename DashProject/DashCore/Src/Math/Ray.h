@@ -5,7 +5,7 @@
 namespace Dash
 {
 	template<typename Scalar>
-	class TScalarRay
+	struct TScalarRay
 	{
 	public:
 		TScalarRay() noexcept;

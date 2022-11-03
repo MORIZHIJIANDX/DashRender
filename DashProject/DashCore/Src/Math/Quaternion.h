@@ -17,7 +17,7 @@ namespace Dash
 {
 
 	template <typename Scalar>
-	class TScalarQuaternion
+	struct TScalarQuaternion
 	{
 	public:
 		typedef Scalar ScalarType;

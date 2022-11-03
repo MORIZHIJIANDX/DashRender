@@ -5,10 +5,10 @@
 namespace Dash
 {
 	template <typename Scalar>
-	class TScalarQuaternion;
+	struct TScalarQuaternion;
 
 	template<typename Scalar>
-	class TScalarMatrix<Scalar, 4, 4>
+	struct TScalarMatrix<Scalar, 4, 4>
 	{
 	public:
 		using DataType = TScalarArray<Scalar, 4>;

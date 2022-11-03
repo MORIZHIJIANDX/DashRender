@@ -3,7 +3,7 @@
 namespace Dash
 {
 	template<typename Scalar>
-	class TScalarArray<Scalar, 2>
+	struct TScalarArray<Scalar, 2>
 	{
 	public:
 		using DataType = std::array<Scalar, 2>;

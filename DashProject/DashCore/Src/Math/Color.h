@@ -8,9 +8,9 @@
 namespace Dash
 {
 	template<typename Scalar, std::size_t N>
-	class TScalarArray;
+	struct TScalarArray;
 
-	class FFloat16Color;
+	//class FFloat16Color;
 
 	struct FColor;
 

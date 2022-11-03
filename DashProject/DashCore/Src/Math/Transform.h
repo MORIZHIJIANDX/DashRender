@@ -8,7 +8,7 @@
 
 namespace Dash
 {
-	class FTransform
+	struct FTransform
 	{
 	public:
 		FTransform() noexcept;

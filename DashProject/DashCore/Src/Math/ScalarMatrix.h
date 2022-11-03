@@ -6,7 +6,7 @@ namespace Dash
 {
 
 	template<typename Scalar, std::size_t M, std::size_t N>
-	class TScalarMatrix
+	struct TScalarMatrix
 	{
 	public:
 		using DataType = TScalarArray<Scalar, N>;

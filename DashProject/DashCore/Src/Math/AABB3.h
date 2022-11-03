@@ -3,7 +3,7 @@
 namespace Dash
 {
 	template<typename Scalar>
-	class TAABB<Scalar, 3>
+	struct TAABB<Scalar, 3>
 	{
 	public:
 		using ScalarType = Scalar;

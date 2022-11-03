@@ -33,7 +33,7 @@ namespace Dash
 #define SHUFFLE4(vec1, vec2, x,y,z,w)    _mm_shuffle_ps(vec1, vec2, _MM_SHUFFLE(w,z,y,x))
 
 	template<>
-	class TScalarArray<float, 4>
+	struct TScalarArray<float, 4>
 	{
 	public:
 		using DataType = std::array<float, 4>;

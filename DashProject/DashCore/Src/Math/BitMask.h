@@ -6,7 +6,7 @@
 namespace Dash
 {
 	template<typename Scalar>
-	class BitMask
+	struct BitMask
 	{
 	public:
 		BitMask();

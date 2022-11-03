@@ -7,7 +7,7 @@ namespace Dash
 {
 
 	template<typename Scalar, std::size_t N>
-	class TAABB
+	struct TAABB
 	{
 	public:
 		using ScalarType = Scalar;
