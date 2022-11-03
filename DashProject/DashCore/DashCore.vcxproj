@@ -80,7 +80,9 @@
       <AdditionalIncludeDirectories>Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
+      <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -102,6 +104,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -124,6 +127,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -211,6 +215,7 @@
     <ClInclude Include="Src\Utility\LogEnums.h" />
     <ClInclude Include="Src\Utility\LogManager.h" />
     <ClInclude Include="Src\Utility\Mouse.h" />
+    <ClInclude Include="Src\Utility\StringUtility.h" />
     <ClInclude Include="Src\Utility\SystemTimer.h" />
     <ClInclude Include="Src\Utility\ThreadSafeQueue.h" />
   </ItemGroup>
@@ -256,6 +261,7 @@
     <ClCompile Include="Src\Utility\Keyboard.cpp" />
     <ClCompile Include="Src\Utility\LogManager.cpp" />
     <ClCompile Include="Src\Utility\Mouse.cpp" />
+    <ClCompile Include="Src\Utility\StringUtility.cpp" />
     <ClCompile Include="Src\Utility\SystemTimer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

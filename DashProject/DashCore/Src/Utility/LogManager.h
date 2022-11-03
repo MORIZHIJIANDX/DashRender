@@ -1,6 +1,6 @@
 #pragma once
 
-#define LOGURU_FILENAME_WIDTH  16
+#define LOGURU_FILENAME_WIDTH  24
 #define LOGURU_WITH_STREAMS     1
 #define LOGURU_REDEFINE_ASSERT  1
 #define LOGURU_USE_FMTLIB       0

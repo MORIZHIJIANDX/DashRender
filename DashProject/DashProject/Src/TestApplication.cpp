@@ -10,6 +10,7 @@
 
 #include <string>
 #include "Graphics/Display.h"
+#include "Graphics/CommandContext.h"
 
 namespace Dash
 {
@@ -87,6 +88,15 @@ namespace Dash
 	{
 		FRenderEventArgs Args = e;
 		Args.mCamera = mCamera;
+
+		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin(L"Present");
+
+		graphicsContext.ClearColor(FGraphicsCore::Display->GetDisplayBuffer(), FLinearColor::Gray);
+
+		graphicsContext.TransitionBarrier(FGraphicsCore::Display->GetDisplayBuffer(), D3D12_RESOURCE_STATE_PRESENT);
+
+		graphicsContext.Finish();
+
 		FGraphicsCore::Display->Present();
 	}
 

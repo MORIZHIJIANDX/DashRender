@@ -61,14 +61,6 @@ namespace Dash
 
 	void FDisplay::Present()
 	{
-		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin(L"Present");
-
-		graphicsContext.ClearColor(mSwapChainBuffer[mCurrentBackBufferIndex], FLinearColor::Gray);
-
-		graphicsContext.TransitionBarrier(mSwapChainBuffer[mCurrentBackBufferIndex], D3D12_RESOURCE_STATE_PRESENT);
-
-		graphicsContext.Finish();
-
 		mSwapChain->Present(1, 0);
 
 		mFenceValue[mCurrentBackBufferIndex] = FGraphicsCore::CommandQueueManager->GetGraphicsQueue().Signal();

@@ -262,6 +262,9 @@
     <ClInclude Include="Src\Utility\Mouse.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Utility\StringUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Utility\SystemTimer.h">
       <Filter>Utility</Filter>
     </ClInclude>
@@ -383,6 +386,9 @@
       <Filter>Utility</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\Mouse.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utility\StringUtility.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\SystemTimer.cpp">

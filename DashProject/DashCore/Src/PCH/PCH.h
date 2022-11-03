@@ -6,6 +6,8 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <regex>
+#include <cctype>
 
 #include <filesystem>
 

@@ -8,6 +8,12 @@ workspace "DashProject"
         "Distribution"
     }
 
+    flags
+	{
+        --多核并行编译
+		"MultiProcessorCompile" 
+	}
+
     startproject "DashProject"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"

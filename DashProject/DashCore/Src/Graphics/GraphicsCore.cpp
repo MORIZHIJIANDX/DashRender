@@ -11,6 +11,7 @@
 #include "SamplerDesc.h"
 #include "Display.h"
 #include "GameApp.h"
+#include "Utility/StringUtility.h"
 
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -180,7 +181,7 @@ namespace Dash
 
 			if (SUCCEEDED(D3D12CreateDevice(dxgiAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&FGraphicsCore::Device))))
 			{
-				//LOG_INFO << "Create Device With Adapter : " << desc.Description;
+				LOG_INFO << "Create Device With Adapter : " << WideStringToUTF8(desc.Description);
 				LOG_INFO << "Adapter Memory " << desc.DedicatedVideoMemory / (1024 * 1024) << " MB";
 
 				std::string vendorType = "Adapter Type : ";
@@ -229,7 +230,7 @@ namespace Dash
 
 			if (developerModeEnabled == false)
 			{
-				LOG_WARNING << "Enable Developer Mode on Windows 10 to get consistent profiling results";
+				LOG_INFO << "Enable Developer Mode on Windows 10 to get consistent profiling results";
 			}
 
 			// Prevent the GPU from overclocking or underclocking to get consistent timings
