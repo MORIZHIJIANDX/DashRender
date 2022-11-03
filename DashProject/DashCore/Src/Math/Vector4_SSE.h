@@ -102,9 +102,9 @@ namespace Dash
 
 		union
 		{
-			struct { float x, y, z, w; };
+			struct { float X, Y, Z, W; };
 			DataType Data;
-			TScalarArray<float, 3> xyz;
+			TScalarArray<float, 3> XYZ;
 			__m128 mVec;
 		};
 	};
@@ -198,7 +198,7 @@ namespace Dash
 
 	template <typename Scalar2>
 	FORCEINLINE constexpr TScalarArray<float, 4>::TScalarArray(const TScalarArray<Scalar2, 3> v, Scalar2 w) noexcept
-		: mVec(_mm_setr_ps(float(v.x), float(v.y), float(v.z), float(w)))
+		: mVec(_mm_setr_ps(float(v.X), float(v.Y), float(v.Z), float(w)))
 	{
 	}
 
@@ -211,7 +211,7 @@ namespace Dash
 
 	template <typename Scalar2>
 	FORCEINLINE constexpr TScalarArray<float, 4>::TScalarArray(const TScalarArray<Scalar2, 4>& v) noexcept
-		: mVec(_mm_setr_ps(float(v.x), float(v.y), float(v.z), float(v.w)))
+		: mVec(_mm_setr_ps(float(v.X), float(v.Y), float(v.Z), float(v.W)))
 	{
 	}
 
@@ -276,7 +276,7 @@ namespace Dash
 	template<typename Scalar2>
 	FORCEINLINE TScalarArray<float, 4>& TScalarArray<float, 4>::operator=(const TScalarArray<Scalar2, 4>& v) noexcept
 	{
-		mVec = _mm_setr_ps(float(v.x), float(v.y), float(v.z), float(v.w));
+		mVec = _mm_setr_ps(float(v.X), float(v.Y), float(v.Z), float(v.W));
 		return *this;
 	}
 
@@ -472,7 +472,7 @@ namespace Dash
 
 		FORCEINLINE TScalarArray<float, 4> homogenize(const TScalarArray<float, 4>& a)
 		{
-			ASSERT(!IsZero(a.w));
+			ASSERT(!IsZero(a.W));
 			return TScalarArray<float, 4>{_Div(a, PERMUTE4(a, 3, 3, 3, 3))};
 		}
 

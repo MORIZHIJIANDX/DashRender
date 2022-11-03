@@ -34,8 +34,8 @@ namespace Dash
 	void FMouse::SetCursorPosition(FVector2i pos)
 	{
 		POINT point;
-		point.x = pos.x;
-		point.y = pos.y;
+		point.x = pos.X;
+		point.y = pos.Y;
 
 		if (mFocusedWindow != NULL)
 			if (!ClientToScreen(mFocusedWindow, &point))
@@ -72,8 +72,8 @@ namespace Dash
 
 		memcpy(mPrevMouseButtonStates, mCurrentMouseButtonStates, sizeof(mCurrentMouseButtonStates));
 
-		mMousePos.x = e.mX;
-		mMousePos.y = e.mY;
+		mMousePos.X = e.mX;
+		mMousePos.Y = e.mY;
 
 		MouseButtonPressed(e);
 	}
@@ -100,19 +100,19 @@ namespace Dash
 		
 		memcpy(mPrevMouseButtonStates, mCurrentMouseButtonStates, sizeof(mCurrentMouseButtonStates));
 
-		mMousePos.x = e.mX;
-		mMousePos.y = e.mY;
+		mMousePos.X = e.mX;
+		mMousePos.Y = e.mY;
 
 		MouseButtonReleased(e);
 	}
 
 	void FMouse::OnMouseMove(FMouseMotionEventArgs& e)
 	{
-		e.mRelX = e.mX - mMousePos.x;
-		e.mRelY = e.mY - mMousePos.y;
+		e.mRelX = e.mX - mMousePos.X;
+		e.mRelY = e.mY - mMousePos.Y;
 
-		mMousePos.x = e.mX;
-		mMousePos.y = e.mY;
+		mMousePos.X = e.mX;
+		mMousePos.Y = e.mY;
 
 		MouseMoved(e);
 	}

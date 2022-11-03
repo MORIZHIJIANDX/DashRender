@@ -27,27 +27,27 @@ namespace Dash
         template<typename Scalar>
         FORCEINLINE Scalar Width(const TAABB<Scalar, 2>& b) noexcept
         {
-            return b.Upper.x - b.Lower.x;
+            return b.Upper.X - b.Lower.X;
         }
 
         template<typename Scalar>
         FORCEINLINE Scalar Height(const TAABB<Scalar, 2>& b) noexcept
         {
-            return b.Upper.y - b.Lower.y;
+            return b.Upper.Y - b.Lower.Y;
         }
 
         template<typename Scalar>
         FORCEINLINE Scalar Area(const TAABB<Scalar, 2>& b) noexcept
         {
             TScalarArray<Scalar, 2> d = Diagonal(b);
-            return (d.x * d.y);
+            return (d.X * d.Y);
         }
 
         template<typename Scalar>
         FORCEINLINE std::size_t MaximumExtent(const TAABB<Scalar, 2>& b) noexcept
         {
             TScalarArray<Scalar, 2> diag = Diagonal(b);
-            if (diag.x > diag.y)
+            if (diag.X > diag.Y)
                 return 0;
             else
                 return 1;
@@ -80,10 +80,10 @@ namespace Dash
 
     private:
         void Advance() {
-            ++p.x;
-            if (p.x == TAABB->Upper.x) {
-                p.x = TAABB->Lower.x;
-                ++p.y;
+            ++p.X;
+            if (p.X == TAABB->Upper.X) {
+                p.X = TAABB->Lower.X;
+                ++p.Y;
             }
         }
         TScalarArray<int, 2> p;

@@ -69,17 +69,17 @@ namespace Dash
 	}
 
 	FLinearColor::FLinearColor(const TScalarArray<float, 3>& Vector) :
-		r(Vector.x),
-		g(Vector.y),
-		b(Vector.z),
+		r(Vector.X),
+		g(Vector.Y),
+		b(Vector.Z),
 		a(1.0f)
 	{}
 
 	FLinearColor::FLinearColor(const TScalarArray<float, 4>& Vector) :
-		r(Vector.x),
-		g(Vector.y),
-		b(Vector.z),
-		a(Vector.w)
+		r(Vector.X),
+		g(Vector.Y),
+		b(Vector.Z),
+		a(Vector.W)
 	{}
 
 	//FLinearColor::FLinearColor(const FFloat16Color& C)
@@ -236,7 +236,7 @@ namespace Dash
 	}
 
 	FColor::FColor(const TScalarArray<uint8_t, 4>& InColor)
-		: a(InColor.w), r(InColor.x), g(InColor.y), b(InColor.z)
+		: a(InColor.W), r(InColor.X), g(InColor.Y), b(InColor.Z)
 	{
 	}
 

@@ -140,9 +140,9 @@ namespace Dash
 		FORCEINLINE TScalarArray<Scalar, 3> Lerp(const TAABB<Scalar, 3>& b, const TScalarArray<Scalar, 3>& t) noexcept
 		{
 			return TScalarArray<Scalar, 3>{
-				Lerp(b.Lower.x, b.Upper.x, t.x),
-					Lerp(b.Lower.y, b.Upper.y, t.y),
-					Lerp(b.Lower.z, b.Upper.z, t.z)
+				Lerp(b.Lower.X, b.Upper.X, t.X),
+					Lerp(b.Lower.Y, b.Upper.Y, t.Y),
+					Lerp(b.Lower.Z, b.Upper.Z, t.Z)
 			};
 		}
 
@@ -150,9 +150,9 @@ namespace Dash
 		TScalarArray<Scalar, 3> Offset(const TAABB<Scalar, 3>& b, const TScalarArray<Scalar, 3>& p) noexcept
 		{
 			TScalarArray<Scalar, 3> result = p - b.Lower;
-			if (b.Upper.x > b.Lower.x)	result.x /= b.Upper.x - b.Lower.x;
-			if (b.Upper.y > b.Lower.y)	result.y /= b.Upper.y - b.Lower.y;
-			if (b.Upper.z > b.Lower.z)	result.z /= b.Upper.z - b.Lower.z;
+			if (b.Upper.X > b.Lower.X)	result.X /= b.Upper.X - b.Lower.X;
+			if (b.Upper.Y > b.Lower.Y)	result.Y /= b.Upper.Y - b.Lower.Y;
+			if (b.Upper.Z > b.Lower.Z)	result.Z /= b.Upper.Z - b.Lower.Z;
 
 			return result;
 		}
@@ -225,9 +225,9 @@ namespace Dash
 		template<typename Scalar>
 		FORCEINLINE bool Overlaps(const TAABB<Scalar, 3>& b1, const TAABB<Scalar, 3>& b2) noexcept
 		{
-			bool x = (b1.Upper.x >= b2.Lower.y) && (b1.Lower.x <= b2.Upper.x);
-			bool y = (b1.Upper.x >= b2.Lower.y) && (b1.Lower.x <= b2.Upper.x);
-			bool z = (b1.Upper.x >= b2.Lower.y) && (b1.Lower.x <= b2.Upper.x);
+			bool x = (b1.Upper.X >= b2.Lower.X) && (b1.Lower.X <= b2.Upper.X);
+			bool y = (b1.Upper.Y >= b2.Lower.Y) && (b1.Lower.Y <= b2.Upper.Y);
+			bool z = (b1.Upper.Z >= b2.Lower.Z) && (b1.Lower.Z <= b2.Upper.Z);
 
 			return x && y && z;
 		}
@@ -235,9 +235,9 @@ namespace Dash
 		template<typename Scalar>
 		FORCEINLINE bool Inside(const TScalarArray<Scalar, 3>& p, const TAABB<Scalar, 3>& b) noexcept
 		{
-			bool x = (p.x <= b.Upper.x) && (p.x >= b.Lower.x);
-			bool y = (p.y <= b.Upper.y) && (p.y >= b.Lower.y);
-			bool z = (p.z <= b.Upper.z) && (p.z >= b.Lower.z);
+			bool x = (p.X <= b.Upper.X) && (p.X >= b.Lower.X);
+			bool y = (p.Y <= b.Upper.Y) && (p.Y >= b.Lower.Y);
+			bool z = (p.Z <= b.Upper.Z) && (p.Z >= b.Lower.Z);
 
 			return x && y && z;
 		}
@@ -245,9 +245,9 @@ namespace Dash
 		template<typename Scalar>
 		FORCEINLINE bool InsideExclusive(const TScalarArray<Scalar, 3>& p, const TAABB<Scalar, 3>& b) noexcept
 		{
-			bool x = (p.x < b.Upper.x) && (p.x >= b.Lower.x);
-			bool y = (p.y < b.Upper.y) && (p.y >= b.Lower.y);
-			bool z = (p.z < b.Upper.z) && (p.z >= b.Lower.z);
+			bool x = (p.X < b.Upper.X) && (p.X >= b.Lower.X);
+			bool y = (p.Y < b.Upper.Y) && (p.Y >= b.Lower.Y);
+			bool z = (p.Z < b.Upper.Z) && (p.Z >= b.Lower.Z);
 
 			return x && y && z;
 		}
@@ -264,9 +264,9 @@ namespace Dash
 		FORCEINLINE Scalar Distance(const TScalarArray<Scalar, 3>& p, const TAABB<Scalar, 3>& b) noexcept
 		{
 			TScalarArray<Scalar, 3> result{
-				Max(Scalar{}, b.Lower.x - p.x, p.x - b.Upper.x),
-				Max(Scalar{}, b.Lower.y - p.y, p.y - b.Upper.y),
-				Max(Scalar{}, b.Lower.z - p.z, p.z - b.Upper.z)
+				Max(Scalar{}, b.Lower.X - p.X, p.X - b.Upper.X),
+				Max(Scalar{}, b.Lower.Y - p.Y, p.Y - b.Upper.Y),
+				Max(Scalar{}, b.Lower.Z - p.Z, p.Z - b.Upper.Z)
 			};
 
 			return Dot(result, result);

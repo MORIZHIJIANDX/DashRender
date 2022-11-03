@@ -41,8 +41,8 @@ namespace Dash
 
 		union
 		{
-			struct { Scalar x, y, z, w; };
-			TScalarArray<Scalar, 3> xyz;
+			struct { Scalar X, Y, Z, W; };
+			TScalarArray<Scalar, 3> XYZ;
 		};
 	};
 
@@ -146,36 +146,36 @@ namespace Dash
 
 	template<typename Scalar>
 	FORCEINLINE TScalarQuaternion<Scalar>::TScalarQuaternion() noexcept
-		: x()
-		, y()
-		, z()
-		, w()
+		: X()
+		, Y()
+		, Z()
+		, W()
 	{}
 
 	template<typename Scalar>
 	FORCEINLINE
 		TScalarQuaternion<Scalar>::TScalarQuaternion(FIdentity) noexcept
-		: x()
-		, y()
-		, z()
-		, w(Scalar{ 1 })
+		: X()
+		, Y()
+		, Z()
+		, W(Scalar{ 1 })
 	{}
 
 	template<typename Scalar>
 	FORCEINLINE TScalarQuaternion<Scalar>::TScalarQuaternion(Scalar x, Scalar y, Scalar z, Scalar w) noexcept
-		: x(x)
-		, y(y)
-		, z(z)
-		, w(w)
+		: X(X)
+		, Y(Y)
+		, Z(Z)
+		, W(W)
 	{}
 
 	template<typename Scalar>
 	template<typename Scalar2>
 	FORCEINLINE TScalarQuaternion<Scalar>::TScalarQuaternion(const Scalar2* v) noexcept
-		: x(Scalar{ v[0] })
-		, y(Scalar{ v[1] })
-		, z(Scalar{ v[2] })
-		, w(Scalar{ v[3] })
+		: X(Scalar{ v[0] })
+		, Y(Scalar{ v[1] })
+		, Z(Scalar{ v[2] })
+		, W(Scalar{ v[3] })
 	{
 		ASSERT(v != nullptr);
 	}
@@ -183,19 +183,19 @@ namespace Dash
 	template<typename Scalar>
 	template<typename Scalar2>
 	FORCEINLINE TScalarQuaternion<Scalar>::TScalarQuaternion(const TScalarQuaternion<Scalar2>& a) noexcept
-		: x(Scalar{ a.x })
-		, y(Scalar{ a.y })
-		, z(Scalar{ a.z })
-		, w(Scalar{ a.w })
+		: X(Scalar{ a.X })
+		, Y(Scalar{ a.Y })
+		, Z(Scalar{ a.Z })
+		, W(Scalar{ a.W })
 	{}
 
 	template<typename Scalar>
 	template<typename Scalar2>
 	FORCEINLINE TScalarQuaternion<Scalar>::TScalarQuaternion(const TScalarArray<Scalar2, 4>& a) noexcept
-		: x(Scalar{ a.x })
-		, y(Scalar{ a.y })
-		, z(Scalar{ a.z })
-		, w(Scalar{ a.w })
+		: X(Scalar{ a.X })
+		, Y(Scalar{ a.Y })
+		, Z(Scalar{ a.Z })
+		, W(Scalar{ a.W })
 	{
 	}
 
@@ -205,10 +205,10 @@ namespace Dash
 	{
 		Scalar halfTheta = angle * Scalar(0.5);
 		TScalarArray<Scalar, 3> normalizedAxis = FMath::Normalize(axis) * FMath::Sin(halfTheta);
-		x = normalizedAxis.x;
-		y = normalizedAxis.y;
-		z = normalizedAxis.z;
-		w = FMath::Cos(halfTheta);
+		X = normalizedAxis.X;
+		Y = normalizedAxis.Y;
+		Z = normalizedAxis.Z;
+		W = FMath::Cos(halfTheta);
 	}
 
 	template<typename Scalar>
@@ -225,10 +225,10 @@ namespace Dash
 			const Scalar s = FMath::Sqrt((Scalar{ 1 } +d) * Scalar { 2 });
 			const Scalar invS = 1.0f / s;
 
-			x = c.x * invS;
-			y = c.y * invS;
-			z = c.z * invS;
-			w = Scalar{ 0.5 } *s;
+			X = c.X * invS;
+			Y = c.Y * invS;
+			Z = c.Z * invS;
+			W = Scalar{ 0.5 } *s;
 		}
 		else
 		{
@@ -241,23 +241,23 @@ namespace Dash
 
 			Scalar halfTheta = FMath::Radians(Scalar{ 180 }) * Scalar(0.5);
 			TScalarArray<Scalar, 3> normalizedAxis = FMath::Normalize(axis) * FMath::Sin(halfTheta);
-			x = normalizedAxis.x;
-			y = normalizedAxis.y;
-			z = normalizedAxis.z;
-			w = FMath::Cos(halfTheta);
+			X = normalizedAxis.X;
+			Y = normalizedAxis.Y;
+			Z = normalizedAxis.Z;
+			W = FMath::Cos(halfTheta);
 		}
 	}
 
 	template<typename Scalar>
 	FORCEINLINE TScalarQuaternion<Scalar>::operator const Scalar* () const noexcept
 	{
-		return &x;
+		return &X;
 	}
 
 	template<typename Scalar>
 	FORCEINLINE TScalarQuaternion<Scalar>::operator Scalar* () noexcept
 	{
-		return &x;
+		return &X;
 	}
 
 	template<typename Scalar>
@@ -265,10 +265,10 @@ namespace Dash
 	FORCEINLINE TScalarQuaternion<Scalar>& TScalarQuaternion<Scalar>::operator*=(const TScalarQuaternion<Scalar2>& other) noexcept
 	{
 		TScalarQuaternion<Scalar> temp;
-		temp.x = w * other.x + x * other.w + y * other.z - z * other.y;
-		temp.y = w * other.y - x * other.z + y * other.w + z * other.x;
-		temp.z = w * other.z + x * other.y - y * other.x + z * other.w;
-		temp.w = w * other.w - x * other.x - y * other.y - z * other.z;
+		temp.X = W * other.X + X * other.W + Y * other.Z - Z * other.Y;
+		temp.Y = W * other.Y - X * other.Z + Y * other.W + Z * other.X;
+		temp.Z = W * other.Z + X * other.Y - Y * other.X + Z * other.W;
+		temp.W = W * other.W - X * other.X - Y * other.Y - Z * other.Z;
 		*this = temp;
 
 		return *this;
@@ -280,12 +280,12 @@ namespace Dash
 	{
 		using RT = typename TPromote<Scalar, Scalar2>::RT;
 
-		TScalarArray<RT, 3> u{ x, y, z };
+		TScalarArray<RT, 3> u{ X, Y, Z };
 
 		TScalarArray<RT, 3> c1 = FMath::Cross(u, v);
 		TScalarArray<RT, 3> c2 = FMath::Cross(u, c1);
 
-		return v + RT{ 2 } *(c1 * w + c2);
+		return v + RT{ 2 } *(c1 * W + c2);
 	}
 
 
@@ -304,7 +304,7 @@ namespace Dash
 	template<typename CharT, typename Traits, typename Scalar>
 	FORCEINLINE std::basic_ostream<CharT, Traits>& operator<<(std::basic_ostream<CharT, Traits>& os, const TScalarQuaternion<Scalar>& a)
 	{
-		return os << a.x << ' ' << a.y << ' ' << a.z << ' ' << a.w;
+		return os << a.X << ' ' << a.Y << ' ' << a.Z << ' ' << a.W;
 	}
 
 #endif
@@ -314,7 +314,7 @@ namespace Dash
 	template<typename CharT, typename Traits, typename Scalar>
 	FORCEINLINE std::basic_istream<CharT, Traits>& operator>>(std::basic_istream<CharT, Traits>& is, TScalarQuaternion<Scalar>& a)
 	{
-		return is >> a.x >> a.y >> a.z >> a.w;
+		return is >> a.X >> a.Y >> a.Z >> a.W;
 	}
 
 #endif
@@ -322,23 +322,23 @@ namespace Dash
 	template<typename Scalar1, typename Scalar2>
 	FORCEINLINE bool operator==(const TScalarQuaternion<Scalar1>& a, const TScalarQuaternion<Scalar2>& b) noexcept
 	{
-		return (a.x == b.x) && (a.y == b.y) && (a.z == b.z) && (a.w == b.w);
+		return (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z) && (a.W == b.W);
 	}
 
 	template<typename Scalar1, typename Scalar2>
 	FORCEINLINE bool operator!=(const TScalarQuaternion<Scalar1>& a, const TScalarQuaternion<Scalar2>& b) noexcept
 	{
-		return (a.x != b.x) || (a.y != b.y) || (a.z != b.z) || (a.w != b.w);
+		return (a.X != b.X) || (a.Y != b.Y) || (a.Z != b.Z) || (a.W != b.W);
 	}
 
 	template<typename Scalar1, typename Scalar2>
 	FORCEINLINE TScalarQuaternion<typename TPromote<Scalar1, Scalar2>::RT> operator*(const TScalarQuaternion<Scalar1>& a, const TScalarQuaternion<Scalar2>& b) noexcept
 	{
 		typedef typename TPromote<Scalar1, Scalar2>::RT RT;
-		return TScalarQuaternion<RT>(a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y,
-			a.w * b.y + a.y * b.w + a.z * b.x - a.x * b.z,
-			a.w * b.z + a.z * b.w + a.x * b.y - a.y * b.x,
-			a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z);
+		return TScalarQuaternion<RT>(a.W * b.X + a.X * b.W + a.Y * b.Z - a.Z * b.Y,
+			a.W * b.Y + a.Y * b.W + a.Z * b.X - a.X * b.Z,
+			a.W * b.Z + a.Z * b.W + a.X * b.Y - a.Y * b.X,
+			a.W * b.W - a.X * b.X - a.Y * b.Y - a.Z * b.Z);
 	}
 
 
@@ -358,7 +358,7 @@ namespace Dash
 		template<typename Scalar1, typename Scalar2>
 		FORCEINLINE typename TPromote<Scalar1, Scalar2>::RT Dot(const TScalarQuaternion<Scalar1>& a, const TScalarQuaternion<Scalar2>& b) noexcept
 		{
-			return typename TPromote<Scalar1, Scalar2>::RT(a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w);
+			return typename TPromote<Scalar1, Scalar2>::RT(a.X * b.X + a.Y * b.Y + a.Z * b.Z + a.W * b.W);
 		}
 
 		template<typename Scalar1, typename Scalar2>
@@ -366,10 +366,10 @@ namespace Dash
 			TScalarQuaternion<typename TPromote<Scalar1, Scalar2>::RT> Mul(const TScalarQuaternion<Scalar1>& a, const TScalarQuaternion<Scalar2>& b) noexcept
 		{
 			typedef typename TPromote<Scalar1, Scalar2>::RT RT;
-			return TScalarQuaternion<RT>(a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y,
-				a.w * b.y + a.y * b.w + a.z * b.x - a.x * b.z,
-				a.w * b.z + a.z * b.w + a.x * b.y - a.y * b.x,
-				a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z);
+			return TScalarQuaternion<RT>(a.W * b.X + a.X * b.W + a.Y * b.Z - a.Z * b.Y,
+				a.W * b.Y + a.Y * b.W + a.Z * b.X - a.X * b.Z,
+				a.W * b.Z + a.Z * b.W + a.X * b.Y - a.Y * b.X,
+				a.W * b.W - a.X * b.X - a.Y * b.Y - a.Z * b.Z);
 		}
 
 		template<typename Scalar1, typename Scalar2>
@@ -377,18 +377,18 @@ namespace Dash
 		{
 			typedef typename TPromote<Scalar1, Scalar2>::RT RT;
 
-			TScalarArray<RT, 3> u{ q.xyz };
+			TScalarArray<RT, 3> u{ q.XYZ };
 
 			TScalarArray<RT, 3> c1 = Cross(u, v);
 			TScalarArray<RT, 3> c2 = Cross(u, c1);
 
-			return v + RT{ 2 } *(c1 * q.w + c2);
+			return v + RT{ 2 } *(c1 * q.W + c2);
 		}
 
 		template<typename Scalar>
 		FORCEINLINE TScalarQuaternion<Scalar> Conjugate(const TScalarQuaternion<Scalar>& q) noexcept
 		{
-			return TScalarQuaternion<Scalar>{-q.x, -q.y, -q.z, q.w};
+			return TScalarQuaternion<Scalar>{-q.X, -q.Y, -q.Z, q.W};
 		}
 
 		template<typename Scalar>
@@ -396,7 +396,7 @@ namespace Dash
 		{
 			Scalar invLength = Scalar(1) / Length(q);
 			ASSERT(IsPositive(invLength));
-			return TScalarQuaternion<Scalar>(-q.x * invLength, -q.y * invLength, -q.z * invLength, q.w * invLength);
+			return TScalarQuaternion<Scalar>(-q.X * invLength, -q.Y * invLength, -q.Z * invLength, q.W * invLength);
 		}
 
 		template<typename Scalar>
@@ -418,11 +418,11 @@ namespace Dash
 		template<typename Scalar>
 		FORCEINLINE void ToAxisAngle(TScalarArray<Scalar, 3>& axis, Scalar& theta, const TScalarQuaternion<Scalar>& q) noexcept
 		{
-			Scalar s = Sqrt(q.x * q.x + q.y * q.y + q.z * q.z);
+			Scalar s = Sqrt(q.X * q.X + q.Y * q.Y + q.Z * q.Z);
 			if (!IsZero(s))
 			{
-				theta = Atan2(s, q.w) * Scalar { 2 };
-				axis = TScalarArray<Scalar, 3>(q.x, q.y, q.z) / s;
+				theta = Atan2(s, q.W) * Scalar { 2 };
+				axis = TScalarArray<Scalar, 3>(q.X, q.Y, q.Z) / s;
 			}
 			else
 			{
@@ -437,16 +437,16 @@ namespace Dash
 			TScalarArray<Scalar, 4> angles{ pitch, yaw, roll, Scalar(0) };
 			angles *= Scalar(0.5);
 
-			TScalarArray<Scalar, 4> sinAngles{ Sin(angles.x), Sin(angles.y), Sin(angles.z), Scalar(0) };
-			TScalarArray<Scalar, 4> cosAngles{ Cos(angles.x), Cos(angles.y), Cos(angles.z), Scalar(0) };
+			TScalarArray<Scalar, 4> sinAngles{ Sin(angles.X), Sin(angles.Y), Sin(angles.Z), Scalar(0) };
+			TScalarArray<Scalar, 4> cosAngles{ Cos(angles.X), Cos(angles.Y), Cos(angles.Z), Scalar(0) };
 
-			TScalarArray<Scalar, 4> p0{ sinAngles.x, cosAngles.x, cosAngles.x, cosAngles.x };
-			TScalarArray<Scalar, 4> y0{ cosAngles.y, sinAngles.y, cosAngles.y, cosAngles.y };
-			TScalarArray<Scalar, 4> r0{ cosAngles.z, cosAngles.z, sinAngles.z, cosAngles.z };
+			TScalarArray<Scalar, 4> p0{ sinAngles.X, cosAngles.X, cosAngles.X, cosAngles.X };
+			TScalarArray<Scalar, 4> y0{ cosAngles.Y, sinAngles.Y, cosAngles.Y, cosAngles.Y };
+			TScalarArray<Scalar, 4> r0{ cosAngles.Z, cosAngles.Z, sinAngles.Z, cosAngles.Z };
 
-			TScalarArray<Scalar, 4> p1{ cosAngles.x, sinAngles.x, sinAngles.x, sinAngles.x };
-			TScalarArray<Scalar, 4> y1{ sinAngles.y, cosAngles.y, sinAngles.y, sinAngles.y };
-			TScalarArray<Scalar, 4> r1{ sinAngles.z, sinAngles.z, cosAngles.z, sinAngles.z };
+			TScalarArray<Scalar, 4> p1{ cosAngles.X, sinAngles.X, sinAngles.X, sinAngles.X };
+			TScalarArray<Scalar, 4> y1{ sinAngles.Y, cosAngles.Y, sinAngles.Y, sinAngles.Y };
+			TScalarArray<Scalar, 4> r1{ sinAngles.Z, sinAngles.Z, cosAngles.Z, sinAngles.Z };
 
 			TScalarArray<Scalar, 4> sign{ Scalar{1}, -Scalar{1}, -Scalar{1}, Scalar{1} };
 
@@ -461,21 +461,21 @@ namespace Dash
 		template<typename Scalar>
 		FORCEINLINE TScalarQuaternion<Scalar> FromEuler(const TScalarArray<Scalar, 3>& euler) noexcept
 		{
-			return FromEuler(euler.x, euler.y, euler.z);
+			return FromEuler(euler.X, euler.Y, euler.Z);
 		}
 
 		template<typename Scalar>
 		FORCEINLINE void ToEuler(Scalar& pitch, Scalar& yaw, Scalar& roll, const TScalarQuaternion<Scalar>& q) noexcept
 		{
-			yaw = Atan2(Scalar{ 2 } *(q.w * q.y + q.z * q.x), Scalar{ 1 } -Scalar{ 2 } *(q.x * q.x + q.y * q.y));
-			pitch = ASin(Scalar{ 2 } *(q.w * q.x - q.y * q.z));
-			roll = Atan2(Scalar{ 2 } *(q.w * q.z + q.x * q.y), Scalar{ 1 } -Scalar{ 2 } *(q.z * q.z + q.x * q.x));
+			yaw = Atan2(Scalar{ 2 } *(q.W * q.Y + q.Z * q.X), Scalar{ 1 } -Scalar{ 2 } *(q.X * q.X + q.Y * q.Y));
+			pitch = ASin(Scalar{ 2 } *(q.W * q.X - q.Y * q.Z));
+			roll = Atan2(Scalar{ 2 } *(q.W * q.Z + q.X * q.Y), Scalar{ 1 } -Scalar{ 2 } *(q.Z * q.Z + q.X * q.X));
 		}
 
 		template<typename Scalar>
 		FORCEINLINE void ToEuler(TScalarArray<Scalar, 3>& euler, const TScalarQuaternion<Scalar>& q) noexcept
 		{
-			ToEuler(euler.x, euler.y, euler.z, q);
+			ToEuler(euler.X, euler.Y, euler.Z, q);
 		}
 
 		template<typename Scalar>
@@ -483,24 +483,24 @@ namespace Dash
 		{
 			TScalarArray<Scalar, 2> c1 = TScalarArray<Scalar, 2>{ Cos(theta), Sin(theta) };
 			TScalarArray<Scalar, 2> c2 = TScalarArray<Scalar, 2>{ Cos(phi), Sin(phi) };
-			TScalarArray<Scalar, 3> axis(c1.x * c2.y, c1.y * c2.y, c2.x);
+			TScalarArray<Scalar, 3> axis(c1.X * c2.Y, c1.Y * c2.Y, c2.X);
 			return FromAxisAngle(axis, rho);
 		}
 
 		template<typename Scalar>
 		FORCEINLINE void ToSpherical(Scalar& rho, Scalar& phi, Scalar& theta, const TScalarQuaternion<Scalar>& u) noexcept
 		{
-			rho = ACos(u.w) * Scalar(2);
-			TScalarArray<Scalar, 3> axis = Normalize(u.xyz);
-			phi = ACos(axis.z);
-			theta = Atan2(axis.y, axis.x);
+			rho = ACos(u.W) * Scalar(2);
+			TScalarArray<Scalar, 3> axis = Normalize(u.XYZ);
+			phi = ACos(axis.Z);
+			theta = Atan2(axis.Y, axis.X);
 		}
 
 		template<typename Scalar>
 		FORCEINLINE TScalarArray<Scalar, 2> CartesianToSpherical(const TScalarArray<Scalar, 3>& norm)
 		{
-			Scalar theta = Atan2(norm.z, norm.x);
-			Scalar phi = ACos(norm.y);
+			Scalar theta = Atan2(norm.Z, norm.X);
+			Scalar phi = ACos(norm.Y);
 
 			return TScalarArray<Scalar, 2>{theta, phi};
 		}
@@ -509,10 +509,10 @@ namespace Dash
 		FORCEINLINE TScalarArray<Scalar, 3> SphericalToCartesian(const TScalarArray<Scalar, 2>& s)
 		{
 			Scalar sinTheta, cosTheta;
-			SinCos(s.x, sinTheta, cosTheta);
+			SinCos(s.X, sinTheta, cosTheta);
 
 			Scalar sinPhi, cosPhi;
-			SinCos(s.y, sinPhi, cosPhi);
+			SinCos(s.Y, sinPhi, cosPhi);
 
 			return TScalarArray<Scalar, 3>{ sinPhi* cosTheta, cosPhi, sinPhi* sinTheta };
 		}
@@ -543,9 +543,9 @@ namespace Dash
 				const Scalar invS = 1.0f / s;
 
 				return TScalarQuaternion<Scalar>{
-					c.x* invS,
-						c.y* invS,
-						c.z* invS,
+					c.X* invS,
+						c.Y* invS,
+						c.Z* invS,
 						Scalar{ 0.5 } *s
 				};
 			}
@@ -562,9 +562,9 @@ namespace Dash
 				TScalarArray<Scalar, 3> normalizedAxis = Normalize(axis) * Sin(halfTheta);
 
 				return TScalarQuaternion<Scalar>{
-					normalizedAxis.x,
-						normalizedAxis.y,
-						normalizedAxis.z,
+					normalizedAxis.X,
+						normalizedAxis.Y,
+						normalizedAxis.Z,
 						Cos(halfTheta)
 				};
 			}
@@ -615,48 +615,48 @@ namespace Dash
 		FORCEINLINE void ToMatrix(TScalarMatrix<Scalar, 4, 4>& m, const TScalarQuaternion<Scalar>& q) noexcept
 		{
 			m = TScalarMatrix<Scalar, 4, 4>{ FIdentity{} };
-			m[0][0] = 1 - 2 * q.y * q.y - 2 * q.z * q.z;
-			m[0][1] = 2 * q.x * q.y + 2 * q.z * q.w;
-			m[0][2] = 2 * q.x * q.z - 2 * q.y * q.w;
+			m[0][0] = 1 - 2 * q.Y * q.Y - 2 * q.Z * q.Z;
+			m[0][1] = 2 * q.X * q.Y + 2 * q.Z * q.W;
+			m[0][2] = 2 * q.X * q.Z - 2 * q.Y * q.W;
 
-			m[1][0] = 2 * q.x * q.y - 2 * q.z * q.w;
-			m[1][1] = 1 - 2 * q.x * q.x - 2 * q.z * q.z;
-			m[1][2] = 2 * q.y * q.z + 2 * q.x * q.w;
+			m[1][0] = 2 * q.X * q.Y - 2 * q.Z * q.W;
+			m[1][1] = 1 - 2 * q.X * q.X - 2 * q.Z * q.Z;
+			m[1][2] = 2 * q.Y * q.Z + 2 * q.X * q.W;
 
-			m[2][0] = 2 * q.x * q.z + 2 * q.y * q.w;
-			m[2][1] = 2 * q.y * q.z - 2 * q.x * q.w;
-			m[2][2] = 1 - 2 * q.x * q.x - 2 * q.y * q.y;
+			m[2][0] = 2 * q.X * q.Z + 2 * q.Y * q.W;
+			m[2][1] = 2 * q.Y * q.Z - 2 * q.X * q.W;
+			m[2][2] = 1 - 2 * q.X * q.X - 2 * q.Y * q.Y;
 		}
 
 		template<typename Scalar>
 		FORCEINLINE void ToMatrix(TScalarMatrix<Scalar, 3, 3>& m, const TScalarQuaternion<Scalar>& q) noexcept
 		{
 			m = TScalarMatrix<Scalar, 3, 3>{ FIdentity{} };
-			m[0][0] = 1 - 2 * q.y * q.y - 2 * q.z * q.z;
-			m[0][1] = 2 * q.x * q.y + 2 * q.z * q.w;
-			m[0][2] = 2 * q.x * q.z - 2 * q.y * q.w;
+			m[0][0] = 1 - 2 * q.Y * q.Y - 2 * q.Z * q.Z;
+			m[0][1] = 2 * q.X * q.Y + 2 * q.Z * q.W;
+			m[0][2] = 2 * q.X * q.Z - 2 * q.Y * q.W;
 
-			m[1][0] = 2 * q.x * q.y - 2 * q.z * q.w;
-			m[1][1] = 1 - 2 * q.x * q.x - 2 * q.z * q.z;
-			m[1][2] = 2 * q.y * q.z + 2 * q.x * q.w;
+			m[1][0] = 2 * q.X * q.Y - 2 * q.Z * q.W;
+			m[1][1] = 1 - 2 * q.X * q.X - 2 * q.Z * q.Z;
+			m[1][2] = 2 * q.Y * q.Z + 2 * q.X * q.W;
 
-			m[2][0] = 2 * q.x * q.z + 2 * q.y * q.w;
-			m[2][1] = 2 * q.y * q.z - 2 * q.x * q.w;
-			m[2][2] = 1 - 2 * q.x * q.x - 2 * q.y * q.y;
+			m[2][0] = 2 * q.X * q.Z + 2 * q.Y * q.W;
+			m[2][1] = 2 * q.Y * q.Z - 2 * q.X * q.W;
+			m[2][2] = 1 - 2 * q.X * q.X - 2 * q.Y * q.Y;
 		}
 
 		template<typename Scalar>
 		FORCEINLINE TScalarQuaternion<Scalar> Normalize(const TScalarQuaternion<Scalar>& a) noexcept
 		{
 			Scalar invLength = Scalar(1) / Length(a);
-			return TScalarQuaternion<Scalar>(a.x * invLength, a.y * invLength, a.z * invLength, a.w * invLength);
+			return TScalarQuaternion<Scalar>(a.X * invLength, a.Y * invLength, a.Z * invLength, a.W * invLength);
 		}
 
 		template<typename Scalar>
 		FORCEINLINE TScalarQuaternion<Scalar> LerpAndNormalize(const TScalarQuaternion<Scalar>& a, const TScalarQuaternion<Scalar>& b, Scalar t) noexcept
 		{
 			Scalar lerpParam = 1 - t;
-			return Normalize(a + TScalarQuaternion<Scalar>{ b.x* lerpParam, b.y* lerpParam, b.z* lerpParam, b.w* lerpParam  });
+			return Normalize(a + TScalarQuaternion<Scalar>{ b.X* lerpParam, b.Y* lerpParam, b.Z* lerpParam, b.W* lerpParam  });
 		}
 
 		template<typename Scalar>
@@ -688,14 +688,14 @@ namespace Dash
 		{
 			translation = TScalarArray<Scalar, 3>{ a[3][0], a[3][1], a[3][2] };
 
-			scale = TScalarArray<Scalar, 3>{ Length(FMath::Row(a, 0).xyz), Length(FMath::Row(a, 1).xyz), Length(FMath::Row(a, 2).xyz) };
+			scale = TScalarArray<Scalar, 3>{ Length(FMath::Row(a, 0).XYZ), Length(FMath::Row(a, 1).XYZ), Length(FMath::Row(a, 2).XYZ) };
 
-			TScalarArray<Scalar, 3> inverseScale{ 1 / scale.x, 1 / scale.y, 1 / scale.z };
+			TScalarArray<Scalar, 3> inverseScale{ 1 / scale.X, 1 / scale.Y, 1 / scale.Z };
 
 			rotation = FromMatrix(TScalarMatrix<Scalar, 3, 3>{
-				a[0][0] * inverseScale.x, a[0][1] * inverseScale.x, a[0][2] * inverseScale.x,
-					a[1][0] * inverseScale.y, a[1][1] * inverseScale.y, a[1][2] * inverseScale.y,
-					a[2][0] * inverseScale.z, a[2][1] * inverseScale.z, a[2][2] * inverseScale.z,
+				a[0][0] * inverseScale.X, a[0][1] * inverseScale.X, a[0][2] * inverseScale.X,
+					a[1][0] * inverseScale.Y, a[1][1] * inverseScale.Y, a[1][2] * inverseScale.Y,
+					a[2][0] * inverseScale.Z, a[2][1] * inverseScale.Z, a[2][2] * inverseScale.Z,
 			});
 		}
 	}

@@ -357,32 +357,32 @@ namespace Dash
 
 	FORCEINLINE TScalarArray<float, 3> FTransform::GetForwardAxis() const noexcept
 	{
-		return mMat[2].xyz;
+		return mMat[2].XYZ;
 	}
 
 	FORCEINLINE TScalarArray<float, 3> FTransform::GetUnitForwardAxis() const noexcept
 	{
-		return FMath::Normalize(mMat[2].xyz);
+		return FMath::Normalize(mMat[2].XYZ);
 	}
 
 	FORCEINLINE TScalarArray<float, 3> FTransform::GetRightAxis() const noexcept
 	{
-		return mMat[0].xyz;
+		return mMat[0].XYZ;
 	}
 
 	FORCEINLINE TScalarArray<float, 3> FTransform::GetUnitRightAxis() const noexcept
 	{
-		return FMath::Normalize(mMat[0].xyz);
+		return FMath::Normalize(mMat[0].XYZ);
 	}
 
 	FORCEINLINE TScalarArray<float, 3> FTransform::GetUpAxis() const noexcept
 	{
-		return mMat[1].xyz;
+		return mMat[1].XYZ;
 	}
 
 	FORCEINLINE TScalarArray<float, 3> FTransform::GetUnitUpAxis() const noexcept
 	{
-		return FMath::Normalize(mMat[1].xyz);
+		return FMath::Normalize(mMat[1].XYZ);
 	}
 
 	FORCEINLINE TScalarMatrix<float, 4, 4> FTransform::GetMatrix() const noexcept
@@ -432,7 +432,7 @@ namespace Dash
 
 	FORCEINLINE void FTransform::Rotate(const TScalarArray<float, 3>& euler) noexcept
 	{
-		Rotate(euler.x, euler.y, euler.z);
+		Rotate(euler.X, euler.Y, euler.Z);
 	}
 
 	FORCEINLINE void FTransform::Rotate(float x, float y, float z) noexcept
@@ -446,7 +446,7 @@ namespace Dash
 
 	FORCEINLINE void FTransform::RotateLocal(const TScalarArray<float, 3>& euler) noexcept
 	{
-		RotateLocal(euler.x, euler.y, euler.z);
+		RotateLocal(euler.X, euler.Y, euler.Z);
 	}
 
 	FORCEINLINE void FTransform::RotateLocal(float x, float y, float z) noexcept
@@ -470,7 +470,7 @@ namespace Dash
 
 	FORCEINLINE void FTransform::TranslateLocal(const TScalarArray<float, 3>& t) noexcept
 	{
-		TranslateLocal(t.x, t.y, t.z);
+		TranslateLocal(t.X, t.Y, t.Z);
 	}
 
 	FORCEINLINE void FTransform::TranslateLocal(float x, float y, float z) noexcept
@@ -481,9 +481,9 @@ namespace Dash
 	FORCEINLINE TScalarArray<float, 3> FTransform::TransformVector(const TScalarArray<float, 3>& v) const noexcept
 	{
 		return TScalarArray<float, 3>{
-			FMath::Dot(v, FMath::Column(mMat, 0).xyz),
-			FMath::Dot(v, FMath::Column(mMat, 1).xyz),
-			FMath::Dot(v, FMath::Column(mMat, 2).xyz)
+			FMath::Dot(v, FMath::Column(mMat, 0).XYZ),
+			FMath::Dot(v, FMath::Column(mMat, 1).XYZ),
+			FMath::Dot(v, FMath::Column(mMat, 2).XYZ)
 		};
 	}
 
@@ -510,18 +510,18 @@ namespace Dash
 	FORCEINLINE TScalarArray<float, 3> FTransform::TransformNormal(const TScalarArray<float, 3>& n) const noexcept
 	{
 		return TScalarArray<float, 3>{
-			FMath::Dot(n, FMath::Row(mInverseMat, 0).xyz),
-			FMath::Dot(n, FMath::Row(mInverseMat, 1).xyz),
-			FMath::Dot(n, FMath::Row(mInverseMat, 2).xyz)
+			FMath::Dot(n, FMath::Row(mInverseMat, 0).XYZ),
+			FMath::Dot(n, FMath::Row(mInverseMat, 1).XYZ),
+			FMath::Dot(n, FMath::Row(mInverseMat, 2).XYZ)
 		};
 	}
 
 	FORCEINLINE TScalarArray<float, 4> FTransform::TransformVector(const TScalarArray<float, 4>& v) const noexcept
 	{
 		return TScalarArray<float, 4>{
-			FMath::Dot(v.xyz, FMath::Column(mMat, 0).xyz),
-			FMath::Dot(v.xyz, FMath::Column(mMat, 1).xyz),
-			FMath::Dot(v.xyz, FMath::Column(mMat, 2).xyz),
+			FMath::Dot(v.XYZ, FMath::Column(mMat, 0).XYZ),
+			FMath::Dot(v.XYZ, FMath::Column(mMat, 1).XYZ),
+			FMath::Dot(v.XYZ, FMath::Column(mMat, 2).XYZ),
 			float{}
 		};
 	}
@@ -530,20 +530,20 @@ namespace Dash
 	{
 		TScalarArray<float, 4> hp = FMath::Mul(p, mMat);
 
-		ASSERT(!FMath::IsZero(hp.w));
+		ASSERT(!FMath::IsZero(hp.W));
 
-		if (hp.w == 1)
+		if (hp.W == 1)
 			return hp;
 		else
-			return hp / hp.w;
+			return hp / hp.W;
 	}
 
 	FORCEINLINE TScalarArray<float, 4> FTransform::TransformNormal(const TScalarArray<float, 4>& n) const noexcept
 	{
 		return TScalarArray<float, 4>{
-			FMath::Dot(n.xyz, FMath::Row(mInverseMat, 0).xyz),
-			FMath::Dot(n.xyz, FMath::Row(mInverseMat, 1).xyz),
-			FMath::Dot(n.xyz, FMath::Row(mInverseMat, 2).xyz),
+			FMath::Dot(n.XYZ, FMath::Row(mInverseMat, 0).XYZ),
+			FMath::Dot(n.XYZ, FMath::Row(mInverseMat, 1).XYZ),
+			FMath::Dot(n.XYZ, FMath::Row(mInverseMat, 2).XYZ),
 			float{}
 		};
 	}
@@ -551,14 +551,14 @@ namespace Dash
 	FORCEINLINE TAABB<float, 3> FTransform::TransformBoundingBox(const TAABB<float, 3>& b) const noexcept
 	{
 		const FTransform& M = *this;
-		TAABB<float, 3> ret(M.TransformPoint(TScalarArray<float, 3>(b.Lower.x, b.Lower.y, b.Lower.z)));
-		ret = FMath::Union(ret, (M.TransformPoint(TScalarArray<float, 3>{ b.Upper.x, b.Lower.y, b.Lower.z })));
-		ret = FMath::Union(ret, (M.TransformPoint(TScalarArray<float, 3>{ b.Lower.x, b.Upper.y, b.Lower.z })));
-		ret = FMath::Union(ret, (M.TransformPoint(TScalarArray<float, 3>{ b.Lower.x, b.Lower.y, b.Upper.z })));
-		ret = FMath::Union(ret, (M.TransformPoint(TScalarArray<float, 3>{ b.Lower.x, b.Upper.y, b.Upper.z })));
-		ret = FMath::Union(ret, (M.TransformPoint(TScalarArray<float, 3>{ b.Upper.x, b.Upper.y, b.Lower.z })));
-		ret = FMath::Union(ret, (M.TransformPoint(TScalarArray<float, 3>{ b.Upper.x, b.Lower.y, b.Upper.z })));
-		ret = FMath::Union(ret, (M.TransformPoint(TScalarArray<float, 3>{ b.Upper.x, b.Upper.y, b.Upper.z })));
+		TAABB<float, 3> ret(M.TransformPoint(TScalarArray<float, 3>(b.Lower.X, b.Lower.Y, b.Lower.Z)));
+		ret = FMath::Union(ret, (M.TransformPoint(TScalarArray<float, 3>{ b.Upper.X, b.Lower.Y, b.Lower.Z })));
+		ret = FMath::Union(ret, (M.TransformPoint(TScalarArray<float, 3>{ b.Lower.X, b.Upper.Y, b.Lower.Z })));
+		ret = FMath::Union(ret, (M.TransformPoint(TScalarArray<float, 3>{ b.Lower.X, b.Lower.Y, b.Upper.Z })));
+		ret = FMath::Union(ret, (M.TransformPoint(TScalarArray<float, 3>{ b.Lower.X, b.Upper.Y, b.Upper.Z })));
+		ret = FMath::Union(ret, (M.TransformPoint(TScalarArray<float, 3>{ b.Upper.X, b.Upper.Y, b.Lower.Z })));
+		ret = FMath::Union(ret, (M.TransformPoint(TScalarArray<float, 3>{ b.Upper.X, b.Lower.Y, b.Upper.Z })));
+		ret = FMath::Union(ret, (M.TransformPoint(TScalarArray<float, 3>{ b.Upper.X, b.Upper.Y, b.Upper.Z })));
 		return ret;
 	}
 

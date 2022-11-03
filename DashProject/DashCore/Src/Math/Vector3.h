@@ -62,9 +62,9 @@ namespace Dash
 
 		union
 		{
-			struct { Scalar x, y, z; };
+			struct { Scalar X, Y, Z; };
 			DataType Data;
-			TScalarArray<Scalar, 2> xy;
+			TScalarArray<Scalar, 2> XY;
 		};
 	};
 
@@ -127,34 +127,34 @@ namespace Dash
 
 	template<typename Scalar>
 	FORCEINLINE constexpr TScalarArray<Scalar, 3>::TScalarArray() noexcept
-		: x()
-		, y()
-		, z()
+		: X()
+		, Y()
+		, Z()
 	{
 	}
 
 	template<typename Scalar>
 	FORCEINLINE constexpr TScalarArray<Scalar, 3>::TScalarArray(FZero) noexcept
-		: x(Scalar{})
-		, y(Scalar{})
-		, z(Scalar{})
+		: X(Scalar{})
+		, Y(Scalar{})
+		, Z(Scalar{})
 	{
 	}
 
 	template<typename Scalar>
 	FORCEINLINE constexpr TScalarArray<Scalar, 3>::TScalarArray(FIdentity) noexcept
-		: x(Scalar{ 1 })
-		, y(Scalar{ 1 })
-		, z(Scalar{ 1 })
+		: X(Scalar{ 1 })
+		, Y(Scalar{ 1 })
+		, Z(Scalar{ 1 })
 	{
 	}
 
 	template<typename Scalar>
 	template <std::size_t I>
 	FORCEINLINE constexpr TScalarArray<Scalar, 3>::TScalarArray(FUnit<I>) noexcept
-		: x(Scalar{ I == 0 })
-		, y(Scalar{ I == 1 })
-		, z(Scalar{ I == 2 })
+		: X(Scalar{ I == 0 })
+		, Y(Scalar{ I == 1 })
+		, Z(Scalar{ I == 2 })
 	{
 		STATIC_ASSERT(I < 3);
 	}
@@ -162,36 +162,36 @@ namespace Dash
 	template<typename Scalar>
 	template<typename Scalar2>
 	FORCEINLINE constexpr TScalarArray<Scalar, 3>::TScalarArray(const TScalarArray<Scalar2, 2>& v, Scalar2 z) noexcept
-		: x(static_cast<Scalar>(v.x))
-		, y(static_cast<Scalar>(v.y))
-		, z(static_cast<Scalar>(z))
+		: X(static_cast<Scalar>(v.X))
+		, Y(static_cast<Scalar>(v.Y))
+		, Z(static_cast<Scalar>(z))
 	{
 	}
 
 	template<typename Scalar>
 	template<typename Scalar2>
 	FORCEINLINE constexpr TScalarArray<Scalar, 3>::TScalarArray(Scalar2 x, Scalar2 y, Scalar2 z) noexcept
-		: x(static_cast<Scalar>(x))
-		, y(static_cast<Scalar>(y))
-		, z(static_cast<Scalar>(z))
+		: X(static_cast<Scalar>(x))
+		, Y(static_cast<Scalar>(y))
+		, Z(static_cast<Scalar>(z))
 	{
 	}
 
 	template<typename Scalar>
 	template<typename Scalar2>
 	FORCEINLINE constexpr TScalarArray<Scalar, 3>::TScalarArray(const Scalar2* v) noexcept
-		: x(Scalar{ v[0] })
-		, y(Scalar{ v[1] })
-		, z(Scalar{ v[2] })
+		: X(Scalar{ v[0] })
+		, Y(Scalar{ v[1] })
+		, Z(Scalar{ v[2] })
 	{
 	}
 
 	template<typename Scalar>
 	template<typename Scalar2>
 	FORCEINLINE constexpr TScalarArray<Scalar, 3>::TScalarArray(const TScalarArray<Scalar2, 3>& v) noexcept
-		: x(Scalar{ v.x })
-		, y(Scalar{ v.y })
-		, z(Scalar{ v.z })
+		: X(Scalar{ v.X })
+		, Y(Scalar{ v.Y })
+		, Z(Scalar{ v.Z })
 	{
 	}
 
@@ -210,9 +210,9 @@ namespace Dash
 	template<typename Scalar>
 	FORCEINLINE TScalarArray<Scalar, 3>& TScalarArray<Scalar, 3>::operator=(FZero) noexcept
 	{
-		x = Scalar{};
-		y = Scalar{};
-		z = Scalar{};
+		X = Scalar{};
+		Y = Scalar{};
+		Z = Scalar{};
 
 		return *this;
 	}
@@ -232,9 +232,9 @@ namespace Dash
 	template<typename Scalar>
 	FORCEINLINE TScalarArray<Scalar, 3>& TScalarArray<Scalar, 3>::operator*=(FZero) noexcept
 	{
-		x = Scalar{};
-		y = Scalar{};
-		z = Scalar{};
+		X = Scalar{};
+		Y = Scalar{};
+		Z = Scalar{};
 
 		return *this;
 	}
@@ -243,9 +243,9 @@ namespace Dash
 	template<std::size_t I>
 	FORCEINLINE TScalarArray<Scalar, 3>& TScalarArray<Scalar, 3>::operator=(FUnit<I>) noexcept
 	{
-		x = Scalar{ I == 0 };
-		y = Scalar{ I == 1 };
-		z = Scalar{ I == 2 };
+		X = Scalar{ I == 0 };
+		Y = Scalar{ I == 1 };
+		Z = Scalar{ I == 2 };
 
 		return *this;
 	}
@@ -256,9 +256,9 @@ namespace Dash
 	{
 		ASSERT(v != nullptr);
 
-		x = v[0];
-		y = v[1];
-		z = v[2];
+		X = v[0];
+		Y = v[1];
+		Z = v[2];
 
 		return *this;
 	}
@@ -269,9 +269,9 @@ namespace Dash
 	{
 		ASSERT(v != nullptr);
 
-		x = v.x;
-		y = v.y;
-		z = v.z;
+		X = v.X;
+		Y = v.Y;
+		Z = v.Z;
 
 		return *this;
 	}
@@ -282,9 +282,9 @@ namespace Dash
 	{
 		ASSERT(v != nullptr);
 
-		x += v.x;
-		y += v.y;
-		z += v.z;
+		X += v.X;
+		Y += v.Y;
+		Z += v.Z;
 
 		return *this;
 	}
@@ -295,9 +295,9 @@ namespace Dash
 	{
 		ASSERT(v != nullptr);
 
-		x -= v.x;
-		y -= v.y;
-		z -= v.z;
+		X -= v.X;
+		Y -= v.Y;
+		Z -= v.Z;
 
 		return *this;
 	}
@@ -308,9 +308,9 @@ namespace Dash
 	{
 		ASSERT(v != nullptr);
 
-		x *= v.x;
-		y *= v.y;
-		z *= v.z;
+		X *= v.X;
+		Y *= v.Y;
+		Z *= v.Z;
 
 		return *this;
 	}
@@ -319,9 +319,9 @@ namespace Dash
 	template<typename Scalar>
 	FORCEINLINE TScalarArray<Scalar, 3>& TScalarArray<Scalar, 3>::operator*=(Scalar s) noexcept
 	{
-		x *= s;
-		y *= s;
-		z *= s;
+		X *= s;
+		Y *= s;
+		Z *= s;
 
 		return *this;
 	}
@@ -387,7 +387,7 @@ namespace Dash
 		{
 			using RT = typename TPromote<Scalar1, Scalar2>::RT;
 
-			return a.x * b.x + a.y * b.y + a.z * b.z;
+			return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
 		}
 
 		template<typename Scalar1, typename Scalar2>
@@ -396,15 +396,15 @@ namespace Dash
 			using RT = typename TPromote<Scalar1, Scalar2>::RT;
 
 			typedef typename TPromote<Scalar1, Scalar2>::RT RT;
-			return TScalarArray<RT, 3>{a.y* b.z - a.z * b.y,
-				a.z* b.x - a.x * b.z,
-				a.x* b.y - a.y * b.x};
+			return TScalarArray<RT, 3>{a.Y* b.Z - a.Z * b.Y,
+				a.Z* b.X - a.X * b.Z,
+				a.X* b.Y - a.Y * b.X};
 		}
 
 		template<typename Scalar>
 		FORCEINLINE TScalarArray<Scalar, 3> Abs(const TScalarArray<Scalar, 3>& a) noexcept
 		{
-			return TScalarArray<Scalar, 3>{ Abs(a.x), Abs(a.y), Abs(a.z) };
+			return TScalarArray<Scalar, 3>{ Abs(a.X), Abs(a.Y), Abs(a.Z) };
 		}
 
 		template<typename Scalar>
@@ -454,18 +454,18 @@ namespace Dash
 		template<typename Scalar>
 		FORCEINLINE std::size_t MaxAxis(const TScalarArray<Scalar, 3>& a) noexcept
 		{
-			int c0 = IsLessnn(a.x, a.y);
-			int c1 = IsLessnn(a.x, a.z);
-			int c2 = IsLessnn(a.y, a.z);
+			int c0 = IsLessnn(a.X, a.Y);
+			int c1 = IsLessnn(a.X, a.Z);
+			int c2 = IsLessnn(a.Y, a.Z);
 			return (c0 & ~c2) | ((c1 & c2) << 1);
 		}
 
 		template<typename Scalar>
 		FORCEINLINE std::size_t MinAxis(const TScalarArray<Scalar, 3>& a) noexcept
 		{
-			int c0 = IsLessnn(a.y, a.x);
-			int c1 = IsLessnn(a.z, a.x);
-			int c2 = IsLessnn(a.z, a.y);
+			int c0 = IsLessnn(a.Y, a.X);
+			int c1 = IsLessnn(a.Z, a.X);
+			int c2 = IsLessnn(a.Z, a.Y);
 			return (c0 & ~c2) | ((c1 & c2) << 1);
 		}
 
@@ -484,9 +484,9 @@ namespace Dash
 		template<typename Scalar1, typename Scalar2>
 		FORCEINLINE bool Dominates(const TScalarArray<Scalar1, 3>& a, const TScalarArray<Scalar2, 3>& b) noexcept
 		{
-			return !IsLessnn(a.x, b.x) &&
-				!IsLessnn(a.y, b.y) &&
-				!IsLessnn(a.z, b.z);
+			return !IsLessnn(a.X, b.X) &&
+				!IsLessnn(a.Y, b.Y) &&
+				!IsLessnn(a.Z, b.Z);
 		}
 
 		template<typename Scalar1, typename Scalar2>
@@ -494,27 +494,27 @@ namespace Dash
 		{
 			ASSERT(v != nullptr);
 
-			v[0] = Scalar1(a.x);
-			v[1] = Scalar1(a.y);
-			v[2] = Scalar1(a.z);
+			v[0] = Scalar1(a.X);
+			v[1] = Scalar1(a.Y);
+			v[2] = Scalar1(a.Z);
 		}
 
 		template<typename Scalar>
 		FORCEINLINE bool Isfinite(const TScalarArray<Scalar, 3>& a) noexcept
 		{
-			return IsFinite(a.x) && IsFinite(a.y) && IsFinite(a.z);
+			return IsFinite(a.X) && IsFinite(a.Y) && IsFinite(a.Z);
 		}
 
 		template<typename Scalar>
 		FORCEINLINE constexpr TScalarArray<Scalar, 3> Min(const TScalarArray<Scalar, 3> a, const TScalarArray<Scalar, 3> b) noexcept
 		{
-			return TScalarArray<Scalar, 3>{ Min(a.x, b.x), Min(a.y, b.y), Min(a.z, b.z) };
+			return TScalarArray<Scalar, 3>{ Min(a.X, b.X), Min(a.Y, b.Y), Min(a.Z, b.Z) };
 		}
 
 		template<typename Scalar>
 		FORCEINLINE constexpr TScalarArray<Scalar, 3> Max(const TScalarArray<Scalar, 3> a, const TScalarArray<Scalar, 3> b) noexcept
 		{
-			return TScalarArray<Scalar, 3>{ Max(a.x, b.x), Max(a.y, b.y), Max(a.z, b.z) };
+			return TScalarArray<Scalar, 3>{ Max(a.X, b.X), Max(a.Y, b.Y), Max(a.Z, b.Z) };
 		}
 	}
 }

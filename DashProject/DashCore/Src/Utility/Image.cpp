@@ -93,7 +93,7 @@ namespace Dash
 
 	void FTexture::Resize(const FVector2i& size)
 	{
-		Resize(size.x, size.y);
+		Resize(size.X, size.Y);
 	}
 
 }

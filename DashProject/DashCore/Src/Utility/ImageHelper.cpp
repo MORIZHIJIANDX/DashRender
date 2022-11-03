@@ -24,40 +24,40 @@ namespace Dash
 		{
 		case Dash::EDASH_FORMAT::R8G8B8A8_UINT:
 		{
-			color = image->GetPixel<FColor>(index.x, index.y);
+			color = image->GetPixel<FColor>(index.X, index.Y);
 			break;
 		}
 		case Dash::EDASH_FORMAT::R32_FLOAT:
 		{
-			float fvalue = image->GetPixel<float>(index.x, index.y);
+			float fvalue = image->GetPixel<float>(index.X, index.Y);
 			const uint8_t ivalue = GetSRGBFromLinear(fvalue);
 			color = repeat ? FColor{ ivalue, ivalue, ivalue, 255 } : FColor{ ivalue, 0, 0, 255 };
 			break;
 		}
 		case Dash::EDASH_FORMAT::R32G32_FLOAT:
 		{
-			FVector2f fvalue = image->GetPixel<FVector2f>(index.x, index.y);
-			const uint8_t ir = GetSRGBFromLinear(fvalue.x);
-			const uint8_t ig = GetSRGBFromLinear(fvalue.y);
+			FVector2f fvalue = image->GetPixel<FVector2f>(index.X, index.Y);
+			const uint8_t ir = GetSRGBFromLinear(fvalue.X);
+			const uint8_t ig = GetSRGBFromLinear(fvalue.Y);
 			color = FColor{ ir, ig, 0, 255 };
 			break;
 		}
 		case Dash::EDASH_FORMAT::R32G32B32_FLOAT:
 		{
-			FVector3f fvalue = image->GetPixel<FVector3f>(index.x, index.y);
-			const uint8_t ir = GetSRGBFromLinear(fvalue.x);
-			const uint8_t ig = GetSRGBFromLinear(fvalue.y);
-			const uint8_t ib = GetSRGBFromLinear(fvalue.z);
+			FVector3f fvalue = image->GetPixel<FVector3f>(index.X, index.Y);
+			const uint8_t ir = GetSRGBFromLinear(fvalue.X);
+			const uint8_t ig = GetSRGBFromLinear(fvalue.Y);
+			const uint8_t ib = GetSRGBFromLinear(fvalue.Z);
 			color = FColor{ ir, ig, ib, 255 };
 			break;
 		}
 		case Dash::EDASH_FORMAT::R32G32B32A32_FLOAT:
 		{
-			FVector4f fvalue = image->GetPixel<FVector4f>(index.x, index.y);
-			const uint8_t ir = GetSRGBFromLinear(fvalue.x);
-			const uint8_t ig = GetSRGBFromLinear(fvalue.y);
-			const uint8_t ib = GetSRGBFromLinear(fvalue.z);
-			const uint8_t ia = FMath::FloorToInt(FMath::Clamp(fvalue.w, 0.0f, 1.0f) * 255.999f);
+			FVector4f fvalue = image->GetPixel<FVector4f>(index.X, index.Y);
+			const uint8_t ir = GetSRGBFromLinear(fvalue.X);
+			const uint8_t ig = GetSRGBFromLinear(fvalue.Y);
+			const uint8_t ib = GetSRGBFromLinear(fvalue.Z);
+			const uint8_t ia = FMath::FloorToInt(FMath::Clamp(fvalue.W, 0.0f, 1.0f) * 255.999f);
 			color = FColor{ ir, ig, ib, ia };
 			break;
 		}

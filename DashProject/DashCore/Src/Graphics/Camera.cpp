@@ -202,7 +202,7 @@ namespace Dash
 
 		FVector3f OriginEuler;
 		FMath::ToEuler(OriginEuler, mTransform.GetRotation());
-		OriginEuler.x += FMath::Radians(angle);
+		OriginEuler.X += FMath::Radians(angle);
 		FQuaternion Rotation = FMath::FromEuler(OriginEuler);
 		
 		mTransform.SetRotation(Rotation);
@@ -216,7 +216,7 @@ namespace Dash
 
 		FVector3f OriginEuler;
 		FMath::ToEuler(OriginEuler, mTransform.GetRotation());
-		OriginEuler.y += FMath::Radians(angle);
+		OriginEuler.Y += FMath::Radians(angle);
 		FQuaternion Rotation = FMath::FromEuler(OriginEuler);
 
 		mTransform.SetRotation(Rotation);

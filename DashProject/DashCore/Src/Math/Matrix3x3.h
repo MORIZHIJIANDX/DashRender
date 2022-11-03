@@ -358,17 +358,17 @@ namespace Dash
 	template<typename Scalar>
 	FORCEINLINE void TScalarMatrix<Scalar, 3, 3>::SetColumns(const TScalarArray<Scalar, 3>& c0, const TScalarArray<Scalar, 3>& c1, const TScalarArray<Scalar, 3>& c2) noexcept
 	{
-		mRows[0] = TScalarArray<Scalar, 3>{ c0.x, c1.x, c2.x };
-		mRows[1] = TScalarArray<Scalar, 3>{ c0.y, c1.y, c2.x };
-		mRows[2] = TScalarArray<Scalar, 3>{ c0.z, c1.z, c2.x };
+		mRows[0] = TScalarArray<Scalar, 3>{ c0.X, c1.X, c2.X };
+		mRows[1] = TScalarArray<Scalar, 3>{ c0.Y, c1.Y, c2.Y };
+		mRows[2] = TScalarArray<Scalar, 3>{ c0.Z, c1.Z, c2.Z };
 	}
 
 	template<typename Scalar>
 	FORCEINLINE void TScalarMatrix<Scalar, 3, 3>::SetColumn(int j, const TScalarArray<Scalar, 3>& v) noexcept
 	{
-		mRows[0][j] = v.x;
-		mRows[1][j] = v.y;
-		mRows[2][j] = v.z;
+		mRows[0][j] = v.X;
+		mRows[1][j] = v.Y;
+		mRows[2][j] = v.Z;
 	}
 
 
@@ -554,7 +554,7 @@ namespace Dash
 		template<typename Scalar>
 		FORCEINLINE Scalar TDot(const TScalarMatrix<Scalar, 3, 3>& a, int i, const TScalarArray<Scalar, 3>& v) noexcept
 		{
-			return a[0][i] * v.x + a[1][i] * v.y + a[2][i] * v.z;
+			return a[0][i] * v.X + a[1][i] * v.Y + a[2][i] * v.Z;
 		}
 
 		template<int I, int J, typename Scalar>

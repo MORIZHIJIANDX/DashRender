@@ -75,7 +75,7 @@ namespace Dash
 	template<typename T>
 	FORCEINLINE void FTexture::SetPixel(const T& value, const FVector2i& index)
 	{
-		SetPixel(value, index.x, index.y);
+		SetPixel(value, index.X, index.Y);
 	}
 
 	template<typename T>
@@ -91,7 +91,7 @@ namespace Dash
 	template<typename T>
 	FORCEINLINE const T& FTexture::GetPixel(const FVector2i& index) const
 	{
-		GetPixel(index.x, index.y);
+		GetPixel(index.X, index.Y);
 	}
 
 	template<typename T>

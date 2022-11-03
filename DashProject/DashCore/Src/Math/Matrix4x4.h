@@ -450,25 +450,25 @@ namespace Dash
 	template<typename Scalar>
 	FORCEINLINE void TScalarMatrix<Scalar, 4, 4>::SetRow(int i, const TScalarArray<Scalar, 3>& v) noexcept
 	{
-		mRows[i] = TScalarArray<Scalar, 4>{ v.x, v.y, v.z, mRows[i].w };
+		mRows[i] = TScalarArray<Scalar, 4>{ v.X, v.Y, v.Z, mRows[i].W };
 	}
 
 	template<typename Scalar>
 	FORCEINLINE void TScalarMatrix<Scalar, 4, 4>::SetColumns(const TScalarArray<Scalar, 4>& c0, const TScalarArray<Scalar, 4>& c1, const TScalarArray<Scalar, 4>& c2, const TScalarArray<Scalar, 4>& c3) noexcept
 	{
-		mRows[0] = TScalarArray<Scalar, 4>{ c0.x, c1.x, c2.x, c3.x };
-		mRows[1] = TScalarArray<Scalar, 4>{ c0.y, c1.y, c2.y, c3.y };
-		mRows[2] = TScalarArray<Scalar, 4>{ c0.z, c1.z, c2.z, c3.z };
-		mRows[3] = TScalarArray<Scalar, 4>{ c0.w, c1.w, c2.w, c3.w };
+		mRows[0] = TScalarArray<Scalar, 4>{ c0.X, c1.X, c2.X, c3.X };
+		mRows[1] = TScalarArray<Scalar, 4>{ c0.Y, c1.Y, c2.Y, c3.Y };
+		mRows[2] = TScalarArray<Scalar, 4>{ c0.Z, c1.Z, c2.Z, c3.Z };
+		mRows[3] = TScalarArray<Scalar, 4>{ c0.W, c1.W, c2.W, c3.W };
 	}
 
 	template<typename Scalar>
 	FORCEINLINE void TScalarMatrix<Scalar, 4, 4>::SetColumn(int j, const TScalarArray<Scalar, 4>& v) noexcept
 	{
-		mRows[0][j] = v.x;
-		mRows[1][j] = v.y;
-		mRows[2][j] = v.z;
-		mRows[3][j] = v.w;
+		mRows[0][j] = v.X;
+		mRows[1][j] = v.Y;
+		mRows[2][j] = v.Z;
+		mRows[3][j] = v.W;
 	}
 
 	template<typename Scalar>
@@ -796,7 +796,7 @@ namespace Dash
 		template <typename Scalar>
 		FORCEINLINE Scalar TDot(const TScalarMatrix<Scalar, 4, 4>& a, int i, const TScalarArray<Scalar, 4>& v) noexcept
 		{
-			return a[0][i] * v.x + a[1][i] * v.y + a[2][i] * v.z + a[3][i] * v.w;
+			return a[0][i] * v.X + a[1][i] * v.Y + a[2][i] * v.Z + a[3][i] * v.W;
 		}
 
 		template <int I, int J, typename Scalar>
@@ -816,7 +816,7 @@ namespace Dash
 		template<typename Scalar>
 		FORCEINLINE TScalarMatrix<Scalar, 4, 4> ScaleMatrix4x4(const TScalarArray<Scalar, 3>& a) noexcept
 		{
-			return ScaleMatrix4x4(a.x, a.y, a.z);
+			return ScaleMatrix4x4(a.X, a.Y, a.Z);
 		}
 
 		template<typename Scalar>
@@ -833,7 +833,7 @@ namespace Dash
 		template<typename Scalar>
 		FORCEINLINE TScalarMatrix<Scalar, 4, 4> RotateMatrix4x4(const TScalarArray<Scalar, 3>& a) noexcept
 		{
-			return RotateMatrix4x4(a.x, a.y, a.z);
+			return RotateMatrix4x4(a.X, a.Y, a.Z);
 		}
 
 		template<typename Scalar>
@@ -860,17 +860,17 @@ namespace Dash
 		FORCEINLINE TScalarMatrix<Scalar, 4, 4> RotateMatrix4x4(const TScalarQuaternion<Scalar>& q) noexcept
 		{
 			TScalarMatrix<Scalar, 4, 4> m{ FIdentity{} };
-			m[0][0] = 1 - 2 * q.y * q.y - 2 * q.z * q.z;
-			m[0][1] = 2 * q.x * q.y + 2 * q.z * q.w;
-			m[0][2] = 2 * q.x * q.z - 2 * q.y * q.w;
+			m[0][0] = 1 - 2 * q.Y * q.Y - 2 * q.Z * q.Z;
+			m[0][1] = 2 * q.X * q.Y + 2 * q.Z * q.W;
+			m[0][2] = 2 * q.X * q.Z - 2 * q.Y * q.W;
 
-			m[1][0] = 2 * q.x * q.y - 2 * q.z * q.w;
-			m[1][1] = 1 - 2 * q.x * q.x - 2 * q.z * q.z;
-			m[1][2] = 2 * q.y * q.z + 2 * q.x * q.w;
+			m[1][0] = 2 * q.X * q.Y - 2 * q.Z * q.W;
+			m[1][1] = 1 - 2 * q.X * q.X - 2 * q.Z * q.Z;
+			m[1][2] = 2 * q.Y * q.Z + 2 * q.X * q.W;
 
-			m[2][0] = 2 * q.x * q.z + 2 * q.y * q.w;
-			m[2][1] = 2 * q.y * q.z - 2 * q.x * q.w;
-			m[2][2] = 1 - 2 * q.x * q.x - 2 * q.y * q.y;
+			m[2][0] = 2 * q.X * q.Z + 2 * q.Y * q.W;
+			m[2][1] = 2 * q.Y * q.Z - 2 * q.X * q.W;
+			m[2][2] = 1 - 2 * q.X * q.X - 2 * q.Y * q.Y;
 
 			return m;
 		}
@@ -882,7 +882,7 @@ namespace Dash
 				Scalar{ 1 }, Scalar{}, Scalar{}, Scalar{},
 					Scalar{}, Scalar{ 1 }, Scalar{}, Scalar{},
 					Scalar{}, Scalar{}, Scalar{ 1 }, Scalar{},
-					a.x, a.y, a.z, Scalar{ 1 }
+					a.X, a.Y, a.Z, Scalar{ 1 }
 			};
 		}
 
