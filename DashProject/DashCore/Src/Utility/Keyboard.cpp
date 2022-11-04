@@ -40,23 +40,23 @@ namespace Dash
 
 	void FKeyboard::OnKeyPressed(FKeyEventArgs& e)
 	{
-		if (!e.mRepeat || IsAutoRepeatEnabled())
+		if (!e.Repeat || IsAutoRepeatEnabled())
 		{
-			//mKeyStates[static_cast<unsigned int>(e.mKey)] = true;
+			//mKeyStates[static_cast<unsigned int>(e.Key)] = true;
 
  			FKeyState currentKeyState;
 			currentKeyState.Pressed = true;
 			currentKeyState.RisingEdge =
-				currentKeyState.Pressed && !mPrevKeyStates[static_cast<unsigned int>(e.mKey)].Pressed;
+				currentKeyState.Pressed && !mPrevKeyStates[static_cast<unsigned int>(e.Key)].Pressed;
 			currentKeyState.FallingEdge =
-				!currentKeyState.Pressed && mPrevKeyStates[static_cast<unsigned int>(e.mKey)].Pressed;
+				!currentKeyState.Pressed && mPrevKeyStates[static_cast<unsigned int>(e.Key)].Pressed;
 
-			mPrevKeyStates[static_cast<unsigned int>(e.mKey)] = currentKeyState;
+			mPrevKeyStates[static_cast<unsigned int>(e.Key)] = currentKeyState;
 		}
 		
-		if (e.mChar != 0)
+		if (e.Char != 0)
 		{
-			OnChar(e.mChar);
+			OnChar(e.Char);
 		}
 
 		KeyPressed(e);
@@ -67,11 +67,11 @@ namespace Dash
 		FKeyState currentKeyState;
 		currentKeyState.Pressed = false;
 		currentKeyState.RisingEdge =
-			currentKeyState.Pressed && !mPrevKeyStates[static_cast<unsigned int>(e.mKey)].Pressed;
+			currentKeyState.Pressed && !mPrevKeyStates[static_cast<unsigned int>(e.Key)].Pressed;
 		currentKeyState.FallingEdge =
-			!currentKeyState.Pressed && mPrevKeyStates[static_cast<unsigned int>(e.mKey)].Pressed;
+			!currentKeyState.Pressed && mPrevKeyStates[static_cast<unsigned int>(e.Key)].Pressed;
 
-		mPrevKeyStates[static_cast<unsigned int>(e.mKey)] = currentKeyState;
+		mPrevKeyStates[static_cast<unsigned int>(e.Key)] = currentKeyState;
 
 		KeyReleased(e);
 	}

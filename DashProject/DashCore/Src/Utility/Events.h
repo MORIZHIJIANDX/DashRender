@@ -13,7 +13,7 @@ namespace Dash
 
 namespace Dash
 {
-	class FEventArgs
+	struct FEventArgs
 	{
 	public:
 		FEventArgs()
@@ -29,59 +29,59 @@ namespace Dash
 		Pressed = 1
 	};
 
-	class FKeyEventArgs : public FEventArgs
+	struct FKeyEventArgs : public FEventArgs
 	{
 	public:
 		using base = FEventArgs;
 
 		FKeyEventArgs(EKeyCode key, unsigned int c, EKeyState state, bool control, bool shift, bool alt, bool repeat)
-			: mKey(key)
-			, mChar(c)
-			, mState(state)
-			, mControl(control)
-			, mShift(shift)
-			, mAlt(alt)
-			, mRepeat(repeat)
+			: Key(key)
+			, Char(c)
+			, State(state)
+			, Control(control)
+			, Shift(shift)
+			, Alt(alt)
+			, Repeat(repeat)
 		{}
 
-		EKeyCode        mKey;    // The Key Code that was pressed or released.
-		unsigned int    mChar;   // The 32-bit character code that was pressed. This value will be 0 if it is a non-printable character.
-		EKeyState       mState;  // Was the key pressed or released?
-		bool            mControl;// Is the Control modifier pressed
-		bool            mShift;  // Is the Shift modifier pressed
-		bool            mAlt;    // Is the Alt modifier pressed
-		bool			mRepeat;
+		EKeyCode        Key;    // The Key Code that was pressed or released.
+		unsigned int    Char;   // The 32-bit character code that was pressed. This value will be 0 if it is a non-printable character.
+		EKeyState       State;  // Was the key pressed or released?
+		bool            Control;// Is the Control modifier pressed
+		bool            Shift;  // Is the Shift modifier pressed
+		bool            Alt;    // Is the Alt modifier pressed
+		bool			Repeat;
 	};
 
 	using FKeyboardEvent = TMulticastDelegate<void(FKeyEventArgs&)>;
 	using FKeyboardEventDelegate = TDelegate<void(FKeyEventArgs&)>;
 
 
-	class FMouseMotionEventArgs : public FEventArgs
+	struct FMouseMotionEventArgs : public FEventArgs
 	{
 	public:
 		using base = FEventArgs;
 
 		FMouseMotionEventArgs(bool leftButton, bool middleButton, bool rightButton, bool control, bool shift, int x, int y)
-			: mLeftButton(leftButton)
-			, mMiddleButton(middleButton)
-			, mRightButton(rightButton)
-			, mControl(control)
-			, mShift(shift)
-			, mX(x)
-			, mY(y)
+			: LeftButton(leftButton)
+			, MiddleButton(middleButton)
+			, RightButton(rightButton)
+			, Control(control)
+			, Shift(shift)
+			, X(x)
+			, Y(y)
 			, mRelX(0)
 			, mRelY(0)
 		{}
 
-		bool mLeftButton;    // Is the left mouse button down?
-		bool mMiddleButton;  // Is the middle mouse button down?
-		bool mRightButton;   // Is the right mouse button down?
-		bool mControl;       // Is the CTRL key down?
-		bool mShift;         // Is the Shift key down?
+		bool LeftButton;    // Is the left mouse button down?
+		bool MiddleButton;  // Is the middle mouse button down?
+		bool RightButton;   // Is the right mouse button down?
+		bool Control;       // Is the CTRL key down?
+		bool Shift;         // Is the Shift key down?
 
-		int mX;              // The X-position of the cursor relative to the upper-left corner of the client area.
-		int mY;              // The Y-position of the cursor relative to the upper-left corner of the client area.
+		int X;              // The X-position of the cursor relative to the upper-left corner of the client area.
+		int Y;              // The Y-position of the cursor relative to the upper-left corner of the client area.
 		int mRelX;			// How far the mouse moved since the last event.
 		int mRelY;			// How far the mouse moved since the last event.
 	};
@@ -104,64 +104,64 @@ namespace Dash
 		Pressed = 1
 	};
 
-	class FMouseButtonEventArgs : public FEventArgs
+	struct FMouseButtonEventArgs : public FEventArgs
 	{
 	public:
 		using base = FEventArgs;
 
 		FMouseButtonEventArgs(EMouseButton buttonID, EButtonState state, bool leftButton, bool middleButton, bool rightButton, bool control, bool shift, int x, int y)
 			: mButton(buttonID)
-			, mState(state)
-			, mLeftButton(leftButton)
-			, mMiddleButton(middleButton)
-			, mRightButton(rightButton)
-			, mControl(control)
-			, mShift(shift)
-			, mX(x)
-			, mY(y)
+			, State(state)
+			, LeftButton(leftButton)
+			, MiddleButton(middleButton)
+			, RightButton(rightButton)
+			, Control(control)
+			, Shift(shift)
+			, X(x)
+			, Y(y)
 		{}
 
 		EMouseButton mButton; // The mouse button that was pressed or released.
-		EButtonState mState;  // Was the button pressed or released?
-		bool mLeftButton;    // Is the left mouse button down?
-		bool mMiddleButton;  // Is the middle mouse button down?
-		bool mRightButton;   // Is the right mouse button down?
-		bool mControl;       // Is the CTRL key down?
-		bool mShift;         // Is the Shift key down?
+		EButtonState State;  // Was the button pressed or released?
+		bool LeftButton;    // Is the left mouse button down?
+		bool MiddleButton;  // Is the middle mouse button down?
+		bool RightButton;   // Is the right mouse button down?
+		bool Control;       // Is the CTRL key down?
+		bool Shift;         // Is the Shift key down?
 
-		int mX;              // The X-position of the cursor relative to the upper-left corner of the client area.
-		int mY;              // The Y-position of the cursor relative to the upper-left corner of the client area.
+		int X;              // The X-position of the cursor relative to the upper-left corner of the client area.
+		int Y;              // The Y-position of the cursor relative to the upper-left corner of the client area.
 	};
 
 	using FMouseButtonEvent = TMulticastDelegate<void(FMouseButtonEventArgs&)>;
 	using FMouseButtonEventDelegate = TDelegate<void(FMouseButtonEventArgs&)>;
 
 
-	class FMouseWheelEventArgs : public FEventArgs
+	struct FMouseWheelEventArgs : public FEventArgs
 	{
 	public:
 		using base = FEventArgs;
 
 		FMouseWheelEventArgs(float wheelDelta, bool leftButton, bool middleButton, bool rightButton, bool control, bool shift, int x, int y)
-			: mWheelDelta(wheelDelta)
-			, mLeftButton(leftButton)
-			, mMiddleButton(middleButton)
-			, mRightButton(rightButton)
-			, mControl(control)
-			, mShift(shift)
-			, mX(x)
-			, mY(y)
+			: WheelDelta(wheelDelta)
+			, LeftButton(leftButton)
+			, MiddleButton(middleButton)
+			, RightButton(rightButton)
+			, Control(control)
+			, Shift(shift)
+			, X(x)
+			, Y(y)
 		{}
 
-		float mWheelDelta;   // How much the mouse wheel has moved. A positive value indicates that the wheel was moved to the right. A negative value indicates the wheel was moved to the left.
-		bool mLeftButton;    // Is the left mouse button down?
-		bool mMiddleButton;  // Is the middle mouse button down?
-		bool mRightButton;   // Is the right mouse button down?
-		bool mControl;       // Is the CTRL key down?
-		bool mShift;         // Is the Shift key down?
+		float WheelDelta;   // How much the mouse wheel has moved. A positive value indicates that the wheel was moved to the right. A negative value indicates the wheel was moved to the left.
+		bool LeftButton;    // Is the left mouse button down?
+		bool MiddleButton;  // Is the middle mouse button down?
+		bool RightButton;   // Is the right mouse button down?
+		bool Control;       // Is the CTRL key down?
+		bool Shift;         // Is the Shift key down?
 
-		int mX;              // The X-position of the cursor relative to the upper-left corner of the client area.
-		int mY;              // The Y-position of the cursor relative to the upper-left corner of the client area.
+		int X;              // The X-position of the cursor relative to the upper-left corner of the client area.
+		int Y;              // The Y-position of the cursor relative to the upper-left corner of the client area.
 
 	};
 
@@ -169,126 +169,126 @@ namespace Dash
 	using FMouseWheelEventDelegate = TDelegate<void(FMouseWheelEventArgs&)>;
 
 
-	class FResizeEventArgs : public FEventArgs
+	struct FResizeEventArgs : public FEventArgs
 	{
 	public:
 		using base = FEventArgs;
 
 		FResizeEventArgs(int width, int height, bool minimize)
-			: mWidth(width)
-			, mHeight(height)
-			, mMinimized(minimize)
+			: Width(width)
+			, Height(height)
+			, Minimized(minimize)
 		{}
 
 		// The new width of the window
-		int mWidth;
+		int Width;
 		// The new height of the window.
-		int mHeight;
+		int Height;
 
-		bool mMinimized;
+		bool Minimized;
 	};
 
 	using FResizeEvent = TMulticastDelegate<void(FResizeEventArgs&)>;
 	using FResizeEventDelegate = TDelegate<void(FResizeEventArgs&)>;
 
 
-	class FUpdateEventArgs : public FEventArgs
+	struct FUpdateEventArgs : public FEventArgs
 	{
 	public:
 		using base = FEventArgs;
 		FUpdateEventArgs(double fDeltaTime, double fTotalTime, uint64_t frameCounter)
-			: mElapsedTime(fDeltaTime)
-			, mTotalTime(fTotalTime)
-			, mFrameCounter(frameCounter)
+			: ElapsedTime(fDeltaTime)
+			, TotalTime(fTotalTime)
+			, FrameCounter(frameCounter)
 		{}
 
-		double mElapsedTime;
-		double mTotalTime;
-		uint64_t mFrameCounter;
+		double ElapsedTime;
+		double TotalTime;
+		uint64_t FrameCounter;
 	};
 
 	using FUpdateEvent = TMulticastDelegate<void(FUpdateEventArgs&)>;
 	using FUpdateEventDelegate = TDelegate<void(FUpdateEventArgs&)>;
 
 
-	class FRenderEventArgs : public FEventArgs
+	struct FRenderEventArgs : public FEventArgs
 	{
 	public:
 		using base = FEventArgs;
 		FRenderEventArgs(double fDeltaTime, double fTotalTime,
 			uint64_t frameCounter,
 			std::shared_ptr<Dash::FCamera> camera = nullptr)
-			: mElapsedTime(fDeltaTime)
-			, mTotalTime(fTotalTime)
-			, mFrameCounter(frameCounter)
-			, mCamera(camera)
+			: ElapsedTime(fDeltaTime)
+			, TotalTime(fTotalTime)
+			, FrameCounter(frameCounter)
+			, Camera(camera)
 		{}
 
-		double mElapsedTime;
-		double mTotalTime;
-		uint64_t mFrameCounter;
+		double ElapsedTime;
+		double TotalTime;
+		uint64_t FrameCounter;
 
-		std::shared_ptr<Dash::FCamera> mCamera;
+		std::shared_ptr<Dash::FCamera> Camera;
 	};
 
 	using FRenderEvent = TMulticastDelegate<void(FRenderEventArgs&)>;
 	using FRenderEventDelegate = TDelegate<void(FRenderEventArgs&)>;
 
 
-	class FUserEventArgs : public FEventArgs
+	struct FUserEventArgs : public FEventArgs
 	{
 	public:
 		using base = FEventArgs;
 		FUserEventArgs(int code, void* data1, void* data2)
-			: mCode(code)
-			, mData1(data1)
-			, mData2(data2)
+			: Code(code)
+			, Data1(data1)
+			, Data2(data2)
 		{}
 
-		int mCode;
-		void* mData1;
-		void* mData2;
+		int Code;
+		void* Data1;
+		void* Data2;
 	};
 
 	using FUserEvent = TMulticastDelegate<void(FUserEventArgs&)>;
 	using FUserEventDelegate = TDelegate<void(FUserEventArgs&)>;
 
 
-	class FRuntimeErrorEventArgs : public FEventArgs
+	struct FRuntimeErrorEventArgs : public FEventArgs
 	{
 	public:
 		using base = FEventArgs;
 
 		FRuntimeErrorEventArgs(const std::wstring& errorString, const std::wstring& compilerError)
-			: mErrorString(errorString)
-			, mCompilerError(compilerError)
+			: ErrorString(errorString)
+			, CompilerError(compilerError)
 		{}
 
-		std::wstring mErrorString;
-		std::wstring mCompilerError;
+		std::wstring ErrorString;
+		std::wstring CompilerError;
 	};
 
 	using FRuntimeErrorEvent = TMulticastDelegate<void(FRuntimeErrorEventArgs&)>;
 	using FRuntimeErrorEventDelegate = TDelegate<void(FRuntimeErrorEventArgs&)>;
 
 
-	class FProgressEventArgs : public FEventArgs
+	struct FProgressEventArgs : public FEventArgs
 	{
 	public:
 		using base = FEventArgs;
 
 		FProgressEventArgs(const std::wstring& fileName, float progress, bool cancel = false)
-			: mFileName(fileName)
-			, mProgress(progress)
-			, mCancel(cancel)
+			: FileName(fileName)
+			, Progress(progress)
+			, Cancel(cancel)
 		{}
 
 		// The file that is being loaded.
-		std::wstring mFileName;
+		std::wstring FileName;
 		// The progress of the loading process.
-		float mProgress;
+		float Progress;
 		// Set to TRUE to cancel loading.
-		bool mCancel;
+		bool Cancel;
 	};
 
 	using FProgressEvent = TMulticastDelegate<void(FProgressEventArgs&)>;
@@ -305,19 +305,19 @@ namespace Dash
 		RenameNew,      // The file was renamed and this event stores the new name.
 	};
 
-	class FFileChangeEventArgs : FEventArgs
+	struct FFileChangeEventArgs : FEventArgs
 	{
 	public:
 		using base = FEventArgs;
 
 		FFileChangeEventArgs(EFileAction action, const std::wstring& path)
-			: mAction(action)
-			, mPath(path)
+			: Action(action)
+			, Path(path)
 		{}
 
-		EFileAction mAction; // The action that triggered this event.
+		EFileAction Action; // The action that triggered this event.
 						   // The file or directory path that was modified.
-		std::wstring mPath;
+		std::wstring Path;
 	};
 
 	using FFileChangeEvent = TMulticastDelegate<void(FFileChangeEventArgs&)>;

@@ -25,10 +25,7 @@ namespace Dash
 	{
 		mSwapChain->SetFullscreenState(FALSE, nullptr);
 
-		for (uint32_t index = 0; index < SWAP_CHAIN_BUFFER_COUNT; ++index)
-		{
-			mSwapChainBuffer[index].Destroy();
-		}
+		DestroyBuffers();
 
 		mSwapChain = nullptr;
 	}
@@ -41,26 +38,31 @@ namespace Dash
 			
 			FGraphicsCore::ContextManager->ReleaseAllTrackObjects();
 
-			for (uint32_t index = 0; index < SWAP_CHAIN_BUFFER_COUNT; ++index)
-			{
-				mSwapChainBuffer[index].Destroy();	
-			}
+			DestroyBuffers();
 
 			ASSERT(mSwapChain != nullptr);
+
+			mDisplayWdith = displayWdith;
+			mDisplayHeight = displayHeight;
 
 			DXGI_SWAP_CHAIN_DESC desc{};
 			DX_CALL(mSwapChain->GetDesc(&desc));
 			DX_CALL(mSwapChain->ResizeBuffers(SWAP_CHAIN_BUFFER_COUNT, displayWdith, displayHeight, mSwapChainFormat, desc.Flags));
 
 			CreateBuffers();
-
-			mDisplayWdith = displayWdith;
-			mDisplayHeight = displayHeight;
 		}
 	}
 
 	void FDisplay::Present()
 	{
+		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin(L"Present");
+
+		graphicsContext.ClearColor(FGraphicsCore::Display->GetDisplayBuffer(), FLinearColor::Gray);
+
+		graphicsContext.TransitionBarrier(FGraphicsCore::Display->GetDisplayBuffer(), D3D12_RESOURCE_STATE_PRESENT);
+
+		graphicsContext.Finish();
+
 		mSwapChain->Present(1, 0);
 
 		mFenceValue[mCurrentBackBufferIndex] = FGraphicsCore::CommandQueueManager->GetGraphicsQueue().Signal();
@@ -131,7 +133,19 @@ namespace Dash
 			mSwapChainBuffer[index].Create(L"Swap Chain Buffer[" + std::to_wstring(index) + L"]", backBuffer.Detach(), D3D12_RESOURCE_STATE_COMMON); // D3D12_RESOURCE_STATE_PRESENT ?
 		}
 
+		mDisplayBuffer.Create(L"Display Buffer", mDisplayWdith, mDisplayHeight, 1, mSwapChainFormat);
+
 		mCurrentBackBufferIndex = mSwapChain->GetCurrentBackBufferIndex();
+	}
+
+	void FDisplay::DestroyBuffers()
+	{
+		for (uint32_t index = 0; index < SWAP_CHAIN_BUFFER_COUNT; ++index)
+		{
+			mSwapChainBuffer[index].Destroy();
+		}
+
+		mDisplayBuffer.Destroy();
 	}
 
 }

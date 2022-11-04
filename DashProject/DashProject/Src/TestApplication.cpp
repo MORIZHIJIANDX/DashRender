@@ -61,7 +61,7 @@ namespace Dash
 			Speed *= 2.0f;
 		}
 
-		Scalar Translate = Scalar(Speed * e.mElapsedTime);
+		Scalar Translate = Scalar(Speed * e.ElapsedTime);
 
 		if (FKeyboard::Get().IsKeyPressed(EKeyCode::A))
 		{
@@ -87,23 +87,23 @@ namespace Dash
 	void TestApplication::OnRenderScene(const FRenderEventArgs& e)
 	{
 		FRenderEventArgs Args = e;
-		Args.mCamera = mCamera;
+		Args.Camera = mCamera;
 
-		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin(L"Present");
+		//FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin(L"Present");
 
-		graphicsContext.ClearColor(FGraphicsCore::Display->GetDisplayBuffer(), FLinearColor::Gray);
+		//graphicsContext.ClearColor(FGraphicsCore::Display->GetDisplayBuffer(), FLinearColor::Gray);
 
-		graphicsContext.TransitionBarrier(FGraphicsCore::Display->GetDisplayBuffer(), D3D12_RESOURCE_STATE_PRESENT);
+		//graphicsContext.TransitionBarrier(FGraphicsCore::Display->GetDisplayBuffer(), D3D12_RESOURCE_STATE_PRESENT);
 
-		graphicsContext.Finish();
+		//graphicsContext.Finish();
 
 		FGraphicsCore::Display->Present();
 	}
 
 	void TestApplication::OnWindowResize(const FResizeEventArgs& e)
 	{
-		mWindowWidth = e.mWidth;
-		mWindowHeight = e.mHeight;
+		mWindowWidth = e.Width;
+		mWindowHeight = e.Height;
 
 		float aspect = mWindowWidth / (float)mWindowHeight;
 		float fov = 45.0f;
@@ -111,17 +111,17 @@ namespace Dash
 
 		FGraphicsCore::Display->Resize(mWindowWidth, mWindowHeight);
 
-		LOG_INFO << "Window Resized, width : " << e.mWidth << ", Height : " << e.mHeight << " , Minimized : " << e.mMinimized;
+		LOG_INFO << "Window Resized, width : " << e.Width << ", Height : " << e.Height << " , Minimized : " << e.Minimized;
 	}
 
 	void TestApplication::OnMouseWheelDown(FMouseWheelEventArgs& e)
 	{
-		mCamera->TranslateForward(0.001f * e.mWheelDelta);
+		mCamera->TranslateForward(0.001f * e.WheelDelta);
 	}
 
 	void TestApplication::OnMouseWheelUp(FMouseWheelEventArgs& e)
 	{
-		mCamera->TranslateForward(0.001f * e.mWheelDelta);
+		mCamera->TranslateForward(0.001f * e.WheelDelta);
 	}
 
 	void TestApplication::OnMouseMove(FMouseMotionEventArgs& e)

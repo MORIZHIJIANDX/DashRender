@@ -41,7 +41,7 @@ namespace Dash
 		{  
 			mResourceName = name;
 #ifdef DASH_DEBUG
-			if (mResource)
+			if (mResource && !name.empty())
 			{	
 				mResource->SetName(name.c_str());
 			}

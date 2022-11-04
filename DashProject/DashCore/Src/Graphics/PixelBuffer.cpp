@@ -44,12 +44,9 @@ namespace Dash
 		mArraySize = desc.DepthOrArraySize;
 		mFormat = desc.Format;
 
-		FGpuResourcesStateTracker::AddGlobalResourceState(*this, currentState);
+		SetName(name);
 
-		if (!name.empty())
-		{
-			SetD3D12DebugName(mResource.Get(), name.c_str());
-		}		
+		FGpuResourcesStateTracker::AddGlobalResourceState(*this, currentState);	
 	}
 
 	void FPixelBuffer::CreateTextureResource(const D3D12_RESOURCE_DESC& resourceDesc, D3D12_CLEAR_VALUE clearValue, const std::wstring& name)
@@ -59,6 +56,8 @@ namespace Dash
 		CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_DEFAULT);
 		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_COMMON, &clearValue, IID_PPV_ARGS(&mResource)));
 
+		SetName(name);
+
 		FGpuResourcesStateTracker::AddGlobalResourceState(*this, D3D12_RESOURCE_STATE_COMMON);
 
 		mGpuVirtualAddress = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
@@ -67,11 +66,6 @@ namespace Dash
 		mHeight = resourceDesc.Height;
 		mArraySize = resourceDesc.DepthOrArraySize;
 		mFormat = resourceDesc.Format;
-
-		if (!name.empty())
-		{
-			SetD3D12DebugName(mResource.Get(), name.c_str());
-		}
 	}
 
 	void FPixelBuffer::CheckFeatureSupport()

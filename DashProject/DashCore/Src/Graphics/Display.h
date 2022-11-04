@@ -27,6 +27,7 @@ namespace Dash
 		void Initialize();
 		void CreateSwapChain(uint32_t displayWdith, uint32_t displayHeight);
 		void CreateBuffers();
+		void DestroyBuffers();
 
 	protected:
 		uint32_t mDisplayWdith;

@@ -119,7 +119,7 @@ namespace Dash
 		{
 			// Initialize all of the subresources within a resource to the given state.
 			explicit ResourceState(D3D12_RESOURCE_STATES state = D3D12_RESOURCE_STATE_COMMON)
-				: mState(state)
+				: State(state)
 			{}
 
 			// Set a subresource to a particular state.
@@ -127,7 +127,7 @@ namespace Dash
 			{
 				if (subResource == D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES)
 				{
-					mState = state;
+					State = state;
 					mSubResourceStates.clear();
 				}
 				else
@@ -142,7 +142,7 @@ namespace Dash
 			// returned.
 			D3D12_RESOURCE_STATES GetSubResourceState(UINT subResource) const
 			{
-				D3D12_RESOURCE_STATES state = mState;
+				D3D12_RESOURCE_STATES state = State;
 				const auto iter = mSubResourceStates.find(subResource);
 				if (iter != mSubResourceStates.end())
 				{
@@ -151,9 +151,9 @@ namespace Dash
 				return state;
 			}
 
-			// If the SubresourceState array (map) is empty, then the mState variable defines
+			// If the SubresourceState array (map) is empty, then the State variable defines
 			// the state of all of the subresources.
-			D3D12_RESOURCE_STATES mState;
+			D3D12_RESOURCE_STATES State;
 			std::map<UINT, D3D12_RESOURCE_STATES> mSubResourceStates;
 		};
 

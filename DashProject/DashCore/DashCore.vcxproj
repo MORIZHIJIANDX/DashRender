@@ -86,6 +86,10 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
+    <FxCompile>
+      <ShaderModel>6.0</ShaderModel>
+      <AssemblerOutput>AssemblyCode</AssemblerOutput>
+    </FxCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -108,6 +112,10 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
+    <FxCompile>
+      <ShaderModel>6.0</ShaderModel>
+      <AssemblerOutput>AssemblyCode</AssemblerOutput>
+    </FxCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -131,6 +139,10 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
+    <FxCompile>
+      <ShaderModel>6.0</ShaderModel>
+      <AssemblerOutput>AssemblyCode</AssemblerOutput>
+    </FxCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -263,6 +275,14 @@
     <ClCompile Include="Src\Utility\Mouse.cpp" />
     <ClCompile Include="Src\Utility\StringUtility.cpp" />
     <ClCompile Include="Src\Utility\SystemTimer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Src\Shaders\FullScreen_PS.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\generateMips.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
