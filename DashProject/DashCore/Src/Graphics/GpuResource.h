@@ -37,18 +37,13 @@ namespace Dash
 
 		uint32_t GetVersionID() const { return mVersionID; }
 
-		void SetName(const std::wstring& name) 
+		void SetName(const std::string& name) 
 		{  
 			mResourceName = name;
-#ifdef DASH_DEBUG
-			if (mResource && !name.empty())
-			{	
-				mResource->SetName(name.c_str());
-			}
-#endif
+			SetD3D12DebugName(mResource.Get(), name);
 		}
 
-		const std::wstring& GetName() const { return mResourceName; }
+		const std::string& GetName() const { return mResourceName; }
 
 	protected:
 		FGpuResource()
@@ -63,7 +58,7 @@ namespace Dash
 		Microsoft::WRL::ComPtr<ID3D12Resource> mResource;
 		D3D12_GPU_VIRTUAL_ADDRESS mGpuVirtualAddress = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
 
-		std::wstring mResourceName;
+		std::string mResourceName;
 		uint32_t mVersionID = 0;
 	};
 }

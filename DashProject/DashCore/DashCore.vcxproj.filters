@@ -118,6 +118,9 @@
     <ClInclude Include="Src\Graphics\SamplerDesc.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\ShaderCompiler.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\Viewport.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -335,6 +338,9 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\SamplerDesc.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\ShaderCompiler.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Math\Color.cpp">

@@ -4,6 +4,7 @@
 #include "d3dx12.h"
 #include <dxgi.h>
 #include <strsafe.h>
+#include "Utility/StringUtility.h"
 //#include "../Utility/Image.h"
 //#include "../Utility/ImageHelper.h"
 //#include "DX12Helper.h"
@@ -21,6 +22,11 @@ namespace Dash
             pObject->SetName(name);
         }
 
+		FORCEINLINE void SetD3D12DebugName(ID3D12Object* pObject, const std::string& name)
+		{
+            pObject->SetName(UTF8ToWideString(name).c_str());
+		}
+
         FORCEINLINE void SetD3D12DebugNameIndexed(ID3D12Object* pObject, LPCWSTR name, UINT index)
         {
             WCHAR _DebugName[MAX_PATH] = {};
@@ -29,6 +35,11 @@ namespace Dash
                 pObject->SetName(_DebugName);
             }
         }
+
+		FORCEINLINE void SetD3D12DebugNameIndexed(ID3D12Object* pObject, const std::string& name, UINT index)
+		{
+            pObject->SetName(UTF8ToWideString(name + "[" + ToString(index) + "]").c_str());
+        }   
     #else
         FORCEINLINE void SetD3D12DebugName(ID3D12Object*, LPCWSTR)
         {

@@ -259,13 +259,13 @@ namespace Dash
 	public:
 		using base = FEventArgs;
 
-		FRuntimeErrorEventArgs(const std::wstring& errorString, const std::wstring& compilerError)
+		FRuntimeErrorEventArgs(const std::string& errorString, const std::string& compilerError)
 			: ErrorString(errorString)
 			, CompilerError(compilerError)
 		{}
 
-		std::wstring ErrorString;
-		std::wstring CompilerError;
+		std::string ErrorString;
+		std::string CompilerError;
 	};
 
 	using FRuntimeErrorEvent = TMulticastDelegate<void(FRuntimeErrorEventArgs&)>;
@@ -277,14 +277,14 @@ namespace Dash
 	public:
 		using base = FEventArgs;
 
-		FProgressEventArgs(const std::wstring& fileName, float progress, bool cancel = false)
+		FProgressEventArgs(const std::string& fileName, float progress, bool cancel = false)
 			: FileName(fileName)
 			, Progress(progress)
 			, Cancel(cancel)
 		{}
 
 		// The file that is being loaded.
-		std::wstring FileName;
+		std::string FileName;
 		// The progress of the loading process.
 		float Progress;
 		// Set to TRUE to cancel loading.
@@ -310,14 +310,14 @@ namespace Dash
 	public:
 		using base = FEventArgs;
 
-		FFileChangeEventArgs(EFileAction action, const std::wstring& path)
+		FFileChangeEventArgs(EFileAction action, const std::string& path)
 			: Action(action)
 			, Path(path)
 		{}
 
 		EFileAction Action; // The action that triggered this event.
 						   // The file or directory path that was modified.
-		std::wstring Path;
+		std::string Path;
 	};
 
 	using FFileChangeEvent = TMulticastDelegate<void(FFileChangeEventArgs&)>;

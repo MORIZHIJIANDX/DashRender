@@ -135,7 +135,7 @@ namespace Dash
 
 		void InitStaticSampler(UINT shaderRegister, const D3D12_SAMPLER_DESC& desc, D3D12_SHADER_VISIBILITY visibility);
 
-		void Finalize(const std::wstring& name, D3D12_ROOT_SIGNATURE_FLAGS flag = D3D12_ROOT_SIGNATURE_FLAG_NONE);
+		void Finalize(const std::string& name, D3D12_ROOT_SIGNATURE_FLAGS flag = D3D12_ROOT_SIGNATURE_FLAG_NONE);
 
 		FRootParameter& operator[](size_t parameterIndex)
 		{

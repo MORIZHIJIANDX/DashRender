@@ -10,7 +10,7 @@ namespace Dash
 	static std::map<size_t, Microsoft::WRL::ComPtr<ID3D12PipelineState>> GraphicsPipelineStateHashMap;
 	static std::map<size_t, Microsoft::WRL::ComPtr<ID3D12PipelineState>> ComputePipelineStateHashMap;
 
-	FPipelineStateObject::FPipelineStateObject(const std::wstring& name)
+	FPipelineStateObject::FPipelineStateObject(const std::string& name)
 		: mName(name)
 	{}
 
@@ -25,7 +25,7 @@ namespace Dash
 		mRootSignature = &rootSignature;
 	}
 
-	FGraphicsPSO::FGraphicsPSO(const std::wstring& name)
+	FGraphicsPSO::FGraphicsPSO(const std::string& name)
 		: FPipelineStateObject(name)
 		, mPSODesc{}
 	{
@@ -157,7 +157,7 @@ namespace Dash
 		}
 	}
 
-	FComputePSO::FComputePSO(const std::wstring& name)
+	FComputePSO::FComputePSO(const std::string& name)
 		: FPipelineStateObject(name)
 		, mPSODesc{}
 	{

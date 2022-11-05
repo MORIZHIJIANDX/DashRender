@@ -8,7 +8,7 @@ namespace Dash
 	class FGpuBuffer : public FGpuResource
 	{
 	public:
-		void Create(const std::wstring& name, uint32_t numElements, uint32_t elementSize, const void* initData = nullptr, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
+		void Create(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData = nullptr, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
 
 		size_t GetBufferSize() const { return mBufferSize; }
 		uint32_t GetElementCount() const { return mElementCount; }

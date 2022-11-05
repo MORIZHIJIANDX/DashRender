@@ -77,7 +77,7 @@ namespace Dash
 		}
 	}
 
-	void FRootSignature::Finalize(const std::wstring& name, D3D12_ROOT_SIGNATURE_FLAGS flag)
+	void FRootSignature::Finalize(const std::string& name, D3D12_ROOT_SIGNATURE_FLAGS flag)
 	{
 		if (mFinalized == true)
 		{

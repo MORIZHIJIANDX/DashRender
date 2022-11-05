@@ -3,7 +3,7 @@
 
 namespace Dash
 {
-	FileUtility::ByteArray ReadBinaryFileHelper(const std::wstring& fileName)
+	FileUtility::ByteArray ReadBinaryFileHelper(const std::string& fileName)
 	{
 		std::filesystem::path filePath{ fileName };
 		if (!(std::filesystem::exists(filePath) && std::filesystem::is_regular_file(filePath)))
@@ -28,19 +28,19 @@ namespace Dash
 		return byteArray;
 	}
 
-	FileUtility::ByteArray FileUtility::ReadBinaryFileSync(const std::wstring& fileName)
+	FileUtility::ByteArray FileUtility::ReadBinaryFileSync(const std::string& fileName)
 	{
 		return ReadBinaryFileHelper(fileName);
 	}
 
-	std::future<FileUtility::ByteArray> FileUtility::ReadBinaryFileAsync(const std::wstring& fileName)
+	std::future<FileUtility::ByteArray> FileUtility::ReadBinaryFileAsync(const std::string& fileName)
 	{
 		std::future<ByteArray> readTask = std::async(std::launch::async, ReadBinaryFileHelper, fileName);
 		return readTask;
 	}
 
 
-	bool WriteBinaryFileHelper(const std::wstring& fileName, unsigned char* data, size_t count)
+	bool WriteBinaryFileHelper(const std::string& fileName, unsigned char* data, size_t count)
 	{
 		if (data == nullptr)
 		{
@@ -60,12 +60,12 @@ namespace Dash
 		return true;
 	}
 
-	bool FileUtility::WriteBinaryFileSync(const std::wstring& fileName, unsigned char* data, size_t count)
+	bool FileUtility::WriteBinaryFileSync(const std::string& fileName, unsigned char* data, size_t count)
 	{
 		return WriteBinaryFileHelper(fileName, data, count);
 	}
 
-	std::future<bool> FileUtility::WriteBinaryFileAsync(const std::wstring& fileName, unsigned char* data, size_t count)
+	std::future<bool> FileUtility::WriteBinaryFileAsync(const std::string& fileName, unsigned char* data, size_t count)
 	{
 		std::future<bool> writeTask = std::async(std::launch::async, WriteBinaryFileHelper, fileName, data, count);
 		return writeTask;

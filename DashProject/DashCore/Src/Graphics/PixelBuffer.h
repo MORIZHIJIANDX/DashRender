@@ -25,8 +25,8 @@ namespace Dash
 
 		D3D12_RESOURCE_DESC DescribeTexture2D(uint32_t width, uint32_t height, uint32_t depthOrArraySize, uint32_t numMips, DXGI_FORMAT format, UINT flag);
 
-		void AssociateWithResource(ID3D12Resource* resource, const D3D12_RESOURCE_STATES& currentState, const std::wstring& name = L"");
-		void CreateTextureResource(const D3D12_RESOURCE_DESC& resourceDesc, D3D12_CLEAR_VALUE clearValue, const std::wstring& name = L"");
+		void AssociateWithResource(ID3D12Resource* resource, const D3D12_RESOURCE_STATES& currentState, const std::string& name = "");
+		void CreateTextureResource(const D3D12_RESOURCE_DESC& resourceDesc, D3D12_CLEAR_VALUE clearValue, const std::string& name = "");
 
 		void CheckFeatureSupport();
 		bool CheckFormatSupport(D3D12_FORMAT_SUPPORT1 formatSupport) const;

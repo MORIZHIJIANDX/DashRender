@@ -132,7 +132,7 @@ namespace Dash
 		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, resourceState, nullptr, IID_PPV_ARGS(&Buffer)));
 
 #ifdef DASH_DEBUG
-		Buffer->SetName(L"CpuLinearAllocatorPage");
+		SetD3D12DebugName(Buffer, "CpuLinearAllocatorPage");
 #endif // DASH_DEBUG
 
 		return new FPage(Buffer, resourceState, resourceDesc.Width);

@@ -54,7 +54,7 @@ namespace Dash
 		FCommandContext(const FCommandContext&) = delete;
 		FCommandContext& operator=(const FCommandContext&) = delete;
 
-		static FCommandContext& Begin(const std::wstring& id = L"", D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
+		static FCommandContext& Begin(const std::string& id = "", D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
 
 		// Flush existing commands to the GPU but keep the context alive
 		uint64_t Flush(bool waitForCompletion = false);
@@ -82,14 +82,14 @@ namespace Dash
 
 	protected:
 
-		void SetID(const std::wstring& id) { mID = id; }
+		void SetID(const std::string& id) { mID = id; }
 		void BindDescriptorHeaps();
 		void TrackResource(FGpuResource& resource);
 		void ReleaseTrackedObjects();
 		uint64_t Execute();
 
 	protected:
-		std::wstring mID;
+		std::string mID;
 		D3D12_COMMAND_LIST_TYPE mType;
 
 		FCommandList* mCommandList = nullptr;
@@ -116,7 +116,7 @@ namespace Dash
 	class FGraphicsCommandContext : public FCommandContext
 	{
 	public:
-		static FGraphicsCommandContext& Begin(const std::wstring& id = L"")
+		static FGraphicsCommandContext& Begin(const std::string& id = "")
 		{
 			return FCommandContext::Begin(id, D3D12_COMMAND_LIST_TYPE_DIRECT).GetGraphicsCommandContext();
 		}

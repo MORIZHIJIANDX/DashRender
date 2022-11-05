@@ -6,7 +6,7 @@
 
 namespace Dash
 {
-	void FGpuBuffer::Create(const std::wstring& name, uint32_t numElements, uint32_t elementSize, const void* initData /*= nullptr*/, D3D12_RESOURCE_FLAGS flags /*D3D12_RESOURCE_FLAG_NONE*/)
+	void FGpuBuffer::Create(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData /*= nullptr*/, D3D12_RESOURCE_FLAGS flags /*D3D12_RESOURCE_FLAG_NONE*/)
 	{
 		Destroy();
 
@@ -130,7 +130,7 @@ namespace Dash
 		uavDesc.Buffer.CounterOffsetInBytes = 0;
 		uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
 
-		mCounterBuffer.Create(L"FStructuredBuffer::CounterBuffer", 1, 4);
+		mCounterBuffer.Create("FStructuredBuffer::CounterBuffer", 1, 4);
 
 		mUnorderedAccessView = FGraphicsCore::DescriptorAllocator->AllocateUAVDescriptor();
 		FGraphicsCore::Device->CreateUnorderedAccessView(mResource.Get(), mCounterBuffer.GetResource(), &uavDesc, mUnorderedAccessView.GetDescriptorHandle());

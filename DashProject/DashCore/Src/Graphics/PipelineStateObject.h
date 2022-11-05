@@ -9,7 +9,7 @@ namespace Dash
 	class FPipelineStateObject
 	{
 	public:
-		FPipelineStateObject(const std::wstring& name);
+		FPipelineStateObject(const std::string& name);
 		virtual ~FPipelineStateObject() {}
 
 		static void DestroyAll();
@@ -29,7 +29,7 @@ namespace Dash
 		bool IsFinalized() const { return mIsFinalized; }
 
 	protected:
-		std::wstring mName;
+		std::string mName;
 
 		bool mIsFinalized = false;
 
@@ -41,7 +41,7 @@ namespace Dash
 	class FGraphicsPSO : public FPipelineStateObject
 	{
 	public:
-		FGraphicsPSO(const std::wstring& name);
+		FGraphicsPSO(const std::string& name);
 
 		void SetBlendState(const D3D12_BLEND_DESC& blendDesc);
 		void SetSamplerMask(UINT samperMask);
@@ -76,7 +76,7 @@ namespace Dash
 	class FComputePSO : public FPipelineStateObject
 	{
 	public:
-		FComputePSO(const std::wstring& name);
+		FComputePSO(const std::string& name);
 
 		void SetComputeShader(const void* binaryCode, size_t size) { mPSODesc.CS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
 		void SetComputeShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPSODesc.CS = shaderByteCode; }

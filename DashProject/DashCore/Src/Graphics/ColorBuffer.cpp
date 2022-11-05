@@ -5,7 +5,7 @@
 
 namespace Dash
 {
-    void FColorBuffer::Create(const std::wstring& name, ID3D12Resource* resource, D3D12_RESOURCE_STATES initStates)
+    void FColorBuffer::Create(const std::string& name, ID3D12Resource* resource, D3D12_RESOURCE_STATES initStates)
     {
         ASSERT(resource != nullptr);
 
@@ -18,7 +18,7 @@ namespace Dash
         CreateViews();
     }
 
-    void FColorBuffer::Create(const std::wstring& name, const D3D12_RESOURCE_DESC& desc, const FLinearColor& clearColor)
+    void FColorBuffer::Create(const std::string& name, const D3D12_RESOURCE_DESC& desc, const FLinearColor& clearColor)
     {
         mNumMips = desc.MipLevels;
         mMsaaNumSmples = desc.SampleDesc.Count;
@@ -37,7 +37,7 @@ namespace Dash
         CreateViews();
     }
 
-    void FColorBuffer::Create(const std::wstring& name, uint32_t width, uint32_t height, uint32_t numMips, DXGI_FORMAT format)
+    void FColorBuffer::Create(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, DXGI_FORMAT format)
     {
         mNumMips = (numMips == 0 ? ComputeNumMips(width, height) : numMips);
         D3D12_RESOURCE_FLAGS flags = CombineResourceFlgs();
@@ -57,7 +57,7 @@ namespace Dash
         CreateViews();
     }
 
-    void FColorBuffer::CreateArray(const std::wstring& name, uint32_t width, uint32_t height, uint32_t arrayCount, DXGI_FORMAT format)
+    void FColorBuffer::CreateArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, DXGI_FORMAT format)
     {
         D3D12_RESOURCE_FLAGS flags = CombineResourceFlgs();
         D3D12_RESOURCE_DESC desc = DescribeTexture2D(width, height, arrayCount, 1, format, flags);

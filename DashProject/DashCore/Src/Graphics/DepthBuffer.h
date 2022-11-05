@@ -13,11 +13,11 @@ namespace Dash
 			, mClearStencil(clearStencil)
 		{}
 
-		void Create(const std::wstring& name, const D3D12_RESOURCE_DESC& desc, float clearDepth = 0.0f, uint8_t clearStencil = 0);
+		void Create(const std::string& name, const D3D12_RESOURCE_DESC& desc, float clearDepth = 0.0f, uint8_t clearStencil = 0);
 
-		void Create(const std::wstring& name, uint32_t width, uint32_t height, DXGI_FORMAT format);
+		void Create(const std::string& name, uint32_t width, uint32_t height, DXGI_FORMAT format);
 
-		void Create(const std::wstring& name, uint32_t width, uint32_t height, uint32_t sampleCount, DXGI_FORMAT format);
+		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, DXGI_FORMAT format);
 
 		D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE GetShaderResourceView() const;

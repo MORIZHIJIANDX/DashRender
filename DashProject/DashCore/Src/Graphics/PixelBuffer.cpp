@@ -29,7 +29,7 @@ namespace Dash
 		return desc;
 	}
 
-	void FPixelBuffer::AssociateWithResource(ID3D12Resource* resource, const D3D12_RESOURCE_STATES& currentState, const std::wstring& name)
+	void FPixelBuffer::AssociateWithResource(ID3D12Resource* resource, const D3D12_RESOURCE_STATES& currentState, const std::string& name)
 	{
 		ASSERT(resource != nullptr);
 		
@@ -49,7 +49,7 @@ namespace Dash
 		FGpuResourcesStateTracker::AddGlobalResourceState(*this, currentState);	
 	}
 
-	void FPixelBuffer::CreateTextureResource(const D3D12_RESOURCE_DESC& resourceDesc, D3D12_CLEAR_VALUE clearValue, const std::wstring& name)
+	void FPixelBuffer::CreateTextureResource(const D3D12_RESOURCE_DESC& resourceDesc, D3D12_CLEAR_VALUE clearValue, const std::string& name)
 	{
 		Destroy();
 

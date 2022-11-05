@@ -55,7 +55,7 @@ namespace Dash
 
 	void FDisplay::Present()
 	{
-		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin(L"Present");
+		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("Present");
 
 		graphicsContext.ClearColor(FGraphicsCore::Display->GetDisplayBuffer(), FLinearColor::Gray);
 
@@ -130,10 +130,10 @@ namespace Dash
 		{
 			ComPtr<ID3D12Resource> backBuffer;
 			DX_CALL(mSwapChain->GetBuffer(index, IID_PPV_ARGS(&backBuffer)));
-			mSwapChainBuffer[index].Create(L"Swap Chain Buffer[" + std::to_wstring(index) + L"]", backBuffer.Detach(), D3D12_RESOURCE_STATE_COMMON); // D3D12_RESOURCE_STATE_PRESENT ?
+			mSwapChainBuffer[index].Create("Swap Chain Buffer[" + ToString(index) + "]", backBuffer.Detach(), D3D12_RESOURCE_STATE_COMMON); // D3D12_RESOURCE_STATE_PRESENT ?
 		}
 
-		mDisplayBuffer.Create(L"Display Buffer", mDisplayWdith, mDisplayHeight, 1, mSwapChainFormat);
+		mDisplayBuffer.Create("Display Buffer", mDisplayWdith, mDisplayHeight, 1, mSwapChainFormat);
 
 		mCurrentBackBufferIndex = mSwapChain->GetCurrentBackBufferIndex();
 	}

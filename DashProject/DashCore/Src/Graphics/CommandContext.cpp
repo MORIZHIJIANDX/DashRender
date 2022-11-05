@@ -85,7 +85,7 @@ namespace Dash
 	}
 
 
-	FCommandContext& FCommandContext::Begin(const std::wstring& id /*= L""*/, D3D12_COMMAND_LIST_TYPE type /*= D3D12_COMMAND_LIST_TYPE_DIRECT*/)
+	FCommandContext& FCommandContext::Begin(const std::string& id /*= L""*/, D3D12_COMMAND_LIST_TYPE type /*= D3D12_COMMAND_LIST_TYPE_DIRECT*/)
 	{
 		FCommandContext* newContext = FGraphicsCore::ContextManager->AllocateContext(type);
 		newContext->SetID(id);
@@ -229,7 +229,7 @@ namespace Dash
 
 	void FCommandContext::InitializeBuffer(FGpuBuffer& dest, const void* bufferData, size_t numBytes, size_t offset /*= 0*/)
 	{
-		FCommandContext& context = FCommandContext::Begin(L"InitializeBufferContext");
+		FCommandContext& context = FCommandContext::Begin("InitializeBufferContext");
 
 		FGpuLinearAllocator::FAllocation alloc = context.mLinearAllocator.Allocate(numBytes);
 		memcpy(alloc.CpuAddress, bufferData, numBytes);
