@@ -94,6 +94,13 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>dxcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Src\ThirdParty\dxc\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+    <PreBuildEvent>
+      <Command>powershell -ExecutionPolicy Bypass -File $(SolutionDir)/Vendor/GetDXC/GetDXC.ps1 $(SolutionDir)/$(ProjectName)/Src/ThirdParty/dxc</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -121,6 +128,13 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <Lib>
+      <AdditionalDependencies>dxcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Src\ThirdParty\dxc\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+    <PreBuildEvent>
+      <Command>powershell -ExecutionPolicy Bypass -File $(SolutionDir)/Vendor/GetDXC/GetDXC.ps1 $(SolutionDir)/$(ProjectName)/Src/ThirdParty/dxc</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Distribution|x64'">
     <ClCompile>
@@ -148,6 +162,13 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <Lib>
+      <AdditionalDependencies>dxcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Src\ThirdParty\dxc\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+    <PreBuildEvent>
+      <Command>powershell -ExecutionPolicy Bypass -File $(SolutionDir)/Vendor/GetDXC/GetDXC.ps1 $(SolutionDir)/$(ProjectName)/Src/ThirdParty/dxc</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Src\Consolid\Consolid.h" />
@@ -207,6 +228,8 @@
     <ClInclude Include="Src\Math\Vector4.h" />
     <ClInclude Include="Src\Math\Vector4_SSE.h" />
     <ClInclude Include="Src\PCH\PCH.h" />
+    <ClInclude Include="Src\ThirdParty\dxc\inc\d3d12shader.h" />
+    <ClInclude Include="Src\ThirdParty\dxc\inc\dxcapi.h" />
     <ClInclude Include="Src\ThirdParty\imgui\backends\imgui_impl_dx12.h" />
     <ClInclude Include="Src\ThirdParty\imgui\backends\imgui_impl_win32.h" />
     <ClInclude Include="Src\ThirdParty\imgui\imconfig.h" />

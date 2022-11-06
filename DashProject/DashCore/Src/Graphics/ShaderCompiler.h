@@ -2,5 +2,10 @@
 
 namespace Dash
 {
-	
+	class ShaderCompiler
+	{
+	public:
+		void CompileShader();
+	private:
+	};
 }

@@ -12,6 +12,9 @@
 #include "Graphics/Display.h"
 #include "Graphics/CommandContext.h"
 
+#include "Utility/FileUtility.h"
+#include "Graphics/ShaderCompiler.h"
+
 namespace Dash
 {
 	TestApplication::TestApplication()
@@ -39,6 +42,23 @@ namespace Dash
 		FMouse::Get().MouseWheelDown += OnMouseWheelDownDelegate;
 		FMouse::Get().MouseWheelUp += OnMouseWheelUpDelegate;
 		FMouse::Get().MouseMoved += OnMouseMoveDelegate;
+
+		std::string path{ "Src\\ovra.png" };
+		LOG_INFO << "Is Path : " << FileUtility::IsPath(path);
+		LOG_INFO << "Is File : " << FileUtility::IsFile(path);
+		LOG_INFO << "Is Path Exists : " << FileUtility::IsPathExistent(path);
+		LOG_INFO << "Absolute Path : " << FileUtility::GetAbsolutePath(path);
+		LOG_INFO << "RemoveBasePath Path : " << FileUtility::RemoveBasePath(path);
+		LOG_INFO << "BasePath : " << FileUtility::GetBasePath(path);
+		LOG_INFO << "Extension : " << FileUtility::GetFileExtension(path);
+		LOG_INFO << "Last write time : " << FileUtility::GetFileLastWriteTime(path);
+		LOG_INFO << "Current Path : " << FileUtility::GetCurrentPath();
+		LOG_INFO << "File Name : " << FileUtility::GetFileName(path);
+		LOG_INFO << "Relative Path : " << FileUtility::GetRelativePath(FileUtility::GetAbsolutePath(path));
+		LOG_INFO << "Parent Path : " << FileUtility::GetParentPath(FileUtility::GetAbsolutePath(path));
+
+		ShaderCompiler compiler;
+		compiler.CompileShader();
 
 		LOG_INFO << "Startup";
 	}

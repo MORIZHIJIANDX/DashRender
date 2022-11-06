@@ -3,6 +3,8 @@
 
 namespace Dash
 {
+	FileUtility::ByteArray FileUtility::NullFile{};
+
 	FileUtility::ByteArray ReadBinaryFileHelper(const std::string& fileName)
 	{
 		std::filesystem::path filePath{ fileName };
@@ -69,5 +71,97 @@ namespace Dash
 	{
 		std::future<bool> writeTask = std::async(std::launch::async, WriteBinaryFileHelper, fileName, data, count);
 		return writeTask;
+	}
+
+	std::string FileUtility::GetBasePath(const std::string& str)
+	{
+		size_t lastSlash;
+		if ((lastSlash = str.rfind('/')) != std::string::npos)
+			return str.substr(0, lastSlash + 1);
+		else if ((lastSlash = str.rfind('\\')) != std::string::npos)
+			return str.substr(0, lastSlash + 1);
+		else
+			return "";
+	}
+
+	std::string FileUtility::RemoveBasePath(const std::string& str)
+	{
+		size_t lastSlash;
+		if ((lastSlash = str.rfind('/')) != std::string::npos)
+			return str.substr(lastSlash + 1, std::string::npos);
+		else if ((lastSlash = str.rfind('\\')) != std::string::npos)
+			return str.substr(lastSlash + 1, std::string::npos);
+		else
+			return str;
+	}
+
+	std::string FileUtility::GetFileExtension(const std::string& str)
+	{
+		std::string fileName = RemoveBasePath(str);
+		size_t extOffset = fileName.rfind('.');
+		if (extOffset == std::wstring::npos)
+			return "";
+
+		return fileName.substr(extOffset + 1);
+	}
+
+	std::string FileUtility::RemoveExtension(const std::string& str)
+	{
+		return str.substr(0, str.rfind("."));
+	}
+
+	std::string FileUtility::GetAbsolutePath(const std::string& str)
+	{
+		return std::filesystem::absolute(std::filesystem::path(str)).string();
+	}
+
+	std::string FileUtility::GetRelativePath(const std::string& str, const std::string& base)
+	{
+		return std::filesystem::relative(str, base).string();
+	}
+
+	std::string FileUtility::GetParentPath(const std::string& str)
+	{
+		return std::filesystem::path(str).parent_path().string();
+	}
+
+	std::string FileUtility::GetRootPath(const std::string& str)
+	{
+		return std::filesystem::path(str).root_path().string();
+	}
+
+	std::string FileUtility::GetFileName(const std::string& str)
+	{
+		return std::filesystem::path(str).filename().string();
+	}
+
+	std::string FileUtility::GetCurrentPath()
+	{
+		return std::filesystem::current_path().string();
+	}
+
+	Dash::FileUtility::FileTimeType FileUtility::GetFileLastWriteTime(const std::string& str)
+	{
+		return std::filesystem::last_write_time(std::filesystem::path(str));
+	}
+
+	bool FileUtility::IsPathExistent(const std::string& str)
+	{
+		return std::filesystem::exists(std::filesystem::path(str));
+	}
+
+	bool FileUtility::IsPath(const std::string& str)
+	{
+		return std::filesystem::is_directory(std::filesystem::path(str));
+	}
+
+	bool FileUtility::IsFile(const std::string& str)
+	{
+		return std::filesystem::is_regular_file(std::filesystem::path(str));
+	}
+
+	void FileUtility::DeletePath(const std::string& str)
+	{
+		std::filesystem::remove(std::filesystem::path(str));
 	}
 }

@@ -34,6 +34,9 @@ project "DashCore"
 
     characterset ("MBCS")
 
+    -- add dxc lib dir
+    libdirs { "%{wks.location}/%{prj.name}/Src/ThirdParty/dxc/lib/x64" }
+
     files
     {
         "%{prj.name}/Src/**.h",
@@ -47,11 +50,18 @@ project "DashCore"
         "%{prj.name}/Src",
     }
 
+    links
+    {
+        "dxcompiler.lib"
+    }
+
     -- shader config
     shadermodel ("6.0")
     shaderassembler("AssemblyCode")
     local shaderdir = "%{prj.name}/Src/Shaders/"
-    print(shaderdir)
+
+    filter { "system:windows" }
+        prebuildcommands { "powershell -ExecutionPolicy Bypass -File %{wks.location}/Vendor/GetDXC/GetDXC.ps1 %{wks.location}/%{prj.name}/Src/ThirdParty/dxc" }
 
     -- used as includes
     filter "files:**.hlsli"
@@ -112,6 +122,10 @@ project "DashProject"
     objdir ("Bin-Intermediate/"..outputdir.."/%{prj.name}")
 
     characterset ("MBCS")
+
+    --copy dxc dll
+    prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\Src\\ThirdParty\\dxc\\bin\\x64\\dxcompiler.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
+    prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\Src\\ThirdParty\\dxc\\bin\\x64\\dxil.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
 
     files
     {

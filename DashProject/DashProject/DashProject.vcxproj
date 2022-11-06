@@ -92,6 +92,10 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Command>xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\dxc\bin\x64\dxcompiler.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\
+xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\dxc\bin\x64\dxil.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -114,6 +118,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <PreBuildEvent>
+      <Command>xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\dxc\bin\x64\dxcompiler.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\
+xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\dxc\bin\x64\dxil.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Distribution|x64'">
     <ClCompile>
@@ -136,6 +144,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <PreBuildEvent>
+      <Command>xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\dxc\bin\x64\dxcompiler.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\
+xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\dxc\bin\x64\dxil.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Src\TestApplication.h" />

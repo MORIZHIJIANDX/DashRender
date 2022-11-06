@@ -22,6 +22,12 @@
     <Filter Include="ThirdParty">
       <UniqueIdentifier>{107145F9-FC28-8746-6530-60A251072237}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ThirdParty\dxc">
+      <UniqueIdentifier>{1EF8D211-0AC6-C617-F359-373EDFC6A27C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\dxc\inc">
+      <UniqueIdentifier>{276AC934-134E-8A8A-7CAE-84DD68B1740C}</UniqueIdentifier>
+    </Filter>
     <Filter Include="ThirdParty\imgui">
       <UniqueIdentifier>{7A0AC6D2-6603-E524-8F35-CAA97B8DC430}</UniqueIdentifier>
     </Filter>
@@ -204,6 +210,12 @@
     </ClInclude>
     <ClInclude Include="Src\PCH\PCH.h">
       <Filter>PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\dxc\inc\d3d12shader.h">
+      <Filter>ThirdParty\dxc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\dxc\inc\dxcapi.h">
+      <Filter>ThirdParty\dxc\inc</Filter>
     </ClInclude>
     <ClInclude Include="Src\ThirdParty\imgui\backends\imgui_impl_dx12.h">
       <Filter>ThirdParty\imgui\backends</Filter>
