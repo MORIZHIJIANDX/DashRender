@@ -11,6 +11,7 @@ namespace Dash
      */
     static FORCEINLINE std::wstring UTF8ToWideString(const std::string& str)
     {
+    /*
 		auto ret = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, nullptr, 0);
 		if (!ret) {
 			throw std::system_error(GetLastError(), std::generic_category(), "failed to get the buffer size that is needed to store wstring");
@@ -21,6 +22,9 @@ namespace Dash
 		if (!ret) {
 			throw std::system_error(GetLastError(), std::generic_category(), "failed to translate from string to wstring");
 		}
+    */
+        std::wstring dst{str.begin(), str.end()};
+
 		return dst;
     }
 

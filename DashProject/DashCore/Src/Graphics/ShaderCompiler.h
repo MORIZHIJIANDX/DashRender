@@ -12,7 +12,7 @@ namespace Dash
 	{
 	public:
 		void Init();
-		void CompileShader();
+		Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(const std::string& fileName, const std::string& entryPoint, const std::vector<std::string>& defines = {});
 	private:
 		Microsoft::WRL::ComPtr<IDxcUtils> mUtils;
 		Microsoft::WRL::ComPtr<IDxcCompiler3> mCompiler;

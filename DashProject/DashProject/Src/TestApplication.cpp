@@ -58,7 +58,8 @@ namespace Dash
 		LOG_INFO << "Parent Path : " << FileUtility::GetParentPath(FileUtility::GetAbsolutePath(path));
 
 		ShaderCompiler compiler;
-		compiler.CompileShader();
+		compiler.Init();
+		compiler.CompileShader("..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl", "PSMain");
 
 		LOG_INFO << "Startup";
 	}
