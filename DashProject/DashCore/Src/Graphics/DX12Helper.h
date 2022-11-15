@@ -24,7 +24,8 @@ namespace Dash
 
 		FORCEINLINE void SetD3D12DebugName(ID3D12Object* pObject, const std::string& name)
 		{
-            pObject->SetName(UTF8ToWideString(name).c_str());
+            std::wstring wName = FStringUtility::UTF8ToWideString(name);
+            pObject->SetName(wName.c_str());
 		}
 
         FORCEINLINE void SetD3D12DebugNameIndexed(ID3D12Object* pObject, LPCWSTR name, UINT index)
@@ -38,7 +39,8 @@ namespace Dash
 
 		FORCEINLINE void SetD3D12DebugNameIndexed(ID3D12Object* pObject, const std::string& name, UINT index)
 		{
-            pObject->SetName(UTF8ToWideString(name + "[" + ToString(index) + "]").c_str());
+            std::wstring wName = FStringUtility::UTF8ToWideString(name + "[" + FStringUtility::ToString(index) + "]");
+            pObject->SetName(wName.c_str());
         }   
     #else
         FORCEINLINE void SetD3D12DebugName(ID3D12Object*, LPCWSTR)

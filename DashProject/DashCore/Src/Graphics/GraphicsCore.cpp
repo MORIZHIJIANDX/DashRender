@@ -181,7 +181,7 @@ namespace Dash
 
 			if (SUCCEEDED(D3D12CreateDevice(dxgiAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&FGraphicsCore::Device))))
 			{
-				LOG_INFO << "Create Device With Adapter : " << WideStringToUTF8(desc.Description);
+				LOG_INFO << "Create Device With Adapter : " << FStringUtility::WideStringToUTF8(desc.Description);
 				LOG_INFO << "Adapter Memory " << desc.DedicatedVideoMemory / (1024 * 1024) << " MB";
 
 				std::string vendorType = "Adapter Type : ";

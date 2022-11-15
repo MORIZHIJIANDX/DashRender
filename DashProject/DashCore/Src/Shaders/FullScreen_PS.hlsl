@@ -32,7 +32,7 @@ cbuffer FrameBuffer : register(b0)
 };
 
 
-PSInput VSMain(VSInput input)
+PSInput VS_Main(VSInput input)
 {
 	PSInput output;
 	
@@ -49,7 +49,7 @@ PSInput VSMain(VSInput input)
 	return output;
 }
 
-float4 PSMain(PSInput input) : SV_TARGET
+float4 PS_Main(PSInput input) : SV_TARGET
 {
 	//return g_texture.Sample(g_sampler, input.UV);
 

@@ -59,7 +59,7 @@ namespace Dash
 
 		ShaderCompiler compiler;
 		compiler.Init();
-		compiler.CompileShader("..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl", "PSMain");
+		compiler.CompileShaderInternal("..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl", "PS_Main");
 
 		LOG_INFO << "Startup";
 	}

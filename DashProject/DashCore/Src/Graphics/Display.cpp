@@ -130,7 +130,7 @@ namespace Dash
 		{
 			ComPtr<ID3D12Resource> backBuffer;
 			DX_CALL(mSwapChain->GetBuffer(index, IID_PPV_ARGS(&backBuffer)));
-			mSwapChainBuffer[index].Create("Swap Chain Buffer[" + ToString(index) + "]", backBuffer.Detach(), D3D12_RESOURCE_STATE_COMMON); // D3D12_RESOURCE_STATE_PRESENT ?
+			mSwapChainBuffer[index].Create("Swap Chain Buffer[" + FStringUtility::ToString(index) + "]", backBuffer.Detach(), D3D12_RESOURCE_STATE_COMMON); // D3D12_RESOURCE_STATE_PRESENT ?
 		}
 
 		mDisplayBuffer.Create("Display Buffer", mDisplayWdith, mDisplayHeight, 1, mSwapChainFormat);
