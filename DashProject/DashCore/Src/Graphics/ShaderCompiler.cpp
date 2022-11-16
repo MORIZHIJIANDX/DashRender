@@ -1,7 +1,6 @@
 #include "PCH.h"
 #include "ShaderCompiler.h"
 #include "Utility/StringUtility.h"
-#include "Utility/FileUtility.h"
 #include "Utility/Hash.h"
 #include "DX12Helper.h"
 
@@ -14,19 +13,21 @@ namespace Dash
 
 	void FShaderCreationInfo::Finalize()
 	{
-		std::string hasedName = FileName + EntryPoint;
-
-		size_t hash = HashState(FileName.c_str(), FileName.size());
-		hash = HashState(EntryPoint.c_str(), EntryPoint.size(), hash);
+		std::string hasedName = FileUtility::RemoveExtension(FileName) + "_" + EntryPoint;
 
 		std::sort(Defines.begin(), Defines.end());
 		for (const std::string& define : Defines)
 		{
-			hash = HashState(define.c_str(), define.size(), hash);
+			hasedName = hasedName + "_" + define;
 		}
 
-		ShaderHash = hash;
-		HashedFileName = hasedName + "_" + FStringUtility::ToString(hash);
+		ShaderHash = std::hash<std::string>{}(hasedName);
+		HashedFileName = hasedName + "_" + FStringUtility::ToString(ShaderHash) + ".cso";
+	}
+
+	bool FShaderCreationInfo::IsOutOfDate() const
+	{
+		return !FileUtility::IsPathExistent(GetHashedFileName()) || FileUtility::GetFileLastWriteTime(FileName) > FileUtility::GetFileLastWriteTime(GetHashedFileName());
 	}
 
 	void ShaderCompiler::Init()
@@ -37,6 +38,27 @@ namespace Dash
 
 		//create default include handler
 		mUtils->CreateDefaultIncludeHandler(&mIncludeHandler);
+	}
+
+	FileUtility::ByteArray ShaderCompiler::CompileShader(const FShaderCreationInfo& info)
+	{
+		FileUtility::ByteArray compiledShader = FileUtility::NullFile;
+
+		if (info.IsOutOfDate())
+		{
+			ComPtr<IDxcBlob> shaderBlob = CompileShaderInternal(info);
+
+			SaveShaderBlob(info, shaderBlob);
+
+			compiledShader = std::make_shared<std::vector<unsigned char>>(shaderBlob->GetBufferSize());
+			std::memcpy(compiledShader->data(), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());
+		}
+		else
+		{
+			compiledShader = LoadShaderBlob(info);
+		}
+
+		return compiledShader;
 	}
 
 	ComPtr<IDxcBlob> ShaderCompiler::CompileShaderInternal(const FShaderCreationInfo& info)
@@ -130,6 +152,36 @@ namespace Dash
 		DX_CALL(compiledResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&Shader), &ShaderName));
 
 		return Shader;
+	}
+
+	bool ShaderCompiler::SaveShaderBlob(const FShaderCreationInfo& info, Microsoft::WRL::ComPtr<IDxcBlob> shaderBlob)
+	{
+		if (FileUtility::WriteBinaryFileSync(info.GetHashedFileName(), reinterpret_cast<unsigned char*>(shaderBlob->GetBufferPointer()), shaderBlob->GetBufferSize()))
+		{
+			LOG_INFO << "Success to save compiled shader : " << info.GetHashedFileName();
+		}
+		else
+		{
+			LOG_ERROR << "Failed to save compiled shader : " << info.GetHashedFileName();
+		}
+
+		return false;
+	}
+
+	FileUtility::ByteArray ShaderCompiler::LoadShaderBlob(const FShaderCreationInfo& info)
+	{
+		FileUtility::ByteArray compiledShaderFile = FileUtility::ReadBinaryFileSync(info.GetHashedFileName());
+
+		if (compiledShaderFile != FileUtility::NullFile)
+		{
+			LOG_INFO << "Success to load compiled shader : " << info.GetHashedFileName();
+		}
+		else
+		{
+			LOG_ERROR << "Failed to load compiled shader : " << info.GetHashedFileName();
+		}
+
+		return compiledShaderFile;
 	}
 
 	std::wstring ShaderCompiler::GetShaderTargetFromEntryPoint(const std::string& entryPoint)

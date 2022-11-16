@@ -43,7 +43,7 @@ PSInput VS_Main(VSInput input)
 	output.UV = input.UV;
 
 	output.Color = input.Color;
-
+	  
 	output.Normal = mul(float4(input.Normal, 0.0f), InversetransposedWorldMatrix);
 
 	return output;

@@ -43,6 +43,7 @@ namespace Dash
 		FMouse::Get().MouseWheelUp += OnMouseWheelUpDelegate;
 		FMouse::Get().MouseMoved += OnMouseMoveDelegate;
 
+		/*
 		std::string path{ "Src\\ovra.png" };
 		LOG_INFO << "Is Path : " << FileUtility::IsPath(path);
 		LOG_INFO << "Is File : " << FileUtility::IsFile(path);
@@ -56,10 +57,14 @@ namespace Dash
 		LOG_INFO << "File Name : " << FileUtility::GetFileName(path);
 		LOG_INFO << "Relative Path : " << FileUtility::GetRelativePath(FileUtility::GetAbsolutePath(path));
 		LOG_INFO << "Parent Path : " << FileUtility::GetParentPath(FileUtility::GetAbsolutePath(path));
+		*/
+
+		FShaderCreationInfo info{ "..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl" ,  "PS_Main" };
+		info.Finalize();
 
 		ShaderCompiler compiler;
 		compiler.Init();
-		compiler.CompileShaderInternal("..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl", "PS_Main");
+		compiler.CompileShader(info);
 
 		LOG_INFO << "Startup";
 	}

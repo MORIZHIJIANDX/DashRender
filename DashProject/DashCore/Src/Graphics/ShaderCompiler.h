@@ -5,6 +5,7 @@
 #include "ThirdParty/dxc/inc/d3d12shader.h"
 #include "ThirdParty/dxc/inc/dxcapi.h"
 #include <wrl.h>
+#include "Utility/FileUtility.h"
 
 namespace Dash
 {
@@ -20,6 +21,7 @@ namespace Dash
 		void Finalize();
 		size_t GetShaderHash() const { return ShaderHash; }
 		std::string GetHashedFileName() const { return HashedFileName; }
+		bool IsOutOfDate() const;
 
 		std::string FileName;
 		std::string EntryPoint;
@@ -35,13 +37,12 @@ namespace Dash
 	public:
 		void Init();
 
-		std::vector<uint8_t> CompileShader(const FShaderCreationInfo& info);
+		FileUtility::ByteArray CompileShader(const FShaderCreationInfo& info);
 
-	//protected:
+	protected:
 		Microsoft::WRL::ComPtr<IDxcBlob> CompileShaderInternal(const FShaderCreationInfo& info);
-
-		bool SaveShaderBlob(const std::string& hashedName, Microsoft::WRL::ComPtr<IDxcBlob>);
-		std::vector<uint8_t> LoadShaderBlob(const std::string& hashedName);
+		bool SaveShaderBlob(const FShaderCreationInfo& info, Microsoft::WRL::ComPtr<IDxcBlob> shaderBlob);
+		FileUtility::ByteArray LoadShaderBlob(const FShaderCreationInfo& info);
 		std::wstring GetShaderTargetFromEntryPoint(const std::string& entryPoint);
 
 	protected:
