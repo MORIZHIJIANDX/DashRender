@@ -1,6 +1,7 @@
 #pragma once
 
 #include "d3dx12.h"
+#include "InputAssemblerLayout.h"
 
 namespace Dash
 {
@@ -51,7 +52,7 @@ namespace Dash
 		void SetDepthTargetFormat(DXGI_FORMAT depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
 		void SetRenderTargetFormat(DXGI_FORMAT renderTargetFormat, DXGI_FORMAT depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
 		void SetRenderTargetFormats(UINT numRTVs, const DXGI_FORMAT* renderTargetFormats, DXGI_FORMAT depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
-		void SetInputLayout(UINT numElements, const D3D12_INPUT_ELEMENT_DESC* inputElementDescs);
+		void SetInputLayout(const FInputAssemblerLayout& layout);
 		void SetPrimitiveRestart(D3D12_INDEX_BUFFER_STRIP_CUT_VALUE indexBufferProps);
 
 		void SetVertexShader(const void* binaryCode, size_t size) { mPSODesc.VS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
@@ -70,7 +71,6 @@ namespace Dash
 
 	private:
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC mPSODesc;
-		std::shared_ptr<const D3D12_INPUT_ELEMENT_DESC> mInputLayout;
 	};
 
 	class FComputePSO : public FPipelineStateObject

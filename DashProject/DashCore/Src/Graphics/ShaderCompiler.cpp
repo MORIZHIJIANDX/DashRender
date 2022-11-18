@@ -11,26 +11,7 @@ namespace Dash
 {
 	using namespace Microsoft::WRL;
 
-	void FShaderCreationInfo::Finalize()
-	{
-		std::string hasedName = FileUtility::RemoveExtension(FileName) + "_" + EntryPoint;
-
-		std::sort(Defines.begin(), Defines.end());
-		for (const std::string& define : Defines)
-		{
-			hasedName = hasedName + "_" + define;
-		}
-
-		ShaderHash = std::hash<std::string>{}(hasedName);
-		HashedFileName = hasedName + "_" + FStringUtility::ToString(ShaderHash) + ".cso";
-	}
-
-	bool FShaderCreationInfo::IsOutOfDate() const
-	{
-		return !FileUtility::IsPathExistent(GetHashedFileName()) || FileUtility::GetFileLastWriteTime(FileName) > FileUtility::GetFileLastWriteTime(GetHashedFileName());
-	}
-
-	void ShaderCompiler::Init()
+	void FShaderCompiler::Init()
 	{
 		DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&mUtils));
 
@@ -40,7 +21,7 @@ namespace Dash
 		mUtils->CreateDefaultIncludeHandler(&mIncludeHandler);
 	}
 
-	FileUtility::ByteArray ShaderCompiler::CompileShader(const FShaderCreationInfo& info)
+	FileUtility::ByteArray FShaderCompiler::CompileShader(const FShaderCreationInfo& info)
 	{
 		FileUtility::ByteArray compiledShader = FileUtility::NullFile;
 
@@ -48,10 +29,13 @@ namespace Dash
 		{
 			ComPtr<IDxcBlob> shaderBlob = CompileShaderInternal(info);
 
-			SaveShaderBlob(info, shaderBlob);
+			if (shaderBlob)
+			{
+				SaveShaderBlob(info, shaderBlob);
 
-			compiledShader = std::make_shared<std::vector<unsigned char>>(shaderBlob->GetBufferSize());
-			std::memcpy(compiledShader->data(), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());
+				compiledShader = std::make_shared<std::vector<unsigned char>>(shaderBlob->GetBufferSize());
+				std::memcpy(compiledShader->data(), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());
+			}
 		}
 		else
 		{
@@ -61,7 +45,7 @@ namespace Dash
 		return compiledShader;
 	}
 
-	ComPtr<IDxcBlob> ShaderCompiler::CompileShaderInternal(const FShaderCreationInfo& info)
+	ComPtr<IDxcBlob> FShaderCompiler::CompileShaderInternal(const FShaderCreationInfo& info)
 	{
 		if (!FileUtility::IsPathExistent(info.FileName))
 		{
@@ -88,7 +72,7 @@ namespace Dash
 		args.push_back(wEntryPoint.c_str());
 
 		// Target
-		std::wstring target = GetShaderTargetFromEntryPoint(info.EntryPoint);
+		std::wstring target = FStringUtility::UTF8ToWideString(info.GetShaderTarget());
 		args.push_back(L"-T");
 		args.push_back(target.c_str());
 
@@ -154,7 +138,7 @@ namespace Dash
 		return Shader;
 	}
 
-	bool ShaderCompiler::SaveShaderBlob(const FShaderCreationInfo& info, Microsoft::WRL::ComPtr<IDxcBlob> shaderBlob)
+	bool FShaderCompiler::SaveShaderBlob(const FShaderCreationInfo& info, Microsoft::WRL::ComPtr<IDxcBlob> shaderBlob)
 	{
 		if (FileUtility::WriteBinaryFileSync(info.GetHashedFileName(), reinterpret_cast<unsigned char*>(shaderBlob->GetBufferPointer()), shaderBlob->GetBufferSize()))
 		{
@@ -168,7 +152,7 @@ namespace Dash
 		return false;
 	}
 
-	FileUtility::ByteArray ShaderCompiler::LoadShaderBlob(const FShaderCreationInfo& info)
+	FileUtility::ByteArray FShaderCompiler::LoadShaderBlob(const FShaderCreationInfo& info)
 	{
 		FileUtility::ByteArray compiledShaderFile = FileUtility::ReadBinaryFileSync(info.GetHashedFileName());
 
@@ -182,16 +166,5 @@ namespace Dash
 		}
 
 		return compiledShaderFile;
-	}
-
-	std::wstring ShaderCompiler::GetShaderTargetFromEntryPoint(const std::string& entryPoint)
-	{
-		std::vector<std::string> splitStrs = FStringUtility::Split(entryPoint, "_");
-
-		ASSERT(splitStrs.size() == 2);
-
-		static const std::string targetLevel{"_6_5"};
-
-		return FStringUtility::UTF8ToWideString(FStringUtility::ToLower(splitStrs[0]) + targetLevel);
 	}
 }

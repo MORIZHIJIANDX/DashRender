@@ -91,20 +91,9 @@ namespace Dash
 		mPSODesc.SampleDesc.Quality = msaaQuality;
 	}
 
-	void FGraphicsPSO::SetInputLayout(UINT numElements, const D3D12_INPUT_ELEMENT_DESC* inputElementDescs)
+	void FGraphicsPSO::SetInputLayout(const FInputAssemblerLayout& layout)
 	{
-		mPSODesc.InputLayout.NumElements = numElements;
-
-		if (numElements > 0)
-		{
-			D3D12_INPUT_ELEMENT_DESC* newElementsPtr = new D3D12_INPUT_ELEMENT_DESC[numElements * sizeof(D3D12_INPUT_ELEMENT_DESC)];
-			std::memcpy(newElementsPtr, inputElementDescs, numElements * sizeof(D3D12_INPUT_ELEMENT_DESC));
-			mInputLayout.reset((const D3D12_INPUT_ELEMENT_DESC*)newElementsPtr);
-		}
-		else
-		{
-			mInputLayout = nullptr;
-		}
+		mPSODesc.InputLayout = layout.D3DLayout();
 	}
 
 	void FGraphicsPSO::SetPrimitiveRestart(D3D12_INDEX_BUFFER_STRIP_CUT_VALUE indexBufferProps)
@@ -117,10 +106,8 @@ namespace Dash
 		ASSERT(mRootSignature->IsFinalized());
 		mPSODesc.pRootSignature = mRootSignature->GetSignature();
 		
-		mPSODesc.InputLayout.pInputElementDescs = nullptr;
 		size_t hashCode = HashState(&mPSODesc);
-		hashCode = HashState(mInputLayout.get(), mPSODesc.InputLayout.NumElements, hashCode);
-		mPSODesc.InputLayout.pInputElementDescs = mInputLayout.get();
+		hashCode = HashState(mPSODesc.InputLayout.pInputElementDescs, mPSODesc.InputLayout.NumElements, hashCode);
 
 		static std::mutex posMutex;
 		ID3D12PipelineState** psoRef = nullptr;

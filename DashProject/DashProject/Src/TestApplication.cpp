@@ -13,7 +13,7 @@
 #include "Graphics/CommandContext.h"
 
 #include "Utility/FileUtility.h"
-#include "Graphics/ShaderCompiler.h"
+#include "Graphics/ShaderMap.h"
 
 namespace Dash
 {
@@ -62,9 +62,14 @@ namespace Dash
 		FShaderCreationInfo info{ "..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl" ,  "PS_Main" };
 		info.Finalize();
 
-		ShaderCompiler compiler;
-		compiler.Init();
-		compiler.CompileShader(info);
+		FShaderMap shaderMap;
+		shaderMap.Init();
+
+		FShaderResource resourceA = shaderMap.LoadShader(info);
+
+		FShaderResource resourceB = shaderMap.LoadShader(info);
+
+		shaderMap.Destroy();
 
 		LOG_INFO << "Startup";
 	}

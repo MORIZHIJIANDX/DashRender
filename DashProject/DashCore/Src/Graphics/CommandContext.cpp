@@ -415,13 +415,15 @@ namespace Dash
 
 	void FGraphicsCommandContext::SetViewport(const FViewport& vp)
 	{
-		mD3DCommandList->RSSetViewports(1, &vp);
+		D3D12_VIEWPORT viewport = vp.D3DViewport();
+		mD3DCommandList->RSSetViewports(1, &viewport);
 	}
 
 	void FGraphicsCommandContext::SetViewport(Scalar x, Scalar y, Scalar w, Scalar h, Scalar minDepth /*= 0.0f*/, Scalar maxDepth /*= 0.0f*/)
 	{
 		FViewport vp{x, y, w, h, minDepth, maxDepth};
-		mD3DCommandList->RSSetViewports(1, &vp);
+		D3D12_VIEWPORT viewport = vp.D3DViewport();
+		mD3DCommandList->RSSetViewports(1, &viewport);
 	}
 
 	void FGraphicsCommandContext::SetScissor(const D3D12_RECT& rect)
