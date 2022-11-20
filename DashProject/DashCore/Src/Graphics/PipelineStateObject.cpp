@@ -63,14 +63,12 @@ namespace Dash
 
 	void FGraphicsPSO::SetDepthTargetFormat(DXGI_FORMAT depthTargetFormat, UINT msaaCount /*= 1*/, UINT msaaQuality /*= 0*/)
 	{
-		mPSODesc.DSVFormat = depthTargetFormat;
-		mPSODesc.SampleDesc.Count = msaaCount;
-		mPSODesc.SampleDesc.Quality = msaaQuality;
+		SetRenderTargetFormats(0, nullptr, depthTargetFormat, msaaCount, msaaQuality);
 	}
 
 	void FGraphicsPSO::SetRenderTargetFormat(DXGI_FORMAT renderTargetFormat, DXGI_FORMAT depthTargetFormat, UINT msaaCount /*= 1*/, UINT msaaQuality /*= 0*/)
 	{
-		mPSODesc.NumRenderTargets = 1;
+		SetRenderTargetFormats(1, &renderTargetFormat, depthTargetFormat, msaaCount, msaaQuality);
 	}
 
 	void FGraphicsPSO::SetRenderTargetFormats(UINT numRTVs, const DXGI_FORMAT* renderTargetFormats, DXGI_FORMAT depthTargetFormat, UINT msaaCount /*= 1*/, UINT msaaQuality /*= 0*/)
@@ -93,7 +91,8 @@ namespace Dash
 
 	void FGraphicsPSO::SetInputLayout(const FInputAssemblerLayout& layout)
 	{
-		mPSODesc.InputLayout = layout.D3DLayout();
+		mInputLayout = layout;
+		mPSODesc.InputLayout = mInputLayout.D3DLayout();
 	}
 
 	void FGraphicsPSO::SetPrimitiveRestart(D3D12_INDEX_BUFFER_STRIP_CUT_VALUE indexBufferProps)

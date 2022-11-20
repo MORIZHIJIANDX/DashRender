@@ -138,7 +138,7 @@ namespace Dash
 		void SetDepthStencilTarget(FDepthBuffer& depthBuffer) { SetRenderTargets(1, nullptr, depthBuffer); }
 
 		void SetViewport(const FViewport& vp);
-		void SetViewport(Scalar x, Scalar y, Scalar w, Scalar h, Scalar minDepth = 0.0f, Scalar maxDepth = 0.0f);
+		void SetViewport(Scalar x, Scalar y, Scalar w, Scalar h, Scalar minDepth = 0.0f, Scalar maxDepth = 1.0f);
 		void SetScissor(const D3D12_RECT& rect);
 		void SetScissor(UINT left, UINT top, UINT right, UINT bottom);
 		void SetStencilRef(UINT stencilRef);

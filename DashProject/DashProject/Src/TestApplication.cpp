@@ -59,18 +59,6 @@ namespace Dash
 		LOG_INFO << "Parent Path : " << FileUtility::GetParentPath(FileUtility::GetAbsolutePath(path));
 		*/
 
-		FShaderCreationInfo info{ "..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl" ,  "PS_Main" };
-		info.Finalize();
-
-		FShaderMap shaderMap;
-		shaderMap.Init();
-
-		FShaderResource resourceA = shaderMap.LoadShader(info);
-
-		FShaderResource resourceB = shaderMap.LoadShader(info);
-
-		shaderMap.Destroy();
-
 		LOG_INFO << "Startup";
 	}
 

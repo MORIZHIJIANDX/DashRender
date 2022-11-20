@@ -113,6 +113,11 @@ namespace Dash
 		LOG_INFO << "FGraphicsCore::Shutdown End.";
 	}
 
+	D3D_ROOT_SIGNATURE_VERSION FGraphicsCore::GetRootSignatureVersion()
+	{
+		return FGraphicsCore::mHighestRootSignatureVersion;
+	}
+
 	void FGraphicsCore::InitD3DDevice()
 	{
 		ASSERT_MSG(FGraphicsCore::Device == nullptr, "FGraphicsCore Has Already Been Initialized!");
@@ -179,7 +184,7 @@ namespace Dash
 				continue;
 			}
 
-			if (SUCCEEDED(D3D12CreateDevice(dxgiAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&FGraphicsCore::Device))))
+			if (SUCCEEDED(D3D12CreateDevice(dxgiAdapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&FGraphicsCore::Device))))
 			{
 				LOG_INFO << "Create Device With Adapter : " << FStringUtility::WideStringToUTF8(desc.Description);
 				LOG_INFO << "Adapter Memory " << desc.DedicatedVideoMemory / (1024 * 1024) << " MB";

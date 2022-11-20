@@ -112,6 +112,9 @@
     <ClInclude Include="Src\Graphics\GraphicsCore.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\InputAssemblerLayout.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\PipelineStateObject.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -128,6 +131,9 @@
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\ShaderMap.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\ShaderResource.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\Viewport.h">
@@ -292,12 +298,6 @@
     <ClInclude Include="Src\Utility\ThreadSafeQueue.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\ShaderResource.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Graphics\InputAssemblerLayout.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\EntryPoint.cpp" />
@@ -349,6 +349,9 @@
     <ClCompile Include="Src\Graphics\GraphicsCore.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Graphics\InputAssemblerLayout.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Graphics\PipelineStateObject.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
@@ -365,6 +368,9 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\ShaderMap.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\ShaderResource.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Math\Color.cpp">
@@ -426,12 +432,6 @@
     </ClCompile>
     <ClCompile Include="Src\Utility\SystemTimer.cpp">
       <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Graphics\ShaderResource.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Graphics\InputAssemblerLayout.cpp">
-      <Filter>Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

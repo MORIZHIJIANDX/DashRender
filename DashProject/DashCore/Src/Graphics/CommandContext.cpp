@@ -234,9 +234,9 @@ namespace Dash
 		FGpuLinearAllocator::FAllocation alloc = context.mLinearAllocator.Allocate(numBytes);
 		memcpy(alloc.CpuAddress, bufferData, numBytes);
 
-		context.TransitionBarrier(dest, D3D12_RESOURCE_STATE_COPY_DEST, true);
+		context.TransitionBarrier(dest, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 		context.mD3DCommandList->CopyBufferRegion(dest.GetResource(), offset, alloc.Resource.GetResource(), alloc.Offset, numBytes);
-		context.TransitionBarrier(dest, D3D12_RESOURCE_STATE_GENERIC_READ, true);
+		context.TransitionBarrier(dest, D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 
 		context.Finish(true);
 	}
@@ -393,6 +393,7 @@ namespace Dash
 		{
 			rtvHandels.push_back(rtvs[index].GetRenderTargetView());
 			TrackResource(rtvs[index]);
+			TransitionBarrier(rtvs[index], D3D12_RESOURCE_STATE_RENDER_TARGET);
 		}
 
 		mD3DCommandList->OMSetRenderTargets(numRTVs, rtvHandels.data(), false, nullptr);
@@ -406,11 +407,13 @@ namespace Dash
 		{
 			rtvHandels.push_back(rtvs[index].GetRenderTargetView());
 			TrackResource(rtvs[index]);
+			TransitionBarrier(rtvs[index], D3D12_RESOURCE_STATE_RENDER_TARGET);
 		}
 
 		std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> handles = { depthBuffer.GetDepthStencilView() };
 		mD3DCommandList->OMSetRenderTargets(numRTVs, rtvHandels.data(), false, handles.data());
 		TrackResource(depthBuffer);
+		TransitionBarrier(depthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE);
 	}
 
 	void FGraphicsCommandContext::SetViewport(const FViewport& vp)
@@ -419,7 +422,7 @@ namespace Dash
 		mD3DCommandList->RSSetViewports(1, &viewport);
 	}
 
-	void FGraphicsCommandContext::SetViewport(Scalar x, Scalar y, Scalar w, Scalar h, Scalar minDepth /*= 0.0f*/, Scalar maxDepth /*= 0.0f*/)
+	void FGraphicsCommandContext::SetViewport(Scalar x, Scalar y, Scalar w, Scalar h, Scalar minDepth /*= 0.0f*/, Scalar maxDepth /*= 1.0f*/)
 	{
 		FViewport vp{x, y, w, h, minDepth, maxDepth};
 		D3D12_VIEWPORT viewport = vp.D3DViewport();

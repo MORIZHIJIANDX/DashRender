@@ -70,7 +70,8 @@ namespace Dash
 		virtual void Finalize() override;
 
 	private:
-		D3D12_GRAPHICS_PIPELINE_STATE_DESC mPSODesc;
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC mPSODesc{};
+		FInputAssemblerLayout mInputLayout;
 	};
 
 	class FComputePSO : public FPipelineStateObject
@@ -84,7 +85,7 @@ namespace Dash
 		virtual void Finalize() override;
 
 	private:
-		D3D12_COMPUTE_PIPELINE_STATE_DESC mPSODesc;
+		D3D12_COMPUTE_PIPELINE_STATE_DESC mPSODesc{};
 	};
 
 

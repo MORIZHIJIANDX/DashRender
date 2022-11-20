@@ -90,7 +90,7 @@ namespace Dash
 
 	FGpuLinearAllocator::FPage* FGpuLinearAllocator::FPageManager::CreateNewPage(size_t pageSize /*= 0*/)
 	{
-		D3D12_HEAP_PROPERTIES heapProps;
+		D3D12_HEAP_PROPERTIES heapProps{};
 		heapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
 		heapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
 		heapProps.CreationNodeMask = 1;
@@ -107,7 +107,7 @@ namespace Dash
 		resourceDesc.SampleDesc.Quality = 0;
 		resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-		D3D12_RESOURCE_STATES resourceState;
+		D3D12_RESOURCE_STATES resourceState{};
 	
 		if (mAllocatorType == GpuExclusive)
 		{
@@ -191,7 +191,7 @@ namespace Dash
 				mRetiredPages.push_back(mCurrentPage);
 			}
 
-			mCurrentPage = AllocatorPageManger->RequestPage();
+			mCurrentPage = AllocatorPageManger[mAllocatorType].RequestPage();
 		}
 
 		return mCurrentPage->Allocate(alignedSize, alignment);

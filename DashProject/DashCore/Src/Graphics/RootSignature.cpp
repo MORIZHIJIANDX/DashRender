@@ -84,14 +84,14 @@ namespace Dash
 			return;
 		}
 
-		ASSERT(mNumInitializedStaticSamplers = mNumStaticSamplers);
+		ASSERT(mNumInitializedStaticSamplers == mNumStaticSamplers);
 
-		D3D12_ROOT_SIGNATURE_DESC desc;
+		D3D12_ROOT_SIGNATURE_DESC desc{};
 		desc.Flags = flag;
 		desc.NumParameters = mNumParameters;
 		desc.NumStaticSamplers = mNumStaticSamplers;
-		desc.pParameters = static_cast<const D3D12_ROOT_PARAMETER*>(mParameterArray.get());
-		desc.pStaticSamplers = static_cast<const D3D12_STATIC_SAMPLER_DESC*>(mSamplerArray.get());
+		desc.pParameters = (const D3D12_ROOT_PARAMETER*)(mParameterArray.get());
+		desc.pStaticSamplers = (const D3D12_STATIC_SAMPLER_DESC*)(mSamplerArray.get());
 
 		mDescriptorTableMask = 0;
 		mSamplerTableMask = 0;
@@ -152,7 +152,9 @@ namespace Dash
 		{
 			Microsoft::WRL::ComPtr<ID3DBlob> outBlob, errorBlob;
 
-			DX_CALL(D3D12SerializeRootSignature(&desc, FGraphicsCore::GetRootSignatureVersion(), outBlob.GetAddressOf(), errorBlob.GetAddressOf()));
+			//DX_CALL(D3D12SerializeRootSignature(&desc, FGraphicsCore::GetRootSignatureVersion(), &outBlob, &errorBlob));
+			D3D_ROOT_SIGNATURE_VERSION version = FGraphicsCore::GetRootSignatureVersion(); 
+			DX_CALL(D3D12SerializeRootSignature(&desc, D3D_ROOT_SIGNATURE_VERSION_1, &outBlob, &errorBlob));
 
 			DX_CALL(FGraphicsCore::Device->CreateRootSignature(0, outBlob->GetBufferPointer(), outBlob->GetBufferSize(), IID_PPV_ARGS(&mRootSignature)));
 

@@ -6,9 +6,31 @@
 #include "CommandQueue.h"
 #include "CommandContext.h"
 
+#include "ShaderResource.h"
+#include "ShaderMap.h"
+#include "PipelineStateObject.h"
+#include "RootSignature.h"
+
 namespace Dash
 {
 	using namespace Microsoft::WRL;
+
+	FShaderMap ShaderMap;
+	FShaderResource PSShader;
+	FShaderResource VSShader;
+	FRootSignature RootSignature{};
+	FGraphicsPSO PSO{"DisplayPSO"};
+	FGpuVertexBuffer VertexBuffer;
+	//FGpuIndexBuffer IndexBuffer;
+
+	struct Vertex
+	{
+		FVector3f Pos;
+		FVector2f UV;
+	};
+
+	std::vector<Vertex> VertexData;
+
 
 	void FDisplay::Initialize()
 	{
@@ -19,6 +41,92 @@ namespace Dash
 		{
 			mFenceValue[index] = ((uint64_t)D3D12_COMMAND_LIST_TYPE_DIRECT) << COMMAND_TYPE_MASK;;
 		}
+
+		ShaderMap.Init();
+
+		FShaderCreationInfo psInfo{ "..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl" ,  "PS_Main" };
+		psInfo.Finalize();
+		PSShader = ShaderMap.LoadShader(psInfo);
+
+		FShaderCreationInfo vsInfo{ "..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl" ,  "VS_Main" };
+		vsInfo.Finalize();
+		VSShader = ShaderMap.LoadShader(vsInfo);
+
+		RootSignature.Reset(1, 0);
+		RootSignature[0].InitAsRootConstantBufferView(0, D3D12_SHADER_VISIBILITY_ALL);
+		RootSignature.Finalize("DisplayRootSignature", D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+		D3D12_RASTERIZER_DESC RasterizerDefault{};
+		RasterizerDefault.FillMode = D3D12_FILL_MODE_SOLID;
+		RasterizerDefault.CullMode = D3D12_CULL_MODE_BACK;
+		RasterizerDefault.FrontCounterClockwise = TRUE;
+		RasterizerDefault.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
+		RasterizerDefault.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
+		RasterizerDefault.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
+		RasterizerDefault.DepthClipEnable = TRUE;
+		RasterizerDefault.MultisampleEnable = FALSE;
+		RasterizerDefault.AntialiasedLineEnable = FALSE;
+		RasterizerDefault.ForcedSampleCount = 0;
+		RasterizerDefault.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;;
+
+		D3D12_RASTERIZER_DESC RasterizerTwoSided{};
+		RasterizerTwoSided = RasterizerDefault;
+		RasterizerTwoSided.CullMode = D3D12_CULL_MODE_NONE;
+
+
+		D3D12_BLEND_DESC alphaBlend{};
+		alphaBlend.IndependentBlendEnable = FALSE;
+		alphaBlend.RenderTarget[0].BlendEnable = FALSE;
+		alphaBlend.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		alphaBlend.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+		alphaBlend.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		alphaBlend.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+		alphaBlend.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
+		alphaBlend.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		alphaBlend.RenderTarget[0].RenderTargetWriteMask = 0;
+
+		alphaBlend.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+		D3D12_BLEND_DESC BlendDisable = alphaBlend;
+
+		CD3DX12_DEPTH_STENCIL_DESC DepthStateDisabled{};
+		DepthStateDisabled.DepthEnable = FALSE;
+		DepthStateDisabled.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+		DepthStateDisabled.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+		DepthStateDisabled.StencilEnable = FALSE;
+		DepthStateDisabled.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
+		DepthStateDisabled.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
+		DepthStateDisabled.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+		DepthStateDisabled.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+		DepthStateDisabled.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+		DepthStateDisabled.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+		DepthStateDisabled.BackFace = DepthStateDisabled.FrontFace;
+
+		FInputAssemblerLayout inputLayout;
+		inputLayout.AddPerVertexLayoutElement("POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0);
+		inputLayout.AddPerVertexLayoutElement("TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12);
+
+		PSO.SetRootSignature(RootSignature);
+		PSO.SetBlendState(BlendDisable);
+		PSO.SetDepthStencilState(DepthStateDisabled);
+		PSO.SetVertexShader(CD3DX12_SHADER_BYTECODE{ VSShader.ShaderCode->data(), VSShader.ShaderCode->size()});
+		PSO.SetPixelShader(CD3DX12_SHADER_BYTECODE{ PSShader.ShaderCode->data(), PSShader.ShaderCode->size() });
+		PSO.SetRasterizerState(RasterizerTwoSided);
+		PSO.SetInputLayout(inputLayout);
+		PSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+		PSO.SetSamplerMask(UINT_MAX);
+		PSO.SetRenderTargetFormat(mSwapChainFormat, DXGI_FORMAT_D32_FLOAT);
+		PSO.Finalize();
+	
+		VertexData.resize(3);
+		VertexData[0].Pos = FVector3f{-1.0f, 3.0f, 0.5f};
+		VertexData[0].UV = FVector2f{ 0.0f, -1.0f };
+
+		VertexData[1].Pos = FVector3f{ 3.0f, -1.0f, 0.5f };
+		VertexData[1].UV = FVector2f{ 2.0f, 1.0f };
+
+		VertexData[2].Pos = FVector3f{ -1.0f, -1.0f, 0.5f };
+		VertexData[2].UV = FVector2f{ 0.0f, 1.0f };
+		VertexBuffer.Create("DisplayVertexBuffer", 3, sizeof(Vertex), VertexData.data());	
 	}
 
 	void FDisplay::Destroy()
@@ -28,6 +136,10 @@ namespace Dash
 		DestroyBuffers();
 
 		mSwapChain = nullptr;
+
+
+		VertexBuffer.Destroy();
+		ShaderMap.Destroy();
 	}
 
 	void FDisplay::Resize(uint32_t displayWdith, uint32_t displayHeight)
@@ -57,7 +169,15 @@ namespace Dash
 	{
 		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("Present");
 
+		graphicsContext.SetRenderTarget(FGraphicsCore::Display->GetDisplayBuffer());
 		graphicsContext.ClearColor(FGraphicsCore::Display->GetDisplayBuffer(), FLinearColor::Gray);
+		graphicsContext.SetRootSignature(RootSignature);
+		graphicsContext.SetPipelineState(PSO);
+		graphicsContext.SetViewport(0.0f, 0.0f, IGameApp::GetInstance()->GetWindowWidth(), IGameApp::GetInstance()->GetWindowHeight());
+		graphicsContext.SetScissor(0, 0, IGameApp::GetInstance()->GetWindowWidth(), IGameApp::GetInstance()->GetWindowHeight());
+		graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		//graphicsContext.SetVertexBuffer(0, VertexBuffer);
+		graphicsContext.Draw(3);
 
 		graphicsContext.TransitionBarrier(FGraphicsCore::Display->GetDisplayBuffer(), D3D12_RESOURCE_STATE_PRESENT);
 

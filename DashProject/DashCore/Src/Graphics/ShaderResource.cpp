@@ -31,7 +31,7 @@ namespace Dash
 
 		ASSERT(splitStrs.size() == 2);
 
-		static const std::string targetLevel{ "_6_5" };
+		static const std::string targetLevel{ "_6_4" };
 
 		ShaderTarget = FStringUtility::ToLower(splitStrs[0]) + targetLevel;
 	}
