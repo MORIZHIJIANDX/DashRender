@@ -440,6 +440,12 @@ namespace Dash
 		mD3DCommandList->RSSetScissorRects(1, &rect);
 	}
 
+	void FGraphicsCommandContext::SetViewportAndScissor(UINT x, UINT y, UINT width, UINT height)
+	{
+		SetViewport(static_cast<float>(x), static_cast<float>(y), static_cast<float>(width), static_cast<float>(height));
+		SetScissor(x, y, x + width, y + height);
+	}
+
 	void FGraphicsCommandContext::SetStencilRef(UINT stencilRef)
 	{
 		mD3DCommandList->OMSetStencilRef(stencilRef);

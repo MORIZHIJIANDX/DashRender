@@ -141,6 +141,7 @@ namespace Dash
 		void SetViewport(Scalar x, Scalar y, Scalar w, Scalar h, Scalar minDepth = 0.0f, Scalar maxDepth = 1.0f);
 		void SetScissor(const D3D12_RECT& rect);
 		void SetScissor(UINT left, UINT top, UINT right, UINT bottom);
+		void SetViewportAndScissor(UINT x, UINT y, UINT width, UINT height);
 		void SetStencilRef(UINT stencilRef);
 		void SetBlendFactor(const FLinearColor& color);
 		void SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY type);

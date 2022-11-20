@@ -34,7 +34,7 @@ namespace Dash
 	void FRootSignature::InitStaticSampler(UINT shaderRegister, const D3D12_SAMPLER_DESC& desc, D3D12_SHADER_VISIBILITY visibility)
 	{
 		ASSERT(mNumInitializedStaticSamplers < mNumStaticSamplers);
-		D3D12_STATIC_SAMPLER_DESC staticSamplerDec{};
+		D3D12_STATIC_SAMPLER_DESC& staticSamplerDec = mSamplerArray[mNumInitializedStaticSamplers++];
 
 		staticSamplerDec.AddressU = desc.AddressU;
 		staticSamplerDec.AddressV = desc.AddressV;

@@ -17,9 +17,11 @@ namespace Dash
 
 	FShaderMap ShaderMap;
 	FShaderResource PSShader;
+	FShaderResource PSShaderPresent;
 	FShaderResource VSShader;
 	FRootSignature RootSignature{};
-	FGraphicsPSO PSO{"DisplayPSO"};
+	FGraphicsPSO PSO{ "DisplayPSO" };
+	FGraphicsPSO PresentPSO{ "PresentPSO" };
 	FGpuVertexBuffer VertexBuffer;
 	//FGpuIndexBuffer IndexBuffer;
 
@@ -48,12 +50,28 @@ namespace Dash
 		psInfo.Finalize();
 		PSShader = ShaderMap.LoadShader(psInfo);
 
+		FShaderCreationInfo psPresentInfo{ "..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl" ,  "PS_SampleColor" };
+		psPresentInfo.Finalize();
+		PSShaderPresent = ShaderMap.LoadShader(psPresentInfo);
+
 		FShaderCreationInfo vsInfo{ "..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl" ,  "VS_Main" };
 		vsInfo.Finalize();
 		VSShader = ShaderMap.LoadShader(vsInfo);
 
-		RootSignature.Reset(1, 0);
-		RootSignature[0].InitAsRootConstantBufferView(0, D3D12_SHADER_VISIBILITY_ALL);
+		D3D12_SAMPLER_DESC sampler{};
+		sampler.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
+		sampler.AddressU = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+		sampler.AddressV = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+		sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+		sampler.MipLODBias = 0;
+		sampler.MaxAnisotropy = 0;
+		sampler.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+		sampler.MinLOD = 0.0f;
+		sampler.MaxLOD = D3D12_FLOAT32_MAX;
+
+		RootSignature.Reset(1, 1);
+		RootSignature[0].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1);
+		RootSignature.InitStaticSampler(0, sampler, D3D12_SHADER_VISIBILITY_PIXEL);
 		RootSignature.Finalize("DisplayRootSignature", D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 		D3D12_RASTERIZER_DESC RasterizerDefault{};
@@ -72,7 +90,6 @@ namespace Dash
 		D3D12_RASTERIZER_DESC RasterizerTwoSided{};
 		RasterizerTwoSided = RasterizerDefault;
 		RasterizerTwoSided.CullMode = D3D12_CULL_MODE_NONE;
-
 
 		D3D12_BLEND_DESC alphaBlend{};
 		alphaBlend.IndependentBlendEnable = FALSE;
@@ -116,6 +133,10 @@ namespace Dash
 		PSO.SetSamplerMask(UINT_MAX);
 		PSO.SetRenderTargetFormat(mSwapChainFormat, DXGI_FORMAT_D32_FLOAT);
 		PSO.Finalize();
+
+		PresentPSO = PSO;
+		PresentPSO.SetPixelShader(CD3DX12_SHADER_BYTECODE{ PSShaderPresent.ShaderCode->data(), PSShaderPresent.ShaderCode->size() });
+		PresentPSO.Finalize();
 	
 		VertexData.resize(3);
 		VertexData[0].Pos = FVector3f{-1.0f, 3.0f, 0.5f};
@@ -169,15 +190,29 @@ namespace Dash
 	{
 		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("Present");
 
-		graphicsContext.SetRenderTarget(FGraphicsCore::Display->GetDisplayBuffer());
-		graphicsContext.ClearColor(FGraphicsCore::Display->GetDisplayBuffer(), FLinearColor::Gray);
-		graphicsContext.SetRootSignature(RootSignature);
-		graphicsContext.SetPipelineState(PSO);
-		graphicsContext.SetViewport(0.0f, 0.0f, IGameApp::GetInstance()->GetWindowWidth(), IGameApp::GetInstance()->GetWindowHeight());
-		graphicsContext.SetScissor(0, 0, IGameApp::GetInstance()->GetWindowWidth(), IGameApp::GetInstance()->GetWindowHeight());
-		graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		//graphicsContext.SetVertexBuffer(0, VertexBuffer);
-		graphicsContext.Draw(3);
+		{
+			graphicsContext.SetRenderTarget(mDisplayBuffer);
+			graphicsContext.ClearColor(mDisplayBuffer, FLinearColor::Yellow);
+			graphicsContext.SetRootSignature(RootSignature);
+			graphicsContext.SetPipelineState(PSO);
+			graphicsContext.SetViewportAndScissor(0, 0, IGameApp::GetInstance()->GetWindowWidth(), IGameApp::GetInstance()->GetWindowHeight());
+			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			//graphicsContext.SetVertexBuffer(0, VertexBuffer);
+			graphicsContext.Draw(3);
+		}
+
+		{
+			graphicsContext.SetRenderTarget(FGraphicsCore::Display->GetDisplayBuffer());
+			graphicsContext.ClearColor(FGraphicsCore::Display->GetDisplayBuffer(), FLinearColor::Gray);
+			graphicsContext.SetRootSignature(RootSignature);
+			graphicsContext.SetPipelineState(PresentPSO);
+			graphicsContext.SetViewportAndScissor(0, 0, IGameApp::GetInstance()->GetWindowWidth(), IGameApp::GetInstance()->GetWindowHeight());
+			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			graphicsContext.SetShaderResourceView(0, 0, mDisplayBuffer);
+			//graphicsContext.SetVertexBuffer(0, VertexBuffer);
+			graphicsContext.Draw(3);
+		}
+
 
 		graphicsContext.TransitionBarrier(FGraphicsCore::Display->GetDisplayBuffer(), D3D12_RESOURCE_STATE_PRESENT);
 
