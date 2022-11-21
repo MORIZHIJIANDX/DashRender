@@ -38,7 +38,7 @@ namespace Dash
 	{
 		ASSERT(rootParameterIndex < MaxDescriptorTables && numDescriptors < mNumDescriptorsPerHeap);
 
-		ASSERT_MSG((offset + numDescriptors) < mRootSignatureDescriptorTableCache[rootParameterIndex].NumDescriptors, 
+		ASSERT_MSG((offset + numDescriptors) <= mRootSignatureDescriptorTableCache[rootParameterIndex].NumDescriptors, 
 			"Number of descriptors exceeds the number of descriptors in the root signature descriptor table.");
 
 		D3D12_CPU_DESCRIPTOR_HANDLE* descriptorHandlePtr = mRootSignatureDescriptorTableCache[rootParameterIndex].BaseDescriptor + offset;
@@ -110,7 +110,7 @@ namespace Dash
 
 			ASSERT(numDescriptors > 0);
 
-			FDescriptorTableCache descriptorTableCache = mRootSignatureDescriptorTableCache[rootParameterIndex];
+			FDescriptorTableCache& descriptorTableCache = mRootSignatureDescriptorTableCache[rootParameterIndex];
 			descriptorTableCache.NumDescriptors = numDescriptors;
 			descriptorTableCache.BaseDescriptor = mDescriptorHandleCache.get() + currentOffset;
 

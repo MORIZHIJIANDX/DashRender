@@ -70,7 +70,7 @@ namespace Dash
 		sampler.MaxLOD = D3D12_FLOAT32_MAX;
 
 		RootSignature.Reset(1, 1);
-		RootSignature[0].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1);
+		RootSignature[0].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1, D3D12_SHADER_VISIBILITY_PIXEL);
 		RootSignature.InitStaticSampler(0, sampler, D3D12_SHADER_VISIBILITY_PIXEL);
 		RootSignature.Finalize("DisplayRootSignature", D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
@@ -134,8 +134,16 @@ namespace Dash
 		PSO.SetRenderTargetFormat(mSwapChainFormat, DXGI_FORMAT_D32_FLOAT);
 		PSO.Finalize();
 
-		PresentPSO = PSO;
+		PresentPSO.SetRootSignature(RootSignature);
+		PresentPSO.SetBlendState(BlendDisable);
+		PresentPSO.SetDepthStencilState(DepthStateDisabled);
+		PresentPSO.SetVertexShader(CD3DX12_SHADER_BYTECODE{ VSShader.ShaderCode->data(), VSShader.ShaderCode->size() });
 		PresentPSO.SetPixelShader(CD3DX12_SHADER_BYTECODE{ PSShaderPresent.ShaderCode->data(), PSShaderPresent.ShaderCode->size() });
+		PresentPSO.SetRasterizerState(RasterizerTwoSided);
+		PresentPSO.SetInputLayout(inputLayout);
+		PresentPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+		PresentPSO.SetSamplerMask(UINT_MAX);
+		PresentPSO.SetRenderTargetFormat(mSwapChainFormat, DXGI_FORMAT_D32_FLOAT);
 		PresentPSO.Finalize();
 	
 		VertexData.resize(3);
@@ -192,7 +200,7 @@ namespace Dash
 
 		{
 			graphicsContext.SetRenderTarget(mDisplayBuffer);
-			graphicsContext.ClearColor(mDisplayBuffer, FLinearColor::Yellow);
+			graphicsContext.ClearColor(mDisplayBuffer, mDisplayBuffer.GetClearColor());
 			graphicsContext.SetRootSignature(RootSignature);
 			graphicsContext.SetPipelineState(PSO);
 			graphicsContext.SetViewportAndScissor(0, 0, IGameApp::GetInstance()->GetWindowWidth(), IGameApp::GetInstance()->GetWindowHeight());

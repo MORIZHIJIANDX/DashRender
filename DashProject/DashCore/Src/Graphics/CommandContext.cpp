@@ -245,7 +245,7 @@ namespace Dash
 	{
 		UINT nonNullHeaps = 0;
 		ID3D12DescriptorHeap* heapsToBind[D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES];
-		for (UINT index = 0; index < nonNullHeaps; ++index)
+		for (UINT index = 0; index < D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES; ++index)
 		{
 			ID3D12DescriptorHeap* heapPtr = mDescriptorHeaps[index];
 			if (heapPtr != nullptr)
@@ -299,6 +299,11 @@ namespace Dash
 
 	void FCommandContext::Reset()
 	{
+		for (int i = 0; i < D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES; ++i)
+		{
+			mDescriptorHeaps[i] = nullptr;
+		}
+
 		mResourceStateTracker.Reset();
 		mDynamicViewDescriptor.Reset();
 		mDynamicSamplerDescriptor.Reset();

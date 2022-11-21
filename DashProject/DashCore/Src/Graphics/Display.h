@@ -34,7 +34,7 @@ namespace Dash
 		uint32_t mDisplayHeight;
 		DXGI_FORMAT mSwapChainFormat;
 
-		FColorBuffer mDisplayBuffer;
+		FColorBuffer mDisplayBuffer{FLinearColor::Yellow};
 		FColorBuffer mSwapChainBuffer[SWAP_CHAIN_BUFFER_COUNT];
 		uint64_t mFenceValue[SWAP_CHAIN_BUFFER_COUNT];
 

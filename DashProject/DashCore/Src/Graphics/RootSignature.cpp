@@ -31,7 +31,7 @@ namespace Dash
 		return mNumDescriptorsPerTable[rootParameterIndex];
 	}
 
-	void FRootSignature::InitStaticSampler(UINT shaderRegister, const D3D12_SAMPLER_DESC& desc, D3D12_SHADER_VISIBILITY visibility)
+	void FRootSignature::InitStaticSampler(UINT shaderRegister, const D3D12_SAMPLER_DESC& desc, D3D12_SHADER_VISIBILITY visibility, UINT space /* = 0 */)
 	{
 		ASSERT(mNumInitializedStaticSamplers < mNumStaticSamplers);
 		D3D12_STATIC_SAMPLER_DESC& staticSamplerDec = mSamplerArray[mNumInitializedStaticSamplers++];
@@ -46,7 +46,7 @@ namespace Dash
 		staticSamplerDec.MaxLOD = desc.MaxLOD;
 		staticSamplerDec.MinLOD = desc.MinLOD;
 		staticSamplerDec.MipLODBias = desc.MipLODBias;
-		staticSamplerDec.RegisterSpace = staticSamplerDec.RegisterSpace;
+		staticSamplerDec.RegisterSpace = space;
 		staticSamplerDec.ShaderRegister = shaderRegister;
 		staticSamplerDec.ShaderVisibility = visibility;
 

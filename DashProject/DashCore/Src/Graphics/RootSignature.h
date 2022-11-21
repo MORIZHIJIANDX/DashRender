@@ -138,7 +138,7 @@ namespace Dash
 
 		uint32_t GetNumDescriptors(uint32_t rootParameterIndex) const;
 
-		void InitStaticSampler(UINT shaderRegister, const D3D12_SAMPLER_DESC& desc, D3D12_SHADER_VISIBILITY visibility);
+		void InitStaticSampler(UINT shaderRegister, const D3D12_SAMPLER_DESC& desc, D3D12_SHADER_VISIBILITY visibility, UINT space = 0);
 
 		void Finalize(const std::string& name, D3D12_ROOT_SIGNATURE_FLAGS flag = D3D12_ROOT_SIGNATURE_FLAG_NONE);
 
