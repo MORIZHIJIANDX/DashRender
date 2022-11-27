@@ -76,7 +76,7 @@ namespace Dash
     D3D12_UNORDERED_ACCESS_VIEW_DESC FColorBuffer::GetUAVDesc(const D3D12_RESOURCE_DESC& resourceDesc, UINT mipSlice, UINT arraySlice, UINT planeSlice) const
     {
         D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
-        uavDesc.Format = GetUAVFormat(resourceDesc.Format);
+        uavDesc.Format = D3DUnorderedAccessViewFormat(resourceDesc.Format);
 
         switch (resourceDesc.Dimension)
         {

@@ -63,6 +63,12 @@ namespace Dash
 
 	using FFormatVariant = std::variant<ETypelessColorFormat, EColorFormat, EDepthStencilFormat>;
 
+	DXGI_FORMAT D3DTypelessFormat(DXGI_FORMAT format);
+	DXGI_FORMAT D3DUnorderedAccessViewFormat(DXGI_FORMAT format);
+	DXGI_FORMAT D3DDepthStencilViewFormat(DXGI_FORMAT format);
+	DXGI_FORMAT D3DDepthFormat(DXGI_FORMAT format);
+	DXGI_FORMAT D3DStencilFormat(DXGI_FORMAT format);
+
 	DXGI_FORMAT D3DFormat(ETypelessColorFormat type);
 	DXGI_FORMAT D3DFormat(EColorFormat type);
 	DXGI_FORMAT D3DFormat(EDepthStencilFormat type);
@@ -73,4 +79,60 @@ namespace Dash
 
 	FFormatVariant FormatFromD3DFormat(DXGI_FORMAT format);
 	EColorSpace ColorSpaceFromD3DSpace(DXGI_COLOR_SPACE_TYPE space);
+
+	size_t BytesPerPixel(DXGI_FORMAT format);
+	size_t BytesPerPixel(ETypelessColorFormat format);
+	size_t BytesPerPixel(EColorFormat format);
+	size_t BytesPerPixel(EDepthStencilFormat format);
+	size_t BytesPerPixel(FFormatVariant format);
+
+	struct FResourceMagnitude
+	{
+		FResourceMagnitude(uint32_t width, uint32_t height, uint32_t depth);
+		FResourceMagnitude(uint32_t width, uint32_t height);
+		FResourceMagnitude(uint32_t width);
+		FResourceMagnitude() = default;
+
+		uint32_t LargestMagnitude() const;
+		bool operator==(const FResourceMagnitude& rhs);
+		bool operator!=(const FResourceMagnitude& rhs);
+
+		FResourceMagnitude XMultiplied(float m) const;
+		FResourceMagnitude XYMultiplied(float m) const;
+		FResourceMagnitude XYZMultiplied(float m) const;
+
+		uint64_t Width = 1;
+		uint64_t Height = 1;
+		uint64_t Depth = 1;
+	};
+
+	struct TextureProperties
+	{
+		FFormatVariant Format;
+		ETextureDimension Dimension;
+		FResourceMagnitude Dimensions;
+		FClearValue OptimizedClearValue;
+		ResourceState InitialStateMask;		//添加 resource state
+		ResourceState ExpectedStateMask;
+		uint32_t MipCount;
+
+		/*
+		TextureProperties(FFormatVariant format, ETextureDimension dimension, const FResourceMagnitude& dimensions,
+			const FClearValue& optimizedClearValue, ResourceState initialStateMask, ResourceState expectedStateMask, uint32_t mipCount = 1);
+
+		TextureProperties(FFormatVariant format, ETextureDimension dimension, const FResourceMagnitude& dimensions,
+			ResourceState initialStateMask, ResourceState expectedStateMask, uint32_t mipCount = 1);
+
+		TextureProperties(FFormatVariant format, ETextureDimension dimension, const FResourceMagnitude& dimensions,
+			const FClearValue& optimizedClearValue, ResourceState initialStateMask, uint32_t mipCount = 1);
+
+		TextureProperties(FFormatVariant format, ETextureDimension dimension, const FResourceMagnitude& dimensions,
+			ResourceState initialStateMask, uint32_t mipCount = 1);
+
+		FResourceMagnitude MipSize(uint8_t mip) const;
+		*/
+
+		//添加 Create 方法
+		TextureProperties Create();
+	};
 }
