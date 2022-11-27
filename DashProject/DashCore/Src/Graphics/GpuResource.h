@@ -2,6 +2,7 @@
 #include <wrl.h>
 #include "DX12Helper.h"
 #include "GpuResourcesStateTracker.h"
+#include "ResourceFormat.h"
 
 namespace Dash
 {

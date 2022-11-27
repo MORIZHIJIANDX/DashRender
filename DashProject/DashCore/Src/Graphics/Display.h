@@ -10,7 +10,7 @@ namespace Dash
 	class FDisplay
 	{
 	public:
-		FDisplay(uint32_t displayWdith, uint32_t displayHeight, DXGI_FORMAT swapChainFormat = DXGI_FORMAT_R10G10B10A2_UNORM)
+		FDisplay(uint32_t displayWdith, uint32_t displayHeight, EColorFormat swapChainFormat = EColorFormat::RGB10A2_Unorm)
 			: mDisplayWdith(displayWdith)
 			, mDisplayHeight(displayHeight)
 			, mSwapChainFormat(swapChainFormat)
@@ -32,7 +32,7 @@ namespace Dash
 	protected:
 		uint32_t mDisplayWdith;
 		uint32_t mDisplayHeight;
-		DXGI_FORMAT mSwapChainFormat;
+		EColorFormat mSwapChainFormat;
 
 		FColorBuffer mDisplayBuffer{FLinearColor::Yellow};
 		FColorBuffer mSwapChainBuffer[SWAP_CHAIN_BUFFER_COUNT];

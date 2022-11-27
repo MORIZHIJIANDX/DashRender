@@ -2,7 +2,7 @@
 
 #include "PixelBuffer.h"
 #include "CpuDescriptorAllocation.h"
-#include "../Math/Color.h"
+#include "Math/Color.h"
 
 namespace Dash
 {
@@ -17,9 +17,9 @@ namespace Dash
 
 		void Create(const std::string& name, const D3D12_RESOURCE_DESC& desc, const FLinearColor& clearColor = FLinearColor{});
 
-		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, DXGI_FORMAT format);
+		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EColorFormat format);
 
-		void CreateArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, DXGI_FORMAT format);
+		void CreateArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, EColorFormat format);
 
 		D3D12_CPU_DESCRIPTOR_HANDLE GetRenderTargetView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE GetShaderResourceView() const;

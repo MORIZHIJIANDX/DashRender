@@ -79,17 +79,17 @@ namespace Dash
 	class FTypedBuffer : public FGpuConstantBuffer
 	{
 	public:
-		FTypedBuffer(DXGI_FORMAT format)
+		FTypedBuffer(FFormatVariant format)
 			: mFormat(format)
 		{}
 
-		DXGI_FORMAT GetFormat() const { return mFormat; };
+		FFormatVariant GetFormat() const { return mFormat; };
 
 	protected:
 		virtual void CreateViews() override;
 
 	protected:
-		DXGI_FORMAT mFormat;
+		FFormatVariant mFormat;
 	};
 
 	class FGpuVertexBuffer : public FGpuBuffer

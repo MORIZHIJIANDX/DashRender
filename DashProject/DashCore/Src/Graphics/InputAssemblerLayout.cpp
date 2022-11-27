@@ -3,10 +3,10 @@
 
 namespace Dash
 {
-	void FInputAssemblerLayout::AddPerVertexLayoutElement(const std::string& semanticName, uint32_t semanticIndex, DXGI_FORMAT format, uint32_t inputSlot, uint32_t alignedOffset)
+	void FInputAssemblerLayout::AddPerVertexLayoutElement(const std::string& semanticName, uint32_t semanticIndex, EColorFormat format, uint32_t inputSlot, uint32_t alignedOffset)
 	{
 		D3D12_INPUT_ELEMENT_DESC desc{};
-		desc.Format = format;
+		desc.Format = D3DFormat(format);
 		desc.AlignedByteOffset = alignedOffset;
 		desc.InputSlot = inputSlot;
 		desc.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
@@ -21,10 +21,10 @@ namespace Dash
 		SetSemanticNames();
 	}
 
-	void FInputAssemblerLayout::AddPerInstanceLayoutElement(const std::string& semanticName, uint32_t semanticIndex, DXGI_FORMAT format, uint32_t inputSlot, uint32_t alignedOffset, uint32_t stepRate)
+	void FInputAssemblerLayout::AddPerInstanceLayoutElement(const std::string& semanticName, uint32_t semanticIndex, EColorFormat format, uint32_t inputSlot, uint32_t alignedOffset, uint32_t stepRate)
 	{
 		D3D12_INPUT_ELEMENT_DESC desc{};
-		desc.Format = format;
+		desc.Format = D3DFormat(format);
 		desc.AlignedByteOffset = alignedOffset;
 		desc.InputSlot = inputSlot;
 		desc.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA;

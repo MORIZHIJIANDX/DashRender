@@ -198,6 +198,7 @@
     <ClInclude Include="Src\Graphics\InputAssemblerLayout.h" />
     <ClInclude Include="Src\Graphics\PipelineStateObject.h" />
     <ClInclude Include="Src\Graphics\PixelBuffer.h" />
+    <ClInclude Include="Src\Graphics\ResourceFormat.h" />
     <ClInclude Include="Src\Graphics\RootSignature.h" />
     <ClInclude Include="Src\Graphics\SamplerDesc.h" />
     <ClInclude Include="Src\Graphics\ShaderCompiler.h" />
@@ -279,6 +280,7 @@
     <ClCompile Include="Src\Graphics\InputAssemblerLayout.cpp" />
     <ClCompile Include="Src\Graphics\PipelineStateObject.cpp" />
     <ClCompile Include="Src\Graphics\PixelBuffer.cpp" />
+    <ClCompile Include="Src\Graphics\ResourceFormat.cpp" />
     <ClCompile Include="Src\Graphics\RootSignature.cpp" />
     <ClCompile Include="Src\Graphics\SamplerDesc.cpp" />
     <ClCompile Include="Src\Graphics\ShaderCompiler.cpp" />

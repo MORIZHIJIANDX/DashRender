@@ -6,14 +6,14 @@
 
 namespace Dash
 {	
-	D3D12_RESOURCE_DESC FPixelBuffer::DescribeTexture2D(uint32_t width, uint32_t height, uint32_t depthOrArraySize, uint32_t numMips, DXGI_FORMAT format, UINT flag)
+	D3D12_RESOURCE_DESC FPixelBuffer::DescribeTexture2D(uint32_t width, uint32_t height, uint32_t depthOrArraySize, uint32_t numMips, FFormatVariant format, UINT flag)
 	{
 		D3D12_RESOURCE_DESC desc{};
 		desc.Alignment = 0;
 		desc.DepthOrArraySize = static_cast<UINT16>(depthOrArraySize);
 		desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 		desc.Flags = static_cast<D3D12_RESOURCE_FLAGS>(flag);
-		desc.Format = GetBaseFormat(format);
+		desc.Format = GetBaseFormat(D3DFormat(format));
 		desc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 		desc.MipLevels = static_cast<UINT16>(numMips);
 		desc.Width = static_cast<UINT64>(width);
@@ -42,7 +42,7 @@ namespace Dash
 		mWidth = static_cast<uint32_t>(desc.Width);
 		mHeight = desc.Height;
 		mArraySize = desc.DepthOrArraySize;
-		mFormat = desc.Format;
+		mFormat = FormatFromD3DFormat(desc.Format);
 
 		SetName(name);
 
@@ -65,7 +65,7 @@ namespace Dash
 		mWidth = static_cast<uint32_t>(resourceDesc.Width);
 		mHeight = resourceDesc.Height;
 		mArraySize = resourceDesc.DepthOrArraySize;
-		mFormat = resourceDesc.Format;
+		mFormat = FormatFromD3DFormat(resourceDesc.Format);
 	}
 
 	void FPixelBuffer::CheckFeatureSupport()

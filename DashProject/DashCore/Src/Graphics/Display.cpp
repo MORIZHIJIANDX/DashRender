@@ -119,8 +119,8 @@ namespace Dash
 		DepthStateDisabled.BackFace = DepthStateDisabled.FrontFace;
 
 		FInputAssemblerLayout inputLayout;
-		inputLayout.AddPerVertexLayoutElement("POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0);
-		inputLayout.AddPerVertexLayoutElement("TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12);
+		inputLayout.AddPerVertexLayoutElement("POSITION", 0, EColorFormat::RGB32_Float, 0, 0);
+		inputLayout.AddPerVertexLayoutElement("TEXCOORD", 0, EColorFormat::RG32_Float, 0, 12);
 
 		PSO.SetRootSignature(RootSignature);
 		PSO.SetBlendState(BlendDisable);
@@ -131,7 +131,7 @@ namespace Dash
 		PSO.SetInputLayout(inputLayout);
 		PSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 		PSO.SetSamplerMask(UINT_MAX);
-		PSO.SetRenderTargetFormat(mSwapChainFormat, DXGI_FORMAT_D32_FLOAT);
+		PSO.SetRenderTargetFormat(mSwapChainFormat, EDepthStencilFormat::Depth32_Float);
 		PSO.Finalize();
 
 		PresentPSO.SetRootSignature(RootSignature);
@@ -143,7 +143,7 @@ namespace Dash
 		PresentPSO.SetInputLayout(inputLayout);
 		PresentPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 		PresentPSO.SetSamplerMask(UINT_MAX);
-		PresentPSO.SetRenderTargetFormat(mSwapChainFormat, DXGI_FORMAT_D32_FLOAT);
+		PresentPSO.SetRenderTargetFormat(mSwapChainFormat, EDepthStencilFormat::Depth32_Float);
 		PresentPSO.Finalize();
 	
 		VertexData.resize(3);
@@ -188,7 +188,7 @@ namespace Dash
 
 			DXGI_SWAP_CHAIN_DESC desc{};
 			DX_CALL(mSwapChain->GetDesc(&desc));
-			DX_CALL(mSwapChain->ResizeBuffers(SWAP_CHAIN_BUFFER_COUNT, displayWdith, displayHeight, mSwapChainFormat, desc.Flags));
+			DX_CALL(mSwapChain->ResizeBuffers(SWAP_CHAIN_BUFFER_COUNT, displayWdith, displayHeight, D3DFormat(mSwapChainFormat), desc.Flags));
 
 			CreateBuffers();
 		}
@@ -263,7 +263,7 @@ namespace Dash
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 		swapChainDesc.Width = displayWdith;
 		swapChainDesc.Height = displayHeight;
-		swapChainDesc.Format = mSwapChainFormat;
+		swapChainDesc.Format = D3DFormat(mSwapChainFormat);
 		swapChainDesc.Scaling = DXGI_SCALING_NONE;
 		swapChainDesc.SampleDesc.Quality = 0;
 		swapChainDesc.SampleDesc.Count = 1;

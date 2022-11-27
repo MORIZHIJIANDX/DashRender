@@ -140,7 +140,7 @@ namespace Dash
 	{
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
-		srvDesc.Format = mFormat;
+		srvDesc.Format = D3DFormat(mFormat);
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 		srvDesc.Buffer.NumElements = mElementCount;
 		srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
@@ -150,7 +150,7 @@ namespace Dash
 
 		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
 		uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
-		uavDesc.Format = mFormat;
+		uavDesc.Format = D3DFormat(mFormat);
 		uavDesc.Buffer.NumElements = mElementCount;
 		uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
 

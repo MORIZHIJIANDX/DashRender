@@ -61,30 +61,31 @@ namespace Dash
 		mPSODesc.PrimitiveTopologyType = primitiveTopologyType;
 	}
 
-	void FGraphicsPSO::SetDepthTargetFormat(DXGI_FORMAT depthTargetFormat, UINT msaaCount /*= 1*/, UINT msaaQuality /*= 0*/)
+	void FGraphicsPSO::SetDepthTargetFormat(EDepthStencilFormat depthTargetFormat, UINT msaaCount /*= 1*/, UINT msaaQuality /*= 0*/)
 	{
 		SetRenderTargetFormats(0, nullptr, depthTargetFormat, msaaCount, msaaQuality);
 	}
 
-	void FGraphicsPSO::SetRenderTargetFormat(DXGI_FORMAT renderTargetFormat, DXGI_FORMAT depthTargetFormat, UINT msaaCount /*= 1*/, UINT msaaQuality /*= 0*/)
+	void FGraphicsPSO::SetRenderTargetFormat(EColorFormat renderTargetFormat, EDepthStencilFormat depthTargetFormat, UINT msaaCount /*= 1*/, UINT msaaQuality /*= 0*/)
 	{
 		SetRenderTargetFormats(1, &renderTargetFormat, depthTargetFormat, msaaCount, msaaQuality);
 	}
 
-	void FGraphicsPSO::SetRenderTargetFormats(UINT numRTVs, const DXGI_FORMAT* renderTargetFormats, DXGI_FORMAT depthTargetFormat, UINT msaaCount /*= 1*/, UINT msaaQuality /*= 0*/)
+	void FGraphicsPSO::SetRenderTargetFormats(UINT numRTVs, const EColorFormat* renderTargetFormats, EDepthStencilFormat depthTargetFormat, UINT msaaCount /*= 1*/, UINT msaaQuality /*= 0*/)
 	{
 		ASSERT_MSG(numRTVs == 0 || renderTargetFormats != nullptr, "Null format array conflicts with non-zero length");
 		for (UINT i = 0; i < numRTVs; ++i)
 		{
-			ASSERT(renderTargetFormats[i] != DXGI_FORMAT_UNKNOWN);
-			mPSODesc.RTVFormats[i] = renderTargetFormats[i];
+			DXGI_FORMAT format = D3DFormat(renderTargetFormats[i]);
+			ASSERT(format != DXGI_FORMAT_UNKNOWN);
+			mPSODesc.RTVFormats[i] = format;
 		}
 		for (UINT i = numRTVs; i < mPSODesc.NumRenderTargets; ++i)
 		{
 			mPSODesc.RTVFormats[i] = DXGI_FORMAT_UNKNOWN;
 		}
 		mPSODesc.NumRenderTargets = numRTVs;
-		mPSODesc.DSVFormat = depthTargetFormat;
+		mPSODesc.DSVFormat = D3DFormat(depthTargetFormat);
 		mPSODesc.SampleDesc.Count = msaaCount;
 		mPSODesc.SampleDesc.Quality = msaaQuality;
 	}

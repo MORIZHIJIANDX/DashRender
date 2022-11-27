@@ -25,13 +25,15 @@
 #include <map>
 #include <unordered_map>
 #include <set>
+#include <variant>
 
-#include "../Consolid/Consolid.h"
-#include "../Utility/LogManager.h"
-#include "../Utility/Assert.h"
-#include "../Utility/Events.h"
+#include "Consolid/Consolid.h"
+#include "Utility/LogManager.h"
+#include "Utility/Assert.h"
+#include "Utility/Events.h"
 
-#include "../Math/MathType.h"
+#include "Math/MathType.h"
+
 
 static void SetThreadName(std::thread& thread, const char* threadName)
 {
