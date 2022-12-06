@@ -1,5 +1,5 @@
 #include "PCH.h"
-#include "ResourceProperty.h"
+#include "ResourceDescription.h"
 
 namespace Dash
 {
