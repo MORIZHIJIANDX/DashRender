@@ -121,10 +121,10 @@
     <ClInclude Include="Src\Graphics\PixelBuffer.h">
       <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\ResourceFormat.h">
+    <ClInclude Include="Src\Graphics\ResourceDescription.h">
       <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\ResourceProperty.h">
+    <ClInclude Include="Src\Graphics\ResourceFormat.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\ResourceState.h">
@@ -373,10 +373,10 @@
     <ClCompile Include="Src\Graphics\PixelBuffer.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Graphics\ResourceFormat.cpp">
+    <ClCompile Include="Src\Graphics\ResourceDescription.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Graphics\ResourceProperty.cpp">
+    <ClCompile Include="Src\Graphics\ResourceFormat.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\ResourceState.cpp">
