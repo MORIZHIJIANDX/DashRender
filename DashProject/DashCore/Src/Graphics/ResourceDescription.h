@@ -6,19 +6,19 @@ namespace Dash
 {
 	struct FTextureProperties
 	{
-		FFormatVariant Format;
+		EResourceFormat Format;
 		ETextureDimension Dimension;
 		FResourceMagnitude Magnitude;
 		FClearValue OptimizedClearValue;
 		EResourceState InitialStateMask;
 		uint32_t MipCount;
 
-		static FTextureProperties CreateTextureProperties(FFormatVariant format, ETextureDimension dimension, const FResourceMagnitude& magnitude,
+		static FTextureProperties CreateTextureProperties(EResourceFormat format, ETextureDimension dimension, const FResourceMagnitude& magnitude,
 			const FClearValue& optimizedClearValue, EResourceState initialStateMask = EResourceState::Common, uint32_t mipCount = 1);
 
-		static FTextureProperties CreateTextureProperties1D(FFormatVariant format, uint32_t width, const FClearValue& optimizedClearValue, EResourceState initialStateMask = EResourceState::Common, uint32_t mipCount = 1);
-		static FTextureProperties CreateTextureProperties2D(FFormatVariant format, uint32_t width, uint32_t height, const FClearValue& optimizedClearValue, EResourceState initialStateMask = EResourceState::Common, uint32_t mipCount = 1);
-		static FTextureProperties CreateTextureProperties3D(FFormatVariant format, uint32_t width, uint32_t height, uint32_t depth, const FClearValue& optimizedClearValue, EResourceState initialStateMask = EResourceState::Common, uint32_t mipCount = 1);
+		static FTextureProperties CreateTextureProperties1D(EResourceFormat format, uint32_t width, const FClearValue& optimizedClearValue, EResourceState initialStateMask = EResourceState::Common, uint32_t mipCount = 1);
+		static FTextureProperties CreateTextureProperties2D(EResourceFormat format, uint32_t width, uint32_t height, const FClearValue& optimizedClearValue, EResourceState initialStateMask = EResourceState::Common, uint32_t mipCount = 1);
+		static FTextureProperties CreateTextureProperties3D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t depth, const FClearValue& optimizedClearValue, EResourceState initialStateMask = EResourceState::Common, uint32_t mipCount = 1);
 
 		FResourceMagnitude MipSize(uint8_t mip) const;
 	};

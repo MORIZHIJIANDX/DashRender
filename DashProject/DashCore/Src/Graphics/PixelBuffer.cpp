@@ -6,7 +6,7 @@
 
 namespace Dash
 {	
-	D3D12_RESOURCE_DESC FPixelBuffer::DescribeTexture2D(uint32_t width, uint32_t height, uint32_t depthOrArraySize, uint32_t numMips, FFormatVariant format, UINT flag)
+	D3D12_RESOURCE_DESC FPixelBuffer::DescribeTexture2D(uint32_t width, uint32_t height, uint32_t depthOrArraySize, uint32_t numMips, EResourceFormat format, UINT flag)
 	{
 		D3D12_RESOURCE_DESC desc{};
 		desc.Alignment = 0;
@@ -42,7 +42,7 @@ namespace Dash
 		mWidth = static_cast<uint32_t>(desc.Width);
 		mHeight = desc.Height;
 		mArraySize = desc.DepthOrArraySize;
-		mFormat = FormatFromD3DFormat(desc.Format);
+		mFormat = ResourceFormatFromD3DFormat(desc.Format);
 
 		SetName(name);
 
@@ -65,7 +65,7 @@ namespace Dash
 		mWidth = static_cast<uint32_t>(resourceDesc.Width);
 		mHeight = resourceDesc.Height;
 		mArraySize = resourceDesc.DepthOrArraySize;
-		mFormat = FormatFromD3DFormat(resourceDesc.Format);
+		mFormat = ResourceFormatFromD3DFormat(resourceDesc.Format);
 	}
 
 	void FPixelBuffer::CheckFeatureSupport()

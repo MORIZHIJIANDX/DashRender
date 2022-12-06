@@ -37,8 +37,10 @@ namespace Dash
         CreateViews();
     }
 
-    void FColorBuffer::Create(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EColorFormat format)
+    void FColorBuffer::Create(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format)
     {
+        ASSERT(IsColorFormat(format));
+
         mNumMips = (numMips == 0 ? ComputeNumMips(width, height) : numMips);
         D3D12_RESOURCE_FLAGS flags = CombineResourceFlgs();
         D3D12_RESOURCE_DESC desc = DescribeTexture2D(width, height, 1, numMips, format, flags);
@@ -57,8 +59,10 @@ namespace Dash
         CreateViews();
     }
 
-    void FColorBuffer::CreateArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, EColorFormat format)
+    void FColorBuffer::CreateArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, EResourceFormat format)
     {
+        ASSERT(IsColorFormat(format));
+
         D3D12_RESOURCE_FLAGS flags = CombineResourceFlgs();
         D3D12_RESOURCE_DESC desc = DescribeTexture2D(width, height, arrayCount, 1, format, flags);
 

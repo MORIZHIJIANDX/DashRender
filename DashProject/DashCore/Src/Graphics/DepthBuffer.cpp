@@ -19,13 +19,15 @@ namespace Dash
         CreateViews();
 	}
 
-    void FDepthBuffer::Create(const std::string& name, uint32_t width, uint32_t height, EDepthStencilFormat format)
+    void FDepthBuffer::Create(const std::string& name, uint32_t width, uint32_t height, EResourceFormat format)
     {
         Create(name, width, height, 1, format);
     }
 
-    void FDepthBuffer::Create(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, EDepthStencilFormat format)
+    void FDepthBuffer::Create(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, EResourceFormat format)
     {
+        ASSERT(IsDepthStencilFormat(format));
+
         D3D12_RESOURCE_DESC desc = DescribeTexture2D(width, height, 1, 1, format, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
         desc.SampleDesc.Count = sampleCount;
 

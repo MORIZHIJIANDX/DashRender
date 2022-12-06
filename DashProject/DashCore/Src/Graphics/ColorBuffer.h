@@ -17,9 +17,9 @@ namespace Dash
 
 		void Create(const std::string& name, const D3D12_RESOURCE_DESC& desc, const FLinearColor& clearColor = FLinearColor{});
 
-		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EColorFormat format);
+		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format);
 
-		void CreateArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, EColorFormat format);
+		void CreateArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, EResourceFormat format);
 
 		D3D12_CPU_DESCRIPTOR_HANDLE GetRenderTargetView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE GetShaderResourceView() const;

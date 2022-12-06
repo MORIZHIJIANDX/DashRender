@@ -49,9 +49,9 @@ namespace Dash
 		void SetRasterizerState(const D3D12_RASTERIZER_DESC& rasterDesc);
 		void SetDepthStencilState(const D3D12_DEPTH_STENCIL_DESC& depthStencilDesc);
 		void SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopologyType);
-		void SetDepthTargetFormat(EDepthStencilFormat depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
-		void SetRenderTargetFormat(EColorFormat renderTargetFormat, EDepthStencilFormat depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
-		void SetRenderTargetFormats(UINT numRTVs, const EColorFormat* renderTargetFormats, EDepthStencilFormat depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
+		void SetDepthTargetFormat(EResourceFormat depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
+		void SetRenderTargetFormat(EResourceFormat renderTargetFormat, EResourceFormat depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
+		void SetRenderTargetFormats(UINT numRTVs, const EResourceFormat* renderTargetFormats, EResourceFormat depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
 		void SetInputLayout(const FInputAssemblerLayout& layout);
 		void SetPrimitiveRestart(D3D12_INDEX_BUFFER_STRIP_CUT_VALUE indexBufferProps);
 

@@ -128,8 +128,8 @@ namespace Dash
 		DepthStateDisabled.BackFace = DepthStateDisabled.FrontFace;
 
 		FInputAssemblerLayout inputLayout;
-		inputLayout.AddPerVertexLayoutElement("POSITION", 0, EColorFormat::RGB32_Float, 0, 0);
-		inputLayout.AddPerVertexLayoutElement("TEXCOORD", 0, EColorFormat::RG32_Float, 0, 12);
+		inputLayout.AddPerVertexLayoutElement("POSITION", 0, EResourceFormat::RGB32_Float, 0, 0);
+		inputLayout.AddPerVertexLayoutElement("TEXCOORD", 0, EResourceFormat::RG32_Float, 0, 12);
 
 		PSO.SetRootSignature(RootSignature);
 		PSO.SetBlendState(BlendDisable);
@@ -140,7 +140,7 @@ namespace Dash
 		PSO.SetInputLayout(inputLayout);
 		PSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 		PSO.SetSamplerMask(UINT_MAX);
-		PSO.SetRenderTargetFormat(mSwapChainFormat, EDepthStencilFormat::Depth32_Float);
+		PSO.SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
 		PSO.Finalize();
 
 		PresentPSO.SetRootSignature(RootSignature);
@@ -152,7 +152,7 @@ namespace Dash
 		PresentPSO.SetInputLayout(inputLayout);
 		PresentPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 		PresentPSO.SetSamplerMask(UINT_MAX);
-		PresentPSO.SetRenderTargetFormat(mSwapChainFormat, EDepthStencilFormat::Depth32_Float);
+		PresentPSO.SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
 		PresentPSO.Finalize();
 	
 		VertexData.resize(3);

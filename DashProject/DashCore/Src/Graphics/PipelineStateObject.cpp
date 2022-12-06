@@ -61,17 +61,17 @@ namespace Dash
 		mPSODesc.PrimitiveTopologyType = primitiveTopologyType;
 	}
 
-	void FGraphicsPSO::SetDepthTargetFormat(EDepthStencilFormat depthTargetFormat, UINT msaaCount /*= 1*/, UINT msaaQuality /*= 0*/)
+	void FGraphicsPSO::SetDepthTargetFormat(EResourceFormat depthTargetFormat, UINT msaaCount /*= 1*/, UINT msaaQuality /*= 0*/)
 	{
 		SetRenderTargetFormats(0, nullptr, depthTargetFormat, msaaCount, msaaQuality);
 	}
 
-	void FGraphicsPSO::SetRenderTargetFormat(EColorFormat renderTargetFormat, EDepthStencilFormat depthTargetFormat, UINT msaaCount /*= 1*/, UINT msaaQuality /*= 0*/)
+	void FGraphicsPSO::SetRenderTargetFormat(EResourceFormat renderTargetFormat, EResourceFormat depthTargetFormat, UINT msaaCount /*= 1*/, UINT msaaQuality /*= 0*/)
 	{
 		SetRenderTargetFormats(1, &renderTargetFormat, depthTargetFormat, msaaCount, msaaQuality);
 	}
 
-	void FGraphicsPSO::SetRenderTargetFormats(UINT numRTVs, const EColorFormat* renderTargetFormats, EDepthStencilFormat depthTargetFormat, UINT msaaCount /*= 1*/, UINT msaaQuality /*= 0*/)
+	void FGraphicsPSO::SetRenderTargetFormats(UINT numRTVs, const EResourceFormat* renderTargetFormats, EResourceFormat depthTargetFormat, UINT msaaCount /*= 1*/, UINT msaaQuality /*= 0*/)
 	{
 		ASSERT_MSG(numRTVs == 0 || renderTargetFormats != nullptr, "Null format array conflicts with non-zero length");
 		for (UINT i = 0; i < numRTVs; ++i)

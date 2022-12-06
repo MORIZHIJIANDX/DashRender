@@ -3,7 +3,7 @@
 
 namespace Dash
 {
-	void FInputAssemblerLayout::AddPerVertexLayoutElement(const std::string& semanticName, uint32_t semanticIndex, EColorFormat format, uint32_t inputSlot, uint32_t alignedOffset)
+	void FInputAssemblerLayout::AddPerVertexLayoutElement(const std::string& semanticName, uint32_t semanticIndex, EResourceFormat format, uint32_t inputSlot, uint32_t alignedOffset)
 	{
 		D3D12_INPUT_ELEMENT_DESC desc{};
 		desc.Format = D3DFormat(format);
@@ -21,7 +21,7 @@ namespace Dash
 		SetSemanticNames();
 	}
 
-	void FInputAssemblerLayout::AddPerInstanceLayoutElement(const std::string& semanticName, uint32_t semanticIndex, EColorFormat format, uint32_t inputSlot, uint32_t alignedOffset, uint32_t stepRate)
+	void FInputAssemblerLayout::AddPerInstanceLayoutElement(const std::string& semanticName, uint32_t semanticIndex, EResourceFormat format, uint32_t inputSlot, uint32_t alignedOffset, uint32_t stepRate)
 	{
 		D3D12_INPUT_ELEMENT_DESC desc{};
 		desc.Format = D3DFormat(format);

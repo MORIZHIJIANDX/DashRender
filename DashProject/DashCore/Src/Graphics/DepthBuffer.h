@@ -15,9 +15,9 @@ namespace Dash
 
 		void Create(const std::string& name, const D3D12_RESOURCE_DESC& desc, float clearDepth = 0.0f, uint8_t clearStencil = 0);
 
-		void Create(const std::string& name, uint32_t width, uint32_t height, EDepthStencilFormat format);
+		void Create(const std::string& name, uint32_t width, uint32_t height, EResourceFormat format);
 
-		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, EDepthStencilFormat format);
+		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, EResourceFormat format);
 
 		D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE GetShaderResourceView() const;
