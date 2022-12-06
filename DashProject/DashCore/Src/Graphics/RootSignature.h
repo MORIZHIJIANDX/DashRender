@@ -43,6 +43,7 @@ namespace Dash
 			mRootParameter.ShaderVisibility = visibility;
 			mRootParameter.Descriptor.ShaderRegister = shaderRegister;
 			mRootParameter.Descriptor.RegisterSpace = space;
+			mRootParameter.Descriptor.Flags = D3D12_ROOT_DESCRIPTOR_FLAG_NONE;
 		}
 
 		void InitAsRootShaderResourceView(UINT shaderRegister, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, UINT space = 0)
@@ -51,6 +52,7 @@ namespace Dash
 			mRootParameter.ShaderVisibility = visibility;
 			mRootParameter.Descriptor.ShaderRegister = shaderRegister;
 			mRootParameter.Descriptor.RegisterSpace = space;
+			mRootParameter.Descriptor.Flags = D3D12_ROOT_DESCRIPTOR_FLAG_NONE;
 		}
 
 		void InitAsRootUnorderAccessView(UINT shaderRegister, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, UINT space = 0)
@@ -59,6 +61,7 @@ namespace Dash
 			mRootParameter.ShaderVisibility = visibility;
 			mRootParameter.Descriptor.ShaderRegister = shaderRegister;
 			mRootParameter.Descriptor.RegisterSpace = space;
+			mRootParameter.Descriptor.Flags = D3D12_ROOT_DESCRIPTOR_FLAG_NONE;
 		}
 
 		void InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE type, UINT shaderRegister, UINT count, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, UINT space = 0)
@@ -72,23 +75,24 @@ namespace Dash
 			mRootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 			mRootParameter.ShaderVisibility = visibility;
 			mRootParameter.DescriptorTable.NumDescriptorRanges = rangeCount;
-			mRootParameter.DescriptorTable.pDescriptorRanges = new D3D12_DESCRIPTOR_RANGE[rangeCount];
+			mRootParameter.DescriptorTable.pDescriptorRanges = new D3D12_DESCRIPTOR_RANGE1[rangeCount];
 		}
 
 		void SetTableRange(UINT rangeIndex, D3D12_DESCRIPTOR_RANGE_TYPE type, UINT shaderRegister, UINT count, UINT space = 0)
 		{
-			D3D12_DESCRIPTOR_RANGE* range = const_cast<D3D12_DESCRIPTOR_RANGE*>(mRootParameter.DescriptorTable.pDescriptorRanges + rangeIndex);
+			D3D12_DESCRIPTOR_RANGE1* range = const_cast<D3D12_DESCRIPTOR_RANGE1*>(mRootParameter.DescriptorTable.pDescriptorRanges + rangeIndex);
 			range->BaseShaderRegister = shaderRegister;
 			range->NumDescriptors = count;
 			range->RangeType = type;
 			range->RegisterSpace = space;
 			range->OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+			range->Flags = D3D12_DESCRIPTOR_RANGE_FLAG_NONE;
 		}
 
-		const D3D12_ROOT_PARAMETER& operator() (void) const { return mRootParameter; }
+		const D3D12_ROOT_PARAMETER1& operator() (void) const { return mRootParameter; }
 
 	private: 
-		D3D12_ROOT_PARAMETER mRootParameter{};
+		D3D12_ROOT_PARAMETER1 mRootParameter{};
 	};
 
 	class FRootSignature
