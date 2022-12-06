@@ -41,9 +41,15 @@ namespace Dash
         FORCEINLINE void SetD3D12DebugName(ID3D12Object*, LPCWSTR)
         {
         }
+		FORCEINLINE void SetD3D12DebugName(ID3D12Object*, const std::string&)
+		{
+		}
         FORCEINLINE void SetD3D12DebugNameIndexed(ID3D12Object*, LPCWSTR, UINT)
         {
         }
+		FORCEINLINE void SetD3D12DebugNameIndexed(ID3D12Object*, const std::string&, UINT)
+		{
+		}
     #endif
     #define DASH_SET_D3D12_DEBUGNAME(x)                     SetD3D12DebugName(x, L#x)
     #define DASH_SET_D3D12_DEBUGNAME_INDEXED(x, n)           SetD3D12DebugNameIndexed(x[n], L#x, n)

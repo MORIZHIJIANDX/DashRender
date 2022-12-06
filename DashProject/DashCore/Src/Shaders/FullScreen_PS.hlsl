@@ -35,7 +35,8 @@ cbuffer FrameBuffer : register(b0)
 
 cbuffer FrameBuffer : register(b0)
 {
-	matrix ProjectionMatrix;
+	float4 TintColor;
+	float4 Params;
 };
 
 
@@ -58,7 +59,7 @@ float4 PS_Main(float4 position : SV_Position, float2 uv : TexCoord0) : SV_Target
 
 float4 PS_SampleColor(float4 position : SV_Position, float2 uv : TexCoord0) : SV_Target0
 {
-	return g_texture.Sample(g_sampler, uv);
+	return g_texture.Sample(g_sampler, uv) * TintColor;
 }
 
 

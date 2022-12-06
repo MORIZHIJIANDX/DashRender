@@ -150,10 +150,10 @@ namespace Dash
 	template<typename Scalar>
 	template<typename Scalar2>
 	FORCEINLINE constexpr TScalarArray<Scalar, 4>::TScalarArray(Scalar2 x, Scalar2 y, Scalar2 z, Scalar2 w) noexcept
-		: X(static_cast<Scalar>(X))
-		, Y(static_cast<Scalar>(Y))
-		, Z(static_cast<Scalar>(Z))
-		, W(static_cast<Scalar>(W))
+		: X(static_cast<Scalar>(x))
+		, Y(static_cast<Scalar>(y))
+		, Z(static_cast<Scalar>(z))
+		, W(static_cast<Scalar>(w))
 	{
 	}
 

@@ -16,6 +16,16 @@ namespace Dash
 
 		std::lock_guard<std::mutex> lock(mAllocationMutex);
 
+		for (int32_t contextType = 0; contextType < 4; ++contextType)
+		{
+			while (!mRetiredContexts[contextType].empty() && FGraphicsCore::CommandQueueManager->IsFenceCompleted(mRetiredContexts[contextType].front().first))
+			{
+				mRetiredContexts[contextType].front().second->ReleaseTrackedObjects();
+				mAvailableContexts[type].push(mRetiredContexts[contextType].front().second);
+				mRetiredContexts[contextType].pop();
+			}
+		}
+
 		auto& availableContext = mAvailableContexts[type];
 
 		FCommandContext* context = nullptr;
@@ -44,7 +54,7 @@ namespace Dash
 		ASSERT(context != nullptr);
 		std::lock_guard<std::mutex> lock(mAllocationMutex);
 		FGraphicsCore::CommandListManager->RetiredUsedCommandList(fenceValue, context->GetCommandList());
-		mAvailableContexts[context->mType].push(context);
+		mRetiredContexts[context->mType].emplace(std::make_pair(fenceValue, context));
 	}
 
 	void FCommandContextManager::ReleaseAllTrackObjects()

@@ -28,6 +28,7 @@ namespace Dash
 	private:
 		std::vector<std::unique_ptr<FCommandContext>> mContextPool[4];
 		std::queue<FCommandContext*> mAvailableContexts[4];
+		std::queue<std::pair<uint64_t, FCommandContext*>> mRetiredContexts[4];
 		std::mutex mAllocationMutex;
 	};
 

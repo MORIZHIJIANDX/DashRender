@@ -10,6 +10,7 @@
 #include "ShaderMap.h"
 #include "PipelineStateObject.h"
 #include "RootSignature.h"
+#include "GpuBuffer.h"
 
 namespace Dash
 {
@@ -29,6 +30,12 @@ namespace Dash
 	{
 		FVector3f Pos;
 		FVector2f UV;
+	};
+
+	struct ConstantParams
+	{
+		FVector4f TintColor;
+		FVector4f Params;
 	};
 
 	std::vector<Vertex> VertexData;
@@ -69,8 +76,10 @@ namespace Dash
 		sampler.MinLOD = 0.0f;
 		sampler.MaxLOD = D3D12_FLOAT32_MAX;
 
-		RootSignature.Reset(1, 1);
+		RootSignature.Reset(2, 1);
 		RootSignature[0].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1, D3D12_SHADER_VISIBILITY_PIXEL);
+		//RootSignature[1].InitAsRootConstantBufferView(0, D3D12_SHADER_VISIBILITY_PIXEL);
+		RootSignature[1].InitAsRootConstants(0, sizeof(ConstantParams), D3D12_SHADER_VISIBILITY_PIXEL);
 		RootSignature.InitStaticSampler(0, sampler, D3D12_SHADER_VISIBILITY_PIXEL);
 		RootSignature.Finalize("DisplayRootSignature", D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
@@ -210,6 +219,10 @@ namespace Dash
 		}
 
 		{
+			ConstantParams param;
+			param.TintColor = FVector4f{1.0f, 0.0f, 1.0f, 1.0f};
+			param.Params = FVector4f{ 1.0f, 1.0f, 0.5f, 1.0f };
+
 			graphicsContext.SetRenderTarget(FGraphicsCore::Display->GetDisplayBuffer());
 			graphicsContext.ClearColor(FGraphicsCore::Display->GetDisplayBuffer(), FLinearColor::Gray);
 			graphicsContext.SetRootSignature(RootSignature);
@@ -217,6 +230,8 @@ namespace Dash
 			graphicsContext.SetViewportAndScissor(0, 0, IGameApp::GetInstance()->GetWindowWidth(), IGameApp::GetInstance()->GetWindowHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			graphicsContext.SetShaderResourceView(0, 0, mDisplayBuffer);
+			//graphicsContext.SetRootConstantBufferView<ConstantParams>(1, param);
+			graphicsContext.Set32BitConstants<ConstantParams>(1, param);
 			//graphicsContext.SetVertexBuffer(0, VertexBuffer);
 			graphicsContext.Draw(3);
 		}
