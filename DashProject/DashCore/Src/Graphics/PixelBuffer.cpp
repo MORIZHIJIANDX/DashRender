@@ -13,7 +13,7 @@ namespace Dash
 		desc.DepthOrArraySize = static_cast<UINT16>(depthOrArraySize);
 		desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 		desc.Flags = static_cast<D3D12_RESOURCE_FLAGS>(flag);
-		desc.Format = D3DTypelessFormat(D3DFormat(format));
+		desc.Format = D3DBaseFormat(D3DFormat(format));
 		desc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 		desc.MipLevels = static_cast<UINT16>(numMips);
 		desc.Width = static_cast<UINT64>(width);

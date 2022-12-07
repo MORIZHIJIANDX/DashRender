@@ -23,6 +23,8 @@ namespace Dash
 		// Color Formats
 		R8_Unsigned_Norm, RG8_Usigned_Norm, RGBA8_Unsigned_Norm, RGBA16_Unsigned_Norm,
 
+		RGBA8_Unsigned_Norm_Srgb, BGRA8_Unsigned_Norm_Srgb,
+
 		BGRA8_Unsigned_Norm,
 
 		R8_Signed, RG8_Signed, RGBA8_Signed,
@@ -42,13 +44,16 @@ namespace Dash
 		BC1_Unsigned_Norm, BC2_Unsigned_Norm, BC3_Unsigned_Norm, BC4_Unsigned_Norm,
 		BC5_Unsigned_Norm, BC5_Signed_Norm, BC7_Unsigned_Norm,
 
+		BC1_Unsigned_Norm_Srgb, BC2_Unsigned_Norm_Srgb, BC3_Unsigned_Norm_Srgb, BC7_Unsigned_Norm_Srgb,
+
 		// Typeless Color Format
-		R8_Typeless, RG8_Typeless, RGBA8_Typeless,
+		R8_Typeless, RG8_Typeless, RGBA8_Typeless, BGRA8_Typeless,
 		R16_Typeless, RG16_Typeless, RGBA16_Typeless,
+		R24G8_Typeless, R32G8X24_Typeless,
 		R32_Typeless, RG32_Typeless, RGB32_Typeless, RGBA32_Typeless,
 
 		// Depth Stencil Format 
-		Depth24_Float_Stencil8_Unsigned, Depth32_Float
+		Depth16_Float, Depth24_Float_Stencil8_Unsigned, Depth32_Float, Depth32_Float_Stencil8_Unsigned
 	};
 
 	enum class EColorSpace : uint8_t
@@ -72,7 +77,7 @@ namespace Dash
 	};
 	ENABLE_BITMASK_OPERATORS(EFormatSupport);
 
-	DXGI_FORMAT D3DTypelessFormat(DXGI_FORMAT format);
+	DXGI_FORMAT D3DBaseFormat(DXGI_FORMAT format);
 	DXGI_FORMAT D3DUnorderedAccessViewFormat(DXGI_FORMAT format);
 	DXGI_FORMAT D3DDepthStencilViewFormat(DXGI_FORMAT format);
 	DXGI_FORMAT D3DDepthFormat(DXGI_FORMAT format);
@@ -80,6 +85,8 @@ namespace Dash
 
 	DXGI_FORMAT D3DFormat(EResourceFormat format);
 	DXGI_COLOR_SPACE_TYPE D3DColorSpace(EColorSpace space);
+
+	EResourceFormat BaseFormat(EResourceFormat format);
 
 	bool IsDepthStencilFormat(DXGI_FORMAT format);
 	bool IsDepthStencilFormat(EResourceFormat format);

@@ -18,7 +18,7 @@ namespace Dash
 
 		static D3D_ROOT_SIGNATURE_VERSION GetRootSignatureVersion();
 
-		static ID3D12Device* Device;
+		static ID3D12Device5* Device;
 		static FCommandQueueManager* CommandQueueManager;
 		static FCommandListManager* CommandListManager;
 		static FCpuDescriptorAllocatorManager* DescriptorAllocator;
@@ -34,6 +34,7 @@ namespace Dash
 	private:
 		static bool mTypedUAVLoadSupport_R11G11B10_FLOAT;
 		static bool mTypedUAVLoadSupport_R16G16B16A16_FLOAT;
+		static bool mSupportsUniversalHeaps;
 		static D3D_ROOT_SIGNATURE_VERSION mHighestRootSignatureVersion;
 	};
 }

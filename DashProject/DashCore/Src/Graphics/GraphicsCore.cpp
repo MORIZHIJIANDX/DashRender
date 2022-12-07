@@ -26,7 +26,7 @@ namespace Dash
 	static const uint32_t VendorID_AMD = 0x1002;
 	static const uint32_t VendorID_Intel = 0x8086;
 
-	ID3D12Device* FGraphicsCore::Device = nullptr;
+	ID3D12Device5* FGraphicsCore::Device = nullptr;
 	FCommandQueueManager* FGraphicsCore::CommandQueueManager = nullptr;
 	FCommandListManager* FGraphicsCore::CommandListManager = nullptr;
 	FCpuDescriptorAllocatorManager* FGraphicsCore::DescriptorAllocator = nullptr;
@@ -35,6 +35,7 @@ namespace Dash
 
 	bool FGraphicsCore::mTypedUAVLoadSupport_R11G11B10_FLOAT = false;
 	bool FGraphicsCore::mTypedUAVLoadSupport_R16G16B16A16_FLOAT = false;
+	bool FGraphicsCore::mSupportsUniversalHeaps = false;
 
 	D3D_ROOT_SIGNATURE_VERSION FGraphicsCore::mHighestRootSignatureVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;
 
@@ -184,7 +185,7 @@ namespace Dash
 				continue;
 			}
 
-			if (SUCCEEDED(D3D12CreateDevice(dxgiAdapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&FGraphicsCore::Device))))
+			if (SUCCEEDED(D3D12CreateDevice(dxgiAdapter.Get(), D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(&FGraphicsCore::Device))))
 			{
 				LOG_INFO << "Create Device With Adapter : " << FStringUtility::WideStringToUTF8(desc.Description);
 				LOG_INFO << "Adapter Memory " << desc.DedicatedVideoMemory / (1024 * 1024) << " MB";
@@ -320,6 +321,11 @@ namespace Dash
 					{
 						mTypedUAVLoadSupport_R16G16B16A16_FLOAT = true;
 					}
+				}
+
+				if (featureDataOptions.ResourceHeapTier != D3D12_RESOURCE_HEAP_TIER_1)
+				{
+					mSupportsUniversalHeaps = true;
 				}
 			}
 

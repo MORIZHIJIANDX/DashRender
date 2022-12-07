@@ -6,7 +6,7 @@
 
 namespace Dash
 {
-	DXGI_FORMAT D3DTypelessFormat(DXGI_FORMAT format)
+	DXGI_FORMAT D3DBaseFormat(DXGI_FORMAT format)
 	{
 		switch (format)
 		{
@@ -367,6 +367,9 @@ namespace Dash
 		case EResourceFormat::RGBA8_Unsigned_Norm:   return DXGI_FORMAT_R8G8B8A8_UNORM;
 		case EResourceFormat::RGBA16_Unsigned_Norm:  return DXGI_FORMAT_R16G16B16A16_UNORM;
 
+		case EResourceFormat::RGBA8_Unsigned_Norm_Srgb:   return DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		case EResourceFormat::BGRA8_Unsigned_Norm_Srgb:   return DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+
 		case EResourceFormat::BGRA8_Unsigned_Norm: return DXGI_FORMAT_B8G8R8A8_UNORM;
 
 		case EResourceFormat::R8_Signed:         return DXGI_FORMAT_R8_SINT;
@@ -415,19 +418,28 @@ namespace Dash
 		case EResourceFormat::BC5_Signed_Norm:   return DXGI_FORMAT_BC5_SNORM;
 		case EResourceFormat::BC7_Unsigned_Norm: return DXGI_FORMAT_BC7_UNORM;
 
+		case EResourceFormat::BC1_Unsigned_Norm_Srgb: return DXGI_FORMAT_BC1_UNORM_SRGB;
+		case EResourceFormat::BC2_Unsigned_Norm_Srgb: return DXGI_FORMAT_BC2_UNORM_SRGB;
+		case EResourceFormat::BC3_Unsigned_Norm_Srgb: return DXGI_FORMAT_BC3_UNORM_SRGB;
+		case EResourceFormat::BC7_Unsigned_Norm_Srgb: return DXGI_FORMAT_BC7_UNORM_SRGB;
+
 		case EResourceFormat::R8_Typeless:       return DXGI_FORMAT_R8_TYPELESS;
 		case EResourceFormat::RG8_Typeless:      return DXGI_FORMAT_R8G8_TYPELESS;
 		case EResourceFormat::RGBA8_Typeless:    return DXGI_FORMAT_R8G8B8A8_TYPELESS;
 		case EResourceFormat::R16_Typeless:      return DXGI_FORMAT_R16_TYPELESS;
 		case EResourceFormat::RG16_Typeless:     return DXGI_FORMAT_R16G16_TYPELESS;
 		case EResourceFormat::RGBA16_Typeless:   return DXGI_FORMAT_R16G16B16A16_TYPELESS;
+		case EResourceFormat::R24G8_Typeless:    return DXGI_FORMAT_R24G8_TYPELESS;
+		case EResourceFormat::R32G8X24_Typeless: return DXGI_FORMAT_R32G8X24_TYPELESS;
 		case EResourceFormat::R32_Typeless:      return DXGI_FORMAT_R32_TYPELESS;
 		case EResourceFormat::RG32_Typeless:     return DXGI_FORMAT_R32G32_TYPELESS;
 		case EResourceFormat::RGB32_Typeless:    return DXGI_FORMAT_R32G32B32_TYPELESS;
 		case EResourceFormat::RGBA32_Typeless:   return DXGI_FORMAT_R32G32B32A32_TYPELESS;
 
+		case EResourceFormat::Depth16_Float:				   return DXGI_FORMAT_R16_FLOAT;
 		case EResourceFormat::Depth24_Float_Stencil8_Unsigned: return DXGI_FORMAT_D24_UNORM_S8_UINT;
 		case EResourceFormat::Depth32_Float:                   return DXGI_FORMAT_D32_FLOAT;
+		case EResourceFormat::Depth32_Float_Stencil8_Unsigned: return DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
 
 		case EResourceFormat::Unknown:            return DXGI_FORMAT_UNKNOWN;
 
@@ -442,6 +454,75 @@ namespace Dash
 		case EColorSpace::Rec709: return DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709;
 		case EColorSpace::Rec2020: return DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020;
 		default: ASSERT_MSG(false, "Should never be hit"); return {};
+		}
+	}
+
+	EResourceFormat BaseFormat(EResourceFormat format)
+	{
+		switch (format)
+		{
+		case EResourceFormat::R8_Unsigned_Norm:
+		case EResourceFormat::R8_Unsigned:
+			return EResourceFormat::R8_Typeless;
+
+		case EResourceFormat::RG8_Signed:
+		case EResourceFormat::RG8_Unsigned:
+			return EResourceFormat::RG8_Typeless;
+
+		case EResourceFormat::RGBA8_Signed:
+		case EResourceFormat::RGBA8_Unsigned:
+		case EResourceFormat::RGBA8_Unsigned_Norm:
+		case EResourceFormat::RGBA8_Unsigned_Norm_Srgb:
+			return EResourceFormat::RGBA8_Typeless;
+
+		case EResourceFormat::BGRA8_Unsigned_Norm:
+		case EResourceFormat::BGRA8_Unsigned_Norm_Srgb:
+			return EResourceFormat::BGRA8_Typeless;
+
+		case EResourceFormat::R16_Float:
+		case EResourceFormat::R16_Signed:
+		case EResourceFormat::R16_Unsigned:
+		case EResourceFormat::Depth16_Float:
+			return EResourceFormat::R16_Typeless;
+
+		case EResourceFormat::RG16_Float:
+		case EResourceFormat::RG16_Signed:
+		case EResourceFormat::RG16_Unsigned:
+			return EResourceFormat::RG16_Typeless;
+
+		case EResourceFormat::RGBA16_Float:
+		case EResourceFormat::RGBA16_Signed:
+		case EResourceFormat::RGBA16_Unsigned:
+			return EResourceFormat::RGBA16_Typeless;
+
+		case EResourceFormat::R32_Float:
+		case EResourceFormat::R32_Signed:
+		case EResourceFormat::R32_Unsigned:
+			return EResourceFormat::R32_Typeless;
+
+		case EResourceFormat::Depth24_Float_Stencil8_Unsigned:
+			return EResourceFormat::R24G8_Typeless;
+
+		case EResourceFormat::Depth32_Float_Stencil8_Unsigned:
+			return EResourceFormat::R32G8X24_Typeless;
+
+		case EResourceFormat::RG32_Float:
+		case EResourceFormat::RG32_Signed:
+		case EResourceFormat::RG32_Unsigned:
+			return EResourceFormat::RG32_Typeless;
+
+		case EResourceFormat::RGB32_Float:
+		case EResourceFormat::RGB32_Signed:
+		case EResourceFormat::RGB32_Unsigned:
+			return EResourceFormat::RGB32_Typeless;
+
+		case EResourceFormat::RGBA32_Float:
+		case EResourceFormat::RGBA32_Signed:
+		case EResourceFormat::RGBA32_Unsigned:
+			return EResourceFormat::RGBA32_Typeless;
+
+		default:
+			return format;
 		}
 	}
 
@@ -476,8 +557,10 @@ namespace Dash
 	{
 		switch (format)
 		{
+		case EResourceFormat::Depth16_Float:
 		case EResourceFormat::Depth24_Float_Stencil8_Unsigned: 
-		case EResourceFormat::Depth32_Float:                  
+		case EResourceFormat::Depth32_Float:        
+		case EResourceFormat::Depth32_Float_Stencil8_Unsigned:
 			 return true;
 
 		default:
@@ -493,6 +576,9 @@ namespace Dash
 		case EResourceFormat::RG8_Usigned_Norm:      
 		case EResourceFormat::RGBA8_Unsigned_Norm:   
 		case EResourceFormat::RGBA16_Unsigned_Norm:  
+
+		case EResourceFormat::RGBA8_Unsigned_Norm_Srgb: 
+		case EResourceFormat::BGRA8_Unsigned_Norm_Srgb:  
 
 		case EResourceFormat::BGRA8_Unsigned_Norm: 
 
@@ -541,6 +627,11 @@ namespace Dash
 		case EResourceFormat::BC5_Unsigned_Norm: 
 		case EResourceFormat::BC5_Signed_Norm:   
 		case EResourceFormat::BC7_Unsigned_Norm: 
+
+		case EResourceFormat::BC1_Unsigned_Norm_Srgb: 
+		case EResourceFormat::BC2_Unsigned_Norm_Srgb: 
+		case EResourceFormat::BC3_Unsigned_Norm_Srgb: 
+		case EResourceFormat::BC7_Unsigned_Norm_Srgb: 
 			return true;
 
 		default: 
@@ -591,6 +682,11 @@ namespace Dash
 		case EResourceFormat::BC5_Unsigned_Norm: 
 		case EResourceFormat::BC5_Signed_Norm:   
 		case EResourceFormat::BC7_Unsigned_Norm: 
+
+		case EResourceFormat::BC1_Unsigned_Norm_Srgb:
+		case EResourceFormat::BC2_Unsigned_Norm_Srgb:
+		case EResourceFormat::BC3_Unsigned_Norm_Srgb:
+		case EResourceFormat::BC7_Unsigned_Norm_Srgb:
 			 return false;
 
 		default:
@@ -630,56 +726,21 @@ namespace Dash
 	{
 		switch (format)
 		{
-		case EResourceFormat::R8_Unsigned_Norm:
-		case EResourceFormat::R8_Unsigned:
-			return EResourceFormat::R8_Typeless;
-
-		case EResourceFormat::RG8_Signed:
-		case EResourceFormat::RG8_Unsigned:
-			return EResourceFormat::RG8_Typeless;
-
-		case EResourceFormat::RGBA8_Signed:
-		case EResourceFormat::RGBA8_Unsigned:
-		case EResourceFormat::RGBA8_Unsigned_Norm:
-			return EResourceFormat::RGBA8_Typeless;
-
-		case EResourceFormat::R16_Float:
-		case EResourceFormat::R16_Signed:
-		case EResourceFormat::R16_Unsigned:
-			return EResourceFormat::R16_Typeless;
-
-		case EResourceFormat::RG16_Float:
-		case EResourceFormat::RG16_Signed:
-		case EResourceFormat::RG16_Unsigned:
-			return EResourceFormat::RG16_Typeless;
-
-		case EResourceFormat::RGBA16_Float:
-		case EResourceFormat::RGBA16_Signed:
-		case EResourceFormat::RGBA16_Unsigned:
-			return EResourceFormat::RGBA16_Typeless;
-
-		case EResourceFormat::R32_Float:
-		case EResourceFormat::R32_Signed:
-		case EResourceFormat::R32_Unsigned:
-			return EResourceFormat::R32_Typeless;
-
-		case EResourceFormat::RG32_Float:
-		case EResourceFormat::RG32_Signed:
-		case EResourceFormat::RG32_Unsigned:
-			return EResourceFormat::RG32_Typeless;
-
-		case EResourceFormat::RGB32_Float:
-		case EResourceFormat::RGB32_Signed:
-		case EResourceFormat::RGB32_Unsigned:
-			return EResourceFormat::RGB32_Typeless;
-
-		case EResourceFormat::RGBA32_Float:
-		case EResourceFormat::RGBA32_Signed:
-		case EResourceFormat::RGBA32_Unsigned:
-			return EResourceFormat::RGBA32_Typeless;
-
+		case EResourceFormat::R8_Typeless:		return EResourceFormat::R8_Unsigned_Norm;
+		case EResourceFormat::RG8_Typeless:		return EResourceFormat::RGBA8_Unsigned_Norm;
+		case EResourceFormat::RGBA8_Typeless:	return EResourceFormat::RGBA8_Typeless;
+		case EResourceFormat::BGRA8_Typeless:	return EResourceFormat::RGBA8_Unsigned_Norm;
+		case EResourceFormat::R16_Typeless:		return EResourceFormat::R16_Float;
+		case EResourceFormat::RG16_Typeless:	return EResourceFormat::RG16_Float;
+		case EResourceFormat::RGBA16_Typeless:	return EResourceFormat::RGBA16_Float;
+		case EResourceFormat::R32_Typeless:		return EResourceFormat::R32_Float;
+		case EResourceFormat::RG32_Typeless:	return EResourceFormat::RG32_Float;
+		case EResourceFormat::RGB32_Typeless:	return EResourceFormat::RGB32_Float;
+		case EResourceFormat::RGBA32_Typeless:	return EResourceFormat::RGBA32_Float;
+		case EResourceFormat::R24G8_Typeless:	return EResourceFormat::Depth24_Float_Stencil8_Unsigned;
+		case EResourceFormat::R32G8X24_Typeless:	return EResourceFormat::Depth32_Float_Stencil8_Unsigned;
 		default:
-			return EResourceFormat::Unknown;
+			return format;
 		}
 	}
 
@@ -742,8 +803,10 @@ namespace Dash
 	{
 		switch (format)
 		{
+		case EResourceFormat::Depth16_Float:				   return { DXGI_FORMAT_R16_FLOAT, std::nullopt };
 		case EResourceFormat::Depth24_Float_Stencil8_Unsigned: return { DXGI_FORMAT_R24_UNORM_X8_TYPELESS, DXGI_FORMAT_X24_TYPELESS_G8_UINT };
 		case EResourceFormat::Depth32_Float:                   return { DXGI_FORMAT_R32_FLOAT, std::nullopt };
+		case EResourceFormat::Depth32_Float_Stencil8_Unsigned: return { DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS, DXGI_FORMAT_D32_FLOAT_S8X24_UINT };
 		default: ASSERT_MSG(false, "Should never be hit"); return {};
 		}
 	}
