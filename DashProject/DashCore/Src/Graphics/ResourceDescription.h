@@ -14,7 +14,10 @@ namespace Dash
 
 	protected:
 		void QueryAllocationInfo();
-		virtual void ResolveResourceDimensionData() = 0;
+		virtual void ResolveResourceDimensionData() {};
+
+	public:
+		EResourceState InitialStateMask = EResourceState::Common;
 
 	protected:
 		D3D12_RESOURCE_DESC mDescription{};
@@ -29,28 +32,29 @@ namespace Dash
 		EResourceFormat Format;
 		ETextureDimension Dimension;
 		FResourceMagnitude Magnitude;
-		EResourceState InitialStateMask = EResourceState::Common;
 		uint32_t MipCount = 1;
 		uint32_t MsaaSampleCount = 1;
 		uint32_t MsaaQuality = 1;
 
-		FResourceMagnitude MipSize(uint8_t mip) const;
+		FResourceMagnitude ComputeMipSize(uint8_t mip) const;
 
 	protected:
 		virtual void ResolveResourceDimensionData() override;
+		uint32_t ComputeNumMips() const;
 	};
 
 	struct FColorBufferDescription : public FTextureDescription
 	{
 	public:
-		FVector4f ClearValue;
+		FLinearColor ClearValue;
 
 		static FColorBufferDescription Create(EResourceFormat format, ETextureDimension dimension, const FResourceMagnitude& magnitude,
-			const FClearValue& optimizedClearValue, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common, uint32_t sampleCount = 1, uint32_t msaaQuality = 0);
+			const FLinearColor& optimizedClearValue, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common, uint32_t sampleCount = 1, uint32_t msaaQuality = 0);
 
-		static FColorBufferDescription Create1D(EResourceFormat format, uint32_t width, const FVector4f& optimizedClearValue, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
-		static FColorBufferDescription Create2D(EResourceFormat format, uint32_t width, uint32_t height, const FVector4f& optimizedClearValue, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
-		static FColorBufferDescription Create3D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t depth, const FVector4f& optimizedClearValue, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
+		static FColorBufferDescription Create1D(EResourceFormat format, uint32_t width, const FLinearColor& optimizedClearValue, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
+		static FColorBufferDescription Create2D(EResourceFormat format, uint32_t width, uint32_t height, const FLinearColor& optimizedClearValue, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
+		static FColorBufferDescription Create2DArray(EResourceFormat format, uint32_t width, uint32_t height, uint32_t arraySize, const FLinearColor& optimizedClearValue, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
+		static FColorBufferDescription Create3D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t depth, const FLinearColor& optimizedClearValue, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
 	};
 
 	struct FDepthBufferDescription : public FTextureDescription
@@ -66,8 +70,8 @@ namespace Dash
 	{
 	public:
 		uint64_t Size = 1;
+		uint64_t Count = 1;
 		uint64_t Stride = 1;
-		EResourceState InitialStateMask;
 
 		static FBufferDescription Create(uint64_t elementSize, uint64_t elementCount, uint64_t elementAlignment = 1, EResourceState initialStateMask = EResourceState::Common);
 

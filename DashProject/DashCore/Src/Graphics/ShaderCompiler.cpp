@@ -156,6 +156,13 @@ namespace Dash
 	{
 		FileUtility::ByteArray compiledShaderFile = FileUtility::ReadBinaryFileSync(info.GetHashedFileName());
 
+		std::wstring wFileName = FStringUtility::UTF8ToWideString(info.GetHashedFileName());
+		ComPtr<IDxcBlobEncoding> source = nullptr;
+		DX_CALL(mUtils->LoadFile(wFileName.c_str(), nullptr, &source));
+
+		std::shared_ptr<std::vector<unsigned char>> compiledShader = std::make_shared<std::vector<unsigned char>>(source->GetBufferSize());
+		std::memcpy(compiledShader->data(), source->GetBufferPointer(), source->GetBufferSize());
+
 		if (compiledShaderFile != FileUtility::NullFile)
 		{
 			LOG_INFO << "Success to load compiled shader : " << info.GetHashedFileName();

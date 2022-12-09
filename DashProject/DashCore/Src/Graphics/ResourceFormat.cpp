@@ -794,9 +794,9 @@ namespace Dash
 		return formatSupport;
 	}
 
-	Dash::EFormatSupport CheckFormatSupport(EResourceFormat format)
+	EFormatSupport CheckFormatSupport(EResourceFormat format)
 	{
-		return EFormatSupport(D3DFormat(format));
+		return CheckFormatSupport(D3DFormat(format));
 	}
 
 	std::pair<DXGI_FORMAT, std::optional<DXGI_FORMAT>> D3DDepthStecilShaderAccessFormats(EResourceFormat format)

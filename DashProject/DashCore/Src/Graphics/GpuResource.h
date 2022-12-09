@@ -3,6 +3,7 @@
 #include "DX12Helper.h"
 #include "GpuResourcesStateTracker.h"
 #include "ResourceFormat.h"
+#include "ResourceDescription.h"
 
 namespace Dash
 {

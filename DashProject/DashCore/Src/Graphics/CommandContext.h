@@ -69,7 +69,7 @@ namespace Dash
 		FCommandList* GetCommandList() { return mCommandList; }
 		ID3D12GraphicsCommandList* GetD3DCommandList() { return mD3DCommandList; }
 
-		void TransitionBarrier(FGpuResource& resource, D3D12_RESOURCE_STATES newState, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, bool flushImmediate = false);
+		void TransitionBarrier(FGpuResource& resource, EResourceState newState, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, bool flushImmediate = false);
 		void UAVBarrier(FGpuResource& resource, bool flushImmediate = false);
 		void AliasingBarrier(FGpuResource& resourceBefore, FGpuResource& resourceAfter, bool flushImmediate = false);
 		void FlushResourceBarriers();
@@ -173,33 +173,33 @@ namespace Dash
 
 		// FGpuConstantBuffer 初始状态 D3D12_RESOURCE_STATE_COMMON 不可直接作为 SRV 和 UAV，需要转换为 D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER (D3D12_RESOURCE_STATE_GENERIC_READ) 状态
 		void SetRootConstantBufferView(UINT rootIndex, FGpuConstantBuffer& constantBuffer, size_t bufferOffset = 0, 
-			D3D12_RESOURCE_STATES stateAfter = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+			EResourceState stateAfter = EResourceState::ConstantBuffer);
 
 		void SetRootShaderResourceView(UINT rootIndex, FGpuConstantBuffer& constantBuffer, size_t bufferOffset = 0,
-			D3D12_RESOURCE_STATES stateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+			EResourceState stateAfter = EResourceState::AnyShaderAccess);
 
 		void SetRootUnorderAccessView(UINT rootIndex, FGpuConstantBuffer& constantBuffer, size_t bufferOffset = 0,
-			D3D12_RESOURCE_STATES stateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+			EResourceState stateAfter = EResourceState::UnorderedAccess);
 
 
 		// Set descriptor table parameters
 
 		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FGpuConstantBuffer& buffer,
-			D3D12_RESOURCE_STATES stateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+			EResourceState stateAfter = EResourceState::AnyShaderAccess);
 
 		void SetUnorderAccessView(UINT rootIndex, UINT descriptorOffset, FGpuConstantBuffer& buffer,
-			D3D12_RESOURCE_STATES stateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+			EResourceState stateAfter = EResourceState::UnorderedAccess);
 
 		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FColorBuffer& buffer,
-			D3D12_RESOURCE_STATES stateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, UINT firstSubResource = 0, 
+			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0,
 			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 
 		void SetUnorderAccessView(UINT rootIndex, UINT descriptorOffset, FColorBuffer& buffer,
-			D3D12_RESOURCE_STATES stateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS, UINT firstSubResource = 0,
+			EResourceState stateAfter = EResourceState::UnorderedAccess, UINT firstSubResource = 0,
 			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 
 		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FDepthBuffer& buffer,
-			D3D12_RESOURCE_STATES stateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, UINT firstSubResource = 0,
+			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0,
 			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 
 		void SetDynamicSampler(UINT rootIndex, UINT descriptorOffset, D3D12_CPU_DESCRIPTOR_HANDLE handle);

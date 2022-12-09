@@ -3,37 +3,44 @@
 #include "GraphicsCore.h"
 #include "CpuDescriptorAllocator.h"
 
+#include "ResourceFormat.h"
+
 namespace Dash
 {
-    void FColorBuffer::Create(const std::string& name, ID3D12Resource* resource, D3D12_RESOURCE_STATES initStates)
+    void FColorBuffer::Create(const std::string& name, ID3D12Resource* resource, EResourceState initStates)
     {
         ASSERT(resource != nullptr);
 
         D3D12_RESOURCE_DESC desc = resource->GetDesc();
-        mNumMips = desc.MipLevels;
-        mMsaaNumSmples = desc.SampleDesc.Count;
-        mMsaaQuality = desc.SampleDesc.Quality;
+       
+        ETextureDimension dimension = ETextureDimension::Texture1D;
+        switch (desc.Dimension)
+        {
+        case D3D12_RESOURCE_DIMENSION::D3D12_RESOURCE_DIMENSION_TEXTURE1D:
+            dimension = ETextureDimension::Texture1D;
+            break;
+        case D3D12_RESOURCE_DIMENSION::D3D12_RESOURCE_DIMENSION_TEXTURE2D:
+            dimension = ETextureDimension::Texture2D;
+            break;
+        case D3D12_RESOURCE_DIMENSION::D3D12_RESOURCE_DIMENSION_TEXTURE3D:
+            dimension = ETextureDimension::Texture3D;
+            break;
+        default:
+            break;
+        }
+        
+        mDesc = FColorBufferDescription::Create(ResourceFormatFromD3DFormat(desc.Format), dimension, FResourceMagnitude(static_cast<uint32_t>(desc.Width), static_cast<uint32_t>(desc.Height), static_cast<uint32_t>(desc.DepthOrArraySize)), mDesc.ClearValue,
+            desc.MipLevels, initStates, desc.SampleDesc.Count, desc.SampleDesc.Quality);
 
         AssociateWithResource(resource, initStates, name);
         CreateViews();
     }
 
-    void FColorBuffer::Create(const std::string& name, const D3D12_RESOURCE_DESC& desc, const FLinearColor& clearColor)
+    void FColorBuffer::Create(const std::string& name, const FColorBufferDescription& desc, const FLinearColor& clearColor)
     {
-        mNumMips = desc.MipLevels;
-        mMsaaNumSmples = desc.SampleDesc.Count;
-        mMsaaQuality = desc.SampleDesc.Quality;
+        mDesc = desc;
 
-        mClearColor = clearColor;
-
-        D3D12_CLEAR_VALUE clearValue = {};
-        clearValue.Format = desc.Format;
-        clearValue.Color[0] = mClearColor.r;
-        clearValue.Color[1] = mClearColor.g;
-        clearValue.Color[2] = mClearColor.b;
-        clearValue.Color[3] = mClearColor.a;
-        
-        CreateTextureResource(desc, clearValue, name);
+        CreateTextureResource(mDesc.D3DResourceDescription(), GetD3DClearValue(), name);
         CreateViews();
     }
 
@@ -41,39 +48,19 @@ namespace Dash
     {
         ASSERT(IsColorFormat(format));
 
-        mNumMips = (numMips == 0 ? ComputeNumMips(width, height) : numMips);
-        D3D12_RESOURCE_FLAGS flags = CombineResourceFlgs();
-        D3D12_RESOURCE_DESC desc = DescribeTexture2D(width, height, 1, numMips, format, flags);
+        mDesc = FColorBufferDescription::Create2D(format, width, height, mDesc.ClearValue, numMips);
 
-        desc.SampleDesc.Count = mMsaaNumSmples;
-        desc.SampleDesc.Quality = mMsaaQuality;
-
-        D3D12_CLEAR_VALUE clearValue = {};
-        clearValue.Format = desc.Format;
-        clearValue.Color[0] = mClearColor.r;
-        clearValue.Color[1] = mClearColor.g;
-        clearValue.Color[2] = mClearColor.b;
-        clearValue.Color[3] = mClearColor.a;
-
-        CreateTextureResource(desc, clearValue, name);
+        CreateTextureResource(mDesc.D3DResourceDescription(), GetD3DClearValue(), name);
         CreateViews();
     }
 
-    void FColorBuffer::CreateArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, EResourceFormat format)
+    void FColorBuffer::CreateArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format)
     {
         ASSERT(IsColorFormat(format));
 
-        D3D12_RESOURCE_FLAGS flags = CombineResourceFlgs();
-        D3D12_RESOURCE_DESC desc = DescribeTexture2D(width, height, arrayCount, 1, format, flags);
+        mDesc = FColorBufferDescription::Create2DArray(format, width, height, arrayCount, mDesc.ClearValue, numMips);
 
-        D3D12_CLEAR_VALUE clearValue = {};
-        clearValue.Format = desc.Format;
-        clearValue.Color[0] = mClearColor.r;
-        clearValue.Color[1] = mClearColor.g;
-        clearValue.Color[2] = mClearColor.b;
-        clearValue.Color[3] = mClearColor.a;
-
-        CreateTextureResource(desc, clearValue, name);
+        CreateTextureResource(mDesc.D3DResourceDescription(), GetD3DClearValue(), name);
         CreateViews();
     }
 
@@ -130,25 +117,25 @@ namespace Dash
 
     void FColorBuffer::CreateViews()
     {
-        CheckFeatureSupport();
+        EFormatSupport formatSupport = CheckFormatSupport(mDesc.Format);
 
         if (mResource)
         {
             D3D12_RESOURCE_DESC desc = mResource->GetDesc();
 
-            if ((desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET) != 0 && CheckRTVSupport())
+            if ((desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET) != 0 && EnumMaskContains(formatSupport, EFormatSupport::RenderTargetView))
             {
                 mRenderTargetView = FGraphicsCore::DescriptorAllocator->AllocateRTVDescriptor();
                 FGraphicsCore::Device->CreateRenderTargetView(mResource.Get(), nullptr, mRenderTargetView.GetDescriptorHandle());
             }
 
-            if ((desc.Flags & D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE) == 0 && CheckSRVSupport())
+            if ((desc.Flags & D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE) == 0 && EnumMaskContains(formatSupport, EFormatSupport::ShaderResourceView))
             {
                 mShaderResourceView = FGraphicsCore::DescriptorAllocator->AllocateSRVDescriptor();
                 FGraphicsCore::Device->CreateShaderResourceView(mResource.Get(), nullptr, mShaderResourceView.GetDescriptorHandle());
             }
 
-            if ((desc.SampleDesc.Count <= 1) && (desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) != 0 && CheckUAVSupport())
+            if ((desc.SampleDesc.Count <= 1) && (desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) != 0 && EnumMaskContains(formatSupport, EFormatSupport::UnorderAccessView))
             {
                 mUnorderedAccessView = FGraphicsCore::DescriptorAllocator->AllocateUAVDescriptor(desc.MipLevels);
 
@@ -161,16 +148,16 @@ namespace Dash
         }
     }
 
-    D3D12_RESOURCE_FLAGS FColorBuffer::CombineResourceFlgs() const
+    D3D12_CLEAR_VALUE FColorBuffer::GetD3DClearValue() const
     {
-        D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE;
+        D3D12_CLEAR_VALUE clearValue = {};
+        clearValue.Format = D3DFormat(mDesc.Format);
+        clearValue.Color[0] = mDesc.ClearValue.r;
+        clearValue.Color[1] = mDesc.ClearValue.g;
+        clearValue.Color[2] = mDesc.ClearValue.b;
+        clearValue.Color[3] = mDesc.ClearValue.a;
 
-        if (flags == D3D12_RESOURCE_FLAG_NONE && mMsaaNumSmples == 1)
-        {
-            flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
-        }
-
-        return D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET | flags;
+        return clearValue;
     }
 
     D3D12_CPU_DESCRIPTOR_HANDLE FColorBuffer::GetRenderTargetView() const
@@ -185,18 +172,18 @@ namespace Dash
 
     D3D12_CPU_DESCRIPTOR_HANDLE FColorBuffer::GetUnorderedAccessView(uint32_t mipIndex) const
     {
-        ASSERT(mipIndex >= 0 && mipIndex < mNumMips);
+        ASSERT(mipIndex >= 0 && mipIndex < mDesc.MipCount);
         return mUnorderedAccessView.GetDescriptorHandle(mipIndex);
     }
 
     void FColorBuffer::SetClearColor(const FLinearColor& clearColor)
     {
-        mClearColor = clearColor;
+        mDesc.ClearValue = clearColor;
     }
 
     void FColorBuffer::SetMsaaMode(uint32_t numSamples, uint32_t quality)
     {
-        mMsaaNumSmples = numSamples;
-        mMsaaQuality = quality;
+        mDesc.MsaaSampleCount = numSamples;
+        mDesc.MsaaQuality = quality;
     }
 }

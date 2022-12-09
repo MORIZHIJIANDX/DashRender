@@ -161,9 +161,9 @@ namespace Dash
 		return reinterpret_cast<FGraphicsCommandContext&>(*this);
 	}
 
-	void FCommandContext::TransitionBarrier(FGpuResource& resource, D3D12_RESOURCE_STATES newState, UINT subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/, bool flushImmediate /*= false*/)
+	void FCommandContext::TransitionBarrier(FGpuResource& resource, EResourceState newState, UINT subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/, bool flushImmediate /*= false*/)
 	{
-		mResourceStateTracker.TransitionResource(resource, newState, subResource);
+		mResourceStateTracker.TransitionResource(resource, D3DResourceState(newState), subResource);
 
 		if (flushImmediate)
 		{
@@ -244,9 +244,9 @@ namespace Dash
 		FGpuLinearAllocator::FAllocation alloc = context.mLinearAllocator.Allocate(numBytes);
 		memcpy(alloc.CpuAddress, bufferData, numBytes);
 
-		context.TransitionBarrier(dest, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
+		context.TransitionBarrier(dest, EResourceState::CopyDestination, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 		context.mD3DCommandList->CopyBufferRegion(dest.GetResource(), offset, alloc.Resource.GetResource(), alloc.Offset, numBytes);
-		context.TransitionBarrier(dest, D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
+		context.TransitionBarrier(dest, EResourceState::GenericRead, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 
 		context.Finish(true);
 	}
@@ -349,7 +349,7 @@ namespace Dash
 
 	void FGraphicsCommandContext::ClearColor(FColorBuffer& target, D3D12_RECT* rect /*= nullptr*/)
 	{
-		TransitionBarrier(target, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
+		TransitionBarrier(target, EResourceState::RenderTarget, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 		mD3DCommandList->ClearRenderTargetView(target.GetRenderTargetView(), target.GetClearColor().Data, (rect == nullptr) ? 0 : 1, rect);
 
 		TrackResource(target);
@@ -357,7 +357,7 @@ namespace Dash
 
 	void FGraphicsCommandContext::ClearColor(FColorBuffer& target, const FLinearColor& color, D3D12_RECT* rect /*= nullptr*/)
 	{
-		TransitionBarrier(target, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
+		TransitionBarrier(target, EResourceState::RenderTarget, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 		mD3DCommandList->ClearRenderTargetView(target.GetRenderTargetView(), color.Data, (rect == nullptr) ? 0 : 1, rect);
 
 		TrackResource(target);
@@ -365,7 +365,7 @@ namespace Dash
 
 	void FGraphicsCommandContext::ClearDepth(FDepthBuffer& target)
 	{
-		TransitionBarrier(target, D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
+		TransitionBarrier(target, EResourceState::DepthWrite, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 		mD3DCommandList->ClearDepthStencilView(target.GetDepthStencilView(), D3D12_CLEAR_FLAG_DEPTH, target.GetClearDepth(), target.GetClearStencil(), 0, nullptr);
 
 		TrackResource(target);
@@ -373,7 +373,7 @@ namespace Dash
 
 	void FGraphicsCommandContext::ClearStencil(FDepthBuffer& target)
 	{
-		TransitionBarrier(target, D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
+		TransitionBarrier(target, EResourceState::DepthWrite, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 		mD3DCommandList->ClearDepthStencilView(target.GetDepthStencilView(), D3D12_CLEAR_FLAG_STENCIL, target.GetClearDepth(), target.GetClearStencil(), 0, nullptr);
 
 		TrackResource(target);
@@ -381,7 +381,7 @@ namespace Dash
 
 	void FGraphicsCommandContext::ClearDepthAndStencil(FDepthBuffer& target)
 	{
-		TransitionBarrier(target, D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
+		TransitionBarrier(target, EResourceState::DepthWrite, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 		mD3DCommandList->ClearDepthStencilView(target.GetDepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, target.GetClearDepth(), target.GetClearStencil(), 0, nullptr);
 
 		TrackResource(target);
@@ -408,7 +408,7 @@ namespace Dash
 		{
 			rtvHandels.push_back(rtvs[index].GetRenderTargetView());
 			TrackResource(rtvs[index]);
-			TransitionBarrier(rtvs[index], D3D12_RESOURCE_STATE_RENDER_TARGET);
+			TransitionBarrier(rtvs[index], EResourceState::RenderTarget);
 		}
 
 		mD3DCommandList->OMSetRenderTargets(numRTVs, rtvHandels.data(), false, nullptr);
@@ -422,13 +422,13 @@ namespace Dash
 		{
 			rtvHandels.push_back(rtvs[index].GetRenderTargetView());
 			TrackResource(rtvs[index]);
-			TransitionBarrier(rtvs[index], D3D12_RESOURCE_STATE_RENDER_TARGET);
+			TransitionBarrier(rtvs[index], EResourceState::RenderTarget);
 		}
 
 		std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> handles = { depthBuffer.GetDepthStencilView() };
 		mD3DCommandList->OMSetRenderTargets(numRTVs, rtvHandels.data(), false, handles.data());
 		TrackResource(depthBuffer);
-		TransitionBarrier(depthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+		TransitionBarrier(depthBuffer, EResourceState::DepthWrite);
 	}
 
 	void FGraphicsCommandContext::SetViewport(const FViewport& vp)
@@ -488,7 +488,7 @@ namespace Dash
 		mDynamicViewDescriptor.StageInlineCBV(rootIndex, alloc.GpuAddress);
 	}
 
-	void FGraphicsCommandContext::SetRootConstantBufferView(UINT rootIndex, FGpuConstantBuffer& constantBuffer, size_t bufferOffset /*= 0*/, D3D12_RESOURCE_STATES stateAfter /*= D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER*/)
+	void FGraphicsCommandContext::SetRootConstantBufferView(UINT rootIndex, FGpuConstantBuffer& constantBuffer, size_t bufferOffset /*= 0*/, EResourceState stateAfter /*= EResourceState::ConstantBuffer*/)
 	{
 		TransitionBarrier(constantBuffer, stateAfter);
 		mDynamicViewDescriptor.StageInlineCBV(rootIndex, constantBuffer.GetGpuVirtualAddress(bufferOffset));
@@ -502,28 +502,28 @@ namespace Dash
 		mDynamicViewDescriptor.StageInlineSRV(rootIndex, alloc.GpuAddress);
 	}
 
-	void FGraphicsCommandContext::SetRootShaderResourceView(UINT rootIndex, FGpuConstantBuffer& constantBuffer, size_t bufferOffset /*= 0*/, D3D12_RESOURCE_STATES stateAfter /*= D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE*/)
+	void FGraphicsCommandContext::SetRootShaderResourceView(UINT rootIndex, FGpuConstantBuffer& constantBuffer, size_t bufferOffset /*= 0*/, EResourceState stateAfter /*= EResourceState::AnyShaderAccess*/)
 	{
 		TransitionBarrier(constantBuffer, stateAfter);
 		mDynamicViewDescriptor.StageInlineSRV(rootIndex, constantBuffer.GetGpuVirtualAddress(bufferOffset));
 		TrackResource(constantBuffer);
 	}
 
-	void FGraphicsCommandContext::SetRootUnorderAccessView(UINT rootIndex, FGpuConstantBuffer& constantBuffer, size_t bufferOffset /*= 0*/, D3D12_RESOURCE_STATES stateAfter /*= D3D12_RESOURCE_STATE_UNORDERED_ACCESS*/)
+	void FGraphicsCommandContext::SetRootUnorderAccessView(UINT rootIndex, FGpuConstantBuffer& constantBuffer, size_t bufferOffset /*= 0*/, EResourceState stateAfter /*= EResourceState::UnorderedAccess*/)
 	{
 		TransitionBarrier(constantBuffer, stateAfter);
 		mDynamicViewDescriptor.StageInlineUAV(rootIndex, constantBuffer.GetGpuVirtualAddress(bufferOffset));
 		TrackResource(constantBuffer);
 	}
 
-	void FGraphicsCommandContext::SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FGpuConstantBuffer& buffer, D3D12_RESOURCE_STATES stateAfter /*= D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE*/)
+	void FGraphicsCommandContext::SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FGpuConstantBuffer& buffer, EResourceState stateAfter /*= EResourceState::AnyShaderAccess*/)
 	{
 		TransitionBarrier(buffer, stateAfter);
 		mDynamicViewDescriptor.StageDescriptors(rootIndex, descriptorOffset, 1, buffer.GetShaderResourceView());
 		TrackResource(buffer);
 	}
 
-	void FGraphicsCommandContext::SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FColorBuffer& buffer, D3D12_RESOURCE_STATES stateAfter /*= D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE*/, UINT firstSubResource /*= 0*/, UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
+	void FGraphicsCommandContext::SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FColorBuffer& buffer, EResourceState stateAfter /*= EResourceState::AnyShaderAccess*/, UINT firstSubResource /*= 0*/, UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
 	{
 		if (numSubResources < D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES)
 		{
@@ -541,7 +541,7 @@ namespace Dash
 		TrackResource(buffer);
 	}
 
-	void FGraphicsCommandContext::SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FDepthBuffer& buffer, D3D12_RESOURCE_STATES stateAfter /*= D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE*/, UINT firstSubResource /*= 0*/, UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
+	void FGraphicsCommandContext::SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FDepthBuffer& buffer, EResourceState stateAfter /*= EResourceState::AnyShaderAccess*/, UINT firstSubResource /*= 0*/, UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
 	{
 		if (numSubResources < D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES)
 		{
@@ -647,14 +647,14 @@ namespace Dash
 		mD3DCommandList->DrawIndexedInstanced(indexCountPerInstance, instanceCount, startIndexLocation, baseVertexLocation, startInstanceLocation);
 	}
 
-	void FGraphicsCommandContext::SetUnorderAccessView(UINT rootIndex, UINT descriptorOffset, FGpuConstantBuffer& buffer, D3D12_RESOURCE_STATES stateAfter /*= D3D12_RESOURCE_STATE_UNORDERED_ACCESS*/)
+	void FGraphicsCommandContext::SetUnorderAccessView(UINT rootIndex, UINT descriptorOffset, FGpuConstantBuffer& buffer, EResourceState stateAfter /*= EResourceState::UnorderedAccess*/)
 	{
 		TransitionBarrier(buffer, stateAfter);
 		mDynamicViewDescriptor.StageDescriptors(rootIndex, descriptorOffset, 1, buffer.GetUnorderedAccessView());
 		TrackResource(buffer);
 	}
 
-	void FGraphicsCommandContext::SetUnorderAccessView(UINT rootIndex, UINT descriptorOffset, FColorBuffer& buffer, D3D12_RESOURCE_STATES stateAfter /*= D3D12_RESOURCE_STATE_UNORDERED_ACCESS*/, UINT firstSubResource /*= 0*/, UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
+	void FGraphicsCommandContext::SetUnorderAccessView(UINT rootIndex, UINT descriptorOffset, FColorBuffer& buffer, EResourceState stateAfter /*= EResourceState::UnorderedAccess*/, UINT firstSubResource /*= 0*/, UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
 	{
 		if (numSubResources < D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES)
 		{

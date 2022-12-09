@@ -10,28 +10,20 @@ namespace Dash
 	public:
 		void Create(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData = nullptr, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
 
-		size_t GetBufferSize() const { return mBufferSize; }
-		uint32_t GetElementCount() const { return mElementCount; }
-		uint32_t GetElementSize() const { return mElementSize; }
+		uint64_t GetBufferSize() const { return mDesc.Size; }
+		uint64_t GetElementCount() const { return mDesc.Count; }
+		uint64_t GetElementSize() const { return mDesc.Stride; }
 
 	protected:
-		D3D12_RESOURCE_DESC DescribeBuffer();
 		void CreateBufferResource(const D3D12_RESOURCE_DESC& desc);
 		
 		virtual void CreateViews() = 0;
 
 	protected:
 		FGpuBuffer()
-			: mBufferSize(0)
-			, mElementCount(0)
-			, mElementSize(0)
-			, mResourceFlag(D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)
 		{}
 
-		size_t mBufferSize;
-		uint32_t mElementCount;
-		uint32_t mElementSize;
-		D3D12_RESOURCE_FLAGS mResourceFlag;
+		FBufferDescription mDesc;
 	};
 
 	// 大部分情况下不需要使用 CreateConstantBufferView 来创建 constant buffer view ，且 constant buffer 更新需要对 resource 进行 map 和 unmap 或者是 CopyBuffer. 
@@ -98,9 +90,9 @@ namespace Dash
 		D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView(size_t offset, uint32_t size, uint32_t stride) const;
 		D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView(size_t baseVertexIndex = 0) const
 		{
-			ASSERT(baseVertexIndex < mElementCount);
-			size_t offset = baseVertexIndex * mElementSize;
-			return GetVertexBufferView(offset, static_cast<uint32_t>(mBufferSize - offset), mElementSize);
+			ASSERT(baseVertexIndex < mDesc.Count);
+			size_t offset = baseVertexIndex * mDesc.Stride;
+			return GetVertexBufferView(offset, static_cast<uint32_t>(mDesc.Size - offset), static_cast<uint32_t>(mDesc.Stride));
 		}
 
 	protected:
@@ -113,9 +105,9 @@ namespace Dash
 		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView(size_t offset, uint32_t size, bool is32Bit = false) const;
 		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView(size_t startIndex = 0) const
 		{
-			ASSERT(startIndex < mElementCount);
-			size_t offset = startIndex * mElementSize;
-			return GetIndexBufferView(offset, static_cast<uint32_t>(mBufferSize - offset), mElementSize == 4);
+			ASSERT(startIndex < mDesc.Count);
+			size_t offset = startIndex * mDesc.Stride;
+			return GetIndexBufferView(offset, static_cast<uint32_t>(mDesc.Size - offset), mDesc.Stride == 4);
 		}
 
 	protected:

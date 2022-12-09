@@ -10,27 +10,30 @@ namespace Dash
 	{
 	public:
 		FColorBuffer(const FLinearColor& clearColor = FLinearColor{})
-			: mClearColor(clearColor)
-		{}
+		{
+			mDesc.ClearValue = clearColor;
+		}
 
-		void Create(const std::string& name, ID3D12Resource* resource, D3D12_RESOURCE_STATES initStates = D3D12_RESOURCE_STATE_COMMON);
+		void Create(const std::string& name, ID3D12Resource* resource, EResourceState initStates = EResourceState::Common);
 
-		void Create(const std::string& name, const D3D12_RESOURCE_DESC& desc, const FLinearColor& clearColor = FLinearColor{});
+		void Create(const std::string& name, const FColorBufferDescription& desc, const FLinearColor& clearColor = FLinearColor{});
 
 		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format);
 
-		void CreateArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, EResourceFormat format);
+		void CreateArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format);
 
 		D3D12_CPU_DESCRIPTOR_HANDLE GetRenderTargetView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE GetShaderResourceView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE GetUnorderedAccessView(uint32_t mipIndex = 0) const;
 
 		void SetClearColor(const FLinearColor& clearColor);
-		FLinearColor GetClearColor() const { return mClearColor; }
+		FLinearColor GetClearColor() const { return mDesc.ClearValue; }
 
 		void SetMsaaMode(uint32_t numSamples, uint32_t quality = 0);
 
-		uint32_t GetNumMips() const { return mNumMips; }
+		uint32_t GetNumMips() const { return mDesc.MipCount; }
+
+		const FColorBufferDescription& GetDesc() const { return mDesc; }
 
 	protected:
 		
@@ -45,15 +48,11 @@ namespace Dash
 
 		void CreateViews();
 
-		D3D12_RESOURCE_FLAGS CombineResourceFlgs() const;
+		D3D12_CLEAR_VALUE GetD3DClearValue() const;
 
 	protected:
 
-		FLinearColor mClearColor;
-
-		uint32_t mNumMips = 0;
-		uint32_t mMsaaNumSmples = 1;
-		uint32_t mMsaaQuality = 0;
+		FColorBufferDescription mDesc;
 
 		FCpuDescriptorAllocation mRenderTargetView;
 		FCpuDescriptorAllocation mShaderResourceView;

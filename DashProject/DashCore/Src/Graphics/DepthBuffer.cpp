@@ -5,38 +5,26 @@
 
 namespace Dash
 {
-	void FDepthBuffer::Create(const std::string& name, const D3D12_RESOURCE_DESC& desc, float clearDepth, uint8_t clearStencil)
+	void FDepthBuffer::Create(const std::string& name, const FDepthBufferDescription& desc)
 	{
-        mClearDepth = clearDepth;
-        mClearStencil = clearStencil;
+        mDesc = desc;
 
-        D3D12_CLEAR_VALUE clearValue = {};
-        clearValue.Format = desc.Format;
-        clearValue.DepthStencil.Depth = mClearDepth;
-        clearValue.DepthStencil.Stencil = mClearStencil;
-
-        CreateTextureResource(desc, clearValue, name);
+        CreateTextureResource(mDesc.D3DResourceDescription(), GetD3DClearValue(), name);
         CreateViews();
 	}
 
     void FDepthBuffer::Create(const std::string& name, uint32_t width, uint32_t height, EResourceFormat format)
     {
-        Create(name, width, height, 1, format);
+        Create(name, width, height, 1, 0, format);
     }
 
-    void FDepthBuffer::Create(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, EResourceFormat format)
+    void FDepthBuffer::Create(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, uint32_t sampleQuality, EResourceFormat format)
     {
         ASSERT(IsDepthStencilFormat(format));
 
-        D3D12_RESOURCE_DESC desc = DescribeTexture2D(width, height, 1, 1, format, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
-        desc.SampleDesc.Count = sampleCount;
+        mDesc = FDepthBufferDescription::Create(format, width, height, mDesc.ClearValue, 1, EResourceState::Common, sampleCount, sampleQuality);
 
-        D3D12_CLEAR_VALUE clearValue = {};
-        clearValue.Format = desc.Format;
-        clearValue.DepthStencil.Depth = mClearDepth;
-        clearValue.DepthStencil.Stencil = mClearStencil;
-
-        CreateTextureResource(desc, clearValue, name);
+        CreateTextureResource(mDesc.D3DResourceDescription(), GetD3DClearValue(), name);
         CreateViews();
     }
 
@@ -52,23 +40,32 @@ namespace Dash
 
     void FDepthBuffer::CreateViews()
     {
-        CheckFeatureSupport();
-
         if (mResource)
         {
+            EFormatSupport formatSupport = CheckFormatSupport(mDesc.Format);
+
             D3D12_RESOURCE_DESC desc = mResource->GetDesc();
 
-            if ((desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL) != 0 && CheckDSVSupport())
+            if ((desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL) != 0 && EnumMaskContains(formatSupport, EFormatSupport::DepthStencilView))
             {
                 mDepthStencilView = FGraphicsCore::DescriptorAllocator->AllocateDSVDescriptor();
                 FGraphicsCore::Device->CreateShaderResourceView(mResource.Get(), nullptr, mShaderResourceView.GetDescriptorHandle());
             }
 
-            if ((desc.Flags & D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE) == 0 && CheckSRVSupport())
+            if ((desc.Flags & D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE) == 0 && EnumMaskContains(formatSupport, EFormatSupport::ShaderResourceView))
             {
                 mShaderResourceView = FGraphicsCore::DescriptorAllocator->AllocateSRVDescriptor();
                 FGraphicsCore::Device->CreateShaderResourceView(mResource.Get(), nullptr, mShaderResourceView.GetDescriptorHandle());
             }
         }
+    }
+
+    D3D12_CLEAR_VALUE FDepthBuffer::GetD3DClearValue() const
+    {
+        D3D12_CLEAR_VALUE clearValue = {};
+        clearValue.Format = D3DFormat(mDesc.Format);
+        clearValue.DepthStencil.Depth = mDesc.ClearValue.Depth;
+        clearValue.DepthStencil.Stencil = mDesc.ClearValue.Stencil;
+        return clearValue;
     }
 }

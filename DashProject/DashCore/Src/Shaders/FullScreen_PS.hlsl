@@ -39,7 +39,7 @@ cbuffer FrameBuffer : register(b0)
 	float4 Params;
 };
 
-
+/*
 void VS_Main(
 	in uint VertID : SV_VertexID, 
 	out float4 Pos : SV_Position,
@@ -49,7 +49,18 @@ void VS_Main(
 	Tex = float2(uint2(VertID, VertID << 1) & 2);
 	Pos = float4(lerp(float2(-1, 1), float2(1, -1), Tex), 0, 1);
 }
+*/
 
+void VS_Main(VSInput input,
+	out float4 Pos : SV_Position,
+	out float2 Tex : TexCoord0)
+{
+	PSInput output;
+
+	Pos = float4(input.Position, 1.0f);
+
+	Tex = input.UV;
+}
 
 float4 PS_Main(float4 position : SV_Position, float2 uv : TexCoord0) : SV_Target0
 {
@@ -64,17 +75,6 @@ float4 PS_SampleColor(float4 position : SV_Position, float2 uv : TexCoord0) : SV
 
 
 /*
-PSInput VS_Main(VSInput input)
-{
-	PSInput output;
-
-	output.Position = float4(input.Position, 1.0f);
-
-	output.UV = input.UV;
-
-	return output;
-}
-
 float4 PS_Main(PSInput input) : SV_TARGET
 {
 	float4 Color = float4(input.UV.x, input.UV.y, 0.0f, 1.0f);

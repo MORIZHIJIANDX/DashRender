@@ -9,31 +9,33 @@ namespace Dash
 	{
 	public:
 		FDepthBuffer(float clearDepth = 0.0f, uint8_t clearStencil = 0)
-			: mClearDepth(clearDepth)
-			, mClearStencil(clearStencil)
-		{}
+		{
+			mDesc.ClearValue = FDepthStencilClearValue{ clearDepth, clearStencil};
+		}
 
-		void Create(const std::string& name, const D3D12_RESOURCE_DESC& desc, float clearDepth = 0.0f, uint8_t clearStencil = 0);
+		void Create(const std::string& name, const FDepthBufferDescription& desc);
 
 		void Create(const std::string& name, uint32_t width, uint32_t height, EResourceFormat format);
 
-		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, EResourceFormat format);
+		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, uint32_t sampleQuality, EResourceFormat format);
 
 		D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE GetShaderResourceView() const;
 
-		float GetClearDepth() const { return mClearDepth; }
-		uint8_t GetClearStencil() const { return mClearStencil; }
+		float GetClearDepth() const { return mDesc.ClearValue.Depth; }
+		uint8_t GetClearStencil() const { return mDesc.ClearValue.Stencil; }
+
+		const FDepthBufferDescription& GetDesc() const { return mDesc; }
 
 	protected:
 			
 		void CreateViews();
 
-	protected:
+		D3D12_CLEAR_VALUE GetD3DClearValue() const;
 
-		float mClearDepth = 0.0f;
-		uint8_t mClearStencil = 0;
-		
+	protected:
+		FDepthBufferDescription mDesc;
+
 		FCpuDescriptorAllocation mDepthStencilView;
 		FCpuDescriptorAllocation mShaderResourceView;
 	};

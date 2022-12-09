@@ -18,7 +18,7 @@ namespace Dash
 		mDescription.Alignment = mResourceAlignment;
 	}
 
-	FResourceMagnitude FTextureDescription::MipSize(uint8_t mip) const
+	FResourceMagnitude FTextureDescription::ComputeMipSize(uint8_t mip) const
 	{
 		FResourceMagnitude mipMagnitude = Magnitude.XYZMultiplied(1.0f / FMath::Pow(Scalar(2), Scalar(mip)));
 		mipMagnitude.Depth = FMath::Max(mipMagnitude.Depth, uint32_t(1));
@@ -42,27 +42,40 @@ namespace Dash
 			break;
 		}
 
-		bool isArray = (Dimension == ETextureDimension::Texture1D || Dimension == ETextureDimension::Texture3D) && Magnitude.Depth > 1;
+		bool isArray = (Dimension == ETextureDimension::Texture1D || Dimension == ETextureDimension::Texture2D) && Magnitude.Depth > 1;
 		mSubresourceCount = isArray ? Magnitude.Depth * MipCount : MipCount;
 
+		mDescription.Format = D3DFormat(Format);
 		mDescription.Width = Magnitude.Width;
 		mDescription.Height = Magnitude.Height;
 		mDescription.DepthOrArraySize = Magnitude.Depth;
 		mDescription.SampleDesc.Count = MsaaSampleCount;
 		mDescription.SampleDesc.Quality = MsaaQuality;
-		mDescription.MipLevels = MipCount;
-		mDescription.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+		mDescription.MipLevels = (MipCount == 0 ? ComputeNumMips() : MipCount);
+		mDescription.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 		mDescription.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+		QueryAllocationInfo();
 
 		if (MsaaSampleCount == 1)
 		{
 			mDescription.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 		}
 
-		QueryAllocationInfo();
+		if (!IsCompressedFormat(mDescription.Format))
+		{
+			mDescription.Flags |= D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+		}
 	}
 
-	FColorBufferDescription FColorBufferDescription::Create(EResourceFormat format, ETextureDimension dimension, const FResourceMagnitude& magnitude, const FClearValue& optimizedClearValue, uint32_t mipCount /*= 1*/,
+	uint32_t FTextureDescription::ComputeNumMips() const
+	{
+		uint32_t highBit;
+		_BitScanReverse((unsigned long*)&highBit, Magnitude.Width | Magnitude.Height);
+		return highBit + 1;
+	}
+
+	FColorBufferDescription FColorBufferDescription::Create(EResourceFormat format, ETextureDimension dimension, const FResourceMagnitude& magnitude, const FLinearColor& optimizedClearValue, uint32_t mipCount /*= 1*/,
 			EResourceState initialStateMask /*= EResourceState::Common*/, uint32_t sampleCount /*= 1*/, uint32_t msaaQuality /*= 0*/)
 	{
 		FColorBufferDescription desc;
@@ -73,23 +86,29 @@ namespace Dash
 		desc.MipCount = mipCount;
 		desc.MsaaSampleCount = sampleCount;
 		desc.MsaaQuality = msaaQuality;
+		desc.ClearValue = optimizedClearValue;
 
 		desc.ResolveResourceDimensionData();
 
 		return desc;
 	}
 
-	FColorBufferDescription FColorBufferDescription::Create1D(EResourceFormat format, uint32_t width, const FVector4f& optimizedClearValue, uint32_t mipCount /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
+	FColorBufferDescription FColorBufferDescription::Create1D(EResourceFormat format, uint32_t width, const FLinearColor& optimizedClearValue, uint32_t mipCount /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
 	{
 		return FColorBufferDescription::Create(format, ETextureDimension::Texture1D, FResourceMagnitude(width), optimizedClearValue, mipCount, initialStateMask);
 	}
 
-	FColorBufferDescription FColorBufferDescription::Create2D(EResourceFormat format, uint32_t width, uint32_t height, const FVector4f& optimizedClearValue, uint32_t mipCount /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
+	FColorBufferDescription FColorBufferDescription::Create2D(EResourceFormat format, uint32_t width, uint32_t height, const FLinearColor& optimizedClearValue, uint32_t mipCount /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
 	{
 		return FColorBufferDescription::Create(format, ETextureDimension::Texture2D, FResourceMagnitude(width, height), optimizedClearValue, mipCount, initialStateMask);
 	}
 
-	FColorBufferDescription FColorBufferDescription::Create3D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t depth, const FVector4f& optimizedClearValue, uint32_t mipCount /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
+	FColorBufferDescription FColorBufferDescription::Create2DArray(EResourceFormat format, uint32_t width, uint32_t height, uint32_t arraySize, const FLinearColor& optimizedClearValue, uint32_t mipCount, EResourceState initialStateMask)
+	{
+		return FColorBufferDescription::Create(format, ETextureDimension::Texture2D, FResourceMagnitude(width, height, arraySize), optimizedClearValue, mipCount, initialStateMask);
+	}
+
+	FColorBufferDescription FColorBufferDescription::Create3D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t depth, const FLinearColor& optimizedClearValue, uint32_t mipCount /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
 	{
 		return FColorBufferDescription::Create(format, ETextureDimension::Texture3D, FResourceMagnitude(width, height, depth), optimizedClearValue, mipCount, initialStateMask);
 	}
@@ -105,22 +124,26 @@ namespace Dash
 		desc.MipCount = mipCount;
 		desc.MsaaSampleCount = sampleCount;
 		desc.MsaaQuality = msaaQuality;
+		desc.ClearValue = optimizedClearValue;
 
 		desc.ResolveResourceDimensionData();
 
 		return desc;
 	}
 
-	Dash::FBufferDescription FBufferDescription::Create(uint64_t elementSize, uint64_t elementCount, uint64_t elementAlignment /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
+	FBufferDescription FBufferDescription::Create(uint64_t elementSize, uint64_t elementCount, uint64_t elementAlignment /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
 	{
 		ASSERT(elementSize > 0);
 
-		FBufferDescription properties;
-		properties.Stride = FMath::AlignUp(elementSize, elementAlignment);
-		properties.Size = properties.Stride * elementCount;
-		properties.InitialStateMask = initialStateMask;
+		FBufferDescription desc;
+		desc.Count = elementCount;
+		desc.Stride = FMath::AlignUp(elementSize, elementAlignment);
+		desc.Size = desc.Stride * elementCount;
+		desc.InitialStateMask = initialStateMask;
 
-		return properties;
+		desc.ResolveResourceDimensionData();
+
+		return desc;
 	}
 
 	void FBufferDescription::ResolveResourceDimensionData()
@@ -132,7 +155,7 @@ namespace Dash
 		mDescription.Height = 1;
 		mDescription.DepthOrArraySize = 1;
 		mDescription.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-		mDescription.Flags = D3D12_RESOURCE_FLAG_NONE;
+		mDescription.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 		mDescription.Format = DXGI_FORMAT_UNKNOWN;
 		mDescription.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 		mDescription.MipLevels = 1;

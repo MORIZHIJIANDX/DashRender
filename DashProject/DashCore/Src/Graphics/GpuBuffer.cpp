@@ -10,43 +10,21 @@ namespace Dash
 	{
 		Destroy();
 
-		mElementCount = numElements;
-		mElementSize = elementSize;
-		mBufferSize = static_cast<size_t>(numElements * elementSize);
-		mResourceFlag |= flags;
+		mDesc = FBufferDescription::Create(elementSize, numElements);
 
-		D3D12_RESOURCE_DESC resourceDesc = DescribeBuffer();
+		D3D12_RESOURCE_DESC resourceDesc = mDesc.D3DResourceDescription();
+		resourceDesc.Flags |= flags;
 
 		CreateBufferResource(resourceDesc);
 
 		if (initData)
 		{
-			FCommandContext::InitializeBuffer(*this, initData, mBufferSize);
+			FCommandContext::InitializeBuffer(*this, initData, mDesc.Size);
 		}
 
 		CreateViews();
 
 		SetD3D12DebugName(mResource.Get(), name.c_str());
-	}
-
-	D3D12_RESOURCE_DESC FGpuBuffer::DescribeBuffer()
-	{
-		ASSERT(mBufferSize != 0);
-
-		D3D12_RESOURCE_DESC desc{};
-		desc.Alignment = 0;
-		desc.DepthOrArraySize = 1;
-		desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-		desc.Flags = mResourceFlag;
-		desc.Format = DXGI_FORMAT_UNKNOWN;
-		desc.Height = 1;
-		desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-		desc.MipLevels = 1;
-		desc.SampleDesc.Count = 1;
-		desc.SampleDesc.Quality = 0;
-		desc.Width = static_cast<UINT64>(mBufferSize);
-
-		return desc;
 	}
 
 	void FGpuBuffer::CreateBufferResource(const D3D12_RESOURCE_DESC& desc)
@@ -64,7 +42,7 @@ namespace Dash
 
 	D3D12_GPU_VIRTUAL_ADDRESS FGpuConstantBuffer::GetGpuVirtualAddress(size_t offset /*= 0*/) const
 	{
-		return mGpuVirtualAddress + mElementSize * offset;
+		return mGpuVirtualAddress + mDesc.Stride * offset;
 	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE FGpuConstantBuffer::GetShaderResourceView() const
@@ -83,7 +61,7 @@ namespace Dash
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 		srvDesc.Format = DXGI_FORMAT_R32_TYPELESS;
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc.Buffer.NumElements = static_cast<UINT>(mBufferSize / 4);
+		srvDesc.Buffer.NumElements = static_cast<UINT>(mDesc.Size / 4);
 		srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_RAW;
 
 		mShaderResourceView = FGraphicsCore::DescriptorAllocator->AllocateSRVDescriptor();
@@ -92,7 +70,7 @@ namespace Dash
 		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
 		uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
 		uavDesc.Format = DXGI_FORMAT_R32_TYPELESS;
-		uavDesc.Buffer.NumElements = static_cast<UINT>(mBufferSize / 4);
+		uavDesc.Buffer.NumElements = static_cast<UINT>(mDesc.Size / 4);
 		uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_RAW;
 
 		mUnorderedAccessView = FGraphicsCore::DescriptorAllocator->AllocateUAVDescriptor();
@@ -115,8 +93,8 @@ namespace Dash
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc.Buffer.NumElements = mElementCount;
-		srvDesc.Buffer.StructureByteStride = mElementSize;
+		srvDesc.Buffer.NumElements = static_cast<UINT>(mDesc.Count);
+		srvDesc.Buffer.StructureByteStride = static_cast<UINT>(mDesc.Stride);
 		srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 
 		mShaderResourceView = FGraphicsCore::DescriptorAllocator->AllocateSRVDescriptor();
@@ -125,8 +103,8 @@ namespace Dash
 		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
 		uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
 		uavDesc.Format = DXGI_FORMAT_UNKNOWN;
-		uavDesc.Buffer.NumElements = mElementCount;
-		uavDesc.Buffer.StructureByteStride = mElementSize;
+		uavDesc.Buffer.NumElements = static_cast<UINT>(mDesc.Count);
+		uavDesc.Buffer.StructureByteStride = static_cast<UINT>(mDesc.Stride);
 		uavDesc.Buffer.CounterOffsetInBytes = 0;
 		uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
 
@@ -142,7 +120,7 @@ namespace Dash
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 		srvDesc.Format = D3DFormat(mFormat);
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc.Buffer.NumElements = mElementCount;
+		srvDesc.Buffer.NumElements = static_cast<UINT>(mDesc.Count);
 		srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 
 		mShaderResourceView = FGraphicsCore::DescriptorAllocator->AllocateSRVDescriptor();
@@ -151,7 +129,7 @@ namespace Dash
 		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
 		uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
 		uavDesc.Format = D3DFormat(mFormat);
-		uavDesc.Buffer.NumElements = mElementCount;
+		uavDesc.Buffer.NumElements = static_cast<UINT>(mDesc.Count);
 		uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
 
 		mUnorderedAccessView = FGraphicsCore::DescriptorAllocator->AllocateUAVDescriptor();

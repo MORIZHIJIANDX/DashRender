@@ -12,7 +12,6 @@ namespace Dash
 			, mHeight(0)
 			, mArraySize(0)
 			, mFormat()
-			, mFormatSupport{}
 		{}
 
 		uint32_t GetWidth() const { return mWidth; }
@@ -22,36 +21,8 @@ namespace Dash
 
 	protected:
 
-		D3D12_RESOURCE_DESC DescribeTexture2D(uint32_t width, uint32_t height, uint32_t depthOrArraySize, uint32_t numMips, EResourceFormat format, UINT flag);
-
-		void AssociateWithResource(ID3D12Resource* resource, const D3D12_RESOURCE_STATES& currentState, const std::string& name = "");
+		void AssociateWithResource(ID3D12Resource* resource, EResourceState currentState, const std::string& name = "");
 		void CreateTextureResource(const D3D12_RESOURCE_DESC& resourceDesc, D3D12_CLEAR_VALUE clearValue, const std::string& name = "");
-
-		void CheckFeatureSupport();
-		bool CheckFormatSupport(D3D12_FORMAT_SUPPORT1 formatSupport) const;
-		bool CheckFormatSupport(D3D12_FORMAT_SUPPORT2 formatSupport) const;
-
-		bool CheckSRVSupport() const
-		{
-			return CheckFormatSupport(D3D12_FORMAT_SUPPORT1_SHADER_SAMPLE);
-		}
-
-		bool CheckRTVSupport() const
-		{
-			return CheckFormatSupport(D3D12_FORMAT_SUPPORT1_RENDER_TARGET);
-		}
-
-		bool CheckUAVSupport() const
-		{
-			return CheckFormatSupport(D3D12_FORMAT_SUPPORT1_TYPED_UNORDERED_ACCESS_VIEW) &&
-				CheckFormatSupport(D3D12_FORMAT_SUPPORT2_UAV_TYPED_LOAD) &&
-				CheckFormatSupport(D3D12_FORMAT_SUPPORT2_UAV_TYPED_STORE);
-		}
-
-		bool CheckDSVSupport() const
-		{
-			return CheckFormatSupport(D3D12_FORMAT_SUPPORT1_DEPTH_STENCIL);
-		}
 
 	protected:
 
@@ -59,7 +30,5 @@ namespace Dash
 		uint32_t mHeight;
 		uint32_t mArraySize;
 		EResourceFormat mFormat;
-
-		D3D12_FEATURE_DATA_FORMAT_SUPPORT mFormatSupport;
 	};
 }

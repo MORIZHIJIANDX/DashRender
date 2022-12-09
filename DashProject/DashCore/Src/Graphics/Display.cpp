@@ -214,7 +214,7 @@ namespace Dash
 			graphicsContext.SetPipelineState(PSO);
 			graphicsContext.SetViewportAndScissor(0, 0, IGameApp::GetInstance()->GetWindowWidth(), IGameApp::GetInstance()->GetWindowHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			//graphicsContext.SetVertexBuffer(0, VertexBuffer);
+			graphicsContext.SetVertexBuffer(0, VertexBuffer);
 			graphicsContext.Draw(3);
 		}
 
@@ -232,12 +232,12 @@ namespace Dash
 			graphicsContext.SetShaderResourceView(0, 0, mDisplayBuffer);
 			//graphicsContext.SetRootConstantBufferView<ConstantParams>(1, param);
 			graphicsContext.Set32BitConstants<ConstantParams>(1, param);
-			//graphicsContext.SetVertexBuffer(0, VertexBuffer);
+			graphicsContext.SetVertexBuffer(0, VertexBuffer);
 			graphicsContext.Draw(3);
 		}
 
 
-		graphicsContext.TransitionBarrier(FGraphicsCore::Display->GetDisplayBuffer(), D3D12_RESOURCE_STATE_PRESENT);
+		graphicsContext.TransitionBarrier(FGraphicsCore::Display->GetDisplayBuffer(), EResourceState::Present);
 
 		graphicsContext.Finish();
 
@@ -308,7 +308,7 @@ namespace Dash
 		{
 			ComPtr<ID3D12Resource> backBuffer;
 			DX_CALL(mSwapChain->GetBuffer(index, IID_PPV_ARGS(&backBuffer)));
-			mSwapChainBuffer[index].Create("Swap Chain Buffer[" + FStringUtility::ToString(index) + "]", backBuffer.Detach(), D3D12_RESOURCE_STATE_COMMON); // D3D12_RESOURCE_STATE_PRESENT ?
+			mSwapChainBuffer[index].Create("Swap Chain Buffer[" + FStringUtility::ToString(index) + "]", backBuffer.Detach(), EResourceState::Common); // D3D12_RESOURCE_STATE_PRESENT ?
 		}
 
 		mDisplayBuffer.Create("Display Buffer", mDisplayWdith, mDisplayHeight, 1, mSwapChainFormat);
