@@ -21,20 +21,17 @@ namespace Dash
 		mUtils->CreateDefaultIncludeHandler(&mIncludeHandler);
 	}
 
-	FileUtility::ByteArray FShaderCompiler::CompileShader(const FShaderCreationInfo& info)
+	FDX12CompiledShader FShaderCompiler::CompileShader(const FShaderCreationInfo& info)
 	{
-		FileUtility::ByteArray compiledShader = FileUtility::NullFile;
+		FDX12CompiledShader compiledShader;
 
 		if (info.IsOutOfDate())
 		{
-			ComPtr<IDxcBlob> shaderBlob = CompileShaderInternal(info);
+			compiledShader = CompileShaderInternal(info);
 
-			if (shaderBlob)
+			if (compiledShader.IsValid())
 			{
-				SaveShaderBlob(info, shaderBlob);
-
-				compiledShader = std::make_shared<std::vector<unsigned char>>(shaderBlob->GetBufferSize());
-				std::memcpy(compiledShader->data(), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());
+				SaveShaderBlob(info, compiledShader);
 			}
 		}
 		else
@@ -45,12 +42,12 @@ namespace Dash
 		return compiledShader;
 	}
 
-	ComPtr<IDxcBlob> FShaderCompiler::CompileShaderInternal(const FShaderCreationInfo& info)
+	FDX12CompiledShader FShaderCompiler::CompileShaderInternal(const FShaderCreationInfo& info)
 	{
 		if (!FileUtility::IsPathExistent(info.FileName))
 		{
 			LOG_WARNING << "Cannot found file : " << info.FileName;
-			return nullptr;
+			return FDX12CompiledShader{};
 		}
 
 		std::wstring wFileName = FStringUtility::UTF8ToWideString(info.FileName);
@@ -128,50 +125,101 @@ namespace Dash
 		if (FAILED(status))
 		{
 			LOG_INFO << info.FileName << " Compile failed.";
-			return nullptr;
+			return FDX12CompiledShader{};
 		}
 
-		ComPtr<IDxcBlob> Shader = nullptr;
-		ComPtr<IDxcBlobUtf16> ShaderName = nullptr;
-		DX_CALL(compiledResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&Shader), &ShaderName));
+		ComPtr<IDxcBlob> shaderBlob = nullptr;
+		ComPtr<IDxcBlobUtf16> shaderName = nullptr;
+		DX_CALL(compiledResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), &shaderName));
 
-		return Shader;
+		ComPtr<ID3D12ShaderReflection> shaderReflector;
+
+		ComPtr<IDxcBlob> reflectionBlob;
+		compiledResult->GetOutput(DXC_OUT_REFLECTION, IID_PPV_ARGS(&reflectionBlob), nullptr);
+		if (reflectionBlob != nullptr)
+		{
+			// Create reflection interface.
+			DxcBuffer reflectionData;
+			reflectionData.Encoding = DXC_CP_ACP;
+			reflectionData.Ptr = reflectionBlob->GetBufferPointer();
+			reflectionData.Size = reflectionBlob->GetBufferSize();
+
+			mUtils->CreateReflection(&reflectionData, IID_PPV_ARGS(&shaderReflector));
+		}
+
+		FDX12CompiledShader compiledShader;
+		compiledShader.CompiledShaderBlob = shaderBlob;
+		compiledShader.ShaderRelectionBlob = reflectionBlob;
+		compiledShader.ShaderReflector = shaderReflector;
+
+		return compiledShader;
 	}
 
-	bool FShaderCompiler::SaveShaderBlob(const FShaderCreationInfo& info, Microsoft::WRL::ComPtr<IDxcBlob> shaderBlob)
+	bool FShaderCompiler::SaveShaderBlob(const FShaderCreationInfo& info, const FDX12CompiledShader& compiledShader)
 	{
-		if (FileUtility::WriteBinaryFileSync(info.GetHashedFileName(), reinterpret_cast<unsigned char*>(shaderBlob->GetBufferPointer()), shaderBlob->GetBufferSize()))
+		std::string hasedShaderName = info.GetHashedFileName() + SHADER_BLOB_FILE_EXTENSION;
+
+		if (FileUtility::WriteBinaryFileSync(hasedShaderName, reinterpret_cast<unsigned char*>(compiledShader.CompiledShaderBlob->GetBufferPointer()), compiledShader.CompiledShaderBlob->GetBufferSize()))
 		{
-			LOG_INFO << "Success to save compiled shader : " << info.GetHashedFileName();
+			LOG_INFO << "Success to save compiled shader blob : " << hasedShaderName;
 		}
 		else
 		{
-			LOG_ERROR << "Failed to save compiled shader : " << info.GetHashedFileName();
+			LOG_ERROR << "Failed to save compiled shader blob : " << hasedShaderName;
+		}
+
+		std::string hasedRefectionName = info.GetHashedFileName() + REFLECTION_BLOB_FILE_EXTENSION;
+
+		if (FileUtility::WriteBinaryFileSync(hasedRefectionName, reinterpret_cast<unsigned char*>(compiledShader.ShaderRelectionBlob->GetBufferPointer()), compiledShader.ShaderRelectionBlob->GetBufferSize()))
+		{
+			LOG_INFO << "Success to save shader reflection blob : " << hasedRefectionName;
+		}
+		else
+		{
+			LOG_ERROR << "Failed to save shader reflection blob : " << hasedRefectionName;
 		}
 
 		return false;
 	}
 
-	FileUtility::ByteArray FShaderCompiler::LoadShaderBlob(const FShaderCreationInfo& info)
+	FDX12CompiledShader FShaderCompiler::LoadShaderBlob(const FShaderCreationInfo& info)
 	{
-		FileUtility::ByteArray compiledShaderFile = FileUtility::ReadBinaryFileSync(info.GetHashedFileName());
+		std::string hasedShaderName = info.GetHashedFileName() + SHADER_BLOB_FILE_EXTENSION;
+		ComPtr<IDxcBlobEncoding> compiledShaderBlob = LoadBlobFromFile(hasedShaderName);
 
-		std::wstring wFileName = FStringUtility::UTF8ToWideString(info.GetHashedFileName());
-		ComPtr<IDxcBlobEncoding> source = nullptr;
-		DX_CALL(mUtils->LoadFile(wFileName.c_str(), nullptr, &source));
+		std::string reflectionFileName = info.GetHashedFileName() + REFLECTION_BLOB_FILE_EXTENSION;
+		ComPtr<IDxcBlobEncoding> reflectionBlob = LoadBlobFromFile(reflectionFileName);
 
-		std::shared_ptr<std::vector<unsigned char>> compiledShader = std::make_shared<std::vector<unsigned char>>(source->GetBufferSize());
-		std::memcpy(compiledShader->data(), source->GetBufferPointer(), source->GetBufferSize());
+		ComPtr<ID3D12ShaderReflection> shaderReflector;
 
-		if (compiledShaderFile != FileUtility::NullFile)
-		{
-			LOG_INFO << "Success to load compiled shader : " << info.GetHashedFileName();
-		}
-		else
-		{
-			LOG_ERROR << "Failed to load compiled shader : " << info.GetHashedFileName();
-		}
+		// Create reflection interface.
+		DxcBuffer reflectionData;
+		reflectionData.Encoding = DXC_CP_ACP;
+		reflectionData.Ptr = reflectionBlob->GetBufferPointer();
+		reflectionData.Size = reflectionBlob->GetBufferSize();
 
-		return compiledShaderFile;
+		mUtils->CreateReflection(&reflectionData, IID_PPV_ARGS(&shaderReflector));
+
+		FDX12CompiledShader compiledShader;
+		compiledShader.CompiledShaderBlob = compiledShaderBlob;
+		compiledShader.ShaderRelectionBlob = reflectionBlob;
+		compiledShader.ShaderReflector = shaderReflector;
+
+		return compiledShader;
 	}
+
+	ComPtr<IDxcBlobEncoding> FShaderCompiler::LoadBlobFromFile(const std::string& fileName)
+	{
+		ComPtr<IDxcBlobEncoding> blob = nullptr;
+
+		std::wstring wShaderFileName = FStringUtility::UTF8ToWideString(fileName);
+
+		if (FileUtility::IsPathExistent(fileName))
+		{
+			DX_CALL(mUtils->LoadFile(wShaderFileName.c_str(), nullptr, &blob));
+		}
+
+		return blob;
+	}
+
 }

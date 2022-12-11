@@ -30,6 +30,7 @@ namespace Dash
 	{
 		FVector3f Pos;
 		FVector2f UV;
+		FVector4f Color;
 	};
 
 	struct ConstantParams
@@ -79,7 +80,7 @@ namespace Dash
 		RootSignature.Reset(2, 1);
 		RootSignature[0].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1, D3D12_SHADER_VISIBILITY_PIXEL);
 		//RootSignature[1].InitAsRootConstantBufferView(0, D3D12_SHADER_VISIBILITY_PIXEL);
-		RootSignature[1].InitAsRootConstants(0, sizeof(ConstantParams), D3D12_SHADER_VISIBILITY_PIXEL);
+		RootSignature[1].InitAsRootConstants(0, sizeof(ConstantParams), D3D12_SHADER_VISIBILITY_ALL);
 		RootSignature.InitStaticSampler(0, sampler, D3D12_SHADER_VISIBILITY_PIXEL);
 		RootSignature.Finalize("DisplayRootSignature", D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
@@ -130,12 +131,13 @@ namespace Dash
 		FInputAssemblerLayout inputLayout;
 		inputLayout.AddPerVertexLayoutElement("POSITION", 0, EResourceFormat::RGB32_Float, 0, 0);
 		inputLayout.AddPerVertexLayoutElement("TEXCOORD", 0, EResourceFormat::RG32_Float, 0, 12);
+		inputLayout.AddPerVertexLayoutElement("COLOR", 0, EResourceFormat::RGBA32_Float, 0, 20);
 
 		PSO.SetRootSignature(RootSignature);
 		PSO.SetBlendState(BlendDisable);
 		PSO.SetDepthStencilState(DepthStateDisabled);
-		PSO.SetVertexShader(CD3DX12_SHADER_BYTECODE{ VSShader.ShaderCode->data(), VSShader.ShaderCode->size()});
-		PSO.SetPixelShader(CD3DX12_SHADER_BYTECODE{ PSShader.ShaderCode->data(), PSShader.ShaderCode->size() });
+		PSO.SetVertexShader(CD3DX12_SHADER_BYTECODE{ VSShader.GetCompiledShader().Data, VSShader.GetCompiledShader().Size});
+		PSO.SetPixelShader(CD3DX12_SHADER_BYTECODE{ PSShader.GetCompiledShader().Data, PSShader.GetCompiledShader().Size });
 		PSO.SetRasterizerState(RasterizerTwoSided);
 		PSO.SetInputLayout(inputLayout);
 		PSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
@@ -146,8 +148,8 @@ namespace Dash
 		PresentPSO.SetRootSignature(RootSignature);
 		PresentPSO.SetBlendState(BlendDisable);
 		PresentPSO.SetDepthStencilState(DepthStateDisabled);
-		PresentPSO.SetVertexShader(CD3DX12_SHADER_BYTECODE{ VSShader.ShaderCode->data(), VSShader.ShaderCode->size() });
-		PresentPSO.SetPixelShader(CD3DX12_SHADER_BYTECODE{ PSShaderPresent.ShaderCode->data(), PSShaderPresent.ShaderCode->size() });
+		PresentPSO.SetVertexShader(CD3DX12_SHADER_BYTECODE{ VSShader.GetCompiledShader().Data, VSShader.GetCompiledShader().Size });
+		PresentPSO.SetPixelShader(CD3DX12_SHADER_BYTECODE{ PSShaderPresent.GetCompiledShader().Data, PSShaderPresent.GetCompiledShader().Size });
 		PresentPSO.SetRasterizerState(RasterizerTwoSided);
 		PresentPSO.SetInputLayout(inputLayout);
 		PresentPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
@@ -158,12 +160,15 @@ namespace Dash
 		VertexData.resize(3);
 		VertexData[0].Pos = FVector3f{-1.0f, 3.0f, 0.5f};
 		VertexData[0].UV = FVector2f{ 0.0f, -1.0f };
+		VertexData[0].Color = FVector4f{ 1.0f, 0.0f, 0.0f, 1.0f };
 
 		VertexData[1].Pos = FVector3f{ 3.0f, -1.0f, 0.5f };
 		VertexData[1].UV = FVector2f{ 2.0f, 1.0f };
+		VertexData[1].Color = FVector4f{ 0.0f, 1.0f, 0.0f, 1.0f };
 
 		VertexData[2].Pos = FVector3f{ -1.0f, -1.0f, 0.5f };
 		VertexData[2].UV = FVector2f{ 0.0f, 1.0f };
+		VertexData[2].Color = FVector4f{ 0.0f, 0.0f, 1.0f, 1.0f };
 		VertexBuffer.Create("DisplayVertexBuffer", 3, sizeof(Vertex), VertexData.data());	
 	}
 
@@ -220,7 +225,7 @@ namespace Dash
 
 		{
 			ConstantParams param;
-			param.TintColor = FVector4f{1.0f, 0.0f, 1.0f, 1.0f};
+			param.TintColor = FVector4f{1.0f, 1.0f, 0.0f, 1.0f};
 			param.Params = FVector4f{ 1.0f, 1.0f, 0.5f, 1.0f };
 
 			graphicsContext.SetRenderTarget(FGraphicsCore::Display->GetDisplayBuffer());

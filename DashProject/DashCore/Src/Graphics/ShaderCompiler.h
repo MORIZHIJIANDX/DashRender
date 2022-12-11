@@ -14,12 +14,13 @@ namespace Dash
 	public:
 		void Init();
 
-		FileUtility::ByteArray CompileShader(const FShaderCreationInfo& info);
+		FDX12CompiledShader CompileShader(const FShaderCreationInfo& info);
 
 	protected:
-		Microsoft::WRL::ComPtr<IDxcBlob> CompileShaderInternal(const FShaderCreationInfo& info);
-		bool SaveShaderBlob(const FShaderCreationInfo& info, Microsoft::WRL::ComPtr<IDxcBlob> shaderBlob);
-		FileUtility::ByteArray LoadShaderBlob(const FShaderCreationInfo& info);
+		FDX12CompiledShader CompileShaderInternal(const FShaderCreationInfo& info);
+		bool SaveShaderBlob(const FShaderCreationInfo& info, const FDX12CompiledShader& compiledShader);
+		FDX12CompiledShader LoadShaderBlob(const FShaderCreationInfo& info);
+		Microsoft::WRL::ComPtr<IDxcBlobEncoding> LoadBlobFromFile(const std::string& fileName);
 		
 	protected:
 		Microsoft::WRL::ComPtr<IDxcUtils> mUtils;

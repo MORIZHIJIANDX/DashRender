@@ -3,6 +3,8 @@
 
 namespace Dash
 {
+	using namespace Microsoft::WRL;
+
 	void FShaderMap::Init()
 	{
 		for (size_t i = 0; i < MAX_PARALLEL_SHADER_COMPILER; i++)
@@ -24,16 +26,16 @@ namespace Dash
 		if (!mShaderResourceMap.contains(shaderHash))
 		{
 			FShaderResourceRef shaderResource;
-			FileUtility::ByteArray shaderCode = mCompilers[0].CompileShader(info);
-			if (shaderCode != FileUtility::NullFile)
-			{
-				
-				shaderResource.ShaderResource.ShaderCode = shaderCode;
-				shaderResource.ShaderResource.CreationInfo = info;
+			FDX12CompiledShader compiledShader = mCompilers[0].CompileShader(info);
+			if (compiledShader.IsValid())
+			{	
+				shaderResource.ShaderResource.Init(compiledShader.CompiledShaderBlob, compiledShader.ShaderReflector, info);
+
 				mShaderResourceMap[shaderHash] = shaderResource;
 			}
 			else
 			{
+				ASSERT(false);
 				return shaderResource.ShaderResource;
 			}
 		}
@@ -45,7 +47,7 @@ namespace Dash
 	void FShaderMap::ReleaseShader(const FShaderResource& info)
 	{
 		std::lock_guard<std::mutex> lock(mShaderMapMutex);
-		size_t shaderHash = info.CreationInfo.GetShaderHash();
+		size_t shaderHash = info.GetShaderHash();
 		if (mShaderResourceMap.contains(shaderHash) && mShaderResourceMap[shaderHash].Release())
 		{
 			mShaderResourceMap.erase(shaderHash);
