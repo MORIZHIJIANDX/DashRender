@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Utility/FileUtility.h"
 #include "Utility/BitwiseEnum.h"
 #include <wtypes.h>
 #include <Unknwn.h>
@@ -15,12 +14,12 @@ namespace Dash
 
 	enum class EShaderStage : uint16_t
 	{
-		Vertex = 0,
-		Hull = 1, 
-		Domain = 2,
-		Geometry = 3,
-		Pixel = 4,
-		Compute = 5,
+		Vertex = 1 << 1,
+		Hull = 1 << 2,
+		Domain = 1 << 3,
+		Geometry = 1 << 4,
+		Pixel = 1 << 5,
+		Compute = 1 << 6,
 	};
 	ENABLE_BITMASK_OPERATORS(EShaderStage);
 
@@ -81,6 +80,7 @@ namespace Dash
 		std::string Name;
 		EShaderStage ShaderStage;
 		D3D_SHADER_INPUT_TYPE ResourceType;
+		D3D_SRV_DIMENSION ResourceDimension;
 		UINT BindPoint = 0;
 		UINT RegisterSpace = 0;
 		UINT Size = 0;

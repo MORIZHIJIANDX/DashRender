@@ -9,48 +9,49 @@ namespace Dash
 	{
 		for (size_t i = 0; i < MAX_PARALLEL_SHADER_COMPILER; i++)
 		{
-			mCompilers[i].Init();
+			GetInstance().mCompilers[i].Init();
 		}
 	}
 
 	void FShaderMap::Destroy()
 	{
-		std::lock_guard<std::mutex> lock(mShaderMapMutex);
-		mShaderResourceMap.clear();
+		std::lock_guard<std::mutex> lock(GetInstance().mShaderMapMutex);
+		GetInstance().mShaderResourceMap.clear();
 	}
 
-	FShaderResource FShaderMap::LoadShader(const FShaderCreationInfo& info)
+	FShaderResource& FShaderMap::LoadShader(const FShaderCreationInfo& info)
 	{
-		std::lock_guard<std::mutex> lock(mShaderMapMutex);
+		FShaderMap& globalShaderMap = GetInstance();
+		std::lock_guard<std::mutex> lock(GetInstance().mShaderMapMutex);		
 		size_t shaderHash = info.GetShaderHash();
-		if (!mShaderResourceMap.contains(shaderHash))
+		if (!globalShaderMap.mShaderResourceMap.contains(shaderHash))
 		{
 			FShaderResourceRef shaderResource;
-			FDX12CompiledShader compiledShader = mCompilers[0].CompileShader(info);
+			FDX12CompiledShader compiledShader = globalShaderMap.mCompilers[0].CompileShader(info);
 			if (compiledShader.IsValid())
 			{	
 				shaderResource.ShaderResource.Init(compiledShader.CompiledShaderBlob, compiledShader.ShaderReflector, info);
 
-				mShaderResourceMap[shaderHash] = shaderResource;
+				globalShaderMap.mShaderResourceMap[shaderHash] = shaderResource;
 			}
 			else
 			{
-				ASSERT(false);
-				return shaderResource.ShaderResource;
+				ASSERT_MSG(false, "Failed to compile or load shader.");
 			}
 		}
 
-		mShaderResourceMap[shaderHash].AddRef();
-		return mShaderResourceMap[shaderHash].ShaderResource;
+		globalShaderMap.mShaderResourceMap[shaderHash].AddRef();
+		return globalShaderMap.mShaderResourceMap[shaderHash].ShaderResource;
 	}
 
 	void FShaderMap::ReleaseShader(const FShaderResource& info)
 	{
-		std::lock_guard<std::mutex> lock(mShaderMapMutex);
+		FShaderMap& globalShaderMap = GetInstance();
+		std::lock_guard<std::mutex> lock(globalShaderMap.mShaderMapMutex);
 		size_t shaderHash = info.GetShaderHash();
-		if (mShaderResourceMap.contains(shaderHash) && mShaderResourceMap[shaderHash].Release())
+		if (globalShaderMap.mShaderResourceMap.contains(shaderHash) && globalShaderMap.mShaderResourceMap[shaderHash].Release())
 		{
-			mShaderResourceMap.erase(shaderHash);
+			globalShaderMap.mShaderResourceMap.erase(shaderHash);
 		}	
 	}
 

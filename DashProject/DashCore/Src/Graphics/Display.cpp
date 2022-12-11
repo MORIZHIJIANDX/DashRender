@@ -11,12 +11,13 @@
 #include "PipelineStateObject.h"
 #include "RootSignature.h"
 #include "GpuBuffer.h"
+#include "ShaderPass.h"
 
 namespace Dash
 {
 	using namespace Microsoft::WRL;
 
-	FShaderMap ShaderMap;
+	//FShaderMap ShaderMap;
 	FShaderResource PSShader;
 	FShaderResource PSShaderPresent;
 	FShaderResource VSShader;
@@ -52,19 +53,24 @@ namespace Dash
 			mFenceValue[index] = ((uint64_t)D3D12_COMMAND_LIST_TYPE_DIRECT) << COMMAND_TYPE_MASK;;
 		}
 
-		ShaderMap.Init();
+		FShaderMap::Init();
 
 		FShaderCreationInfo psInfo{ "..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl" ,  "PS_Main" };
 		psInfo.Finalize();
-		PSShader = ShaderMap.LoadShader(psInfo);
+		PSShader = FShaderMap::LoadShader(psInfo);
 
 		FShaderCreationInfo psPresentInfo{ "..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl" ,  "PS_SampleColor" };
 		psPresentInfo.Finalize();
-		PSShaderPresent = ShaderMap.LoadShader(psPresentInfo);
+		PSShaderPresent = FShaderMap::LoadShader(psPresentInfo);
 
 		FShaderCreationInfo vsInfo{ "..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl" ,  "VS_Main" };
 		vsInfo.Finalize();
-		VSShader = ShaderMap.LoadShader(vsInfo);
+		VSShader = FShaderMap::LoadShader(vsInfo);
+
+		FShaderPass PresentPass;
+		PresentPass.SetShader(EShaderStage::Vertex, vsInfo);
+		PresentPass.SetShader(EShaderStage::Pixel, psPresentInfo);
+		PresentPass.Finalize();
 
 		D3D12_SAMPLER_DESC sampler{};
 		sampler.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
@@ -182,7 +188,7 @@ namespace Dash
 
 
 		VertexBuffer.Destroy();
-		ShaderMap.Destroy();
+		FShaderMap::Destroy();
 	}
 
 	void FDisplay::Resize(uint32_t displayWdith, uint32_t displayHeight)

@@ -1,6 +1,7 @@
 #include "PCH.h"
 #include "ShaderResource.h"
 #include "Utility/StringUtility.h"
+#include "Utility/FileUtility.h"
 
 namespace Dash
 {
@@ -133,6 +134,7 @@ namespace Dash
 			resourceParameter.BindPoint = resourceDesc.BindPoint;
 			resourceParameter.RegisterSpace = resourceDesc.Space;
 			resourceParameter.ResourceType = resourceDesc.Type;
+			resourceParameter.ResourceDimension = resourceDesc.Dimension;
 
 			if (bufferSizeMap.contains(resourceParameter.Name))
 			{

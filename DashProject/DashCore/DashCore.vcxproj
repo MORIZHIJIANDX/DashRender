@@ -205,7 +205,9 @@
     <ClInclude Include="Src\Graphics\SamplerDesc.h" />
     <ClInclude Include="Src\Graphics\ShaderCompiler.h" />
     <ClInclude Include="Src\Graphics\ShaderMap.h" />
+    <ClInclude Include="Src\Graphics\ShaderPass.h" />
     <ClInclude Include="Src\Graphics\ShaderResource.h" />
+    <ClInclude Include="Src\Graphics\ShaderTechnique.h" />
     <ClInclude Include="Src\Graphics\Viewport.h" />
     <ClInclude Include="Src\Graphics\d3dx12.h" />
     <ClInclude Include="Src\Math\AABB.h" />
@@ -291,7 +293,9 @@
     <ClCompile Include="Src\Graphics\SamplerDesc.cpp" />
     <ClCompile Include="Src\Graphics\ShaderCompiler.cpp" />
     <ClCompile Include="Src\Graphics\ShaderMap.cpp" />
+    <ClCompile Include="Src\Graphics\ShaderPass.cpp" />
     <ClCompile Include="Src\Graphics\ShaderResource.cpp" />
+    <ClCompile Include="Src\Graphics\ShaderTechnique.cpp" />
     <ClCompile Include="Src\Math\Color.cpp" />
     <ClCompile Include="Src\PCH\PCH.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

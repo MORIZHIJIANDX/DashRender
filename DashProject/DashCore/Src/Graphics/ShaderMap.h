@@ -8,11 +8,11 @@ namespace Dash
 	class FShaderMap
 	{
 	public:
-		void Init();
-		void Destroy();
+		static void Init();
+		static void Destroy();
 
-		FShaderResource LoadShader(const FShaderCreationInfo& info);
-		void ReleaseShader(const FShaderResource& info);
+		static FShaderResource& LoadShader(const FShaderCreationInfo& info);
+		static void ReleaseShader(const FShaderResource& info);
 
 	private:
 		struct FShaderResourceRef
@@ -33,8 +33,16 @@ namespace Dash
 			}
 		};
 
+		static FShaderMap& GetInstance()  
+		{
+			static FShaderMap globalInstance; 
+			return globalInstance;
+		}
+
 		std::mutex mShaderMapMutex;
 		std::unordered_map<size_t, FShaderResourceRef> mShaderResourceMap;
 		FShaderCompiler mCompilers[MAX_PARALLEL_SHADER_COMPILER];
 	};
+
+
 }
