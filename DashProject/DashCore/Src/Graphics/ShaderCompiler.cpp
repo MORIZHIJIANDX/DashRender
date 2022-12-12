@@ -217,6 +217,8 @@ namespace Dash
 		if (FileUtility::IsPathExistent(fileName))
 		{
 			DX_CALL(mUtils->LoadFile(wShaderFileName.c_str(), nullptr, &blob));
+
+			LOG_INFO << "Success to load shader blob : " << fileName;
 		}
 
 		return blob;

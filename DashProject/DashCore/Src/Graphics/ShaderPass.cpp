@@ -165,7 +165,7 @@ namespace Dash
 		bool hasDynamicSamplerParameters = numDynamicSamplerParameters > 0;
 
 		UINT numRootParameters = numConstantParameters + (hasSRVParameters ? UINT(1) : UINT(0)) + (hasUAVParameters ? UINT(1) : UINT(0)) + (hasDynamicSamplerParameters ? UINT(1) : UINT(0));
-		mRootSignature.Reset(2, 8);
+		mRootSignature.Reset(numRootParameters, 8);
 		
 		uint32_t parameterIndex = 0;
 		if (hasConstantParameters)

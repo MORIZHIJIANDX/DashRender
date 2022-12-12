@@ -25,6 +25,7 @@ namespace Dash
 	FGraphicsPSO PSO{ "DisplayPSO" };
 	FGraphicsPSO PresentPSO{ "PresentPSO" };
 	FGpuVertexBuffer VertexBuffer;
+	FShaderPass PresentPass;
 	//FGpuIndexBuffer IndexBuffer;
 
 	struct Vertex
@@ -66,11 +67,11 @@ namespace Dash
 		FShaderCreationInfo vsInfo{ "..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl" ,  "VS_Main" };
 		vsInfo.Finalize();
 		VSShader = FShaderMap::LoadShader(vsInfo);
-
-		FShaderPass PresentPass;
+	
 		PresentPass.SetShader(EShaderStage::Vertex, vsInfo);
-		PresentPass.SetShader(EShaderStage::Pixel, psPresentInfo);
+		PresentPass.SetShader(EShaderStage::Pixel, psInfo);
 		PresentPass.Finalize("PresentPass");
+		//PresentPass.SetPassName("PresentPass");
 
 		D3D12_SAMPLER_DESC sampler{};
 		sampler.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
@@ -142,8 +143,9 @@ namespace Dash
 		PSO.SetRootSignature(RootSignature);
 		PSO.SetBlendState(BlendDisable);
 		PSO.SetDepthStencilState(DepthStateDisabled);
-		PSO.SetVertexShader(CD3DX12_SHADER_BYTECODE{ VSShader.GetCompiledShader().Data, VSShader.GetCompiledShader().Size});
-		PSO.SetPixelShader(CD3DX12_SHADER_BYTECODE{ PSShader.GetCompiledShader().Data, PSShader.GetCompiledShader().Size });
+		//PSO.SetVertexShader(CD3DX12_SHADER_BYTECODE{ VSShader.GetCompiledShader().Data, VSShader.GetCompiledShader().Size});
+		//PSO.SetPixelShader(CD3DX12_SHADER_BYTECODE{ PSShader.GetCompiledShader().Data, PSShader.GetCompiledShader().Size });
+		PSO.SetShaderPass(PresentPass);
 		PSO.SetRasterizerState(RasterizerTwoSided);
 		PSO.SetInputLayout(inputLayout);
 		PSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
