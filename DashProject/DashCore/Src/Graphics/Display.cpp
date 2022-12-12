@@ -70,7 +70,7 @@ namespace Dash
 		FShaderPass PresentPass;
 		PresentPass.SetShader(EShaderStage::Vertex, vsInfo);
 		PresentPass.SetShader(EShaderStage::Pixel, psPresentInfo);
-		PresentPass.Finalize();
+		PresentPass.Finalize("PresentPass");
 
 		D3D12_SAMPLER_DESC sampler{};
 		sampler.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;

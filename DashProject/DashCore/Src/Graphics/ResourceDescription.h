@@ -29,8 +29,8 @@ namespace Dash
 	struct FTextureDescription : public FResourceDescription
 	{
 	public:
-		EResourceFormat Format;
-		ETextureDimension Dimension;
+		EResourceFormat Format = EResourceFormat::Unknown;
+		ETextureDimension Dimension = ETextureDimension::Texture1D;
 		FResourceMagnitude Magnitude;
 		uint32_t MipCount = 1;
 		uint32_t MsaaSampleCount = 1;
@@ -60,7 +60,7 @@ namespace Dash
 	struct FDepthBufferDescription : public FTextureDescription
 	{
 	public:
-		FDepthStencilClearValue ClearValue;
+		FDepthStencilClearValue ClearValue{};
 
 		static FDepthBufferDescription Create(EResourceFormat format, uint32_t width, uint32_t height,
 			const FDepthStencilClearValue& optimizedClearValue, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common, uint32_t sampleCount = 1, uint32_t msaaQuality = 0);

@@ -8,6 +8,7 @@
 #include "Viewport.h"
 #include "GpuBuffer.h"
 #include "GpuLinearAllocator.h"
+#include "ShaderPass.h"
 
 namespace Dash
 {

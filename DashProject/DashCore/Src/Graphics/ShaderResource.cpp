@@ -135,6 +135,7 @@ namespace Dash
 			resourceParameter.RegisterSpace = resourceDesc.Space;
 			resourceParameter.ResourceType = resourceDesc.Type;
 			resourceParameter.ResourceDimension = resourceDesc.Dimension;
+			resourceParameter.BindCount = resourceDesc.BindCount;
 
 			if (bufferSizeMap.contains(resourceParameter.Name))
 			{

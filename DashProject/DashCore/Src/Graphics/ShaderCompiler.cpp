@@ -107,7 +107,8 @@ namespace Dash
 		DX_CALL(mCompiler->Compile(&buffer, args.data(), static_cast<UINT32>(args.size()), mIncludeHandler.Get(), IID_PPV_ARGS(&compiledResult)));
 
 		ComPtr<IDxcBlobUtf8> errors;
-		DX_CALL(compiledResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&errors), nullptr));
+		ComPtr<IDxcBlobWide> errorOutputName;
+		DX_CALL(compiledResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&errors), &errorOutputName));
 
 		if (errors != nullptr && errors->GetStringLength() != 0)
 		{
@@ -133,7 +134,8 @@ namespace Dash
 		ComPtr<ID3D12ShaderReflection> shaderReflector;
 
 		ComPtr<IDxcBlob> reflectionBlob;
-		compiledResult->GetOutput(DXC_OUT_REFLECTION, IID_PPV_ARGS(&reflectionBlob), nullptr);
+		ComPtr<IDxcBlobWide> reflectionOutputName;
+		compiledResult->GetOutput(DXC_OUT_REFLECTION, IID_PPV_ARGS(&reflectionBlob), &reflectionOutputName);
 		if (reflectionBlob != nullptr)
 		{
 			// Create reflection interface.

@@ -78,12 +78,13 @@ namespace Dash
 	struct FShaderParameter
 	{
 		std::string Name;
-		EShaderStage ShaderStage;
-		D3D_SHADER_INPUT_TYPE ResourceType;
-		D3D_SRV_DIMENSION ResourceDimension;
+		EShaderStage ShaderStage = EShaderStage::Vertex;
+		D3D_SHADER_INPUT_TYPE ResourceType = D3D_SHADER_INPUT_TYPE::D3D_SIT_CBUFFER;
+		D3D_SRV_DIMENSION ResourceDimension = D3D_SRV_DIMENSION::D3D_SRV_DIMENSION_BUFFER;
 		UINT BindPoint = 0;
 		UINT RegisterSpace = 0;
 		UINT Size = 0;
+		UINT BindCount = 0;
 	};
 
 	struct FShaderResource

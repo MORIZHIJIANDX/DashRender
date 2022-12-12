@@ -25,6 +25,26 @@ namespace Dash
 		mRootSignature = &rootSignature;
 	}
 
+	void FPipelineStateObject::ApplyShaderPass()
+	{
+		if (mShaderPass)
+		{
+			if (!mShaderPass->IsValid())
+			{
+				mShaderPass->Finalize(mShaderPass->GetPassName());
+			}
+
+			const std::map<EShaderStage, FShaderResource*>& shaders = mShaderPass->GetShaders();
+			for (auto& pair : shaders)
+			{
+				if (pair.second != nullptr)
+				{
+					SetShader(*pair.second);
+				}
+			}
+		}
+	}
+
 	FGraphicsPSO::FGraphicsPSO(const std::string& name)
 		: FPipelineStateObject(name)
 		, mPSODesc{}
@@ -101,9 +121,41 @@ namespace Dash
 		mPSODesc.IBStripCutValue = indexBufferProps;
 	}
 
+	void FGraphicsPSO::SetShader(const FShaderResource& shader)
+	{	
+		ASSERT(shader.GetShaderStage() != EShaderStage::Compute);
+
+		const void* shaderData = shader.GetCompiledShader().Data;
+		uint64_t shaderSize = shader.GetCompiledShader().Size;
+
+		switch (shader.GetShaderStage())
+		{
+		case EShaderStage::Vertex:
+			SetVertexShader(shaderData, shaderSize);
+			break;
+		case EShaderStage::Hull:
+			SetHullShader(shaderData, shaderSize);
+			break;
+		case EShaderStage::Domain:
+			SetDomainShader(shaderData, shaderSize);
+			break;
+		case EShaderStage::Geometry:
+			SetVertexShader(shaderData, shaderSize);
+			break;
+		case EShaderStage::Pixel:
+			SetPixelShader(shaderData, shaderSize);
+			break;
+		default:
+			break;
+		}
+	}
+
 	void FGraphicsPSO::Finalize()
 	{
 		ASSERT(mRootSignature->IsFinalized());
+
+		ApplyShaderPass();
+
 		mPSODesc.pRootSignature = mRootSignature->GetSignature();
 		
 		size_t hashCode = HashState(&mPSODesc);
@@ -152,9 +204,22 @@ namespace Dash
 		mPSODesc.NodeMask = 0;
 	}
 
+	void FComputePSO::SetShader(const FShaderResource& shader)
+	{
+		ASSERT(shader.GetShaderStage() == EShaderStage::Compute);
+
+		const void* shaderData = shader.GetCompiledShader().Data;
+		uint64_t shaderSize = shader.GetCompiledShader().Size;
+
+		SetComputeShader(shaderData, shaderSize);
+	}
+
 	void FComputePSO::Finalize()
 	{
 		ASSERT(mRootSignature->IsFinalized());
+
+		ApplyShaderPass();
+
 		mPSODesc.pRootSignature = mRootSignature->GetSignature();
 
 		size_t hashCode = HashState(&mPSODesc);

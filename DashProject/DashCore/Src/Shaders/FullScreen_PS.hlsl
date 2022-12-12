@@ -17,7 +17,7 @@ struct PSInput
 };
 
 Texture2D g_texture : register(t0);
-SamplerState g_sampler : register(s0);
+SamplerState StaticSampler : register(s0);
 
 /*
 cbuffer FrameBuffer : register(b0)
@@ -71,7 +71,7 @@ float4 PS_Main(PSInput input) : SV_Target0
  
 float4 PS_SampleColor(PSInput input) : SV_Target0
 {
-	return g_texture.Sample(g_sampler, input.UV) * TintColor;
+	return g_texture.Sample(StaticSampler, input.UV) * TintColor;
 	//return input.Color;
 }
 

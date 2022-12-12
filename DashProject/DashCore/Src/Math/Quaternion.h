@@ -163,10 +163,10 @@ namespace Dash
 
 	template<typename Scalar>
 	FORCEINLINE TScalarQuaternion<Scalar>::TScalarQuaternion(Scalar x, Scalar y, Scalar z, Scalar w) noexcept
-		: X(X)
-		, Y(Y)
-		, Z(Z)
-		, W(W)
+		: X(x)
+		, Y(y)
+		, Z(z)
+		, W(w)
 	{}
 
 	template<typename Scalar>
