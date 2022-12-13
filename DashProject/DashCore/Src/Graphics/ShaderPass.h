@@ -32,6 +32,7 @@ namespace Dash
 		D3D12_SHADER_VISIBILITY GetShaderVisibility(EShaderStage stage);
 		std::vector<D3D12_SAMPLER_DESC> CreateStaticSamplers();
 		std::optional<FShaderParameter> FindParameterByName(const std::vector<FShaderParameter>& parameterArray, const std::string& parameterName) const;
+		void InitDescriptorRanges(std::vector<FShaderParameter>& parameters, UINT& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType);
 
 	private:
 		std::map<EShaderStage, FShaderResource*> mShaders;

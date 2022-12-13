@@ -42,6 +42,8 @@ namespace Dash
 					SetShader(*pair.second);
 				}
 			}
+
+			SetRootSignature(mShaderPass->GetRootSignature());
 		}
 	}
 
@@ -152,9 +154,9 @@ namespace Dash
 
 	void FGraphicsPSO::Finalize()
 	{
-		ASSERT(mRootSignature->IsFinalized());
-
 		ApplyShaderPass();
+
+		ASSERT(mRootSignature->IsFinalized());
 
 		mPSODesc.pRootSignature = mRootSignature->GetSignature();
 		
@@ -216,9 +218,9 @@ namespace Dash
 
 	void FComputePSO::Finalize()
 	{
-		ASSERT(mRootSignature->IsFinalized());
-
 		ApplyShaderPass();
+
+		ASSERT(mRootSignature->IsFinalized());
 
 		mPSODesc.pRootSignature = mRootSignature->GetSignature();
 

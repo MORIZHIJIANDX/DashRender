@@ -36,7 +36,7 @@ namespace Dash
 	class FCommandContext
 	{
 		friend FCommandContextManager;
-	private:
+	protected:
 		
 		FCommandContext(D3D12_COMMAND_LIST_TYPE type);
 
@@ -79,6 +79,7 @@ namespace Dash
 		void SetDescriptorHeaps(UINT count, D3D12_DESCRIPTOR_HEAP_TYPE types[], ID3D12DescriptorHeap* heaps[]);
 
 		void SetPipelineState(const FPipelineStateObject& pso);
+		virtual void SetRootSignature(const FRootSignature& rootSignature) = 0;
 
 		static void InitializeBuffer(FGpuBuffer& dest, const void* bufferData, size_t numBytes, size_t offset = 0);
 
@@ -89,6 +90,8 @@ namespace Dash
 		void TrackResource(FGpuResource& resource);
 		void ReleaseTrackedObjects();
 		uint64_t Execute();
+
+		
 
 	protected:
 		std::string mID;
@@ -113,11 +116,18 @@ namespace Dash
 
 		ID3D12RootSignature* mCurrentRootSignature = nullptr;
 		ID3D12PipelineState* mCurrentPipelineState = nullptr;
+
+		const FRootSignature* mRootSignature = nullptr;
+		const FPipelineStateObject* mPSO = nullptr;
 	};
 
 	class FGraphicsCommandContext : public FCommandContext
 	{
 	public:
+		FGraphicsCommandContext()
+			: FCommandContext(D3D12_COMMAND_LIST_TYPE_DIRECT)
+		{}
+
 		static FGraphicsCommandContext& Begin(const std::string& id = "")
 		{
 			return FCommandContext::Begin(id, D3D12_COMMAND_LIST_TYPE_DIRECT).GetGraphicsCommandContext();
@@ -131,7 +141,7 @@ namespace Dash
 		void ClearStencil(FDepthBuffer& target);
 		void ClearDepthAndStencil(FDepthBuffer& target);
 
-		void SetRootSignature(const FRootSignature& rootSignature);
+		virtual void SetRootSignature(const FRootSignature& rootSignature) override;
 
 		void SetRenderTargets(UINT numRTVs, FColorBuffer* rtvs);
 		void SetRenderTargets(UINT numRTVs, FColorBuffer* rtvs, FDepthBuffer& depthBuffer);
@@ -172,6 +182,13 @@ namespace Dash
 			SetRootShaderResourceView(rootIndex, sizeof(T), &constants);
 		}
 
+		void SetRootConstantBufferView(const std::string& bufferName, size_t sizeInBytes, const void* constants);
+		template<typename T>
+		void SetRootConstantBufferView(const std::string& bufferName, const T& constants)
+		{
+			SetRootConstantBufferView(bufferName, sizeof(T), &constants);
+		}
+
 		// FGpuConstantBuffer 初始状态 D3D12_RESOURCE_STATE_COMMON 不可直接作为 SRV 和 UAV，需要转换为 D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER (D3D12_RESOURCE_STATE_GENERIC_READ) 状态
 		void SetRootConstantBufferView(UINT rootIndex, FGpuConstantBuffer& constantBuffer, size_t bufferOffset = 0, 
 			EResourceState stateAfter = EResourceState::ConstantBuffer);
@@ -182,6 +199,7 @@ namespace Dash
 		void SetRootUnorderAccessView(UINT rootIndex, FGpuConstantBuffer& constantBuffer, size_t bufferOffset = 0,
 			EResourceState stateAfter = EResourceState::UnorderedAccess);
 
+		void SetRootConstantBufferView(const std::string& bufferName, FGpuConstantBuffer& constantBuffer, EResourceState stateAfter = EResourceState::ConstantBuffer);
 
 		// Set descriptor table parameters
 
@@ -192,6 +210,10 @@ namespace Dash
 			EResourceState stateAfter = EResourceState::UnorderedAccess);
 
 		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FColorBuffer& buffer,
+			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0,
+			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+
+		void SetShaderResourceView(const std::string& srvrName, FColorBuffer& buffer,
 			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0,
 			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 

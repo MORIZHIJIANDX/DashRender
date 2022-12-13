@@ -25,6 +25,7 @@ namespace Dash
 	FGraphicsPSO PSO{ "DisplayPSO" };
 	FGraphicsPSO PresentPSO{ "PresentPSO" };
 	FGpuVertexBuffer VertexBuffer;
+	FShaderPass DrawPass;
 	FShaderPass PresentPass;
 	//FGpuIndexBuffer IndexBuffer;
 
@@ -68,10 +69,14 @@ namespace Dash
 		vsInfo.Finalize();
 		VSShader = FShaderMap::LoadShader(vsInfo);
 	
+		DrawPass.SetShader(EShaderStage::Vertex, vsInfo);
+		DrawPass.SetShader(EShaderStage::Pixel, psInfo);
+		//DrawPass.Finalize("DrawPass");
+		DrawPass.SetPassName("DrawPass");
+
 		PresentPass.SetShader(EShaderStage::Vertex, vsInfo);
-		PresentPass.SetShader(EShaderStage::Pixel, psInfo);
-		PresentPass.Finalize("PresentPass");
-		//PresentPass.SetPassName("PresentPass");
+		PresentPass.SetShader(EShaderStage::Pixel, psPresentInfo);
+		PresentPass.SetPassName("PresentPass");
 
 		D3D12_SAMPLER_DESC sampler{};
 		sampler.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
@@ -140,12 +145,12 @@ namespace Dash
 		inputLayout.AddPerVertexLayoutElement("TEXCOORD", 0, EResourceFormat::RG32_Float, 0, 12);
 		inputLayout.AddPerVertexLayoutElement("COLOR", 0, EResourceFormat::RGBA32_Float, 0, 20);
 
-		PSO.SetRootSignature(RootSignature);
+		//PSO.SetRootSignature(RootSignature);
 		PSO.SetBlendState(BlendDisable);
 		PSO.SetDepthStencilState(DepthStateDisabled);
 		//PSO.SetVertexShader(CD3DX12_SHADER_BYTECODE{ VSShader.GetCompiledShader().Data, VSShader.GetCompiledShader().Size});
 		//PSO.SetPixelShader(CD3DX12_SHADER_BYTECODE{ PSShader.GetCompiledShader().Data, PSShader.GetCompiledShader().Size });
-		PSO.SetShaderPass(PresentPass);
+		PSO.SetShaderPass(DrawPass);
 		PSO.SetRasterizerState(RasterizerTwoSided);
 		PSO.SetInputLayout(inputLayout);
 		PSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
@@ -153,11 +158,12 @@ namespace Dash
 		PSO.SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
 		PSO.Finalize();
 
-		PresentPSO.SetRootSignature(RootSignature);
+		//PresentPSO.SetRootSignature(RootSignature);
 		PresentPSO.SetBlendState(BlendDisable);
 		PresentPSO.SetDepthStencilState(DepthStateDisabled);
-		PresentPSO.SetVertexShader(CD3DX12_SHADER_BYTECODE{ VSShader.GetCompiledShader().Data, VSShader.GetCompiledShader().Size });
-		PresentPSO.SetPixelShader(CD3DX12_SHADER_BYTECODE{ PSShaderPresent.GetCompiledShader().Data, PSShaderPresent.GetCompiledShader().Size });
+		//PresentPSO.SetVertexShader(CD3DX12_SHADER_BYTECODE{ VSShader.GetCompiledShader().Data, VSShader.GetCompiledShader().Size });
+		//PresentPSO.SetPixelShader(CD3DX12_SHADER_BYTECODE{ PSShaderPresent.GetCompiledShader().Data, PSShaderPresent.GetCompiledShader().Size });
+		PresentPSO.SetShaderPass(PresentPass);
 		PresentPSO.SetRasterizerState(RasterizerTwoSided);
 		PresentPSO.SetInputLayout(inputLayout);
 		PresentPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
@@ -220,31 +226,33 @@ namespace Dash
 	{
 		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("Present");
 
+		ConstantParams param;
+		param.TintColor = FVector4f{ 1.0f, 1.0f, 0.0f, 1.0f };
+		param.Params = FVector4f{ 1.0f, 1.0f, 0.5f, 1.0f };
+
+
 		{
 			graphicsContext.SetRenderTarget(mDisplayBuffer);
 			graphicsContext.ClearColor(mDisplayBuffer, mDisplayBuffer.GetClearColor());
-			graphicsContext.SetRootSignature(RootSignature);
+			//graphicsContext.SetRootSignature(RootSignature);
 			graphicsContext.SetPipelineState(PSO);
 			graphicsContext.SetViewportAndScissor(0, 0, IGameApp::GetInstance()->GetWindowWidth(), IGameApp::GetInstance()->GetWindowHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			graphicsContext.SetRootConstantBufferView<ConstantParams>("FrameBuffer", param);
 			graphicsContext.SetVertexBuffer(0, VertexBuffer);
 			graphicsContext.Draw(3);
 		}
 
 		{
-			ConstantParams param;
-			param.TintColor = FVector4f{1.0f, 1.0f, 0.0f, 1.0f};
-			param.Params = FVector4f{ 1.0f, 1.0f, 0.5f, 1.0f };
-
 			graphicsContext.SetRenderTarget(FGraphicsCore::Display->GetDisplayBuffer());
 			graphicsContext.ClearColor(FGraphicsCore::Display->GetDisplayBuffer(), FLinearColor::Gray);
-			graphicsContext.SetRootSignature(RootSignature);
+			//graphicsContext.SetRootSignature(RootSignature);
 			graphicsContext.SetPipelineState(PresentPSO);
 			graphicsContext.SetViewportAndScissor(0, 0, IGameApp::GetInstance()->GetWindowWidth(), IGameApp::GetInstance()->GetWindowHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			graphicsContext.SetShaderResourceView(0, 0, mDisplayBuffer);
-			//graphicsContext.SetRootConstantBufferView<ConstantParams>(1, param);
-			graphicsContext.Set32BitConstants<ConstantParams>(1, param);
+			graphicsContext.SetShaderResourceView("g_texture", mDisplayBuffer);
+			graphicsContext.SetRootConstantBufferView<ConstantParams>("FrameBuffer", param);
+			//graphicsContext.Set32BitConstants<ConstantParams>(1, param);
 			graphicsContext.SetVertexBuffer(0, VertexBuffer);
 			graphicsContext.Draw(3);
 		}

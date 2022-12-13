@@ -85,6 +85,8 @@ namespace Dash
 		UINT RegisterSpace = 0;
 		UINT Size = 0;
 		UINT BindCount = 0;
+		UINT RootParameterIndex = 0;
+		UINT DescriptorOffset = 0;
 	};
 
 	struct FShaderResource

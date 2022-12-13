@@ -32,6 +32,8 @@ namespace Dash
 
 		bool IsFinalized() const { return mIsFinalized; }
 
+		const FShaderPass* GetShaderPass() const { return mShaderPass;}
+
 	protected:
 		void ApplyShaderPass();
 

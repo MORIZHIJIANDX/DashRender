@@ -31,7 +31,19 @@ namespace Dash
 		FCommandContext* context = nullptr;
 		if (availableContext.empty())
 		{
-			context = new FCommandContext(type);
+			switch (type)
+			{
+			case D3D12_COMMAND_LIST_TYPE_DIRECT:
+				//break;
+			case D3D12_COMMAND_LIST_TYPE_COMPUTE:
+				//break;
+			case D3D12_COMMAND_LIST_TYPE_COPY:
+				//break;
+				context = new FGraphicsCommandContext();
+			default:
+				break;
+			}
+			
 			mContextPool[type].emplace_back(context);
 		}
 		else
@@ -227,14 +239,18 @@ namespace Dash
 	void FCommandContext::SetPipelineState(const FPipelineStateObject& pso)
 	{
 		ID3D12PipelineState* pipelineState = pso.GetPipelineState();
-		
+		const FRootSignature& rootSignature = pso.GetRootSignature();
+
 		if (pipelineState == mCurrentPipelineState)
 		{
 			return;
 		}
 
+		SetRootSignature(rootSignature);
 		mD3DCommandList->SetPipelineState(pipelineState);
 		mCurrentPipelineState = pipelineState;
+
+		mPSO = &pso;
 	}
 
 	void FCommandContext::InitializeBuffer(FGpuBuffer& dest, const void* bufferData, size_t numBytes, size_t offset /*= 0*/)
@@ -398,6 +414,8 @@ namespace Dash
 
 		mDynamicViewDescriptor.ParseRootSignature(rootSignature);
 		mDynamicSamplerDescriptor.ParseRootSignature(rootSignature);
+
+		mRootSignature = &rootSignature;
 	}
 
 	void FGraphicsCommandContext::SetRenderTargets(UINT numRTVs, FColorBuffer* rtvs)
@@ -502,6 +520,24 @@ namespace Dash
 		mDynamicViewDescriptor.StageInlineSRV(rootIndex, alloc.GpuAddress);
 	}
 
+	void FGraphicsCommandContext::SetRootConstantBufferView(const std::string& bufferName, size_t sizeInBytes, const void* constants)
+	{
+		if (mPSO)
+		{
+			const FShaderPass* shaderPass = mPSO->GetShaderPass();
+
+			if (shaderPass)
+			{
+				std::optional<FShaderParameter> shaderParameter = shaderPass->FindCBVParameterByName(bufferName);
+				if (shaderParameter)
+				{
+					ASSERT(sizeInBytes == shaderParameter.value().Size);
+					SetRootConstantBufferView(shaderParameter.value().BindPoint, sizeInBytes, constants);
+				}
+			}
+		}
+	}
+
 	void FGraphicsCommandContext::SetRootShaderResourceView(UINT rootIndex, FGpuConstantBuffer& constantBuffer, size_t bufferOffset /*= 0*/, EResourceState stateAfter /*= EResourceState::AnyShaderAccess*/)
 	{
 		TransitionBarrier(constantBuffer, stateAfter);
@@ -514,6 +550,23 @@ namespace Dash
 		TransitionBarrier(constantBuffer, stateAfter);
 		mDynamicViewDescriptor.StageInlineUAV(rootIndex, constantBuffer.GetGpuVirtualAddress(bufferOffset));
 		TrackResource(constantBuffer);
+	}
+
+	void FGraphicsCommandContext::SetRootConstantBufferView(const std::string& bufferName, FGpuConstantBuffer& constantBuffer, EResourceState stateAfter)
+	{
+		if (mPSO)
+		{
+			const FShaderPass* shaderPass = mPSO->GetShaderPass();
+
+			if (shaderPass)
+			{
+				std::optional<FShaderParameter> shaderParameter = shaderPass->FindCBVParameterByName(bufferName);
+				if (shaderParameter)
+				{
+					SetRootConstantBufferView(shaderParameter.value().BindPoint, constantBuffer, 0, stateAfter);
+				}
+			}
+		}
 	}
 
 	void FGraphicsCommandContext::SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FGpuConstantBuffer& buffer, EResourceState stateAfter /*= EResourceState::AnyShaderAccess*/)
@@ -539,6 +592,23 @@ namespace Dash
 
 		mDynamicViewDescriptor.StageDescriptors(rootIndex, descriptorOffset, 1, buffer.GetShaderResourceView());
 		TrackResource(buffer);
+	}
+
+	void FGraphicsCommandContext::SetShaderResourceView(const std::string& srvrName, FColorBuffer& buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
+	{
+		if (mPSO)
+		{
+			const FShaderPass* shaderPass = mPSO->GetShaderPass();
+
+			if (shaderPass)
+			{
+				std::optional<FShaderParameter> shaderParameter = shaderPass->FindSRVParameterByName(srvrName);
+				if (shaderParameter)
+				{
+					SetShaderResourceView(shaderParameter.value().RootParameterIndex, shaderParameter.value().DescriptorOffset, buffer, stateAfter, firstSubResource, numSubResources);
+				}
+			}
+		}
 	}
 
 	void FGraphicsCommandContext::SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FDepthBuffer& buffer, EResourceState stateAfter /*= EResourceState::AnyShaderAccess*/, UINT firstSubResource /*= 0*/, UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
