@@ -238,7 +238,7 @@ namespace Dash
 			graphicsContext.SetPipelineState(PSO);
 			graphicsContext.SetViewportAndScissor(0, 0, IGameApp::GetInstance()->GetWindowWidth(), IGameApp::GetInstance()->GetWindowHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			graphicsContext.SetRootConstantBufferView<ConstantParams>("FrameBuffer", param);
+			//graphicsContext.SetRootConstantBufferView<ConstantParams>("FrameBuffer", param);
 			graphicsContext.SetVertexBuffer(0, VertexBuffer);
 			graphicsContext.Draw(3);
 		}
@@ -250,8 +250,9 @@ namespace Dash
 			graphicsContext.SetPipelineState(PresentPSO);
 			graphicsContext.SetViewportAndScissor(0, 0, IGameApp::GetInstance()->GetWindowWidth(), IGameApp::GetInstance()->GetWindowHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			graphicsContext.SetShaderResourceView("g_texture", mDisplayBuffer);
-			graphicsContext.SetRootConstantBufferView<ConstantParams>("FrameBuffer", param);
+			graphicsContext.SetShaderResourceView("DisplayTexture", mDisplayBuffer);
+			//graphicsContext.SetRootConstantBufferView<ConstantParams>("FrameBuffer", param);
+			//graphicsContext.SetRootConstantBufferView<ConstantParams>("AnotherBuffer", param);
 			//graphicsContext.Set32BitConstants<ConstantParams>(1, param);
 			graphicsContext.SetVertexBuffer(0, VertexBuffer);
 			graphicsContext.Draw(3);

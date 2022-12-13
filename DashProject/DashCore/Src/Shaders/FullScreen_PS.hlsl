@@ -5,18 +5,18 @@ struct VSInput
 	//float3 Normal : NORMAL;
 	//float4 Tangent : TANGENT;
 	float2 UV : TEXCOORD;
-	float4 Color : COLOR; 
+	//float4 Color : COLOR; 
 };
 
 struct PSInput
 {
 	float4 Position : SV_POSITION;
 	float2 UV : TEXCOORD0;
-	float4 Color : COLOR;
+	//float4 Color : COLOR;
 	//float4 Normal : TEXCOORD1;
 };
 
-Texture2D g_texture : register(t0);
+Texture2D DisplayTexture : register(t0);
 SamplerState StaticSampler : register(s0);
 
 /*
@@ -32,12 +32,6 @@ cbuffer FrameBuffer : register(b0)
 	float2 Speed;
 };
 */
-
-cbuffer FrameBuffer : register(b0)
-{
-	float4 TintColor;
-	float4 Params;
-};
 
 /*
 void VS_Main(
@@ -57,7 +51,7 @@ PSInput VS_Main(VSInput input)
 
 	output.Position = float4(input.Position, 1.0f);
 	//output.Color = TintColor;
-	output.Color = TintColor;
+	//output.Color = ParamA.TintColor;
 	output.UV = input.UV;
 	
 	return output;
@@ -71,7 +65,7 @@ float4 PS_Main(PSInput input) : SV_Target0
  
 float4 PS_SampleColor(PSInput input) : SV_Target0
 {
-	return g_texture.Sample(StaticSampler, input.UV) * TintColor;
+	return DisplayTexture.Sample(StaticSampler, input.UV);
 	//return input.Color;
 }
 

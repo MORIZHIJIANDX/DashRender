@@ -22,7 +22,7 @@ namespace Dash
 		{
 			if (ResourceType == src.ResourceType)
 			{
-				if (BindPoint == src.RegisterSpace)
+				if (BindPoint == src.BindPoint)
 				{
 					if (RegisterSpace == src.RegisterSpace)
 					{
@@ -145,6 +145,26 @@ namespace Dash
 	std::optional<FShaderParameter> FShaderPass::FindSamplerParameterByName(const std::string& parameterName) const
 	{
 		return FindParameterByName(mSamplerParameters, parameterName);
+	}
+
+	std::vector<std::string> FShaderPass::GetCBVParameterNames() const
+	{
+		return GetParameterNames(mCBVParameters);
+	}
+
+	std::vector<std::string> FShaderPass::GetSRVParameterNames() const
+	{
+		return GetParameterNames(mSRVParameters);
+	}
+
+	std::vector<std::string> FShaderPass::GetUAVParameterNames() const
+	{
+		return GetParameterNames(mUAVParameters);
+	}
+
+	std::vector<std::string> FShaderPass::GetSamplerParameterNames() const
+	{
+		return GetParameterNames(mSamplerParameters);
 	}
 
 	bool FShaderPass::IsValid() const
@@ -338,6 +358,16 @@ namespace Dash
 		}
 
 		return std::nullopt;
+	}
+
+	std::vector<std::string> FShaderPass::GetParameterNames(const std::vector<FShaderParameter>& parameterArray) const
+	{
+		std::vector<std::string> names;
+		for (size_t i = 0; i < parameterArray.size(); i++)
+		{
+			names.push_back(parameterArray[i].Name);
+		}
+		return names;
 	}
 
 	void FShaderPass::InitDescriptorRanges(std::vector<FShaderParameter>& parameters, UINT& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType)

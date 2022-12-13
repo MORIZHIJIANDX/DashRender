@@ -91,7 +91,8 @@ namespace Dash
 		void ReleaseTrackedObjects();
 		uint64_t Execute();
 
-		
+		void InitParameterBindState();
+		void CheckUnboundShaderParameters();
 
 	protected:
 		std::string mID;
@@ -119,6 +120,11 @@ namespace Dash
 
 		const FRootSignature* mRootSignature = nullptr;
 		const FPipelineStateObject* mPSO = nullptr;
+
+		std::map<std::string, bool> mConstantBufferBindState;
+		std::map<std::string, bool> mShaderResourceViewBindState;
+		std::map<std::string, bool> mUnorderAccessViewBindState;
+		std::map<std::string, bool> mSamplerBindState;
 	};
 
 	class FGraphicsCommandContext : public FCommandContext

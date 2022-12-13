@@ -251,6 +251,8 @@ namespace Dash
 		mCurrentPipelineState = pipelineState;
 
 		mPSO = &pso;
+
+		InitParameterBindState();
 	}
 
 	void FCommandContext::InitializeBuffer(FGpuBuffer& dest, const void* bufferData, size_t numBytes, size_t offset /*= 0*/)
@@ -315,6 +317,55 @@ namespace Dash
 		FGpuResourcesStateTracker::Unlock();
 
 		return fenceValue;
+	}
+
+	void FCommandContext::InitParameterBindState()
+	{
+		if (mPSO == nullptr)
+		{
+			return;
+		}
+		
+		if (mPSO->GetShaderPass() == nullptr)
+		{
+			LOG_WARNING << "Shader Pass Is Not Setted.";
+			return;
+		}
+
+		const FShaderPass* shaderPass = mPSO->GetShaderPass();
+
+		auto initBindStateFunc = [](const std::vector<std::string>& parameterNames, std::map<std::string, bool>& bindStateMap)
+		{	
+			bindStateMap.clear();
+			for (auto& name : parameterNames)
+			{
+				bindStateMap[name] = false;
+			}
+		};
+
+		initBindStateFunc(shaderPass->GetCBVParameterNames(), mConstantBufferBindState);
+		initBindStateFunc(shaderPass->GetSRVParameterNames(), mShaderResourceViewBindState);
+		initBindStateFunc(shaderPass->GetUAVParameterNames(), mUnorderAccessViewBindState);
+		initBindStateFunc(shaderPass->GetSamplerParameterNames(), mSamplerBindState);
+	}
+
+	void FCommandContext::CheckUnboundShaderParameters()
+	{
+		auto checkUnboundParameterFunc = [](const std::map<std::string, bool>& bindStateMap, const std::string& type)
+		{
+			for (auto& pair : bindStateMap)
+			{
+				if (!pair.second)
+				{
+					LOG_WARNING << "Shader Parameter : " << pair.first << ", Type : " << type << ", Is Not Bounded!";
+				}
+			}
+		};
+
+		checkUnboundParameterFunc(mConstantBufferBindState, "Constant Buffer");
+		checkUnboundParameterFunc(mShaderResourceViewBindState, "Shader Resource View");
+		checkUnboundParameterFunc(mUnorderAccessViewBindState, "Unorder Access View");
+		checkUnboundParameterFunc(mSamplerBindState, "Sampler");
 	}
 
 	void FCommandContext::Initialize()
@@ -533,8 +584,17 @@ namespace Dash
 				{
 					ASSERT(sizeInBytes == shaderParameter.value().Size);
 					SetRootConstantBufferView(shaderParameter.value().BindPoint, sizeInBytes, constants);
+					mConstantBufferBindState[bufferName] = true;
+				}
+				else
+				{
+					LOG_WARNING << "Can't Find Constant Buffer Parameter : " << bufferName;
 				}
 			}
+		}
+		else
+		{
+			LOG_WARNING << "Pipeline State Is Not Setted.";
 		}
 	}
 
@@ -564,8 +624,17 @@ namespace Dash
 				if (shaderParameter)
 				{
 					SetRootConstantBufferView(shaderParameter.value().BindPoint, constantBuffer, 0, stateAfter);
+					mConstantBufferBindState[bufferName] = true;
+				}
+				else
+				{
+					LOG_WARNING << "Can't Find Constant Buffer Parameter : " << bufferName;
 				}
 			}
+		}
+		else
+		{
+			LOG_WARNING << "Pipeline State Is Not Setted.";
 		}
 	}
 
@@ -605,9 +674,19 @@ namespace Dash
 				std::optional<FShaderParameter> shaderParameter = shaderPass->FindSRVParameterByName(srvrName);
 				if (shaderParameter)
 				{
+					ASSERT(shaderParameter.value().BindCount == 1);
 					SetShaderResourceView(shaderParameter.value().RootParameterIndex, shaderParameter.value().DescriptorOffset, buffer, stateAfter, firstSubResource, numSubResources);
+					mShaderResourceViewBindState[srvrName] = true;
+				}
+				else
+				{
+					LOG_WARNING << "Can't Find Shader Resource Parameter : " << srvrName;
 				}
 			}
+		}
+		else
+		{
+			LOG_WARNING << "Pipeline State Is Not Setted.";
 		}
 	}
 
@@ -703,6 +782,8 @@ namespace Dash
 
 	void FGraphicsCommandContext::DrawInstanced(UINT vertexCountPerInstance, UINT instanceCount, UINT startVertexLocation /*= 0*/, UINT startInstanceLocation /*= 0*/)
 	{
+		CheckUnboundShaderParameters();
+
 		FlushResourceBarriers();
 		mDynamicViewDescriptor.CommitStagedDescriptorsForDraw(*this);
 		mDynamicSamplerDescriptor.CommitStagedDescriptorsForDraw(*this);
@@ -711,6 +792,8 @@ namespace Dash
 
 	void FGraphicsCommandContext::DrawIndexedInstanced(UINT indexCountPerInstance, UINT instanceCount, UINT startIndexLocation, INT baseVertexLocation, UINT startInstanceLocation)
 	{
+		CheckUnboundShaderParameters();
+
 		FlushResourceBarriers();
 		mDynamicViewDescriptor.CommitStagedDescriptorsForDraw(*this);
 		mDynamicSamplerDescriptor.CommitStagedDescriptorsForDraw(*this);

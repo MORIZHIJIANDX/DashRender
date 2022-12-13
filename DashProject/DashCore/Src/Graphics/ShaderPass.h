@@ -18,13 +18,17 @@ namespace Dash
 		void Finalize(const std::string& passName);
 
 		EShaderPassType GetPassType() const { return mPassType; }
-		const FRootSignature& GetRootSignature() const { return mRootSignature; }
-		const std::map<EShaderStage, FShaderResource*>& GetShaders() const { return mShaders; }
 		const std::string& GetPassName() const { return mPassName; }
+		const FRootSignature& GetRootSignature() const { return mRootSignature; }
+		const std::map<EShaderStage, FShaderResource*>& GetShaders() const { return mShaders; }	
 		std::optional<FShaderParameter> FindCBVParameterByName(const std::string& parameterName) const;
 		std::optional<FShaderParameter> FindSRVParameterByName(const std::string& parameterName) const;
 		std::optional<FShaderParameter> FindUAVParameterByName(const std::string& parameterName) const;
-		std::optional<FShaderParameter> FindSamplerParameterByName(const std::string& parameterName) const;		
+		std::optional<FShaderParameter> FindSamplerParameterByName(const std::string& parameterName) const;	
+		std::vector<std::string> GetCBVParameterNames() const;
+		std::vector<std::string> GetSRVParameterNames() const;
+		std::vector<std::string> GetUAVParameterNames() const;
+		std::vector<std::string> GetSamplerParameterNames() const;
 		bool IsValid() const;
 
 	protected:
@@ -32,6 +36,7 @@ namespace Dash
 		D3D12_SHADER_VISIBILITY GetShaderVisibility(EShaderStage stage);
 		std::vector<D3D12_SAMPLER_DESC> CreateStaticSamplers();
 		std::optional<FShaderParameter> FindParameterByName(const std::vector<FShaderParameter>& parameterArray, const std::string& parameterName) const;
+		std::vector<std::string> GetParameterNames(const std::vector<FShaderParameter>& parameterArray) const;
 		void InitDescriptorRanges(std::vector<FShaderParameter>& parameters, UINT& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType);
 
 	private:
