@@ -19,19 +19,22 @@ namespace Dash
 		}
 			
 		void Destroy();
-		void Resize(uint32_t displayWdith, uint32_t displayHeight);
+		void SetDisplayRate(float displayRate);
+		void OnWindowResize(uint32_t newWidth, uint32_t newHeight);
 		void Present();
 		FColorBuffer& GetDisplayBuffer();
 	
 	protected:
 		void Initialize();
-		void CreateSwapChain(uint32_t displayWdith, uint32_t displayHeight);
+		void CreateSwapChain(uint32_t newWidth, uint32_t newHeight);
 		void CreateBuffers();
 		void DestroyBuffers();
+		void ForceRecreateBuffers(uint32_t newWidth, uint32_t newHeight);
 
 	protected:
-		uint32_t mDisplayWdith;
-		uint32_t mDisplayHeight;
+		uint32_t mDisplayWdith = 1080;
+		uint32_t mDisplayHeight = 720;
+		float mDisplayRate = 1.0f;
 		EResourceFormat mSwapChainFormat;
 
 		FColorBuffer mDisplayBuffer{FLinearColor::Yellow};

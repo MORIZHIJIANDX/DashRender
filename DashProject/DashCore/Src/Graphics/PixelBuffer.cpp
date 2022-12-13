@@ -15,11 +15,6 @@ namespace Dash
 		mResource.Attach(resource);
 
 		D3D12_RESOURCE_DESC desc = resource->GetDesc();
-		
-		mWidth = static_cast<uint32_t>(desc.Width);
-		mHeight = desc.Height;
-		mArraySize = desc.DepthOrArraySize;
-		mFormat = ResourceFormatFromD3DFormat(desc.Format);
 
 		SetName(name);
 
@@ -38,10 +33,5 @@ namespace Dash
 		FGpuResourcesStateTracker::AddGlobalResourceState(*this, D3D12_RESOURCE_STATE_COMMON);
 
 		mGpuVirtualAddress = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
-
-		mWidth = static_cast<uint32_t>(resourceDesc.Width);
-		mHeight = resourceDesc.Height;
-		mArraySize = resourceDesc.DepthOrArraySize;
-		mFormat = ResourceFormatFromD3DFormat(resourceDesc.Format);
 	}
 }

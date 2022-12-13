@@ -101,20 +101,22 @@ namespace Dash
 		{
 			mCamera->TranslateBack(Translate);
 		}
+
+		if (FKeyboard::Get().IsKeyPressed(EKeyCode::K))
+		{
+			FGraphicsCore::Display->SetDisplayRate(0.05);
+		}
+
+		if (FKeyboard::Get().IsKeyPressed(EKeyCode::L))
+		{
+			FGraphicsCore::Display->SetDisplayRate(2);
+		}
 	}
 
 	void TestApplication::OnRenderScene(const FRenderEventArgs& e)
 	{
 		FRenderEventArgs Args = e;
 		Args.Camera = mCamera;
-
-		//FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin(L"Present");
-
-		//graphicsContext.ClearColor(FGraphicsCore::Display->GetDisplayBuffer(), FLinearColor::Gray);
-
-		//graphicsContext.TransitionBarrier(FGraphicsCore::Display->GetDisplayBuffer(), D3D12_RESOURCE_STATE_PRESENT);
-
-		//graphicsContext.Finish();
 
 		FGraphicsCore::Display->Present();
 	}
@@ -128,7 +130,7 @@ namespace Dash
 		float fov = 45.0f;
 		mCamera->SetCameraParams(aspect, fov, 0.1f, 100.0f);
 
-		FGraphicsCore::Display->Resize(mWindowWidth, mWindowHeight);
+		FGraphicsCore::Display->OnWindowResize(mWindowWidth, mWindowHeight);
 
 		LOG_INFO << "Window Resized, width : " << e.Width << ", Height : " << e.Height << " , Minimized : " << e.Minimized;
 	}

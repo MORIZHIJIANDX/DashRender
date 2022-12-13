@@ -388,6 +388,8 @@ namespace Dash
 
 		mCurrentRootSignature = nullptr;
 		mCurrentPipelineState = nullptr;
+		mPSO = nullptr;
+		mRootSignature = nullptr;
 		mCommandList = nullptr;
 		mD3DCommandList = nullptr;
 	}

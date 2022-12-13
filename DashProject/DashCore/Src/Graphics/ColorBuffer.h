@@ -14,6 +14,11 @@ namespace Dash
 			mDesc.ClearValue = clearColor;
 		}
 
+		virtual uint32_t GetWidth() const { return mDesc.Magnitude.Width; }
+		virtual uint32_t GetHeight() const { return mDesc.Magnitude.Height; }
+		virtual uint32_t GetDepth() const { return mDesc.Magnitude.Depth; }
+		virtual const EResourceFormat& GetFormat() const { return mDesc.Format; }
+
 		void Create(const std::string& name, ID3D12Resource* resource, EResourceState initStates = EResourceState::Common);
 
 		void Create(const std::string& name, const FColorBufferDescription& desc, const FLinearColor& clearColor = FLinearColor{});

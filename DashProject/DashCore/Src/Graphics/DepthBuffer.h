@@ -13,6 +13,11 @@ namespace Dash
 			mDesc.ClearValue = FDepthStencilClearValue{ clearDepth, clearStencil};
 		}
 
+		virtual uint32_t GetWidth() const { return mDesc.Magnitude.Width; }
+		virtual uint32_t GetHeight() const { return mDesc.Magnitude.Height; }
+		virtual uint32_t GetDepth() const { return mDesc.Magnitude.Depth; }
+		virtual const EResourceFormat& GetFormat() const { return mDesc.Format; }
+
 		void Create(const std::string& name, const FDepthBufferDescription& desc);
 
 		void Create(const std::string& name, uint32_t width, uint32_t height, EResourceFormat format);
