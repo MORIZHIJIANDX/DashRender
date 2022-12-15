@@ -41,7 +41,7 @@ namespace Dash
 		}
 	};
 
-	void FShaderPass::Finalize(const std::string& passName)
+	void FShaderPass::Finalize(const std::string& passName, bool createStaticSamplers)
 	{
 		mPassName = passName;
 
@@ -124,7 +124,7 @@ namespace Dash
 			}
 		}
 
-		CreateRootSignature();
+		CreateRootSignature(createStaticSamplers);
 	}
 
 	std::optional<FShaderParameter> FShaderPass::FindCBVParameterByName(const std::string& parameterName) const
@@ -172,7 +172,7 @@ namespace Dash
 		return mRootSignature.GetSignature() != nullptr;
 	}
 
-	void FShaderPass::CreateRootSignature()
+	void FShaderPass::CreateRootSignature(bool createStaticSamplers)
 	{
 		UINT numConstantParameters = static_cast<UINT>(mCBVParameters.size());
 		UINT numSRVParameters = static_cast<UINT>(mSRVParameters.size());
@@ -185,7 +185,7 @@ namespace Dash
 		bool hasDynamicSamplerParameters = numDynamicSamplerParameters > 0;
 
 		UINT numRootParameters = numConstantParameters + (hasSRVParameters ? UINT(1) : UINT(0)) + (hasUAVParameters ? UINT(1) : UINT(0)) + (hasDynamicSamplerParameters ? UINT(1) : UINT(0));
-		mRootSignature.Reset(numRootParameters, 8);
+		mRootSignature.Reset(numRootParameters, createStaticSamplers ? 8 : 0);
 		
 		uint32_t rootParameterIndex = 0;
 		if (hasConstantParameters)
@@ -209,11 +209,14 @@ namespace Dash
 		InitDescriptorRanges(mUAVParameters, rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_UAV);
 		InitDescriptorRanges(mSamplerParameters, rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER);
 		 
-		std::vector<D3D12_SAMPLER_DESC> staticSamplers = CreateStaticSamplers();
-
-		for (UINT index = 0; index < staticSamplers.size(); index++)
+		if (createStaticSamplers)
 		{
-			mRootSignature.InitStaticSampler(index, staticSamplers[index], D3D12_SHADER_VISIBILITY_ALL);
+			std::vector<FSamplerDesc> staticSamplers = CreateStaticSamplers();
+
+			for (UINT index = 0; index < staticSamplers.size(); index++)
+			{
+				mRootSignature.InitStaticSampler(index, staticSamplers[index], D3D12_SHADER_VISIBILITY_ALL);
+			}
 		}
 		
 		mRootSignature.Finalize(mPassName + "_RootSignature", D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
@@ -239,102 +242,20 @@ namespace Dash
 		}
 	}
 
-	std::vector<D3D12_SAMPLER_DESC> FShaderPass::CreateStaticSamplers()
+	std::vector<FSamplerDesc> FShaderPass::CreateStaticSamplers()
 	{
 		// Applications usually only need a handful of samplers.  So just define them all up front
-		// and keep them available as part of the root signature.  
+		// and keep them available as part of the root signature. 	
+		FSamplerDesc pointWrap{ ESamplerFilter::Point, ESamplerAddressMode::Wrap, ESamplerComparisonFunc::Never };
+		FSamplerDesc pointClamp{ ESamplerFilter::Point, ESamplerAddressMode::Clamp, ESamplerComparisonFunc::Never };
+		FSamplerDesc linearWrap{ ESamplerFilter::Linear, ESamplerAddressMode::Wrap, ESamplerComparisonFunc::Never };
+		FSamplerDesc linearClamp{ ESamplerFilter::Linear, ESamplerAddressMode::Clamp, ESamplerComparisonFunc::Never };
+		FSamplerDesc anisotropicWrap{ ESamplerFilter::Anisotropic, ESamplerAddressMode::Wrap, ESamplerComparisonFunc::Never, FLinearColor::Black, 0.0f, 8 };
+		FSamplerDesc anisotropicClamp{ ESamplerFilter::Anisotropic, ESamplerAddressMode::Clamp, ESamplerComparisonFunc::Never, FLinearColor::Black, 0.0f, 8 };                          
+		FSamplerDesc shadow{ ESamplerFilter::Point, ESamplerAddressMode::Border, ESamplerComparisonFunc::LessEqual};
+		FSamplerDesc depthMap{ ESamplerFilter::Linear, ESamplerAddressMode::Border, ESamplerComparisonFunc::LessEqual };
 
-		FLOAT borderColor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-
-		D3D12_SAMPLER_DESC pointWrap{};
-		pointWrap.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
-		pointWrap.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-		pointWrap.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-		pointWrap.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-		pointWrap.MipLODBias = 0.0f;
-		pointWrap.MaxAnisotropy = 0;
-		pointWrap.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
-		pointWrap.MinLOD = 0.0f;
-		pointWrap.MaxLOD = D3D12_FLOAT32_MAX;
-
-		D3D12_SAMPLER_DESC pointClamp{};
-		pointClamp.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
-		pointClamp.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-		pointClamp.AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-		pointClamp.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-		pointClamp.MipLODBias = 0.0f;
-		pointClamp.MaxAnisotropy = 0;
-		pointClamp.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
-		pointClamp.MinLOD = 0.0f;
-		pointClamp.MaxLOD = D3D12_FLOAT32_MAX;
-
-		D3D12_SAMPLER_DESC linearWrap{};
-		linearWrap.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
-		linearWrap.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-		linearWrap.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-		linearWrap.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-		linearWrap.MipLODBias = 0.0f;
-		linearWrap.MaxAnisotropy = 0;
-		linearWrap.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
-		linearWrap.MinLOD = 0.0f;
-		linearWrap.MaxLOD = D3D12_FLOAT32_MAX;
-
-		D3D12_SAMPLER_DESC linearClamp{};
-		linearClamp.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
-		linearClamp.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-		linearClamp.AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-		linearClamp.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-		linearClamp.MipLODBias = 0.0f;
-		linearClamp.MaxAnisotropy = 0;
-		linearClamp.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
-		linearClamp.MinLOD = 0.0f;
-		linearClamp.MaxLOD = D3D12_FLOAT32_MAX;
-
-		D3D12_SAMPLER_DESC anisotropicWrap{};
-		anisotropicWrap.Filter = D3D12_FILTER_ANISOTROPIC;
-		anisotropicWrap.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-		anisotropicWrap.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-		anisotropicWrap.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-		anisotropicWrap.MipLODBias = 0.0f;
-		anisotropicWrap.MaxAnisotropy = 8;
-		anisotropicWrap.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
-		anisotropicWrap.MinLOD = 0.0f;
-		anisotropicWrap.MaxLOD = D3D12_FLOAT32_MAX;
-
-		D3D12_SAMPLER_DESC anisotropicClamp{};
-		anisotropicClamp.Filter = D3D12_FILTER_ANISOTROPIC;
-		anisotropicClamp.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-		anisotropicClamp.AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-		anisotropicClamp.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-		anisotropicClamp.MipLODBias = 0.0f;
-		anisotropicClamp.MaxAnisotropy = 8;
-		anisotropicClamp.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
-		anisotropicClamp.MinLOD = 0.0f;
-		anisotropicClamp.MaxLOD = D3D12_FLOAT32_MAX;                          
-
-		D3D12_SAMPLER_DESC shadow{};
-		shadow.Filter = D3D12_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
-		shadow.AddressU = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
-		shadow.AddressV = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
-		shadow.AddressW = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
-		shadow.MipLODBias = 0.0f;
-		shadow.MaxAnisotropy = 16;
-		shadow.ComparisonFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-		shadow.MinLOD = 0.0f;
-		shadow.MaxLOD = D3D12_FLOAT32_MAX;
-
-		D3D12_SAMPLER_DESC depthMap{};
-		depthMap.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
-		depthMap.AddressU = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
-		depthMap.AddressV = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
-		depthMap.AddressW = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
-		depthMap.MipLODBias = 0.0f;
-		depthMap.MaxAnisotropy = 0;
-		depthMap.ComparisonFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-		depthMap.MinLOD = 0.0f;
-		depthMap.MaxLOD = D3D12_FLOAT32_MAX;
-
-		std::vector<D3D12_SAMPLER_DESC> StaticSamplers;
+		std::vector<FSamplerDesc> StaticSamplers;
 		StaticSamplers.push_back(pointWrap);
 		StaticSamplers.push_back(pointClamp);
 		StaticSamplers.push_back(linearWrap);

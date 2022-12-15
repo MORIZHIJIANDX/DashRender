@@ -58,9 +58,9 @@ namespace Dash
 		mPSODesc.InputLayout.NumElements = 0;
 	}
 
-	void FGraphicsPSO::SetBlendState(const D3D12_BLEND_DESC& blendDesc)
+	void FGraphicsPSO::SetBlendState(const FBlendState& blendDesc)
 	{
-		mPSODesc.BlendState = blendDesc;
+		mPSODesc.BlendState = blendDesc.D3DBlendState();
 	}
 
 	void FGraphicsPSO::SetSamplerMask(UINT samperMask)
@@ -68,9 +68,9 @@ namespace Dash
 		mPSODesc.SampleMask = samperMask;
 	}
 
-	void FGraphicsPSO::SetRasterizerState(const D3D12_RASTERIZER_DESC& rasterDesc)
+	void FGraphicsPSO::SetRasterizerState(const FRasterizerState& rasterDesc)
 	{
-		mPSODesc.RasterizerState = rasterDesc;
+		mPSODesc.RasterizerState = rasterDesc.D3DRasterizerState();
 	}
 
 	void FGraphicsPSO::SetDepthStencilState(const D3D12_DEPTH_STENCIL_DESC& depthStencilDesc)

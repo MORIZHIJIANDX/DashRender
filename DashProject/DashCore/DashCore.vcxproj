@@ -178,6 +178,7 @@
     <ClInclude Include="Src\DesignPatterns\MulticastDelegate.h" />
     <ClInclude Include="Src\DesignPatterns\Singleton.h" />
     <ClInclude Include="Src\EntryPoint.h" />
+    <ClInclude Include="Src\Graphics\BlendState.h" />
     <ClInclude Include="Src\Graphics\Camera.h" />
     <ClInclude Include="Src\Graphics\ColorBuffer.h" />
     <ClInclude Include="Src\Graphics\CommandContext.h" />
@@ -198,6 +199,8 @@
     <ClInclude Include="Src\Graphics\InputAssemblerLayout.h" />
     <ClInclude Include="Src\Graphics\PipelineStateObject.h" />
     <ClInclude Include="Src\Graphics\PixelBuffer.h" />
+    <ClInclude Include="Src\Graphics\RasterizerState.h" />
+    <ClInclude Include="Src\Graphics\RenderTarget.h" />
     <ClInclude Include="Src\Graphics\ResourceDescription.h" />
     <ClInclude Include="Src\Graphics\ResourceFormat.h" />
     <ClInclude Include="Src\Graphics\ResourceState.h" />
@@ -267,6 +270,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\EntryPoint.cpp" />
+    <ClCompile Include="Src\Graphics\BlendState.cpp" />
     <ClCompile Include="Src\Graphics\Camera.cpp" />
     <ClCompile Include="Src\Graphics\ColorBuffer.cpp" />
     <ClCompile Include="Src\Graphics\CommandContext.cpp" />
@@ -286,6 +290,8 @@
     <ClCompile Include="Src\Graphics\InputAssemblerLayout.cpp" />
     <ClCompile Include="Src\Graphics\PipelineStateObject.cpp" />
     <ClCompile Include="Src\Graphics\PixelBuffer.cpp" />
+    <ClCompile Include="Src\Graphics\RasterizerState.cpp" />
+    <ClCompile Include="Src\Graphics\RenderTarget.cpp" />
     <ClCompile Include="Src\Graphics\ResourceDescription.cpp" />
     <ClCompile Include="Src\Graphics\ResourceFormat.cpp" />
     <ClCompile Include="Src\Graphics\ResourceState.cpp" />

@@ -22,7 +22,7 @@ namespace Dash
 		void SetDisplayRate(float displayRate);
 		void OnWindowResize(uint32_t newWidth, uint32_t newHeight);
 		void Present();
-		FColorBuffer& GetDisplayBuffer();
+		FColorBuffer& GetDisplayBuffer();	
 	
 	protected:
 		void Initialize();
@@ -30,6 +30,8 @@ namespace Dash
 		void CreateBuffers();
 		void DestroyBuffers();
 		void ForceRecreateBuffers(uint32_t newWidth, uint32_t newHeight);
+
+		FColorBuffer& GetCurrentBackBuffer();
 
 	protected:
 		uint32_t mDisplayWdith = 1080;

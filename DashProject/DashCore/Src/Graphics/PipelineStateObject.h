@@ -3,6 +3,8 @@
 #include "d3dx12.h"
 #include "InputAssemblerLayout.h"
 #include "ShaderPass.h"
+#include "RasterizerState.h"
+#include "BlendState.h"
 
 namespace Dash
 {
@@ -53,9 +55,9 @@ namespace Dash
 	public:
 		FGraphicsPSO(const std::string& name);
 
-		void SetBlendState(const D3D12_BLEND_DESC& blendDesc);
+		void SetBlendState(const FBlendState& blendDesc);
 		void SetSamplerMask(UINT samperMask);
-		void SetRasterizerState(const D3D12_RASTERIZER_DESC& rasterDesc);
+		void SetRasterizerState(const FRasterizerState& rasterDesc);
 		void SetDepthStencilState(const D3D12_DEPTH_STENCIL_DESC& depthStencilDesc);
 		void SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopologyType);
 		void SetDepthTargetFormat(EResourceFormat depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);

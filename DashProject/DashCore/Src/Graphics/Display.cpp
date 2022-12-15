@@ -12,12 +12,14 @@
 #include "RootSignature.h"
 #include "GpuBuffer.h"
 #include "ShaderPass.h"
+#include "RasterizerState.h"
+#include "BlendState.h"
 
 namespace Dash
 {
 	using namespace Microsoft::WRL;
 
-	FGraphicsPSO PSO{ "DisplayPSO" };
+	FGraphicsPSO DrawPSO{ "DisplayPSO" };
 	FGraphicsPSO PresentPSO{ "PresentPSO" };
 	FShaderPass DrawPass;
 	FShaderPass PresentPass;
@@ -32,7 +34,7 @@ namespace Dash
 
 		for (uint32_t index = 0; index < SWAP_CHAIN_BUFFER_COUNT; ++index)
 		{
-			mFenceValue[index] = ((uint64_t)D3D12_COMMAND_LIST_TYPE_DIRECT) << COMMAND_TYPE_MASK;;
+			mFenceValue[index] = ((uint64_t)D3D12_COMMAND_LIST_TYPE_DIRECT) << COMMAND_TYPE_MASK;
 		}
 
 		FShaderMap::Init();
@@ -54,36 +56,10 @@ namespace Dash
 		PresentPass.SetShader(EShaderStage::Pixel, psPresentInfo);
 		PresentPass.SetPassName("PresentPass");
 
-		D3D12_RASTERIZER_DESC RasterizerDefault{};
-		RasterizerDefault.FillMode = D3D12_FILL_MODE_SOLID;
-		RasterizerDefault.CullMode = D3D12_CULL_MODE_BACK;
-		RasterizerDefault.FrontCounterClockwise = TRUE;
-		RasterizerDefault.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
-		RasterizerDefault.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
-		RasterizerDefault.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
-		RasterizerDefault.DepthClipEnable = TRUE;
-		RasterizerDefault.MultisampleEnable = FALSE;
-		RasterizerDefault.AntialiasedLineEnable = FALSE;
-		RasterizerDefault.ForcedSampleCount = 0;
-		RasterizerDefault.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;;
+		FRasterizerState rasterizerDefault{ ERasterizerFillMode::Solid, ERasterizerCullMode::Back };
+		FRasterizerState rasterizerTwoSided{ ERasterizerFillMode::Solid, ERasterizerCullMode::None };
 
-		D3D12_RASTERIZER_DESC RasterizerTwoSided{};
-		RasterizerTwoSided = RasterizerDefault;
-		RasterizerTwoSided.CullMode = D3D12_CULL_MODE_NONE;
-
-		D3D12_BLEND_DESC alphaBlend{};
-		alphaBlend.IndependentBlendEnable = FALSE;
-		alphaBlend.RenderTarget[0].BlendEnable = FALSE;
-		alphaBlend.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-		alphaBlend.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-		alphaBlend.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-		alphaBlend.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-		alphaBlend.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
-		alphaBlend.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-		alphaBlend.RenderTarget[0].RenderTargetWriteMask = 0;
-
-		alphaBlend.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-		D3D12_BLEND_DESC BlendDisable = alphaBlend;
+		FBlendState BlendDisable{false, false};
 
 		CD3DX12_DEPTH_STENCIL_DESC DepthStateDisabled{};
 		DepthStateDisabled.DepthEnable = FALSE;
@@ -102,20 +78,20 @@ namespace Dash
 		inputLayout.AddPerVertexLayoutElement("POSITION", 0, EResourceFormat::RGB32_Float, 0, 0);
 		inputLayout.AddPerVertexLayoutElement("TEXCOORD", 0, EResourceFormat::RG32_Float, 0, 12);
 
-		PSO.SetBlendState(BlendDisable);
-		PSO.SetDepthStencilState(DepthStateDisabled);
-		PSO.SetShaderPass(DrawPass);
-		PSO.SetRasterizerState(RasterizerTwoSided);
-		PSO.SetInputLayout(inputLayout);
-		PSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-		PSO.SetSamplerMask(UINT_MAX);
-		PSO.SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
-		PSO.Finalize();
+		DrawPSO.SetBlendState(BlendDisable);
+		DrawPSO.SetDepthStencilState(DepthStateDisabled);
+		DrawPSO.SetShaderPass(DrawPass);
+		DrawPSO.SetRasterizerState(rasterizerTwoSided);
+		DrawPSO.SetInputLayout(inputLayout);
+		DrawPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+		DrawPSO.SetSamplerMask(UINT_MAX);
+		DrawPSO.SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
+		DrawPSO.Finalize();
 
 		PresentPSO.SetBlendState(BlendDisable);
 		PresentPSO.SetDepthStencilState(DepthStateDisabled);
 		PresentPSO.SetShaderPass(PresentPass);
-		PresentPSO.SetRasterizerState(RasterizerTwoSided);
+		PresentPSO.SetRasterizerState(rasterizerTwoSided);
 		PresentPSO.SetInputLayout(inputLayout);
 		PresentPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 		PresentPSO.SetSamplerMask(UINT_MAX);
@@ -136,9 +112,12 @@ namespace Dash
 
 	void FDisplay::SetDisplayRate(float displayRate)
 	{
-		mDisplayRate = displayRate;
-		ForceRecreateBuffers(mSwapChainBuffer[0].GetWidth(), mSwapChainBuffer[0].GetHeight());
-		LOG_INFO << "Set Display Rate : " << displayRate;
+		if (mDisplayRate != displayRate)
+		{
+			mDisplayRate = displayRate;
+			ForceRecreateBuffers(mSwapChainBuffer[0].GetWidth(), mSwapChainBuffer[0].GetHeight());
+			LOG_INFO << "Set Display Rate : " << displayRate;
+		}
 	}
 
 	void FDisplay::OnWindowResize(uint32_t displayWdith, uint32_t displayHeight)
@@ -156,23 +135,23 @@ namespace Dash
 		{
 			graphicsContext.SetRenderTarget(mDisplayBuffer);
 			graphicsContext.ClearColor(mDisplayBuffer, mDisplayBuffer.GetClearColor());
-			graphicsContext.SetPipelineState(PSO);
+			graphicsContext.SetPipelineState(DrawPSO);
 			graphicsContext.SetViewportAndScissor(0, 0, mDisplayBuffer.GetWidth(), mDisplayBuffer.GetHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			graphicsContext.Draw(3);
 		}
 
 		{
-			graphicsContext.SetRenderTarget(mSwapChainBuffer[mCurrentBackBufferIndex]);
-			graphicsContext.ClearColor(FGraphicsCore::Display->GetDisplayBuffer(), FLinearColor::Gray);
+			graphicsContext.SetRenderTarget(FGraphicsCore::Display->GetCurrentBackBuffer());
+			graphicsContext.ClearColor(FGraphicsCore::Display->GetCurrentBackBuffer(), FLinearColor::Gray);
 			graphicsContext.SetPipelineState(PresentPSO);
-			graphicsContext.SetViewportAndScissor(0, 0, mSwapChainBuffer[mCurrentBackBufferIndex].GetWidth(), mSwapChainBuffer[mCurrentBackBufferIndex].GetHeight());
+			graphicsContext.SetViewportAndScissor(0, 0, FGraphicsCore::Display->GetCurrentBackBuffer().GetWidth(), FGraphicsCore::Display->GetCurrentBackBuffer().GetHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			graphicsContext.SetShaderResourceView("DisplayTexture", mDisplayBuffer);
 			graphicsContext.Draw(3);
 		}
 
-		graphicsContext.TransitionBarrier(FGraphicsCore::Display->GetDisplayBuffer(), EResourceState::Present);
+		graphicsContext.TransitionBarrier(FGraphicsCore::Display->GetCurrentBackBuffer(), EResourceState::Present);
 
 		graphicsContext.Finish();
 
@@ -187,7 +166,7 @@ namespace Dash
 
 	FColorBuffer& FDisplay::GetDisplayBuffer()
 	{
-		return mSwapChainBuffer[mCurrentBackBufferIndex];
+		return mDisplayBuffer;
 	}
 
 	void FDisplay::CreateSwapChain(uint32_t displayWdith, uint32_t displayHeight)
@@ -246,6 +225,7 @@ namespace Dash
 		mDisplayWdith = static_cast<uint32_t>(FMath::AlignUp(mSwapChainBuffer[0].GetWidth() * mDisplayRate, 2));
 		mDisplayHeight = static_cast<uint32_t>(FMath::AlignUp(mSwapChainBuffer[0].GetHeight() * mDisplayRate, 2));
 		mDisplayBuffer.Create("Display Buffer", mDisplayWdith, mDisplayHeight, 1, mSwapChainFormat);
+		LOG_INFO << "Set Display Width : " << mDisplayWdith << ", Display Height : " << mDisplayHeight;
 
 		mCurrentBackBufferIndex = mSwapChain->GetCurrentBackBufferIndex();
 	}
@@ -275,6 +255,11 @@ namespace Dash
 		DX_CALL(mSwapChain->ResizeBuffers(SWAP_CHAIN_BUFFER_COUNT, newWidth, newHeight, D3DFormat(mSwapChainFormat), desc.Flags));
 
 		CreateBuffers();
+	}
+
+	FColorBuffer& FDisplay::GetCurrentBackBuffer()
+	{
+		return mSwapChainBuffer[mCurrentBackBufferIndex];
 	}
 
 }

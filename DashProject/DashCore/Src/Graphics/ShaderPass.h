@@ -1,6 +1,7 @@
 #pragma once
 #include "ShaderResource.h"
 #include "RootSignature.h"
+#include "SamplerDesc.h"
 
 namespace Dash
 {
@@ -15,7 +16,7 @@ namespace Dash
 	public:
 		void SetShader(EShaderStage stage, const FShaderCreationInfo& creationInfo);
 		void SetPassName(const std::string& name) { mPassName = name; }
-		void Finalize(const std::string& passName);
+		void Finalize(const std::string& passName, bool createStaticSamplers = true);
 
 		EShaderPassType GetPassType() const { return mPassType; }
 		const std::string& GetPassName() const { return mPassName; }
@@ -32,9 +33,9 @@ namespace Dash
 		bool IsValid() const;
 
 	protected:
-		void CreateRootSignature();
+		void CreateRootSignature(bool createStaticSamplers);
 		D3D12_SHADER_VISIBILITY GetShaderVisibility(EShaderStage stage);
-		std::vector<D3D12_SAMPLER_DESC> CreateStaticSamplers();
+		std::vector<FSamplerDesc> CreateStaticSamplers();
 		std::optional<FShaderParameter> FindParameterByName(const std::vector<FShaderParameter>& parameterArray, const std::string& parameterName) const;
 		std::vector<std::string> GetParameterNames(const std::vector<FShaderParameter>& parameterArray) const;
 		void InitDescriptorRanges(std::vector<FShaderParameter>& parameters, UINT& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType);

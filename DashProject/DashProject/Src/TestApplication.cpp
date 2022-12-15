@@ -104,12 +104,12 @@ namespace Dash
 
 		if (FKeyboard::Get().IsKeyPressed(EKeyCode::K))
 		{
-			FGraphicsCore::Display->SetDisplayRate(0.05);
+			FGraphicsCore::Display->SetDisplayRate(0.05f);
 		}
 
 		if (FKeyboard::Get().IsKeyPressed(EKeyCode::L))
 		{
-			FGraphicsCore::Display->SetDisplayRate(2);
+			FGraphicsCore::Display->SetDisplayRate(2.0f);
 		}
 	}
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "d3dx12.h"
+#include "SamplerDesc.h"
 
 namespace Dash
 {
@@ -142,7 +143,7 @@ namespace Dash
 
 		uint32_t GetNumDescriptors(uint32_t rootParameterIndex) const;
 
-		void InitStaticSampler(UINT shaderRegister, const D3D12_SAMPLER_DESC& desc, D3D12_SHADER_VISIBILITY visibility, UINT space = 0);
+		void InitStaticSampler(UINT shaderRegister, const FSamplerDesc& desc, D3D12_SHADER_VISIBILITY visibility, UINT space = 0);
 
 		void Finalize(const std::string& name, D3D12_ROOT_SIGNATURE_FLAGS flag = D3D12_ROOT_SIGNATURE_FLAG_NONE);
 

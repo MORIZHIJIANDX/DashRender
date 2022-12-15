@@ -319,6 +319,15 @@
     <ClInclude Include="Src\Utility\Visitor.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\RasterizerState.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\BlendState.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\RenderTarget.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\EntryPoint.cpp" />
@@ -468,6 +477,15 @@
     </ClCompile>
     <ClCompile Include="Src\Utility\SystemTimer.cpp">
       <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\RasterizerState.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\BlendState.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\RenderTarget.cpp">
+      <Filter>Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

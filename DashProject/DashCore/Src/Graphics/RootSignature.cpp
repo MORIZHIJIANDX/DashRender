@@ -31,37 +31,38 @@ namespace Dash
 		return mNumDescriptorsPerTable[rootParameterIndex];
 	}
 
-	void FRootSignature::InitStaticSampler(UINT shaderRegister, const D3D12_SAMPLER_DESC& desc, D3D12_SHADER_VISIBILITY visibility, UINT space /* = 0 */)
+	void FRootSignature::InitStaticSampler(UINT shaderRegister, const FSamplerDesc& desc, D3D12_SHADER_VISIBILITY visibility, UINT space /* = 0 */)
 	{
 		ASSERT(mNumInitializedStaticSamplers < mNumStaticSamplers);
+		const D3D12_SAMPLER_DESC& samplerDesc = desc.D3DSamplerDesc();
 		D3D12_STATIC_SAMPLER_DESC& staticSamplerDec = mSamplerArray[mNumInitializedStaticSamplers++];
 
-		staticSamplerDec.AddressU = desc.AddressU;
-		staticSamplerDec.AddressV = desc.AddressV;
-		staticSamplerDec.AddressW = desc.AddressW;
+		staticSamplerDec.AddressU = samplerDesc.AddressU;
+		staticSamplerDec.AddressV = samplerDesc.AddressV;
+		staticSamplerDec.AddressW = samplerDesc.AddressW;
 		staticSamplerDec.BorderColor = D3D12_STATIC_BORDER_COLOR_OPAQUE_WHITE;
-		staticSamplerDec.ComparisonFunc = desc.ComparisonFunc;
-		staticSamplerDec.Filter = desc.Filter;
-		staticSamplerDec.MaxAnisotropy = desc.MaxAnisotropy;
-		staticSamplerDec.MaxLOD = desc.MaxLOD;
-		staticSamplerDec.MinLOD = desc.MinLOD;
-		staticSamplerDec.MipLODBias = desc.MipLODBias;
+		staticSamplerDec.ComparisonFunc = samplerDesc.ComparisonFunc;
+		staticSamplerDec.Filter = samplerDesc.Filter;
+		staticSamplerDec.MaxAnisotropy = samplerDesc.MaxAnisotropy;
+		staticSamplerDec.MaxLOD = samplerDesc.MaxLOD;
+		staticSamplerDec.MinLOD = samplerDesc.MinLOD;
+		staticSamplerDec.MipLODBias = samplerDesc.MipLODBias;
 		staticSamplerDec.RegisterSpace = space;
 		staticSamplerDec.ShaderRegister = shaderRegister;
 		staticSamplerDec.ShaderVisibility = visibility;
 
-		if (desc.AddressU == D3D12_TEXTURE_ADDRESS_MODE_BORDER ||
-			desc.AddressV == D3D12_TEXTURE_ADDRESS_MODE_BORDER ||
-			desc.AddressW == D3D12_TEXTURE_ADDRESS_MODE_BORDER)
+		if (samplerDesc.AddressU == D3D12_TEXTURE_ADDRESS_MODE_BORDER ||
+			samplerDesc.AddressV == D3D12_TEXTURE_ADDRESS_MODE_BORDER ||
+			samplerDesc.AddressW == D3D12_TEXTURE_ADDRESS_MODE_BORDER)
 		{
-			ASSERT_MSG(	desc.BorderColor[0] == 0.0f && desc.BorderColor[1] == 0.0f && desc.BorderColor[2] == 0.0f && desc.BorderColor[3] == 0.0f || // Transparent Black
-						desc.BorderColor[0] == 0.0f && desc.BorderColor[1] == 0.0f && desc.BorderColor[2] == 0.0f && desc.BorderColor[3] == 1.0f || // Opaque Black
-						desc.BorderColor[0] == 1.0f && desc.BorderColor[1] == 1.0f && desc.BorderColor[2] == 1.0f && desc.BorderColor[3] == 1.0f ,  // Opaque White
+			ASSERT_MSG(	samplerDesc.BorderColor[0] == 0.0f && samplerDesc.BorderColor[1] == 0.0f && samplerDesc.BorderColor[2] == 0.0f && samplerDesc.BorderColor[3] == 0.0f || // Transparent Black
+						samplerDesc.BorderColor[0] == 0.0f && samplerDesc.BorderColor[1] == 0.0f && samplerDesc.BorderColor[2] == 0.0f && samplerDesc.BorderColor[3] == 1.0f || // Opaque Black
+						samplerDesc.BorderColor[0] == 1.0f && samplerDesc.BorderColor[1] == 1.0f && samplerDesc.BorderColor[2] == 1.0f && samplerDesc.BorderColor[3] == 1.0f ,  // Opaque White
 						"Sampler border color does not match static sampler limitations");
 
-			if (desc.BorderColor[3] == 1.0f)
+			if (samplerDesc.BorderColor[3] == 1.0f)
 			{
-				if (desc.BorderColor[0] == 1.0f)
+				if (samplerDesc.BorderColor[0] == 1.0f)
 				{
 					staticSamplerDec.BorderColor = D3D12_STATIC_BORDER_COLOR_OPAQUE_WHITE;
 				}
