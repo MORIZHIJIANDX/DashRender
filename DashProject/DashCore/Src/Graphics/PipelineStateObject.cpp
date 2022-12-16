@@ -73,9 +73,9 @@ namespace Dash
 		mPSODesc.RasterizerState = rasterDesc.D3DRasterizerState();
 	}
 
-	void FGraphicsPSO::SetDepthStencilState(const D3D12_DEPTH_STENCIL_DESC& depthStencilDesc)
+	void FGraphicsPSO::SetDepthStencilState(const FDepthStencilState& depthStencilDesc)
 	{
-		mPSODesc.DepthStencilState = depthStencilDesc;
+		mPSODesc.DepthStencilState = depthStencilDesc.D3DDepthStencilState();
 	}
 
 	void FGraphicsPSO::SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopologyType)

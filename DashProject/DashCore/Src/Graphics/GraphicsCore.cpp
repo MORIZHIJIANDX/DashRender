@@ -12,6 +12,7 @@
 #include "Display.h"
 #include "GameApp.h"
 #include "Utility/StringUtility.h"
+#include "ShaderMap.h"
 
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -43,6 +44,7 @@ namespace Dash
 	{
 		LOG_INFO << "FGraphicsCore::Initialize Begin.";
 
+		FShaderMap::Init();
 		FGraphicsCore::InitD3DDevice();
 
 		CommandQueueManager = new FCommandQueueManager();
@@ -110,6 +112,7 @@ namespace Dash
 		FSamplerDesc::DestroyAll();
 
 		DestroyD3Device();
+		FShaderMap::Destroy();
 	
 		LOG_INFO << "FGraphicsCore::Shutdown End.";
 	}

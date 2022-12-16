@@ -5,6 +5,7 @@
 #include "ShaderPass.h"
 #include "RasterizerState.h"
 #include "BlendState.h"
+#include "DepthStencilState.h"
 
 namespace Dash
 {
@@ -58,7 +59,7 @@ namespace Dash
 		void SetBlendState(const FBlendState& blendDesc);
 		void SetSamplerMask(UINT samperMask);
 		void SetRasterizerState(const FRasterizerState& rasterDesc);
-		void SetDepthStencilState(const D3D12_DEPTH_STENCIL_DESC& depthStencilDesc);
+		void SetDepthStencilState(const FDepthStencilState& depthStencilDesc);
 		void SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopologyType);
 		void SetDepthTargetFormat(EResourceFormat depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
 		void SetRenderTargetFormat(EResourceFormat renderTargetFormat, EResourceFormat depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);

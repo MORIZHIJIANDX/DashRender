@@ -14,6 +14,7 @@
 #include "ShaderPass.h"
 #include "RasterizerState.h"
 #include "BlendState.h"
+#include "DepthStencilState.h"
 
 namespace Dash
 {
@@ -37,8 +38,6 @@ namespace Dash
 			mFenceValue[index] = ((uint64_t)D3D12_COMMAND_LIST_TYPE_DIRECT) << COMMAND_TYPE_MASK;
 		}
 
-		FShaderMap::Init();
-
 		FShaderCreationInfo psInfo{ "..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl" ,  "PS_Main" };
 		psInfo.Finalize();
 
@@ -57,22 +56,9 @@ namespace Dash
 		PresentPass.SetPassName("PresentPass");
 
 		FRasterizerState rasterizerDefault{ ERasterizerFillMode::Solid, ERasterizerCullMode::Back };
-		FRasterizerState rasterizerTwoSided{ ERasterizerFillMode::Solid, ERasterizerCullMode::None };
 
 		FBlendState BlendDisable{false, false};
-
-		CD3DX12_DEPTH_STENCIL_DESC DepthStateDisabled{};
-		DepthStateDisabled.DepthEnable = FALSE;
-		DepthStateDisabled.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-		DepthStateDisabled.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-		DepthStateDisabled.StencilEnable = FALSE;
-		DepthStateDisabled.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
-		DepthStateDisabled.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
-		DepthStateDisabled.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-		DepthStateDisabled.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
-		DepthStateDisabled.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
-		DepthStateDisabled.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
-		DepthStateDisabled.BackFace = DepthStateDisabled.FrontFace;
+		FDepthStencilState DepthStateDisabled{false, false};
 
 		FInputAssemblerLayout inputLayout;
 		inputLayout.AddPerVertexLayoutElement("POSITION", 0, EResourceFormat::RGB32_Float, 0, 0);
@@ -81,7 +67,7 @@ namespace Dash
 		DrawPSO.SetBlendState(BlendDisable);
 		DrawPSO.SetDepthStencilState(DepthStateDisabled);
 		DrawPSO.SetShaderPass(DrawPass);
-		DrawPSO.SetRasterizerState(rasterizerTwoSided);
+		DrawPSO.SetRasterizerState(rasterizerDefault);
 		DrawPSO.SetInputLayout(inputLayout);
 		DrawPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 		DrawPSO.SetSamplerMask(UINT_MAX);
@@ -91,7 +77,7 @@ namespace Dash
 		PresentPSO.SetBlendState(BlendDisable);
 		PresentPSO.SetDepthStencilState(DepthStateDisabled);
 		PresentPSO.SetShaderPass(PresentPass);
-		PresentPSO.SetRasterizerState(rasterizerTwoSided);
+		PresentPSO.SetRasterizerState(rasterizerDefault);
 		PresentPSO.SetInputLayout(inputLayout);
 		PresentPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 		PresentPSO.SetSamplerMask(UINT_MAX);
@@ -106,8 +92,6 @@ namespace Dash
 		DestroyBuffers();
 
 		mSwapChain = nullptr;
-
-		FShaderMap::Destroy();
 	}
 
 	void FDisplay::SetDisplayRate(float displayRate)

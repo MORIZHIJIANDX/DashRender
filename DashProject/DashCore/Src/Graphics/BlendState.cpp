@@ -3,7 +3,7 @@
 
 namespace Dash
 {
-	FBlendState::FBlendState(bool blendEnable, bool logicOpEnable, EBlendState srcBlend, EBlendState destBlend, EBlendOperation blendOp, EBlendState srcBlendAlpha, EBlendState destBlendAlpha, EBlendOperation blendOpAlpha, EBlendLogicOperation logicOp, ERenderTargetWriteMask renderTargetWriteMask)
+	FBlendState::FBlendState(bool blendEnable, bool logicOpEnable, EBlendValue srcBlend, EBlendValue destBlend, EBlendOperation blendOp, EBlendValue srcBlendAlpha, EBlendValue destBlendAlpha, EBlendOperation blendOpAlpha, EBlendLogicOperation logicOp, ERenderTargetWriteMask renderTargetWriteMask)
 	{
 		mDesc.AlphaToCoverageEnable = false;
 		mDesc.IndependentBlendEnable = false;
@@ -19,7 +19,7 @@ namespace Dash
 		mDesc.RenderTarget[0].RenderTargetWriteMask = GetD3DColorWriteMask(renderTargetWriteMask);
 	}
 
-	FBlendState::FBlendState(EBlendState srcBlend, EBlendState destBlend, EBlendOperation blendOp, EBlendState srcBlendAlpha, EBlendState destBlendAlpha, EBlendOperation blendOpAlpha, EBlendLogicOperation logicOp, ERenderTargetWriteMask renderTargetWriteMask)
+	FBlendState::FBlendState(EBlendValue srcBlend, EBlendValue destBlend, EBlendOperation blendOp, EBlendValue srcBlendAlpha, EBlendValue destBlendAlpha, EBlendOperation blendOpAlpha, EBlendLogicOperation logicOp, ERenderTargetWriteMask renderTargetWriteMask)
 	{
 		mDesc.AlphaToCoverageEnable = false;
 		mDesc.IndependentBlendEnable = false;
@@ -35,14 +35,14 @@ namespace Dash
 		mDesc.RenderTarget[0].RenderTargetWriteMask = GetD3DColorWriteMask(renderTargetWriteMask);
 	}
 
-	void FBlendState::SetSourceValues(EBlendState srcColorBlend, EBlendState srcAlphaBlend, ERenderTarget rt)
+	void FBlendState::SetSourceValues(EBlendValue srcColorBlend, EBlendValue srcAlphaBlend, ERenderTarget rt)
 	{
 		auto rtIdx = std::underlying_type<ERenderTarget>::type(rt);
 		mDesc.RenderTarget[rtIdx].SrcBlend = GetD3DBlend(srcColorBlend);
 		mDesc.RenderTarget[rtIdx].SrcBlendAlpha = GetD3DBlend(srcAlphaBlend);
 	}
 
-	void FBlendState::SetDestinationValues(EBlendState destColorBlend, EBlendState destAlphaBlend, ERenderTarget rt)
+	void FBlendState::SetDestinationValues(EBlendValue destColorBlend, EBlendValue destAlphaBlend, ERenderTarget rt)
 	{
 		auto rtIdx = std::underlying_type<ERenderTarget>::type(rt);
 		mDesc.RenderTarget[rtIdx].DestBlend = GetD3DBlend(destColorBlend);
@@ -67,41 +67,41 @@ namespace Dash
 		mDesc.IndependentBlendEnable = enabled;
 	}
 
-	D3D12_BLEND FBlendState::GetD3DBlend(EBlendState state)
+	D3D12_BLEND FBlendState::GetD3DBlend(EBlendValue state) const 
 	{
 		switch (state)
 		{
-		case EBlendState::Zero:
+		case EBlendValue::Zero:
 			return D3D12_BLEND::D3D12_BLEND_ZERO;
-		case EBlendState::One:
+		case EBlendValue::One:
 			return D3D12_BLEND::D3D12_BLEND_ONE;
-		case EBlendState::SrcColor:
+		case EBlendValue::SrcColor:
 			return D3D12_BLEND::D3D12_BLEND_SRC_COLOR;
-		case EBlendState::InvSrcColor:
+		case EBlendValue::InvSrcColor:
 			return D3D12_BLEND::D3D12_BLEND_INV_SRC_COLOR;
-		case EBlendState::SrcAlpha:
+		case EBlendValue::SrcAlpha:
 			return D3D12_BLEND::D3D12_BLEND_SRC_ALPHA;
-		case EBlendState::InvSrcAlpha:
+		case EBlendValue::InvSrcAlpha:
 			return D3D12_BLEND::D3D12_BLEND_INV_SRC_ALPHA;
-		case EBlendState::DestAlpha:
+		case EBlendValue::DestAlpha:
 			return D3D12_BLEND::D3D12_BLEND_DEST_ALPHA;
-		case EBlendState::InvDestAlpha:
+		case EBlendValue::InvDestAlpha:
 			return D3D12_BLEND::D3D12_BLEND_INV_DEST_ALPHA;
-		case EBlendState::DestColor:
+		case EBlendValue::DestColor:
 			return D3D12_BLEND::D3D12_BLEND_DEST_COLOR;
-		case EBlendState::InvDestColor:
+		case EBlendValue::InvDestColor:
 			return D3D12_BLEND::D3D12_BLEND_INV_DEST_COLOR;
-		case EBlendState::SrcAlphaSat:
+		case EBlendValue::SrcAlphaSat:
 			return D3D12_BLEND::D3D12_BLEND_SRC_ALPHA_SAT;
-		case EBlendState::BlendFactor:
+		case EBlendValue::BlendFactor:
 			return D3D12_BLEND::D3D12_BLEND_BLEND_FACTOR;
-		case EBlendState::InvBlendFactor:
+		case EBlendValue::InvBlendFactor:
 			return D3D12_BLEND::D3D12_BLEND_INV_BLEND_FACTOR;
-		case EBlendState::Src1Color:
+		case EBlendValue::Src1Color:
 			return D3D12_BLEND::D3D12_BLEND_SRC1_COLOR;
-		case EBlendState::Src1Alpha:
+		case EBlendValue::Src1Alpha:
 			return D3D12_BLEND::D3D12_BLEND_SRC1_ALPHA;
-		case EBlendState::InvSrc1Alpha:
+		case EBlendValue::InvSrc1Alpha:
 			return D3D12_BLEND::D3D12_BLEND_INV_SRC1_ALPHA;
 		default:
 			ASSERT(false);
@@ -109,7 +109,7 @@ namespace Dash
 		}
 	}
 
-	D3D12_BLEND_OP FBlendState::GetD3DBlendOp(EBlendOperation op)
+	D3D12_BLEND_OP FBlendState::GetD3DBlendOp(EBlendOperation op) const
 	{
 		switch (op)
 		{
@@ -129,7 +129,7 @@ namespace Dash
 		}
 	}
 
-	D3D12_LOGIC_OP FBlendState::GetD3DLogicOp(EBlendLogicOperation op)
+	D3D12_LOGIC_OP FBlendState::GetD3DLogicOp(EBlendLogicOperation op) const
 	{
 		switch (op)
 		{
@@ -174,7 +174,7 @@ namespace Dash
 
 	ENABLE_BITMASK_OPERATORS(D3D12_COLOR_WRITE_ENABLE);
 
-	D3D12_COLOR_WRITE_ENABLE FBlendState::GetD3DColorWriteMask(ERenderTargetWriteMask mask)
+	D3D12_COLOR_WRITE_ENABLE FBlendState::GetD3DColorWriteMask(ERenderTargetWriteMask mask) const
 	{
 		D3D12_COLOR_WRITE_ENABLE writeMask = static_cast<D3D12_COLOR_WRITE_ENABLE>(0);
 		if (EnumMaskContains(mask, ERenderTargetWriteMask::Red)) writeMask |= D3D12_COLOR_WRITE_ENABLE::D3D12_COLOR_WRITE_ENABLE_RED;

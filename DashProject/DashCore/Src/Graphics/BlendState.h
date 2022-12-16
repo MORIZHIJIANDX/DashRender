@@ -6,7 +6,7 @@
 
 namespace Dash
 {
-	enum class EBlendState
+	enum class EBlendValue
 	{
 		Zero, One, SrcColor, InvSrcColor, SrcAlpha, InvSrcAlpha, 
 		DestAlpha, InvDestAlpha, DestColor, InvDestColor, 
@@ -40,17 +40,17 @@ namespace Dash
 	class FBlendState
 	{
 	public:
-		FBlendState(EBlendState srcBlend = EBlendState::SrcAlpha, EBlendState destBlend = EBlendState::InvSrcAlpha, EBlendOperation blendOp = EBlendOperation::Add,
-			EBlendState srcBlendAlpha = EBlendState::One, EBlendState destBlendAlpha = EBlendState::InvSrcAlpha, EBlendOperation blendOpAlpha = EBlendOperation::Add,
+		FBlendState(EBlendValue srcBlend = EBlendValue::SrcAlpha, EBlendValue destBlend = EBlendValue::InvSrcAlpha, EBlendOperation blendOp = EBlendOperation::Add,
+			EBlendValue srcBlendAlpha = EBlendValue::One, EBlendValue destBlendAlpha = EBlendValue::InvSrcAlpha, EBlendOperation blendOpAlpha = EBlendOperation::Add,
 			EBlendLogicOperation logicOp = EBlendLogicOperation::Noop, ERenderTargetWriteMask renderTargetWriteMask = ERenderTargetWriteMask::All);
 
 		FBlendState(bool blendEnable, bool logicOpEnable, 
-			EBlendState srcBlend = EBlendState::SrcAlpha, EBlendState destBlend = EBlendState::InvSrcAlpha, EBlendOperation blendOp = EBlendOperation::Add,
-			EBlendState srcBlendAlpha = EBlendState::One, EBlendState destBlendAlpha = EBlendState::InvSrcAlpha, EBlendOperation blendOpAlpha = EBlendOperation::Add, 
+			EBlendValue srcBlend = EBlendValue::SrcAlpha, EBlendValue destBlend = EBlendValue::InvSrcAlpha, EBlendOperation blendOp = EBlendOperation::Add,
+			EBlendValue srcBlendAlpha = EBlendValue::One, EBlendValue destBlendAlpha = EBlendValue::InvSrcAlpha, EBlendOperation blendOpAlpha = EBlendOperation::Add, 
 			EBlendLogicOperation logicOp = EBlendLogicOperation::Noop, ERenderTargetWriteMask renderTargetWriteMask = ERenderTargetWriteMask::All);
 
-		void SetSourceValues(EBlendState srcColorBlend, EBlendState srcAlphaBlend, ERenderTarget rt = ERenderTarget::RT0);
-		void SetDestinationValues(EBlendState destColorBlend, EBlendState destAlphaBlend, ERenderTarget rt = ERenderTarget::RT0);
+		void SetSourceValues(EBlendValue srcColorBlend, EBlendValue srcAlphaBlend, ERenderTarget rt = ERenderTarget::RT0);
+		void SetDestinationValues(EBlendValue destColorBlend, EBlendValue destAlphaBlend, ERenderTarget rt = ERenderTarget::RT0);
 		void SetFunctions(EBlendOperation colorOp, EBlendOperation alphaOp, ERenderTarget rt = ERenderTarget::RT0);
 		void SetBlendingEnabled(bool enabled, ERenderTarget rt = ERenderTarget::RT0);
 		void SetIndependentBlendEnable(bool enabled);
@@ -58,12 +58,12 @@ namespace Dash
 		const D3D12_BLEND_DESC& D3DBlendState() const { return mDesc; }
 
 	private:
-		D3D12_BLEND GetD3DBlend(EBlendState state);
-		D3D12_BLEND_OP GetD3DBlendOp(EBlendOperation op);
-		D3D12_LOGIC_OP GetD3DLogicOp(EBlendLogicOperation op);
-		D3D12_COLOR_WRITE_ENABLE GetD3DColorWriteMask(ERenderTargetWriteMask mask);
+		D3D12_BLEND GetD3DBlend(EBlendValue state) const;
+		D3D12_BLEND_OP GetD3DBlendOp(EBlendOperation op) const;
+		D3D12_LOGIC_OP GetD3DLogicOp(EBlendLogicOperation op) const;
+		D3D12_COLOR_WRITE_ENABLE GetD3DColorWriteMask(ERenderTargetWriteMask mask) const;
 		 
 	private:
-		D3D12_BLEND_DESC mDesc;
+		D3D12_BLEND_DESC mDesc{};
 	};
 }

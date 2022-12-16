@@ -186,6 +186,7 @@
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocation.h" />
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocator.h" />
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocatorPage.h" />
+    <ClInclude Include="Src\Graphics\DepthStencilState.h" />
     <ClInclude Include="Src\Graphics\DX12Helper.h" />
     <ClInclude Include="Src\Graphics\DepthBuffer.h" />
     <ClInclude Include="Src\Graphics\Display.h" />
@@ -278,6 +279,7 @@
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocation.cpp" />
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocator.cpp" />
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocatorPage.cpp" />
+    <ClCompile Include="Src\Graphics\DepthStencilState.cpp" />
     <ClCompile Include="Src\Graphics\DX12Helper.cpp" />
     <ClCompile Include="Src\Graphics\DepthBuffer.cpp" />
     <ClCompile Include="Src\Graphics\Display.cpp" />
