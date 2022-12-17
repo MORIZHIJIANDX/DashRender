@@ -20,28 +20,36 @@ namespace Dash
 
 		EShaderPassType GetPassType() const { return mPassType; }
 		const std::string& GetPassName() const { return mPassName; }
-		const FRootSignature& GetRootSignature() const { return mRootSignature; }
-		const std::map<EShaderStage, FShaderResource*>& GetShaders() const { return mShaders; }	
-		std::optional<FShaderParameter> FindCBVParameterByName(const std::string& parameterName) const;
-		std::optional<FShaderParameter> FindSRVParameterByName(const std::string& parameterName) const;
-		std::optional<FShaderParameter> FindUAVParameterByName(const std::string& parameterName) const;
-		std::optional<FShaderParameter> FindSamplerParameterByName(const std::string& parameterName) const;	
-		std::vector<std::string> GetCBVParameterNames() const;
-		std::vector<std::string> GetSRVParameterNames() const;
-		std::vector<std::string> GetUAVParameterNames() const;
-		std::vector<std::string> GetSamplerParameterNames() const;
-		bool IsValid() const;
+		FRootSignatureRef GetRootSignature() const { return mRootSignatureRef; }
+		const std::map<EShaderStage, FShaderResourceRef>& GetShaders() const { return mShaders; }
+
+		int32_t FindCBVParameterByName(const std::string& parameterName) const;
+		int32_t FindSRVParameterByName(const std::string& parameterName) const;
+		int32_t FindUAVParameterByName(const std::string& parameterName) const;
+		int32_t FindSamplerParameterByName(const std::string& parameterName) const;
+
+		size_t GetCBVParameterNum() const { return mCBVParameters.size(); }
+		size_t GetSRVParameterNum() const { return mSRVParameters.size(); }
+		size_t GetUAVParameterNum() const { return mUAVParameters.size(); }
+		size_t GetSamplerParameterNum() const { return mSamplerParameters.size(); }
+
+		const std::vector<FShaderParameter>& GetCBVParameters() const { return mCBVParameters; }
+		const std::vector<FShaderParameter>& GetSRVParameters() const { return mSRVParameters; }
+		const std::vector<FShaderParameter>& GetUAVParameters() const { return mUAVParameters; }
+		const std::vector<FShaderParameter>& GetSamplerParameters() const { return mSamplerParameters; }
+
+		bool IsFinalized() const;
 
 	protected:
 		void CreateRootSignature(bool createStaticSamplers);
 		D3D12_SHADER_VISIBILITY GetShaderVisibility(EShaderStage stage);
 		std::vector<FSamplerDesc> CreateStaticSamplers();
-		std::optional<FShaderParameter> FindParameterByName(const std::vector<FShaderParameter>& parameterArray, const std::string& parameterName) const;
+		int32_t FindParameterByName(const std::vector<FShaderParameter>& parameterArray, const std::string& parameterName) const;
 		std::vector<std::string> GetParameterNames(const std::vector<FShaderParameter>& parameterArray) const;
 		void InitDescriptorRanges(std::vector<FShaderParameter>& parameters, UINT& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType);
 
 	private:
-		std::map<EShaderStage, FShaderResource*> mShaders;
+		std::map<EShaderStage, FShaderResourceRef> mShaders;
 
 		std::vector<FShaderParameter> mCBVParameters;
 		std::vector<FShaderParameter> mSRVParameters;
@@ -49,7 +57,7 @@ namespace Dash
 		std::vector<FShaderParameter> mSamplerParameters;
 
 		EShaderPassType mPassType;
-		FRootSignature mRootSignature;
+		FRootSignatureRef mRootSignatureRef;
 		std::string mPassName;
 	};
 }

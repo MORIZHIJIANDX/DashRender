@@ -22,15 +22,24 @@ namespace Dash
 			{
 				mRetiredContexts[contextType].front().second->ReleaseTrackedObjects();
 				mAvailableContexts[type].push(mRetiredContexts[contextType].front().second);
-				mRetiredContexts[contextType].pop();
+				mRetiredContexts[contextType].pop_front();
 			}
 		}
+		
+		int64_t currentCompletedFence = FGraphicsCore::CommandQueueManager->GetGraphicsQueue().GetCompletedFence();
 
 		auto& availableContext = mAvailableContexts[type];
 
 		FCommandContext* context = nullptr;
 		if (availableContext.empty())
 		{
+			LOG_INFO << "Current Completed Fence : " << currentCompletedFence;
+
+			for(auto& pair : mRetiredContexts[D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT])
+			{
+				LOG_INFO << "Unreused Context : " << pair.second << " , Fence : " << pair.first;
+			}
+
 			switch (type)
 			{
 			case D3D12_COMMAND_LIST_TYPE_DIRECT:
@@ -43,6 +52,7 @@ namespace Dash
 			default:
 				break;
 			}
+			
 			
 			mContextPool[type].emplace_back(context);
 		}
@@ -66,7 +76,8 @@ namespace Dash
 		ASSERT(context != nullptr);
 		std::lock_guard<std::mutex> lock(mAllocationMutex);
 		FGraphicsCore::CommandListManager->RetiredUsedCommandList(fenceValue, context->GetCommandList());
-		mRetiredContexts[context->mType].emplace(std::make_pair(fenceValue, context));
+		mRetiredContexts[context->mType].emplace_back(std::make_pair(fenceValue, context));
+		//LOG_INFO << "Free Context : " << context << " , Fence : " << fenceValue;
 	}
 
 	void FCommandContextManager::ReleaseAllTrackObjects()
@@ -236,21 +247,22 @@ namespace Dash
 		}
 	}
 
-	void FCommandContext::SetPipelineState(const FPipelineStateObject& pso)
+	void FCommandContext::SetPipelineState(FPipelineStateObjectRef pso)
 	{
-		ID3D12PipelineState* pipelineState = pso.GetPipelineState();
-		const FRootSignature& rootSignature = pso.GetRootSignature();
+		ASSERT(pso->IsFinalized());
+
+		ID3D12PipelineState* pipelineState = pso->GetPipelineState();
 
 		if (pipelineState == mCurrentPipelineState)
 		{
 			return;
 		}
 
-		SetRootSignature(rootSignature);
+		SetRootSignature(pso->GetRootSignature());
 		mD3DCommandList->SetPipelineState(pipelineState);
 		mCurrentPipelineState = pipelineState;
 
-		mPSO = &pso;
+		mPSORef = pso;
 
 		InitParameterBindState();
 	}
@@ -321,51 +333,47 @@ namespace Dash
 
 	void FCommandContext::InitParameterBindState()
 	{
-		if (mPSO == nullptr)
+		if (mPSORef == nullptr)
 		{
 			return;
 		}
 		
-		if (mPSO->GetShaderPass() == nullptr)
+		ASSERT_MSG(mPSORef->GetShaderPass() != nullptr, "Shader Pass Is Not Set.");
+
+		const FShaderPass* shaderPass = mPSORef->GetShaderPass();
+
+		InitStateForParameter(shaderPass->GetCBVParameterNum(), mConstantBufferBindState);
+		InitStateForParameter(shaderPass->GetSRVParameterNum(), mShaderResourceViewBindState);
+		InitStateForParameter(shaderPass->GetUAVParameterNum(), mUnorderAccessViewBindState);
+		InitStateForParameter(shaderPass->GetSamplerParameterNum(), mSamplerBindState);
+	}
+
+	void FCommandContext::InitStateForParameter(size_t parameterNum, std::vector<bool>& bindStateMap)
+	{
+		bindStateMap.clear();
+		for (size_t parameterIndex = 0; parameterIndex < parameterNum; ++parameterIndex)
 		{
-			LOG_WARNING << "Shader Pass Is Not Setted.";
-			return;
-		}
-
-		const FShaderPass* shaderPass = mPSO->GetShaderPass();
-
-		auto initBindStateFunc = [](const std::vector<std::string>& parameterNames, std::map<std::string, bool>& bindStateMap)
-		{	
-			bindStateMap.clear();
-			for (auto& name : parameterNames)
-			{
-				bindStateMap[name] = false;
-			}
-		};
-
-		initBindStateFunc(shaderPass->GetCBVParameterNames(), mConstantBufferBindState);
-		initBindStateFunc(shaderPass->GetSRVParameterNames(), mShaderResourceViewBindState);
-		initBindStateFunc(shaderPass->GetUAVParameterNames(), mUnorderAccessViewBindState);
-		initBindStateFunc(shaderPass->GetSamplerParameterNames(), mSamplerBindState);
+			bindStateMap.emplace_back(false);
+		}	
 	}
 
 	void FCommandContext::CheckUnboundShaderParameters()
 	{
-		auto checkUnboundParameterFunc = [](const std::map<std::string, bool>& bindStateMap, const std::string& type)
+		auto checkUnboundParameterFunc = [](const std::vector<bool>& bindStateMap, const std::vector<FShaderParameter>& parameters, const std::string& type)
 		{
-			for (auto& pair : bindStateMap)
+			for (size_t parameterIndex = 0; parameterIndex < bindStateMap.size(); ++parameterIndex)
 			{
-				if (!pair.second)
+				if (bindStateMap[parameterIndex] == false)
 				{
-					LOG_WARNING << "Shader Parameter : " << pair.first << ", Type : " << type << ", Is Not Bounded!";
+					LOG_WARNING << "Shader Parameter : " << parameters[parameterIndex].Name << ", Type : " << type << ", Is Not Bounded!";
 				}
 			}
 		};
 
-		checkUnboundParameterFunc(mConstantBufferBindState, "Constant Buffer");
-		checkUnboundParameterFunc(mShaderResourceViewBindState, "Shader Resource View");
-		checkUnboundParameterFunc(mUnorderAccessViewBindState, "Unorder Access View");
-		checkUnboundParameterFunc(mSamplerBindState, "Sampler");
+		checkUnboundParameterFunc(mConstantBufferBindState, mPSORef->GetShaderPass()->GetCBVParameters(), "Constant Buffer");
+		checkUnboundParameterFunc(mShaderResourceViewBindState, mPSORef->GetShaderPass()->GetSRVParameters(), "Shader Resource View");
+		checkUnboundParameterFunc(mUnorderAccessViewBindState, mPSORef->GetShaderPass()->GetUAVParameters(), "Unorder Access View");
+		checkUnboundParameterFunc(mSamplerBindState, mPSORef->GetShaderPass()->GetCBVParameters(), "Sampler");
 	}
 
 	void FCommandContext::Initialize()
@@ -388,8 +396,7 @@ namespace Dash
 
 		mCurrentRootSignature = nullptr;
 		mCurrentPipelineState = nullptr;
-		mPSO = nullptr;
-		mRootSignature = nullptr;
+		mPSORef = nullptr;
 		mCommandList = nullptr;
 		mD3DCommandList = nullptr;
 	}
@@ -456,19 +463,20 @@ namespace Dash
 		TrackResource(target);
 	}
 
-	void FGraphicsCommandContext::SetRootSignature(const FRootSignature& rootSignature)
+	void FGraphicsCommandContext::SetRootSignature(FRootSignatureRef rootSignature)
 	{
-		if (rootSignature.GetSignature() == mCurrentRootSignature)
+		ASSERT(rootSignature != nullptr);
+		ASSERT(rootSignature->IsFinalized());
+
+		if (rootSignature->GetSignature() == mCurrentRootSignature)
 		{
 			return;
 		}
 
-		mD3DCommandList->SetGraphicsRootSignature(rootSignature.GetSignature());
+		mD3DCommandList->SetGraphicsRootSignature(rootSignature->GetSignature());
 
-		mDynamicViewDescriptor.ParseRootSignature(rootSignature);
-		mDynamicSamplerDescriptor.ParseRootSignature(rootSignature);
-
-		mRootSignature = &rootSignature;
+		mDynamicViewDescriptor.ParseRootSignature(*rootSignature);
+		mDynamicSamplerDescriptor.ParseRootSignature(*rootSignature);
 	}
 
 	void FGraphicsCommandContext::SetRenderTargets(UINT numRTVs, FColorBuffer* rtvs)
@@ -575,28 +583,24 @@ namespace Dash
 
 	void FGraphicsCommandContext::SetRootConstantBufferView(const std::string& bufferName, size_t sizeInBytes, const void* constants)
 	{
-		if (mPSO)
-		{
-			const FShaderPass* shaderPass = mPSO->GetShaderPass();
+		ASSERT_MSG(mPSORef != nullptr, "Pipeline State Is Not Set.");
 
-			if (shaderPass)
-			{
-				std::optional<FShaderParameter> shaderParameter = shaderPass->FindCBVParameterByName(bufferName);
-				if (shaderParameter)
-				{
-					ASSERT(sizeInBytes == shaderParameter.value().Size);
-					SetRootConstantBufferView(shaderParameter.value().BindPoint, sizeInBytes, constants);
-					mConstantBufferBindState[bufferName] = true;
-				}
-				else
-				{
-					LOG_WARNING << "Can't Find Constant Buffer Parameter : " << bufferName;
-				}
-			}
-		}
-		else
+		const FShaderPass* shaderPass = mPSORef->GetShaderPass();
+
+		if (shaderPass)
 		{
-			LOG_WARNING << "Pipeline State Is Not Setted.";
+			int32_t shaderParameterIndex = shaderPass->FindCBVParameterByName(bufferName);
+			if (shaderParameterIndex != INDEX_NONE)
+			{
+				const std::vector<FShaderParameter>& parameters = shaderPass->GetCBVParameters();
+				ASSERT(sizeInBytes == parameters[shaderParameterIndex].Size);
+				SetRootConstantBufferView(parameters[shaderParameterIndex].BindPoint, sizeInBytes, constants);
+				mConstantBufferBindState[shaderParameterIndex] = true;
+			}
+			else
+			{
+				LOG_WARNING << "Can't Find Constant Buffer Parameter : " << bufferName;
+			}
 		}
 	}
 
@@ -616,27 +620,23 @@ namespace Dash
 
 	void FGraphicsCommandContext::SetRootConstantBufferView(const std::string& bufferName, FGpuConstantBuffer& constantBuffer, EResourceState stateAfter)
 	{
-		if (mPSO)
-		{
-			const FShaderPass* shaderPass = mPSO->GetShaderPass();
+		ASSERT_MSG(mPSORef != nullptr, "Pipeline State Is Not Set.");
 
-			if (shaderPass)
-			{
-				std::optional<FShaderParameter> shaderParameter = shaderPass->FindCBVParameterByName(bufferName);
-				if (shaderParameter)
-				{
-					SetRootConstantBufferView(shaderParameter.value().BindPoint, constantBuffer, 0, stateAfter);
-					mConstantBufferBindState[bufferName] = true;
-				}
-				else
-				{
-					LOG_WARNING << "Can't Find Constant Buffer Parameter : " << bufferName;
-				}
-			}
-		}
-		else
+		const FShaderPass* shaderPass = mPSORef->GetShaderPass();
+
+		if (shaderPass)
 		{
-			LOG_WARNING << "Pipeline State Is Not Setted.";
+			int32_t shaderParameterIndex = shaderPass->FindCBVParameterByName(bufferName);
+			if (shaderParameterIndex != INDEX_NONE)
+			{
+				const std::vector<FShaderParameter>& parameters = shaderPass->GetCBVParameters();
+				SetRootConstantBufferView(parameters[shaderParameterIndex].BindPoint, constantBuffer, 0, stateAfter);
+				mConstantBufferBindState[shaderParameterIndex] = true;
+			}
+			else
+			{
+				LOG_WARNING << "Can't Find Constant Buffer Parameter : " << bufferName;
+			}
 		}
 	}
 
@@ -667,28 +667,24 @@ namespace Dash
 
 	void FGraphicsCommandContext::SetShaderResourceView(const std::string& srvrName, FColorBuffer& buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
 	{
-		if (mPSO)
-		{
-			const FShaderPass* shaderPass = mPSO->GetShaderPass();
+		ASSERT_MSG(mPSORef != nullptr, "Pipeline State Is Not Set.");
 
-			if (shaderPass)
-			{
-				std::optional<FShaderParameter> shaderParameter = shaderPass->FindSRVParameterByName(srvrName);
-				if (shaderParameter)
-				{
-					ASSERT(shaderParameter.value().BindCount == 1);
-					SetShaderResourceView(shaderParameter.value().RootParameterIndex, shaderParameter.value().DescriptorOffset, buffer, stateAfter, firstSubResource, numSubResources);
-					mShaderResourceViewBindState[srvrName] = true;
-				}
-				else
-				{
-					LOG_WARNING << "Can't Find Shader Resource Parameter : " << srvrName;
-				}
-			}
-		}
-		else
+		const FShaderPass* shaderPass = mPSORef->GetShaderPass();
+
+		if (shaderPass)
 		{
-			LOG_WARNING << "Pipeline State Is Not Setted.";
+			int32_t shaderParameterIndex = shaderPass->FindSRVParameterByName(srvrName);
+			if (shaderParameterIndex != INDEX_NONE)
+			{
+				//ASSERT(shaderParameter.value().BindCount == 1);
+				const std::vector<FShaderParameter>& parameters = shaderPass->GetSRVParameters();
+				SetShaderResourceView(parameters[shaderParameterIndex].RootParameterIndex, parameters[shaderParameterIndex].DescriptorOffset, buffer, stateAfter, firstSubResource, numSubResources);
+				mShaderResourceViewBindState[shaderParameterIndex] = true;
+			}
+			else
+			{
+				LOG_WARNING << "Can't Find Shader Resource Parameter : " << srvrName;
+			}
 		}
 	}
 

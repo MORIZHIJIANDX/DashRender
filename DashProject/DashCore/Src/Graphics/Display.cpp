@@ -20,8 +20,8 @@ namespace Dash
 {
 	using namespace Microsoft::WRL;
 
-	FGraphicsPSO DrawPSO{ "DisplayPSO" };
-	FGraphicsPSO PresentPSO{ "PresentPSO" };
+	FGraphicsPSORef DrawPSO = std::make_shared<FGraphicsPSO>("DisplayPSO");//{ "DisplayPSO" };
+	FGraphicsPSORef PresentPSO = std::make_shared<FGraphicsPSO>("PresentPSO");;//{ "PresentPSO" };
 	FShaderPass DrawPass;
 	FShaderPass PresentPass;
 
@@ -64,25 +64,25 @@ namespace Dash
 		inputLayout.AddPerVertexLayoutElement("POSITION", 0, EResourceFormat::RGB32_Float, 0, 0);
 		inputLayout.AddPerVertexLayoutElement("TEXCOORD", 0, EResourceFormat::RG32_Float, 0, 12);
 
-		DrawPSO.SetBlendState(BlendDisable);
-		DrawPSO.SetDepthStencilState(DepthStateDisabled);
-		DrawPSO.SetShaderPass(DrawPass);
-		DrawPSO.SetRasterizerState(rasterizerDefault);
-		DrawPSO.SetInputLayout(inputLayout);
-		DrawPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-		DrawPSO.SetSamplerMask(UINT_MAX);
-		DrawPSO.SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
-		DrawPSO.Finalize();
+		DrawPSO->SetBlendState(BlendDisable);
+		DrawPSO->SetDepthStencilState(DepthStateDisabled);
+		DrawPSO->SetShaderPass(DrawPass);
+		DrawPSO->SetRasterizerState(rasterizerDefault);
+		DrawPSO->SetInputLayout(inputLayout);
+		DrawPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+		DrawPSO->SetSamplerMask(UINT_MAX);
+		DrawPSO->SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
+		DrawPSO->Finalize();
 
-		PresentPSO.SetBlendState(BlendDisable);
-		PresentPSO.SetDepthStencilState(DepthStateDisabled);
-		PresentPSO.SetShaderPass(PresentPass);
-		PresentPSO.SetRasterizerState(rasterizerDefault);
-		PresentPSO.SetInputLayout(inputLayout);
-		PresentPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-		PresentPSO.SetSamplerMask(UINT_MAX);
-		PresentPSO.SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
-		PresentPSO.Finalize();
+		PresentPSO->SetBlendState(BlendDisable);
+		PresentPSO->SetDepthStencilState(DepthStateDisabled);
+		PresentPSO->SetShaderPass(PresentPass);
+		PresentPSO->SetRasterizerState(rasterizerDefault);
+		PresentPSO->SetInputLayout(inputLayout);
+		PresentPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+		PresentPSO->SetSamplerMask(UINT_MAX);
+		PresentPSO->SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
+		PresentPSO->Finalize();
 	}
 
 	void FDisplay::Destroy()
@@ -114,6 +114,7 @@ namespace Dash
 
 	void FDisplay::Present()
 	{
+	
 		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("Present");
 
 		{
@@ -124,7 +125,8 @@ namespace Dash
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			graphicsContext.Draw(3);
 		}
-
+		
+		
 		{
 			graphicsContext.SetRenderTarget(FGraphicsCore::Display->GetCurrentBackBuffer());
 			graphicsContext.ClearColor(FGraphicsCore::Display->GetCurrentBackBuffer(), FLinearColor::Gray);
@@ -136,9 +138,9 @@ namespace Dash
 		}
 
 		graphicsContext.TransitionBarrier(FGraphicsCore::Display->GetCurrentBackBuffer(), EResourceState::Present);
-
+		
 		graphicsContext.Finish();
-
+		
 		mSwapChain->Present(1, 0);
 
 		mFenceValue[mCurrentBackBufferIndex] = FGraphicsCore::CommandQueueManager->GetGraphicsQueue().Signal();
@@ -146,6 +148,7 @@ namespace Dash
 		mCurrentBackBufferIndex = mSwapChain->GetCurrentBackBufferIndex();
 		uint64_t nextBufferFenceValue = mFenceValue[mCurrentBackBufferIndex];
 		FGraphicsCore::CommandQueueManager->GetGraphicsQueue().WaitForFence(nextBufferFenceValue);
+		
 	}
 
 	FColorBuffer& FDisplay::GetDisplayBuffer()

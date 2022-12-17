@@ -7,7 +7,7 @@ namespace Dash
 {
 	void FShaderPass::SetShader(EShaderStage stage, const FShaderCreationInfo& creationInfo)
 	{
-		mShaders[stage] = &FShaderMap::LoadShader(creationInfo);
+		mShaders[stage] = FShaderMap::LoadShader(creationInfo);
 		ASSERT(mShaders[stage] != nullptr);
 	}
 
@@ -50,9 +50,9 @@ namespace Dash
 		for (auto& pair : mShaders)
 		{
 			EShaderStage stage = pair.first;
-			FShaderResource* creationInfo = pair.second;
+			FShaderResourceRef shaderRef = pair.second;
 
-			const std::vector<FShaderParameter>& shaderParameters = creationInfo->GetShaderParameters();
+			const std::vector<FShaderParameter>& shaderParameters = shaderRef->GetShaderParameters();
 			for (UINT parameterIndex = 0; parameterIndex < shaderParameters.size(); ++parameterIndex)
 			{
 				const FShaderParameter& shaderParameter = shaderParameters[parameterIndex];
@@ -127,53 +127,35 @@ namespace Dash
 		CreateRootSignature(createStaticSamplers);
 	}
 
-	std::optional<FShaderParameter> FShaderPass::FindCBVParameterByName(const std::string& parameterName) const
+	int32_t FShaderPass::FindCBVParameterByName(const std::string& parameterName) const
 	{
 		return FindParameterByName(mCBVParameters, parameterName);
 	}
 
-	std::optional<FShaderParameter> FShaderPass::FindSRVParameterByName(const std::string& parameterName) const
+	int32_t FShaderPass::FindSRVParameterByName(const std::string& parameterName) const
 	{
 		return FindParameterByName(mSRVParameters, parameterName);
 	}
 
-	std::optional<FShaderParameter> FShaderPass::FindUAVParameterByName(const std::string& parameterName) const
+	int32_t FShaderPass::FindUAVParameterByName(const std::string& parameterName) const
 	{
 		return FindParameterByName(mUAVParameters, parameterName);
 	}
 
-	std::optional<FShaderParameter> FShaderPass::FindSamplerParameterByName(const std::string& parameterName) const
+	int32_t FShaderPass::FindSamplerParameterByName(const std::string& parameterName) const
 	{
 		return FindParameterByName(mSamplerParameters, parameterName);
 	}
 
-	std::vector<std::string> FShaderPass::GetCBVParameterNames() const
+	bool FShaderPass::IsFinalized() const
 	{
-		return GetParameterNames(mCBVParameters);
-	}
-
-	std::vector<std::string> FShaderPass::GetSRVParameterNames() const
-	{
-		return GetParameterNames(mSRVParameters);
-	}
-
-	std::vector<std::string> FShaderPass::GetUAVParameterNames() const
-	{
-		return GetParameterNames(mUAVParameters);
-	}
-
-	std::vector<std::string> FShaderPass::GetSamplerParameterNames() const
-	{
-		return GetParameterNames(mSamplerParameters);
-	}
-
-	bool FShaderPass::IsValid() const
-	{
-		return mRootSignature.GetSignature() != nullptr;
+		return (mRootSignatureRef != nullptr) && (mRootSignatureRef->GetSignature() != nullptr);
 	}
 
 	void FShaderPass::CreateRootSignature(bool createStaticSamplers)
 	{
+		mRootSignatureRef = std::make_shared<FRootSignature>();
+
 		UINT numConstantParameters = static_cast<UINT>(mCBVParameters.size());
 		UINT numSRVParameters = static_cast<UINT>(mSRVParameters.size());
 		UINT numUAVParameters = static_cast<UINT>(mUAVParameters.size());
@@ -185,7 +167,7 @@ namespace Dash
 		bool hasDynamicSamplerParameters = numDynamicSamplerParameters > 0;
 
 		UINT numRootParameters = numConstantParameters + (hasSRVParameters ? UINT(1) : UINT(0)) + (hasUAVParameters ? UINT(1) : UINT(0)) + (hasDynamicSamplerParameters ? UINT(1) : UINT(0));
-		mRootSignature.Reset(numRootParameters, createStaticSamplers ? 8 : 0);
+		mRootSignatureRef->Reset(numRootParameters, createStaticSamplers ? 8 : 0);
 		
 		uint32_t rootParameterIndex = 0;
 		if (hasConstantParameters)
@@ -200,7 +182,7 @@ namespace Dash
 			{
 				FShaderParameter& cbv = mCBVParameters[i];
 				cbv.RootParameterIndex = rootParameterIndex;
-				mRootSignature[rootParameterIndex].InitAsRootConstantBufferView(cbv.BindPoint, GetShaderVisibility(cbv.ShaderStage), cbv.RegisterSpace);
+				(*mRootSignatureRef)[rootParameterIndex].InitAsRootConstantBufferView(cbv.BindPoint, GetShaderVisibility(cbv.ShaderStage), cbv.RegisterSpace);
 				++rootParameterIndex;
 			}
 		}
@@ -215,11 +197,11 @@ namespace Dash
 
 			for (UINT index = 0; index < staticSamplers.size(); index++)
 			{
-				mRootSignature.InitStaticSampler(index, staticSamplers[index], D3D12_SHADER_VISIBILITY_ALL);
+				mRootSignatureRef->InitStaticSampler(index, staticSamplers[index], D3D12_SHADER_VISIBILITY_ALL);
 			}
 		}
 		
-		mRootSignature.Finalize(mPassName + "_RootSignature", D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+		mRootSignatureRef->Finalize(mPassName + "_RootSignature", D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 	}
 
 	D3D12_SHADER_VISIBILITY FShaderPass::GetShaderVisibility(EShaderStage stage)
@@ -268,17 +250,17 @@ namespace Dash
 		return StaticSamplers;
 	}
 
-	std::optional<FShaderParameter> FShaderPass::FindParameterByName(const std::vector<FShaderParameter>& parameterArray, const std::string& parameterName) const
+	int32_t FShaderPass::FindParameterByName(const std::vector<FShaderParameter>& parameterArray, const std::string& parameterName) const
 	{
-		for (size_t i = 0; i < parameterArray.size(); i++)
+		for (int32_t i = 0; i < parameterArray.size(); i++)
 		{
 			if (parameterArray[i].Name == parameterName)
 			{
-				return parameterArray[i];
+				return i;
 			}
 		}
 
-		return std::nullopt;
+		return INDEX_NONE;
 	}
 
 	std::vector<std::string> FShaderPass::GetParameterNames(const std::vector<FShaderParameter>& parameterArray) const
@@ -331,7 +313,7 @@ namespace Dash
 			UINT rangeCount = static_cast<UINT>(ranges.size());
 			if (rangeCount > 0)
 			{
-				mRootSignature[rootParameterIndex].InitAsDescriptorTable(rangeCount, GetShaderVisibility(shaderStages));
+				(*mRootSignatureRef)[rootParameterIndex].InitAsDescriptorTable(rangeCount, GetShaderVisibility(shaderStages));
 
 				UINT parameterDescriptorOffset = 0;
 				for (size_t rangeIndex = 0; rangeIndex < rangeCount; rangeIndex++)
@@ -348,7 +330,7 @@ namespace Dash
 						descriptorCountInRange += parameters[parameterIndex].BindCount;
 						parameterDescriptorOffset += parameters[parameterIndex].BindCount;
 					}
-					mRootSignature[rootParameterIndex].SetTableRange(static_cast<UINT>(rangeIndex), rangeType, baseShaderRegister, descriptorCountInRange, registerSpace);
+					(*mRootSignatureRef)[rootParameterIndex].SetTableRange(static_cast<UINT>(rangeIndex), rangeType, baseShaderRegister, descriptorCountInRange, registerSpace);
 				}
 				++rootParameterIndex;
 			}

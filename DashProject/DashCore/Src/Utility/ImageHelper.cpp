@@ -633,8 +633,10 @@ namespace Dash
 	{
 		auto pWIC = _GetWIC();
 		if (!pWIC)
+		{
 			ASSERT_FAIL("Get WIC Factory Failed!");
-
+		}
+			
 		// Initialize WIC
 		Microsoft::WRL::ComPtr<IWICBitmapDecoder> decoder;
 		DX_CALL(pWIC->CreateDecoderFromFilename(fileName.c_str(),
@@ -728,7 +730,9 @@ namespace Dash
 		}
 
 		if (!bpp)
+		{
 			ASSERT_FAIL("Failed to get bpp");
+		}	
 
 		// Handle sRGB formats
 		if (Valid(loadFlags & EWIC_LOADER_FLAGS::WIC_LOADER_FORCE_SRGB))
@@ -812,7 +816,9 @@ namespace Dash
 		uint64_t numBytes = rowBytes * uint64_t(height);
 
 		if (rowBytes > UINT32_MAX || numBytes > UINT32_MAX)
+		{
 			ASSERT_FAIL("Arithmetic Overflow!");
+		}	
 
 		auto rowPitch = static_cast<size_t>(rowBytes);
 		auto imageSize = static_cast<size_t>(numBytes);
@@ -835,7 +841,9 @@ namespace Dash
 			// Resize
 			//auto pWIC = _GetWIC();
 			if (!pWIC)
+			{
 				ASSERT_FAIL("Get WIC Factory Failed!");
+			}	
 
 			Microsoft::WRL::ComPtr<IWICBitmapScaler> scaler;
 			DX_CALL(pWIC->CreateBitmapScaler(scaler.GetAddressOf()));
@@ -872,7 +880,9 @@ namespace Dash
 			// Format conversion but no resize
 			auto pWIC = _GetWIC();
 			if (!pWIC)
+			{
 				ASSERT_FAIL("Get WIC Factory Failed!");
+			}		
 
 			Microsoft::WRL::ComPtr<IWICFormatConverter> FC;
 			DX_CALL(pWIC->CreateFormatConverter(FC.GetAddressOf()));
@@ -896,7 +906,9 @@ namespace Dash
 	void ExportWICTexture(const std::wstring& fileName, const FTexture& texture, REFGUID guidContainerFormat, const GUID* targetFormat, bool forceSRGB)
 	{
 		if (fileName.empty())
+		{
 			ASSERT("Invalid Args");
+		}			
 
 		UINT64 fpRowPitch = texture.GetRowPitch();
 
@@ -910,7 +922,9 @@ namespace Dash
 #endif
 
 		if (dstRowPitch > UINT32_MAX)
+		{
 			ASSERT_FAIL("Arithmetic Overflow!");
+		}			
 
 		size_t textureWidth = texture.GetWidth();
 		size_t textureHeight = texture.GetHeight();
@@ -967,7 +981,9 @@ namespace Dash
 
 		auto pWIC = _GetWIC();
 		if (!pWIC)
+		{
 			ASSERT_FAIL("Get WIC Factory Failed!");
+		}		
 
 		Microsoft::WRL::ComPtr<IWICStream> stream;
 		DX_CALL(pWIC->CreateStream(stream.GetAddressOf()));
@@ -1124,7 +1140,9 @@ namespace Dash
 
 		UINT64 imageSize = dstRowPitch * UINT64(textureHeight);
 		if (imageSize > UINT32_MAX)
+		{
 			ASSERT_FAIL("Arithmetic Overflow!");
+		}		
 
 		if (memcmp(&targetGuid, &pfGuid, sizeof(WICPixelFormatGUID)) != 0)
 		{

@@ -19,17 +19,15 @@ namespace Dash
 
 		static void DestroyAll();
 
-		void SetRootSignature(const FRootSignature& rootSignature);
-
-		const FRootSignature& GetRootSignature() const
+		FRootSignatureRef GetRootSignature() const
 		{
-			ASSERT(mRootSignature != nullptr);
-			return *mRootSignature;
+			ASSERT(mShaderPass != nullptr);
+			return mShaderPass->GetRootSignature();
 		}
 
 		ID3D12PipelineState* GetPipelineState() const { return mPSO; }
 		
-		virtual void SetShader(const FShaderResource& shader) = 0;
+		virtual void SetShader(FShaderResourceRef shader) = 0;
 		void SetShaderPass(const FShaderPass& shaderPass) { mShaderPass = const_cast<FShaderPass*>(&shaderPass); }
 		virtual void Finalize() = 0;
 
@@ -44,8 +42,6 @@ namespace Dash
 		std::string mName;
 
 		bool mIsFinalized = false;
-
-		const FRootSignature* mRootSignature = nullptr;
 
 		ID3D12PipelineState* mPSO = nullptr;
 		FShaderPass* mShaderPass = nullptr;
@@ -79,7 +75,7 @@ namespace Dash
 		void SetHullShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPSODesc.HS = shaderByteCode; }
 		void SetDomainShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPSODesc.DS = shaderByteCode; }
 
-		virtual void SetShader(const FShaderResource& shader) override;
+		virtual void SetShader(FShaderResourceRef shader) override;
 
 		virtual void Finalize() override;
 
@@ -96,7 +92,7 @@ namespace Dash
 		void SetComputeShader(const void* binaryCode, size_t size) { mPSODesc.CS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
 		void SetComputeShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPSODesc.CS = shaderByteCode; }
 
-		virtual void SetShader(const FShaderResource& shader) override;
+		virtual void SetShader(FShaderResourceRef shader) override;
 
 		virtual void Finalize() override;
 
@@ -104,5 +100,7 @@ namespace Dash
 		D3D12_COMPUTE_PIPELINE_STATE_DESC mPSODesc{};
 	};
 
-
+	using FPipelineStateObjectRef = std::shared_ptr<FPipelineStateObject>;
+	using FGraphicsPSORef = std::shared_ptr<FGraphicsPSO>;
+	using FComputePSORef = std::shared_ptr<FComputePSO>;
 }

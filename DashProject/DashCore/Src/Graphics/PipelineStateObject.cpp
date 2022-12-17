@@ -20,30 +20,23 @@ namespace Dash
 		ComputePipelineStateHashMap.clear();
 	}
 
-	void FPipelineStateObject::SetRootSignature(const FRootSignature& rootSignature)
-	{
-		mRootSignature = &rootSignature;
-	}
-
 	void FPipelineStateObject::ApplyShaderPass()
 	{
 		if (mShaderPass)
 		{
-			if (!mShaderPass->IsValid())
+			if (!mShaderPass->IsFinalized())
 			{
 				mShaderPass->Finalize(mShaderPass->GetPassName());
 			}
 
-			const std::map<EShaderStage, FShaderResource*>& shaders = mShaderPass->GetShaders();
+			const std::map<EShaderStage, FShaderResourceRef>& shaders = mShaderPass->GetShaders();
 			for (auto& pair : shaders)
 			{
 				if (pair.second != nullptr)
 				{
-					SetShader(*pair.second);
+					SetShader(pair.second);
 				}
 			}
-
-			SetRootSignature(mShaderPass->GetRootSignature());
 		}
 	}
 
@@ -123,14 +116,14 @@ namespace Dash
 		mPSODesc.IBStripCutValue = indexBufferProps;
 	}
 
-	void FGraphicsPSO::SetShader(const FShaderResource& shader)
+	void FGraphicsPSO::SetShader(FShaderResourceRef shader)
 	{	
-		ASSERT(shader.GetShaderStage() != EShaderStage::Compute);
+		ASSERT(shader && shader->GetShaderStage() != EShaderStage::Compute);
 
-		const void* shaderData = shader.GetCompiledShader().Data;
-		uint64_t shaderSize = shader.GetCompiledShader().Size;
+		const void* shaderData = shader->GetCompiledShader().Data;
+		uint64_t shaderSize = shader->GetCompiledShader().Size;
 
-		switch (shader.GetShaderStage())
+		switch (shader->GetShaderStage())
 		{
 		case EShaderStage::Vertex:
 			SetVertexShader(shaderData, shaderSize);
@@ -154,12 +147,18 @@ namespace Dash
 
 	void FGraphicsPSO::Finalize()
 	{
+		if (mIsFinalized)
+		{
+			return;
+		}
+
 		ApplyShaderPass();
 
-		ASSERT(mRootSignature->IsFinalized());
+		ASSERT(mShaderPass != nullptr);
+		ASSERT(mShaderPass->GetRootSignature()->IsFinalized());
 
-		mPSODesc.pRootSignature = mRootSignature->GetSignature();
-		
+		mPSODesc.pRootSignature = mShaderPass->GetRootSignature()->GetSignature();
+
 		size_t hashCode = HashState(&mPSODesc);
 		hashCode = HashState(mPSODesc.InputLayout.pInputElementDescs, mPSODesc.InputLayout.NumElements, hashCode);
 
@@ -196,6 +195,8 @@ namespace Dash
 
 			mPSO = *psoRef;
 		}
+
+		mIsFinalized = true;
 	}
 
 	FComputePSO::FComputePSO(const std::string& name)
@@ -206,23 +207,29 @@ namespace Dash
 		mPSODesc.NodeMask = 0;
 	}
 
-	void FComputePSO::SetShader(const FShaderResource& shader)
+	void FComputePSO::SetShader(FShaderResourceRef shader)
 	{
-		ASSERT(shader.GetShaderStage() == EShaderStage::Compute);
+		ASSERT(shader && shader->GetShaderStage() == EShaderStage::Compute);
 
-		const void* shaderData = shader.GetCompiledShader().Data;
-		uint64_t shaderSize = shader.GetCompiledShader().Size;
+		const void* shaderData = shader->GetCompiledShader().Data;
+		uint64_t shaderSize = shader->GetCompiledShader().Size;
 
 		SetComputeShader(shaderData, shaderSize);
 	}
 
 	void FComputePSO::Finalize()
 	{
+		if (mIsFinalized)
+		{
+			return;
+		}
+
 		ApplyShaderPass();
 
-		ASSERT(mRootSignature->IsFinalized());
+		ASSERT(mShaderPass != nullptr);
+		ASSERT(mShaderPass->GetRootSignature()->IsFinalized());
 
-		mPSODesc.pRootSignature = mRootSignature->GetSignature();
+		mPSODesc.pRootSignature = mShaderPass->GetRootSignature()->GetSignature();
 
 		size_t hashCode = HashState(&mPSODesc);
 
@@ -259,6 +266,7 @@ namespace Dash
 
 			mPSO = *psoRef;
 		}
-	}
 
+		mIsFinalized = true;
+	}
 }

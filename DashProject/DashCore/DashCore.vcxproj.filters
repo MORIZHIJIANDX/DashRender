@@ -61,6 +61,9 @@
       <Filter>DesignPatterns</Filter>
     </ClInclude>
     <ClInclude Include="Src\EntryPoint.h" />
+    <ClInclude Include="Src\Graphics\BlendState.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\Camera.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -86,6 +89,9 @@
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\DepthBuffer.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\DepthStencilState.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\Display.h">
@@ -119,6 +125,12 @@
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\PixelBuffer.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\RasterizerState.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\RenderTarget.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\ResourceDescription.h">
@@ -319,21 +331,12 @@
     <ClInclude Include="Src\Utility\Visitor.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\RasterizerState.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Graphics\BlendState.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Graphics\RenderTarget.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Graphics\DepthStencilState.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\EntryPoint.cpp" />
+    <ClCompile Include="Src\Graphics\BlendState.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Graphics\Camera.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
@@ -359,6 +362,9 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\DepthBuffer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\DepthStencilState.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\Display.cpp">
@@ -389,6 +395,12 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\PixelBuffer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\RasterizerState.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\RenderTarget.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\ResourceDescription.cpp">
@@ -480,18 +492,6 @@
     </ClCompile>
     <ClCompile Include="Src\Utility\SystemTimer.cpp">
       <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Graphics\RasterizerState.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Graphics\BlendState.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Graphics\RenderTarget.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Graphics\DepthStencilState.cpp">
-      <Filter>Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

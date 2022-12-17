@@ -103,6 +103,7 @@ namespace Dash
 		uint64_t ExecuteCommandLists(std::vector<FCommandList*> commandLists);
 		uint64_t Signal();
 
+		uint64_t GetCompletedFence() const;
 		bool IsFenceCompleted(uint64_t fenceValue);
 
 		void WaitForFence(uint64_t fenceValue);

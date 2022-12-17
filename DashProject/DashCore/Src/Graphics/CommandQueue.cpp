@@ -176,9 +176,14 @@ namespace Dash
 		return mNextFenceValue++;
 	}
 
+	uint64_t FCommandQueue::GetCompletedFence() const
+	{
+		return mFence->GetCompletedValue();
+	}
+
 	bool FCommandQueue::IsFenceCompleted(uint64_t fenceValue)
 	{
-		return fenceValue < mFence->GetCompletedValue();
+		return fenceValue <= mFence->GetCompletedValue();
 	}
 
 	void FCommandQueue::WaitForFence(uint64_t fenceValue)

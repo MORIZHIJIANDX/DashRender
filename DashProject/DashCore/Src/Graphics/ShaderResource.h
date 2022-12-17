@@ -110,4 +110,6 @@ namespace Dash
 		FCompiledBinary mShaderBinary;
 		std::vector<FShaderParameter> mParameters;
 	}; 
+
+	using FShaderResourceRef = std::shared_ptr<FShaderResource>;
 }

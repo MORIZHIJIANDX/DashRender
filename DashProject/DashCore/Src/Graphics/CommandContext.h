@@ -29,7 +29,7 @@ namespace Dash
 	private:
 		std::vector<std::unique_ptr<FCommandContext>> mContextPool[4];
 		std::queue<FCommandContext*> mAvailableContexts[4];
-		std::queue<std::pair<uint64_t, FCommandContext*>> mRetiredContexts[4];
+		std::deque<std::pair<uint64_t, FCommandContext*>> mRetiredContexts[4];
 		std::mutex mAllocationMutex;
 	};
 
@@ -78,8 +78,8 @@ namespace Dash
 		void SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type, ID3D12DescriptorHeap* heap);
 		void SetDescriptorHeaps(UINT count, D3D12_DESCRIPTOR_HEAP_TYPE types[], ID3D12DescriptorHeap* heaps[]);
 
-		void SetPipelineState(const FPipelineStateObject& pso);
-		virtual void SetRootSignature(const FRootSignature& rootSignature) = 0;
+		void SetPipelineState(FPipelineStateObjectRef pso);
+		virtual void SetRootSignature(FRootSignatureRef rootSignature) = 0;
 
 		static void InitializeBuffer(FGpuBuffer& dest, const void* bufferData, size_t numBytes, size_t offset = 0);
 
@@ -92,6 +92,7 @@ namespace Dash
 		uint64_t Execute();
 
 		void InitParameterBindState();
+		void InitStateForParameter(size_t parameterNum, std::vector<bool>& bindStateMap);
 		void CheckUnboundShaderParameters();
 
 	protected:
@@ -118,13 +119,12 @@ namespace Dash
 		ID3D12RootSignature* mCurrentRootSignature = nullptr;
 		ID3D12PipelineState* mCurrentPipelineState = nullptr;
 
-		const FRootSignature* mRootSignature = nullptr;
-		const FPipelineStateObject* mPSO = nullptr;
+		FPipelineStateObjectRef mPSORef;
 
-		std::map<std::string, bool> mConstantBufferBindState;
-		std::map<std::string, bool> mShaderResourceViewBindState;
-		std::map<std::string, bool> mUnorderAccessViewBindState;
-		std::map<std::string, bool> mSamplerBindState;
+		std::vector<bool> mConstantBufferBindState;
+		std::vector<bool> mShaderResourceViewBindState;
+		std::vector<bool> mUnorderAccessViewBindState;
+		std::vector<bool> mSamplerBindState;
 	};
 
 	class FGraphicsCommandContext : public FCommandContext
@@ -147,7 +147,7 @@ namespace Dash
 		void ClearStencil(FDepthBuffer& target);
 		void ClearDepthAndStencil(FDepthBuffer& target);
 
-		virtual void SetRootSignature(const FRootSignature& rootSignature) override;
+		virtual void SetRootSignature(FRootSignatureRef rootSignature) override;
 
 		void SetRenderTargets(UINT numRTVs, FColorBuffer* rtvs);
 		void SetRenderTargets(UINT numRTVs, FColorBuffer* rtvs, FDepthBuffer& depthBuffer);

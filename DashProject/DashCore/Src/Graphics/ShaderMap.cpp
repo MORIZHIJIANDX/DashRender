@@ -19,20 +19,20 @@ namespace Dash
 		GetInstance().mShaderResourceMap.clear();
 	}
 
-	FShaderResource& FShaderMap::LoadShader(const FShaderCreationInfo& info)
+	FShaderResourceRef FShaderMap::LoadShader(const FShaderCreationInfo& info)
 	{
 		FShaderMap& globalShaderMap = GetInstance();
 		std::lock_guard<std::mutex> lock(GetInstance().mShaderMapMutex);		
 		size_t shaderHash = info.GetShaderHash();
 		if (!globalShaderMap.mShaderResourceMap.contains(shaderHash))
 		{
-			FShaderResourceRef shaderResource;
+			FShaderResourceRef shaderResourceref = std::make_shared<FShaderResource>();
 			FDX12CompiledShader compiledShader = globalShaderMap.mCompilers[0].CompileShader(info);
 			if (compiledShader.IsValid())
 			{	
-				shaderResource.ShaderResource.Init(compiledShader.CompiledShaderBlob, compiledShader.ShaderReflector, info);
+				shaderResourceref->Init(compiledShader.CompiledShaderBlob, compiledShader.ShaderReflector, info);
 
-				globalShaderMap.mShaderResourceMap[shaderHash] = shaderResource;
+				globalShaderMap.mShaderResourceMap[shaderHash] = shaderResourceref;
 			}
 			else
 			{
@@ -40,16 +40,15 @@ namespace Dash
 			}
 		}
 
-		globalShaderMap.mShaderResourceMap[shaderHash].AddRef();
-		return globalShaderMap.mShaderResourceMap[shaderHash].ShaderResource;
+		return globalShaderMap.mShaderResourceMap[shaderHash];
 	}
 
-	void FShaderMap::ReleaseShader(const FShaderResource& info)
+	void FShaderMap::ReleaseShader(const FShaderResourceRef& shaderRef)
 	{
 		FShaderMap& globalShaderMap = GetInstance();
 		std::lock_guard<std::mutex> lock(globalShaderMap.mShaderMapMutex);
-		size_t shaderHash = info.GetShaderHash();
-		if (globalShaderMap.mShaderResourceMap.contains(shaderHash) && globalShaderMap.mShaderResourceMap[shaderHash].Release())
+		size_t shaderHash = shaderRef->GetShaderHash();
+		if (globalShaderMap.mShaderResourceMap.contains(shaderHash))
 		{
 			globalShaderMap.mShaderResourceMap.erase(shaderHash);
 		}	

@@ -11,28 +11,10 @@ namespace Dash
 		static void Init();
 		static void Destroy();
 
-		static FShaderResource& LoadShader(const FShaderCreationInfo& info);
-		static void ReleaseShader(const FShaderResource& info);
+		static FShaderResourceRef LoadShader(const FShaderCreationInfo& info);
+		static void ReleaseShader(const FShaderResourceRef& shaderRef);
 
 	private:
-		struct FShaderResourceRef
-		{
-			FShaderResource ShaderResource;
-			int32_t RefCount = 0;
-
-			void AddRef() { ++RefCount; }
-			bool Release() 
-			{ 
-				--RefCount;
-				if (RefCount <= 0)
-				{
-					return true;
-				}
-
-				return false;
-			}
-		};
-
 		static FShaderMap& GetInstance()  
 		{
 			static FShaderMap globalInstance; 

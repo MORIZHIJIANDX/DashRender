@@ -17,6 +17,7 @@
 
 #define USE_IEEE_754 1
 #define USE_ROUNDING_CONTROL 0
+#define INDEX_NONE -1
 
 #ifndef FORCEINLINE
 #   if (_MSC_VER >= 1200)

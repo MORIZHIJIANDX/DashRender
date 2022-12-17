@@ -8,14 +8,14 @@ namespace Dash
 
 	void FSystemTimer::Initialize()
 	{
-		LARGE_INTEGER frequency;
+		LARGE_INTEGER frequency{};
 		ASSERT_MSG(TRUE == QueryPerformanceFrequency(&frequency), "Unable to query performance frequency");
 		mSecondPerTick = 1.0 / static_cast<double>(frequency.QuadPart);
 	}
 
 	int64_t FSystemTimer::GetCurrentTick()
 	{
-		LARGE_INTEGER currentTick;
+		LARGE_INTEGER currentTick{};
 		ASSERT_MSG(TRUE == QueryPerformanceCounter(&currentTick), "Unable to query performance frequency");
 		return static_cast<uint64_t>(currentTick.QuadPart);
 	}

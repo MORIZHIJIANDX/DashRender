@@ -164,6 +164,7 @@ namespace Dash
 		bool IsFinalized() const { return mFinalized; }
 
 	protected:
+		std::string mName;
 		std::atomic<bool> mFinalized;
 		UINT mNumParameters;
 		UINT mNumStaticSamplers;
@@ -175,4 +176,6 @@ namespace Dash
 		std::unique_ptr<FRootParameter[]> mParameterArray;
 		ID3D12RootSignature* mRootSignature;
 	};
+
+	using FRootSignatureRef = std::shared_ptr<FRootSignature>;
 }

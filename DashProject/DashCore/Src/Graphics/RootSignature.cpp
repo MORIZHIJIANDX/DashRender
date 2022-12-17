@@ -87,6 +87,8 @@ namespace Dash
 
 		ASSERT(mNumInitializedStaticSamplers == mNumStaticSamplers);
 
+		mName = name;
+
 		D3D12_ROOT_SIGNATURE_DESC1 desc{};
 		desc.Flags = flag;
 		desc.NumParameters = mNumParameters;
