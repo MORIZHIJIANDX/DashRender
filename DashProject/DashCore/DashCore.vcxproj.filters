@@ -94,9 +94,6 @@
     <ClInclude Include="Src\Graphics\DepthStencilState.h">
       <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\Display.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Graphics\DynamicDescriptorHeap.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -161,6 +158,9 @@
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\ShaderTechnique.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\SwapChain.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\Viewport.h">
@@ -367,9 +367,6 @@
     <ClCompile Include="Src\Graphics\DepthStencilState.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Graphics\Display.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Graphics\DynamicDescriptorHeap.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
@@ -380,6 +377,9 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\GpuLinearAllocator.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\GpuResource.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\GpuResourcesStateTracker.cpp">
@@ -431,6 +431,9 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\ShaderTechnique.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\SwapChain.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Math\Color.cpp">
@@ -492,9 +495,6 @@
     </ClCompile>
     <ClCompile Include="Src\Utility\SystemTimer.cpp">
       <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Graphics\GpuResource.cpp">
-      <Filter>Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

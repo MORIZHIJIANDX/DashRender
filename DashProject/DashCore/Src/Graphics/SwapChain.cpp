@@ -1,5 +1,5 @@
 #include "PCH.h"
-#include "Display.h"
+#include "SwapChain.h"
 #include "GraphicsCore.h"
 #include "DX12Helper.h"
 #include "GameApp.h"
@@ -25,7 +25,7 @@ namespace Dash
 	FShaderPassRef DrawPass = FShaderPass::MakeShaderPass();
 	FShaderPassRef PresentPass = FShaderPass::MakeShaderPass();
 
-	void FDisplay::Initialize()
+	void FSwapChain::Initialize()
 	{
 		mDisplayWdith = IGameApp::GetInstance()->GetWindowWidth();
 		mDisplayHeight = IGameApp::GetInstance()->GetWindowHeight();
@@ -85,7 +85,7 @@ namespace Dash
 		PresentPSO->Finalize();
 	}
 
-	void FDisplay::Destroy()
+	void FSwapChain::Destroy()
 	{
 		mSwapChain->SetFullscreenState(FALSE, nullptr);
 
@@ -94,17 +94,17 @@ namespace Dash
 		mSwapChain = nullptr;
 	}
 
-	void FDisplay::SetDisplayRate(float displayRate)
+	void FSwapChain::SetDisplayRate(float displayRate)
 	{
 		if (mDisplayRate != displayRate)
 		{
 			mDisplayRate = displayRate;
 			ForceRecreateBuffers(mSwapChainBuffer[0]->GetWidth(), mSwapChainBuffer[0]->GetHeight());
-			LOG_INFO << "Set Display Rate : " << displayRate;
+			LOG_INFO << "Set SwapChain Rate : " << displayRate;
 		}
 	}
 
-	void FDisplay::OnWindowResize(uint32_t displayWdith, uint32_t displayHeight)
+	void FSwapChain::OnWindowResize(uint32_t displayWdith, uint32_t displayHeight)
 	{
 		if (mSwapChainBuffer[mCurrentBackBufferIndex]->GetWidth() != displayWdith || mSwapChainBuffer[mCurrentBackBufferIndex]->GetHeight() != displayHeight)
 		{
@@ -112,7 +112,7 @@ namespace Dash
 		}
 	}
 
-	void FDisplay::Present()
+	void FSwapChain::Present()
 	{
 	
 		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("Present");
@@ -126,18 +126,17 @@ namespace Dash
 			graphicsContext.Draw(3);
 		}
 		
-		
 		{
-			graphicsContext.SetRenderTarget(FGraphicsCore::Display->GetCurrentBackBuffer());
-			graphicsContext.ClearColor(FGraphicsCore::Display->GetCurrentBackBuffer(), FLinearColor::Gray);
+			graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
+			graphicsContext.ClearColor(FGraphicsCore::SwapChain->GetCurrentBackBuffer(), FLinearColor::Gray);
 			graphicsContext.SetPipelineState(PresentPSO);
-			graphicsContext.SetViewportAndScissor(0, 0, FGraphicsCore::Display->GetCurrentBackBuffer()->GetWidth(), FGraphicsCore::Display->GetCurrentBackBuffer()->GetHeight());
+			graphicsContext.SetViewportAndScissor(0, 0, FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetWidth(), FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			graphicsContext.SetShaderResourceView("DisplayTexture", mDisplayBuffer);
 			graphicsContext.Draw(3);
 		}
 
-		graphicsContext.TransitionBarrier(FGraphicsCore::Display->GetCurrentBackBuffer(), EResourceState::Present);
+		graphicsContext.TransitionBarrier(FGraphicsCore::SwapChain->GetCurrentBackBuffer(), EResourceState::Present);
 		
 		graphicsContext.Finish();
 		
@@ -151,12 +150,12 @@ namespace Dash
 		
 	}
 
-	FColorBufferRef FDisplay::GetDisplayBuffer()
+	FColorBufferRef FSwapChain::GetDisplayBuffer()
 	{
 		return mDisplayBuffer;
 	}
 
-	void FDisplay::CreateSwapChain(uint32_t displayWdith, uint32_t displayHeight)
+	void FSwapChain::CreateSwapChain(uint32_t displayWdith, uint32_t displayHeight)
 	{
 		ASSERT_MSG(mSwapChain == nullptr, "Swap Chain Already Initialized");
 
@@ -200,7 +199,7 @@ namespace Dash
 		DX_CALL(dxgiSwapChain1.As(&mSwapChain));
 	}
 
-	void FDisplay::CreateBuffers()
+	void FSwapChain::CreateBuffers()
 	{
 		for (uint32_t index = 0; index < SWAP_CHAIN_BUFFER_COUNT; ++index)
 		{
@@ -211,13 +210,13 @@ namespace Dash
 
 		mDisplayWdith = static_cast<uint32_t>(FMath::AlignUp(mSwapChainBuffer[0]->GetWidth() * mDisplayRate, 2));
 		mDisplayHeight = static_cast<uint32_t>(FMath::AlignUp(mSwapChainBuffer[0]->GetHeight() * mDisplayRate, 2));
-		mDisplayBuffer = FColorBuffer::MakeColorBuffer("Display Buffer", mDisplayWdith, mDisplayHeight, 1, mSwapChainFormat);
-		LOG_INFO << "Set Display Width : " << mDisplayWdith << ", Display Height : " << mDisplayHeight;
+		mDisplayBuffer = FColorBuffer::MakeColorBuffer("SwapChain Buffer", mDisplayWdith, mDisplayHeight, 1, mSwapChainFormat);
+		LOG_INFO << "Set SwapChain Width : " << mDisplayWdith << ", SwapChain Height : " << mDisplayHeight;
 
 		mCurrentBackBufferIndex = mSwapChain->GetCurrentBackBufferIndex();
 	}
 
-	void FDisplay::DestroyBuffers()
+	void FSwapChain::DestroyBuffers()
 	{
 		for (uint32_t index = 0; index < SWAP_CHAIN_BUFFER_COUNT; ++index)
 		{
@@ -229,7 +228,7 @@ namespace Dash
 		mDisplayBuffer = nullptr;
 	}
 
-	void FDisplay::ForceRecreateBuffers(uint32_t newWidth, uint32_t newHeight)
+	void FSwapChain::ForceRecreateBuffers(uint32_t newWidth, uint32_t newHeight)
 	{
 		FGraphicsCore::CommandQueueManager->Flush();
 
@@ -246,7 +245,7 @@ namespace Dash
 		CreateBuffers();
 	}
 
-	FColorBufferRef FDisplay::GetCurrentBackBuffer()
+	FColorBufferRef FSwapChain::GetCurrentBackBuffer()
 	{
 		return mSwapChainBuffer[mCurrentBackBufferIndex];
 	}

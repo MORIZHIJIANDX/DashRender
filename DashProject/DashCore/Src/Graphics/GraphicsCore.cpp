@@ -9,7 +9,7 @@
 #include "CommandContext.h"
 #include "RootSignature.h"
 #include "SamplerDesc.h"
-#include "Display.h"
+#include "SwapChain.h"
 #include "GameApp.h"
 #include "Utility/StringUtility.h"
 #include "ShaderMap.h"
@@ -32,7 +32,7 @@ namespace Dash
 	FCommandListManager* FGraphicsCore::CommandListManager = nullptr;
 	FCpuDescriptorAllocatorManager* FGraphicsCore::DescriptorAllocator = nullptr;
 	FCommandContextManager* FGraphicsCore::ContextManager = nullptr;
-	FDisplay* FGraphicsCore::Display = nullptr;
+	FSwapChain* FGraphicsCore::SwapChain = nullptr;
 
 	bool FGraphicsCore::mTypedUAVLoadSupport_R11G11B10_FLOAT = false;
 	bool FGraphicsCore::mTypedUAVLoadSupport_R16G16B16A16_FLOAT = false;
@@ -51,7 +51,7 @@ namespace Dash
 		CommandListManager = new FCommandListManager();
 		DescriptorAllocator = new FCpuDescriptorAllocatorManager();
 		ContextManager = new FCommandContextManager();
-		Display = new FDisplay(IGameApp::GetInstance()->GetWindowWidth(), IGameApp::GetInstance()->GetWindowHeight());
+		SwapChain = new FSwapChain(IGameApp::GetInstance()->GetWindowWidth(), IGameApp::GetInstance()->GetWindowHeight());
 
 		LOG_INFO << "FGraphicsCore::Initialize End.";
 	}
@@ -99,10 +99,10 @@ namespace Dash
 			LOG_INFO << "Destroy CPU Descriptor Allocator.";
 		}
 
-		if(Display)
+		if(SwapChain)
 		{
-			Display->Destroy();
-			delete Display;
+			SwapChain->Destroy();
+			delete SwapChain;
 
 			LOG_INFO << "Destroy Swap Chain.";
 		}

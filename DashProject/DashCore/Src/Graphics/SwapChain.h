@@ -7,10 +7,10 @@ namespace Dash
 {
 	#define SWAP_CHAIN_BUFFER_COUNT 3
 
-	class FDisplay
+	class FSwapChain
 	{
 	public:
-		FDisplay(uint32_t displayWdith, uint32_t displayHeight, EResourceFormat swapChainFormat = EResourceFormat::RGB10A2_Unorm)
+		FSwapChain(uint32_t displayWdith, uint32_t displayHeight, EResourceFormat swapChainFormat = EResourceFormat::RGB10A2_Unorm)
 			: mDisplayWdith(displayWdith)
 			, mDisplayHeight(displayHeight)
 			, mSwapChainFormat(swapChainFormat)
@@ -23,6 +23,7 @@ namespace Dash
 		void OnWindowResize(uint32_t newWidth, uint32_t newHeight);
 		void Present();
 		FColorBufferRef GetDisplayBuffer();
+		FColorBufferRef GetCurrentBackBuffer();
 	
 	protected:
 		void Initialize();
@@ -30,8 +31,6 @@ namespace Dash
 		void CreateBuffers();
 		void DestroyBuffers();
 		void ForceRecreateBuffers(uint32_t newWidth, uint32_t newHeight);
-
-		FColorBufferRef GetCurrentBackBuffer();
 
 	protected:
 		uint32_t mDisplayWdith = 1080;

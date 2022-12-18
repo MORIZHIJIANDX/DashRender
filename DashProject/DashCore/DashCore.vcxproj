@@ -189,7 +189,6 @@
     <ClInclude Include="Src\Graphics\DX12Helper.h" />
     <ClInclude Include="Src\Graphics\DepthBuffer.h" />
     <ClInclude Include="Src\Graphics\DepthStencilState.h" />
-    <ClInclude Include="Src\Graphics\Display.h" />
     <ClInclude Include="Src\Graphics\DynamicDescriptorHeap.h" />
     <ClInclude Include="Src\Graphics\GameApp.h" />
     <ClInclude Include="Src\Graphics\GpuBuffer.h" />
@@ -212,6 +211,7 @@
     <ClInclude Include="Src\Graphics\ShaderPass.h" />
     <ClInclude Include="Src\Graphics\ShaderResource.h" />
     <ClInclude Include="Src\Graphics\ShaderTechnique.h" />
+    <ClInclude Include="Src\Graphics\SwapChain.h" />
     <ClInclude Include="Src\Graphics\Viewport.h" />
     <ClInclude Include="Src\Graphics\d3dx12.h" />
     <ClInclude Include="Src\Math\AABB.h" />
@@ -282,7 +282,6 @@
     <ClCompile Include="Src\Graphics\DX12Helper.cpp" />
     <ClCompile Include="Src\Graphics\DepthBuffer.cpp" />
     <ClCompile Include="Src\Graphics\DepthStencilState.cpp" />
-    <ClCompile Include="Src\Graphics\Display.cpp" />
     <ClCompile Include="Src\Graphics\DynamicDescriptorHeap.cpp" />
     <ClCompile Include="Src\Graphics\GameApp.cpp" />
     <ClCompile Include="Src\Graphics\GpuBuffer.cpp" />
@@ -305,6 +304,7 @@
     <ClCompile Include="Src\Graphics\ShaderPass.cpp" />
     <ClCompile Include="Src\Graphics\ShaderResource.cpp" />
     <ClCompile Include="Src\Graphics\ShaderTechnique.cpp" />
+    <ClCompile Include="Src\Graphics\SwapChain.cpp" />
     <ClCompile Include="Src\Math\Color.cpp" />
     <ClCompile Include="Src\PCH\PCH.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

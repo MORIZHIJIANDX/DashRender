@@ -9,7 +9,7 @@
 
 
 #include <string>
-#include "Graphics/Display.h"
+#include "Graphics/SwapChain.h"
 #include "Graphics/CommandContext.h"
 
 #include "Utility/FileUtility.h"
@@ -104,12 +104,12 @@ namespace Dash
 
 		if (FKeyboard::Get().IsKeyPressed(EKeyCode::K))
 		{
-			FGraphicsCore::Display->SetDisplayRate(0.05f);
+			FGraphicsCore::SwapChain->SetDisplayRate(0.05f);
 		}
 
 		if (FKeyboard::Get().IsKeyPressed(EKeyCode::L))
 		{
-			FGraphicsCore::Display->SetDisplayRate(2.0f);
+			FGraphicsCore::SwapChain->SetDisplayRate(2.0f);
 		}
 	}
 
@@ -118,7 +118,7 @@ namespace Dash
 		FRenderEventArgs Args = e;
 		Args.Camera = mCamera;
 
-		FGraphicsCore::Display->Present();
+		FGraphicsCore::SwapChain->Present();
 	}
 
 	void TestApplication::OnWindowResize(const FResizeEventArgs& e)
@@ -130,7 +130,7 @@ namespace Dash
 		float fov = 45.0f;
 		mCamera->SetCameraParams(aspect, fov, 0.1f, 100.0f);
 
-		FGraphicsCore::Display->OnWindowResize(mWindowWidth, mWindowHeight);
+		FGraphicsCore::SwapChain->OnWindowResize(mWindowWidth, mWindowHeight);
 
 		LOG_INFO << "Window Resized, width : " << e.Width << ", Height : " << e.Height << " , Minimized : " << e.Minimized;
 	}
