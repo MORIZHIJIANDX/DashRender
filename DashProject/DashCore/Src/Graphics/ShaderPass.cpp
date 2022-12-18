@@ -5,6 +5,11 @@
 
 namespace Dash
 {
+	FShaderPassRef FShaderPass::MakeShaderPass()
+	{
+		return std::make_shared<FShaderPass>();
+	}
+
 	void FShaderPass::SetShader(EShaderStage stage, const FShaderCreationInfo& creationInfo)
 	{
 		mShaders[stage] = FShaderMap::LoadShader(creationInfo);
@@ -154,7 +159,7 @@ namespace Dash
 
 	void FShaderPass::CreateRootSignature(bool createStaticSamplers)
 	{
-		mRootSignatureRef = std::make_shared<FRootSignature>();
+		mRootSignatureRef = FRootSignature::MakeRootSignature();
 
 		UINT numConstantParameters = static_cast<UINT>(mCBVParameters.size());
 		UINT numSRVParameters = static_cast<UINT>(mSRVParameters.size());

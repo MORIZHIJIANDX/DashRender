@@ -3,6 +3,7 @@
 #include "d3dx12.h"
 #include "GraphicsCore.h"
 #include "DX12Helper.h"
+#include "GpuResourcesStateTracker.h"
 
 namespace Dash
 {	
@@ -18,7 +19,7 @@ namespace Dash
 
 		SetName(name);
 
-		FGpuResourcesStateTracker::AddGlobalResourceState(*this, D3DResourceState(currentState));	
+		FGpuResourcesStateTracker::AddGlobalResourceState(this->GetResource(), D3DResourceState(currentState));	
 	}
 
 	void FPixelBuffer::CreateTextureResource(const D3D12_RESOURCE_DESC& resourceDesc, D3D12_CLEAR_VALUE clearValue, const std::string& name)
@@ -30,7 +31,7 @@ namespace Dash
 
 		SetName(name);
 
-		FGpuResourcesStateTracker::AddGlobalResourceState(*this, D3D12_RESOURCE_STATE_COMMON);
+		FGpuResourcesStateTracker::AddGlobalResourceState(this->GetResource(), D3D12_RESOURCE_STATE_COMMON);
 
 		mGpuVirtualAddress = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
 	}

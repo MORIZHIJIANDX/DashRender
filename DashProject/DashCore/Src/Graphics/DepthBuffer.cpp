@@ -28,7 +28,28 @@ namespace Dash
         CreateViews();
     }
 
-    D3D12_CPU_DESCRIPTOR_HANDLE FDepthBuffer::GetDepthStencilView() const
+	FDepthBufferRef FDepthBuffer::MakeDepthBuffer(const std::string& name, const FDepthBufferDescription& desc)
+	{
+		FDepthBufferRef bufferRef = std::make_shared<FDepthBuffer>();
+		bufferRef->Create(name, desc);
+		return bufferRef;
+	}
+
+	FDepthBufferRef FDepthBuffer::MakeDepthBuffer(const std::string& name, uint32_t width, uint32_t height, EResourceFormat format)
+	{
+		FDepthBufferRef bufferRef = std::make_shared<FDepthBuffer>();
+		bufferRef->Create(name, width, height, format);
+		return bufferRef;
+	}
+
+	FDepthBufferRef FDepthBuffer::MakeDepthBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, uint32_t sampleQuality, EResourceFormat format)
+	{
+		FDepthBufferRef bufferRef = std::make_shared<FDepthBuffer>();
+		bufferRef->Create(name, width, height, sampleCount, sampleQuality, format);
+		return bufferRef;
+	}
+
+	D3D12_CPU_DESCRIPTOR_HANDLE FDepthBuffer::GetDepthStencilView() const
     {
         return mDepthStencilView.GetDescriptorHandle();
     }

@@ -3,13 +3,23 @@
 #include "GraphicsCore.h"
 #include "CommandQueue.h"
 #include "DX12Helper.h"
-
+#include "GpuResourcesStateTracker.h"
 
 namespace Dash
 {
 	FGpuLinearAllocator::AllocatorType FGpuLinearAllocator::FPageManager::AutoAllocatorType = GpuExclusive;
 	FGpuLinearAllocator::FPageManager FGpuLinearAllocator::AllocatorPageManger[2];
 	 
+	FGpuLinearAllocator::FPage::FPage(ID3D12Resource* resource, D3D12_RESOURCE_STATES defaultState, size_t pageSize)
+		: mPageSie(pageSize)
+		, mOffset(0)
+	{
+		mResource.Attach(resource);
+		FGpuResourcesStateTracker::AddGlobalResourceState(resource, defaultState);
+		mGpuAddress = mResource->GetGPUVirtualAddress();
+		mResource->Map(0, nullptr, &mCpuAddress);
+	}
+
 	bool FGpuLinearAllocator::FPage::HasSpace(size_t sizeInBytes, size_t alignment) const
 	{
 		size_t alignedSize = FMath::AlignUp(sizeInBytes, alignment);

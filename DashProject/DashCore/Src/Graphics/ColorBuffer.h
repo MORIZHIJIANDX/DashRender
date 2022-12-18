@@ -6,6 +6,9 @@
 
 namespace Dash
 {
+	class FColorBuffer;
+	using FColorBufferRef = std::shared_ptr<FColorBuffer>;
+
 	class FColorBuffer : public FPixelBuffer
 	{
 	public:
@@ -19,13 +22,10 @@ namespace Dash
 		virtual uint32_t GetDepth() const { return mDesc.Magnitude.Depth; }
 		virtual const EResourceFormat& GetFormat() const { return mDesc.Format; }
 
-		void Create(const std::string& name, ID3D12Resource* resource, EResourceState initStates = EResourceState::Common);
-
-		void Create(const std::string& name, const FColorBufferDescription& desc, const FLinearColor& clearColor = FLinearColor{});
-
-		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format);
-
-		void CreateArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format);
+		static FColorBufferRef MakeColorBuffer(const std::string& name, ID3D12Resource* resource, EResourceState initStates = EResourceState::Common);
+		static FColorBufferRef MakeColorBuffer(const std::string& name, const FColorBufferDescription& desc, const FLinearColor& clearColor = FLinearColor{});
+		static FColorBufferRef MakeColorBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format);
+		static FColorBufferRef MakeColorBufferArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format);
 
 		D3D12_CPU_DESCRIPTOR_HANDLE GetRenderTargetView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE GetShaderResourceView() const;
@@ -41,6 +41,10 @@ namespace Dash
 		const FColorBufferDescription& GetDesc() const { return mDesc; }
 
 	protected:
+		void Create(const std::string& name, ID3D12Resource* resource, EResourceState initStates = EResourceState::Common);
+		void Create(const std::string& name, const FColorBufferDescription& desc, const FLinearColor& clearColor = FLinearColor{});
+		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format);
+		void CreateArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format);
 		
 		static inline uint32_t ComputeNumMips(uint32_t width, uint32_t height)
 		{	

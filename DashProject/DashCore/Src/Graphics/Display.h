@@ -22,7 +22,7 @@ namespace Dash
 		void SetDisplayRate(float displayRate);
 		void OnWindowResize(uint32_t newWidth, uint32_t newHeight);
 		void Present();
-		FColorBuffer& GetDisplayBuffer();	
+		FColorBufferRef GetDisplayBuffer();
 	
 	protected:
 		void Initialize();
@@ -31,7 +31,7 @@ namespace Dash
 		void DestroyBuffers();
 		void ForceRecreateBuffers(uint32_t newWidth, uint32_t newHeight);
 
-		FColorBuffer& GetCurrentBackBuffer();
+		FColorBufferRef GetCurrentBackBuffer();
 
 	protected:
 		uint32_t mDisplayWdith = 1080;
@@ -39,8 +39,8 @@ namespace Dash
 		float mDisplayRate = 1.0f;
 		EResourceFormat mSwapChainFormat;
 
-		FColorBuffer mDisplayBuffer{FLinearColor::Yellow};
-		FColorBuffer mSwapChainBuffer[SWAP_CHAIN_BUFFER_COUNT];
+		FColorBufferRef mDisplayBuffer = nullptr;
+		FColorBufferRef mSwapChainBuffer[SWAP_CHAIN_BUFFER_COUNT];
 		uint64_t mFenceValue[SWAP_CHAIN_BUFFER_COUNT];
 
 		Microsoft::WRL::ComPtr<IDXGISwapChain4> mSwapChain;

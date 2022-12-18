@@ -1,7 +1,5 @@
 #include "PCH.h"
 #include "GpuResourcesStateTracker.h"
-#include "GpuResource.h"
-#include "d3dx12.h"
 
 namespace Dash
 {
@@ -90,11 +88,11 @@ namespace Dash
 	}
 
 
-	void FGpuResourcesStateTracker::TransitionResource(FGpuResource& resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
+	void FGpuResourcesStateTracker::TransitionResource(FGpuResourceRef resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
 	{
-		if (resource.GetResource())
+		if (resource->GetResource())
 		{
-			ResourceBarrier(CD3DX12_RESOURCE_BARRIER::Transition(resource.GetResource(), D3D12_RESOURCE_STATE_COMMON, stateAfter, subResource));
+			ResourceBarrier(CD3DX12_RESOURCE_BARRIER::Transition(resource->GetResource(), D3D12_RESOURCE_STATE_COMMON, stateAfter, subResource));
 		}
 	}
 
@@ -103,11 +101,11 @@ namespace Dash
 		ResourceBarrier(CD3DX12_RESOURCE_BARRIER::UAV(resource));
 	}
 
-	void FGpuResourcesStateTracker::UAVBarrier(FGpuResource& resource)
+	void FGpuResourcesStateTracker::UAVBarrier(FGpuResourceRef resource)
 	{
-		if (resource.GetResource())
+		if (resource->GetResource())
 		{
-			ResourceBarrier(CD3DX12_RESOURCE_BARRIER::UAV(resource.GetResource()));
+			ResourceBarrier(CD3DX12_RESOURCE_BARRIER::UAV(resource->GetResource()));
 		}
 	}
 
@@ -116,11 +114,11 @@ namespace Dash
 		ResourceBarrier(CD3DX12_RESOURCE_BARRIER::Aliasing(resourceBefore, resourceAfter));
 	}
 
-	void FGpuResourcesStateTracker::AliasBarrier(FGpuResource& resourceBefore, FGpuResource& resourceAfter)
+	void FGpuResourcesStateTracker::AliasBarrier(FGpuResourceRef resourceBefore, FGpuResourceRef resourceAfter)
 	{
-		if (resourceBefore.GetResource() && resourceAfter.GetResource())
+		if (resourceBefore->GetResource() && resourceAfter->GetResource())
 		{
-			ResourceBarrier(CD3DX12_RESOURCE_BARRIER::Aliasing(resourceBefore.GetResource(), resourceAfter.GetResource()));
+			ResourceBarrier(CD3DX12_RESOURCE_BARRIER::Aliasing(resourceBefore->GetResource(), resourceAfter->GetResource()));
 		}
 	}
 
@@ -250,13 +248,13 @@ namespace Dash
 		}
 	}
 
-	void FGpuResourcesStateTracker::AddGlobalResourceState(FGpuResource& resource, D3D12_RESOURCE_STATES state)
+	void FGpuResourcesStateTracker::AddGlobalResourceState(FGpuResourceRef resource, D3D12_RESOURCE_STATES state)
 	{
-		if (resource.GetResource())
+		if (resource->GetResource())
 		{
 			std::lock_guard<std::mutex> lock(GlobalMutex);
 
-			GlobalResourceStates[resource.GetResource()].SetSubResourceState(D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, state);
+			GlobalResourceStates[resource->GetResource()].SetSubResourceState(D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, state);
 		}
 	}
 
@@ -270,13 +268,13 @@ namespace Dash
 		}
 	}
 
-	void FGpuResourcesStateTracker::RemoveGlobalResourceState(FGpuResource& resource)
+	void FGpuResourcesStateTracker::RemoveGlobalResourceState(FGpuResourceRef resource)
 	{
-		if (resource.GetResource())
+		if (resource->GetResource())
 		{
 			std::lock_guard<std::mutex> lock(GlobalMutex);
 
-			GlobalResourceStates.erase(resource.GetResource());
+			GlobalResourceStates.erase(resource->GetResource());
 		}
 	}
 

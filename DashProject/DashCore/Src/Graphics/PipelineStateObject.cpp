@@ -51,6 +51,11 @@ namespace Dash
 		mPSODesc.InputLayout.NumElements = 0;
 	}
 
+	FGraphicsPSORef FGraphicsPSO::MakeGraphicsPSO(const std::string& name)
+	{
+		return std::make_shared<FGraphicsPSO>(name);
+	}
+
 	void FGraphicsPSO::SetBlendState(const FBlendState& blendDesc)
 	{
 		mPSODesc.BlendState = blendDesc.D3DBlendState();
@@ -205,6 +210,11 @@ namespace Dash
 	{
 		ZeroMemory(&mPSODesc, sizeof(mPSODesc));
 		mPSODesc.NodeMask = 0;
+	}
+
+	FComputePSORef FComputePSO::MakeComputePSO(const std::string& name)
+	{
+		return std::make_shared<FComputePSO>(name);
 	}
 
 	void FComputePSO::SetShader(FShaderResourceRef shader)

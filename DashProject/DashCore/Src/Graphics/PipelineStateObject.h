@@ -10,6 +10,14 @@
 namespace Dash
 {
 	class FRootSignature;
+	
+	class FPipelineStateObject;
+	class FGraphicsPSO;
+	class FComputePSO;
+
+	using FPipelineStateObjectRef = std::shared_ptr<FPipelineStateObject>;
+	using FGraphicsPSORef = std::shared_ptr<FGraphicsPSO>;
+	using FComputePSORef = std::shared_ptr<FComputePSO>;
 
 	class FPipelineStateObject
 	{
@@ -28,12 +36,12 @@ namespace Dash
 		ID3D12PipelineState* GetPipelineState() const { return mPSO; }
 		
 		virtual void SetShader(FShaderResourceRef shader) = 0;
-		void SetShaderPass(const FShaderPass& shaderPass) { mShaderPass = const_cast<FShaderPass*>(&shaderPass); }
+		void SetShaderPass(FShaderPassRef shaderPass) { mShaderPass = shaderPass; }
 		virtual void Finalize() = 0;
 
 		bool IsFinalized() const { return mIsFinalized; }
 
-		const FShaderPass* GetShaderPass() const { return mShaderPass;}
+		FShaderPassRef GetShaderPass() const { return mShaderPass;}
 
 	protected:
 		void ApplyShaderPass();
@@ -44,13 +52,15 @@ namespace Dash
 		bool mIsFinalized = false;
 
 		ID3D12PipelineState* mPSO = nullptr;
-		FShaderPass* mShaderPass = nullptr;
+		FShaderPassRef mShaderPass = nullptr;
 	};
 
 	class FGraphicsPSO : public FPipelineStateObject
 	{
 	public:
 		FGraphicsPSO(const std::string& name);
+
+		static FGraphicsPSORef MakeGraphicsPSO(const std::string& name);
 
 		void SetBlendState(const FBlendState& blendDesc);
 		void SetSamplerMask(UINT samperMask);
@@ -89,6 +99,8 @@ namespace Dash
 	public:
 		FComputePSO(const std::string& name);
 
+		static FComputePSORef MakeComputePSO(const std::string& name);
+
 		void SetComputeShader(const void* binaryCode, size_t size) { mPSODesc.CS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
 		void SetComputeShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPSODesc.CS = shaderByteCode; }
 
@@ -99,8 +111,4 @@ namespace Dash
 	private:
 		D3D12_COMPUTE_PIPELINE_STATE_DESC mPSODesc{};
 	};
-
-	using FPipelineStateObjectRef = std::shared_ptr<FPipelineStateObject>;
-	using FGraphicsPSORef = std::shared_ptr<FGraphicsPSO>;
-	using FComputePSORef = std::shared_ptr<FComputePSO>;
 }

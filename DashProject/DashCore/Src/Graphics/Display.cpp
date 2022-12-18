@@ -20,10 +20,10 @@ namespace Dash
 {
 	using namespace Microsoft::WRL;
 
-	FGraphicsPSORef DrawPSO = std::make_shared<FGraphicsPSO>("DisplayPSO");//{ "DisplayPSO" };
-	FGraphicsPSORef PresentPSO = std::make_shared<FGraphicsPSO>("PresentPSO");;//{ "PresentPSO" };
-	FShaderPass DrawPass;
-	FShaderPass PresentPass;
+	FGraphicsPSORef DrawPSO = FGraphicsPSO::MakeGraphicsPSO("DisplayPSO");//{ "DisplayPSO" };
+	FGraphicsPSORef PresentPSO = FGraphicsPSO::MakeGraphicsPSO("PresentPSO");//{ "PresentPSO" };
+	FShaderPassRef DrawPass = FShaderPass::MakeShaderPass();
+	FShaderPassRef PresentPass = FShaderPass::MakeShaderPass();
 
 	void FDisplay::Initialize()
 	{
@@ -47,13 +47,13 @@ namespace Dash
 		FShaderCreationInfo vsInfo{ "..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl" ,  "VS_Main" };
 		vsInfo.Finalize();
 	
-		DrawPass.SetShader(EShaderStage::Vertex, vsInfo);
-		DrawPass.SetShader(EShaderStage::Pixel, psInfo);
-		DrawPass.SetPassName("DrawPass");
+		DrawPass->SetShader(EShaderStage::Vertex, vsInfo);
+		DrawPass->SetShader(EShaderStage::Pixel, psInfo);
+		DrawPass->SetPassName("DrawPass");
 
-		PresentPass.SetShader(EShaderStage::Vertex, vsInfo);
-		PresentPass.SetShader(EShaderStage::Pixel, psPresentInfo);
-		PresentPass.SetPassName("PresentPass");
+		PresentPass->SetShader(EShaderStage::Vertex, vsInfo);
+		PresentPass->SetShader(EShaderStage::Pixel, psPresentInfo);
+		PresentPass->SetPassName("PresentPass");
 
 		FRasterizerState rasterizerDefault{ ERasterizerFillMode::Solid, ERasterizerCullMode::Back };
 
@@ -99,14 +99,14 @@ namespace Dash
 		if (mDisplayRate != displayRate)
 		{
 			mDisplayRate = displayRate;
-			ForceRecreateBuffers(mSwapChainBuffer[0].GetWidth(), mSwapChainBuffer[0].GetHeight());
+			ForceRecreateBuffers(mSwapChainBuffer[0]->GetWidth(), mSwapChainBuffer[0]->GetHeight());
 			LOG_INFO << "Set Display Rate : " << displayRate;
 		}
 	}
 
 	void FDisplay::OnWindowResize(uint32_t displayWdith, uint32_t displayHeight)
 	{
-		if (mSwapChainBuffer[mCurrentBackBufferIndex].GetWidth() != displayWdith || mSwapChainBuffer[mCurrentBackBufferIndex].GetHeight() != displayHeight)
+		if (mSwapChainBuffer[mCurrentBackBufferIndex]->GetWidth() != displayWdith || mSwapChainBuffer[mCurrentBackBufferIndex]->GetHeight() != displayHeight)
 		{
 			ForceRecreateBuffers(displayWdith, displayHeight);
 		}
@@ -119,9 +119,9 @@ namespace Dash
 
 		{
 			graphicsContext.SetRenderTarget(mDisplayBuffer);
-			graphicsContext.ClearColor(mDisplayBuffer, mDisplayBuffer.GetClearColor());
+			graphicsContext.ClearColor(mDisplayBuffer, mDisplayBuffer->GetClearColor());
 			graphicsContext.SetPipelineState(DrawPSO);
-			graphicsContext.SetViewportAndScissor(0, 0, mDisplayBuffer.GetWidth(), mDisplayBuffer.GetHeight());
+			graphicsContext.SetViewportAndScissor(0, 0, mDisplayBuffer->GetWidth(), mDisplayBuffer->GetHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			graphicsContext.Draw(3);
 		}
@@ -131,7 +131,7 @@ namespace Dash
 			graphicsContext.SetRenderTarget(FGraphicsCore::Display->GetCurrentBackBuffer());
 			graphicsContext.ClearColor(FGraphicsCore::Display->GetCurrentBackBuffer(), FLinearColor::Gray);
 			graphicsContext.SetPipelineState(PresentPSO);
-			graphicsContext.SetViewportAndScissor(0, 0, FGraphicsCore::Display->GetCurrentBackBuffer().GetWidth(), FGraphicsCore::Display->GetCurrentBackBuffer().GetHeight());
+			graphicsContext.SetViewportAndScissor(0, 0, FGraphicsCore::Display->GetCurrentBackBuffer()->GetWidth(), FGraphicsCore::Display->GetCurrentBackBuffer()->GetHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			graphicsContext.SetShaderResourceView("DisplayTexture", mDisplayBuffer);
 			graphicsContext.Draw(3);
@@ -151,7 +151,7 @@ namespace Dash
 		
 	}
 
-	FColorBuffer& FDisplay::GetDisplayBuffer()
+	FColorBufferRef FDisplay::GetDisplayBuffer()
 	{
 		return mDisplayBuffer;
 	}
@@ -206,12 +206,12 @@ namespace Dash
 		{
 			ComPtr<ID3D12Resource> backBuffer;
 			DX_CALL(mSwapChain->GetBuffer(index, IID_PPV_ARGS(&backBuffer)));
-			mSwapChainBuffer[index].Create("Swap Chain Buffer[" + FStringUtility::ToString(index) + "]", backBuffer.Detach(), EResourceState::Common); // D3D12_RESOURCE_STATE_PRESENT ?
+			mSwapChainBuffer[index] = FColorBuffer::MakeColorBuffer("Swap Chain Buffer[" + FStringUtility::ToString(index) + "]", backBuffer.Detach(), EResourceState::Common); // D3D12_RESOURCE_STATE_PRESENT ?
 		}
 
-		mDisplayWdith = static_cast<uint32_t>(FMath::AlignUp(mSwapChainBuffer[0].GetWidth() * mDisplayRate, 2));
-		mDisplayHeight = static_cast<uint32_t>(FMath::AlignUp(mSwapChainBuffer[0].GetHeight() * mDisplayRate, 2));
-		mDisplayBuffer.Create("Display Buffer", mDisplayWdith, mDisplayHeight, 1, mSwapChainFormat);
+		mDisplayWdith = static_cast<uint32_t>(FMath::AlignUp(mSwapChainBuffer[0]->GetWidth() * mDisplayRate, 2));
+		mDisplayHeight = static_cast<uint32_t>(FMath::AlignUp(mSwapChainBuffer[0]->GetHeight() * mDisplayRate, 2));
+		mDisplayBuffer = FColorBuffer::MakeColorBuffer("Display Buffer", mDisplayWdith, mDisplayHeight, 1, mSwapChainFormat);
 		LOG_INFO << "Set Display Width : " << mDisplayWdith << ", Display Height : " << mDisplayHeight;
 
 		mCurrentBackBufferIndex = mSwapChain->GetCurrentBackBufferIndex();
@@ -221,17 +221,19 @@ namespace Dash
 	{
 		for (uint32_t index = 0; index < SWAP_CHAIN_BUFFER_COUNT; ++index)
 		{
-			mSwapChainBuffer[index].Destroy();
+			mSwapChainBuffer[index]->Destroy();
+			mSwapChainBuffer[index] = nullptr;
 		}
 
-		mDisplayBuffer.Destroy();
+		mDisplayBuffer->Destroy();
+		mDisplayBuffer = nullptr;
 	}
 
 	void FDisplay::ForceRecreateBuffers(uint32_t newWidth, uint32_t newHeight)
 	{
 		FGraphicsCore::CommandQueueManager->Flush();
 
-		FGraphicsCore::ContextManager->ReleaseAllTrackObjects();
+		FGraphicsCore::ContextManager->ResetAllContext();
 
 		DestroyBuffers();
 
@@ -244,7 +246,7 @@ namespace Dash
 		CreateBuffers();
 	}
 
-	FColorBuffer& FDisplay::GetCurrentBackBuffer()
+	FColorBufferRef FDisplay::GetCurrentBackBuffer()
 	{
 		return mSwapChainBuffer[mCurrentBackBufferIndex];
 	}

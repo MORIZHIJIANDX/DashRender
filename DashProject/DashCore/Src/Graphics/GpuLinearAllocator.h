@@ -45,15 +45,7 @@ namespace Dash
 		class FPage : public FGpuResource
 		{
 		public:
-			FPage(ID3D12Resource* resource, D3D12_RESOURCE_STATES defaultState, size_t pageSize)
-				: mPageSie(pageSize)
-				, mOffset(0)
-			{
-				mResource.Attach(resource);
-				FGpuResourcesStateTracker::AddGlobalResourceState(resource, defaultState);
-				mGpuAddress = mResource->GetGPUVirtualAddress();
-				mResource->Map(0, nullptr, &mCpuAddress);
-			}
+			FPage(ID3D12Resource* resource, D3D12_RESOURCE_STATES defaultState, size_t pageSize);
 
 			// Check to see if the page has room to satisfy the requested
 			// allocation.

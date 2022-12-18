@@ -5,6 +5,9 @@
 
 namespace Dash
 {
+	class FRootSignature;
+	using FRootSignatureRef = std::shared_ptr<FRootSignature>;
+
 	class FRootParameter
 	{
 		friend class FRootSignature;
@@ -112,6 +115,8 @@ namespace Dash
 
 		~FRootSignature() {}
 
+		static FRootSignatureRef MakeRootSignature(UINT numRootParameters = 0, UINT numStaticSamplers = 0);
+
 		static void DestroyAll();
 
 		void Reset(UINT numRootParameters, UINT numStaticSamplers)
@@ -177,5 +182,5 @@ namespace Dash
 		ID3D12RootSignature* mRootSignature;
 	};
 
-	using FRootSignatureRef = std::shared_ptr<FRootSignature>;
+	
 }

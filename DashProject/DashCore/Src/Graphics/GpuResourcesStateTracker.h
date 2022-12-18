@@ -1,10 +1,10 @@
 #pragma once
-#include <d3d12.h>
+
+#include "d3dx12.h"
+#include "GpuResource.h"
 
 namespace Dash
 {
-	class FGpuResource;
-
 	class FGpuResourcesStateTracker
 	{
 	public:
@@ -27,7 +27,7 @@ namespace Dash
 		 * which indicates that all subresources should be transitioned to the same state.
 		 */
 		void TransitionResource(ID3D12Resource* resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
-		void TransitionResource(FGpuResource& resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+		void TransitionResource(std::shared_ptr<FGpuResource> resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 
 		/**
 		 * Push a UAV resource barrier for the given resource.
@@ -36,7 +36,7 @@ namespace Dash
 		 * indicates that any UAV access could require the barrier.
 		 */
 		void UAVBarrier(ID3D12Resource* resource = nullptr);
-		void UAVBarrier(FGpuResource& resource);
+		void UAVBarrier(FGpuResourceRef resource);
 
 		/**
 		 * Push an aliasing barrier for the given resource.
@@ -48,7 +48,7 @@ namespace Dash
 		 * indicates that any placed or reserved resource could cause aliasing.
 		 */
 		void AliasBarrier(ID3D12Resource* resourceBefore = nullptr, ID3D12Resource* resourceAfter = nullptr);
-		void AliasBarrier(FGpuResource& resourceBefore, FGpuResource& resourceAfter);
+		void AliasBarrier(FGpuResourceRef resourceBefore, FGpuResourceRef resourceAfter);
 
 		/**
 		 * Flush any pending resource barriers to the command list.
@@ -93,14 +93,14 @@ namespace Dash
 		 * This should be done when the resource is created for the first time.
 		 */
 		static void AddGlobalResourceState(ID3D12Resource* resource, D3D12_RESOURCE_STATES state);
-		static void AddGlobalResourceState(FGpuResource& resource, D3D12_RESOURCE_STATES state);
+		static void AddGlobalResourceState(FGpuResourceRef resource, D3D12_RESOURCE_STATES state);
 
 		/**
 		 * Remove a resource from the global resource state array (map).
 		 * This should only be done when the resource is destroyed.
 		 */
 		static void RemoveGlobalResourceState(ID3D12Resource* resource);
-		static void RemoveGlobalResourceState(FGpuResource& resource);
+		static void RemoveGlobalResourceState(FGpuResourceRef resource);
 
 	private:
 		// An array (vector) of resource barriers.

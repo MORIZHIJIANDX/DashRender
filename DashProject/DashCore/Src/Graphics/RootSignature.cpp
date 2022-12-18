@@ -8,6 +8,11 @@ namespace Dash
 {
 	static std::map<size_t, Microsoft::WRL::ComPtr<ID3D12RootSignature>> RootSignatureHashMap;
 
+	FRootSignatureRef FRootSignature::MakeRootSignature(UINT numRootParameters, UINT numStaticSamplers)
+	{
+		return std::make_shared<FRootSignature>(numRootParameters, numStaticSamplers);
+	}
+
 	void FRootSignature::DestroyAll()
 	{
 		RootSignatureHashMap.clear();

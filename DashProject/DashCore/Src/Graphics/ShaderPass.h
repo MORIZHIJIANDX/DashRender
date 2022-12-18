@@ -11,9 +11,15 @@ namespace Dash
 		Compute
 	};
 
+	class FShaderPass;
+
+	using FShaderPassRef = std::shared_ptr<FShaderPass>;
+
 	class FShaderPass
 	{
 	public:
+		static FShaderPassRef MakeShaderPass();
+
 		void SetShader(EShaderStage stage, const FShaderCreationInfo& creationInfo);
 		void SetPassName(const std::string& name) { mPassName = name; }
 		void Finalize(const std::string& passName, bool createStaticSamplers = true);

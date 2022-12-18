@@ -1,12 +1,14 @@
 #pragma once
 #include <wrl.h>
 #include "DX12Helper.h"
-#include "GpuResourcesStateTracker.h"
 #include "ResourceFormat.h"
 #include "ResourceDescription.h"
 
 namespace Dash
 {
+	class FGpuResource;
+	using FGpuResourceRef = std::shared_ptr<FGpuResource>;
+
 	class FGpuResource
 	{
 	public:
@@ -15,15 +17,7 @@ namespace Dash
 			Destroy();
 		}
 
-		virtual void Destroy()
-		{
-			FGpuResourcesStateTracker::RemoveGlobalResourceState(*this);
-
-			mResource = nullptr;
-			mGpuVirtualAddress = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
-
-			++mVersionID;
-		}
+		virtual void Destroy();
 
 		ID3D12Resource* operator->() { return mResource.Get(); }
 		const ID3D12Resource* operator->() const { return mResource.Get(); }
@@ -53,7 +47,7 @@ namespace Dash
 		}
 
 		FGpuResource(ID3D12Resource* resource)
-		: mResource(resource)
+			: mResource(resource)
 		{
 		}
 

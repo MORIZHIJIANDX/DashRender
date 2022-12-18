@@ -3,6 +3,7 @@
 #include "GraphicsCore.h"
 #include "CommandContext.h"
 #include "CpuDescriptorAllocator.h"
+#include "GpuResourcesStateTracker.h"
 
 namespace Dash
 {
@@ -19,7 +20,7 @@ namespace Dash
 
 		if (initData)
 		{
-			FCommandContext::InitializeBuffer(*this, initData, mDesc.Size);
+			//FCommandContext::InitializeBuffer(*this, initData, mDesc.Size);
 		}
 
 		CreateViews();
@@ -34,7 +35,7 @@ namespace Dash
 		// D3D12_RESOURCE_STATE_COMMON 不可直接作为 SRV 和 UAV，需要转换为 D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER (D3D12_RESOURCE_STATE_GENERIC_READ) 状态
 		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_COMMON, nullptr, IID_PPV_ARGS(&mResource)));
 
-		FGpuResourcesStateTracker::AddGlobalResourceState(*this, D3D12_RESOURCE_STATE_COMMON);
+		FGpuResourcesStateTracker::AddGlobalResourceState(this->GetResource(), D3D12_RESOURCE_STATE_COMMON);
 
 		//GetGPUVirtualAddress is only useful for buffer resources, it will return zero for all texture resources.
 		mGpuVirtualAddress = mResource->GetGPUVirtualAddress();

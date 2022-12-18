@@ -9,6 +9,7 @@
 #include "GpuBuffer.h"
 #include "GpuLinearAllocator.h"
 #include "ShaderPass.h"
+#include "GpuResourcesStateTracker.h"
 
 namespace Dash
 {
@@ -23,7 +24,7 @@ namespace Dash
 
 		FCommandContext* AllocateContext(D3D12_COMMAND_LIST_TYPE type);
 		void FreeContext(uint64_t fenceValue, FCommandContext* context);
-		void ReleaseAllTrackObjects();
+		void ResetAllContext();
 		void Destroy();
 
 	private:
@@ -70,9 +71,9 @@ namespace Dash
 		FCommandList* GetCommandList() { return mCommandList; }
 		ID3D12GraphicsCommandList* GetD3DCommandList() { return mD3DCommandList; }
 
-		void TransitionBarrier(FGpuResource& resource, EResourceState newState, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, bool flushImmediate = false);
-		void UAVBarrier(FGpuResource& resource, bool flushImmediate = false);
-		void AliasingBarrier(FGpuResource& resourceBefore, FGpuResource& resourceAfter, bool flushImmediate = false);
+		void TransitionBarrier(FGpuResourceRef resource, EResourceState newState, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, bool flushImmediate = false);
+		void UAVBarrier(FGpuResourceRef resource, bool flushImmediate = false);
+		void AliasingBarrier(FGpuResourceRef resourceBefore, FGpuResourceRef resourceAfter, bool flushImmediate = false);
 		void FlushResourceBarriers();
 
 		void SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type, ID3D12DescriptorHeap* heap);
@@ -81,13 +82,13 @@ namespace Dash
 		void SetPipelineState(FPipelineStateObjectRef pso);
 		virtual void SetRootSignature(FRootSignatureRef rootSignature) = 0;
 
-		static void InitializeBuffer(FGpuBuffer& dest, const void* bufferData, size_t numBytes, size_t offset = 0);
+		static void InitializeBuffer(FGpuBufferRef dest, const void* bufferData, size_t numBytes, size_t offset = 0);
 
 	protected:
 
 		void SetID(const std::string& id) { mID = id; }
 		void BindDescriptorHeaps();
-		void TrackResource(FGpuResource& resource);
+		void TrackResource(FGpuResourceRef resource);
 		void ReleaseTrackedObjects();
 		uint64_t Execute();
 
@@ -113,7 +114,7 @@ namespace Dash
 
 		FGpuLinearAllocator mLinearAllocator;
 
-		using FTrackedObjects = std::vector<Microsoft::WRL::ComPtr<ID3D12Object>>;
+		using FTrackedObjects = std::vector<FGpuResourceRef>;
 		FTrackedObjects mTrackedObjects;
 
 		ID3D12RootSignature* mCurrentRootSignature = nullptr;
@@ -139,21 +140,21 @@ namespace Dash
 			return FCommandContext::Begin(id, D3D12_COMMAND_LIST_TYPE_DIRECT).GetGraphicsCommandContext();
 		}
 
-		void ClearUAV(FGpuConstantBuffer& target);
-		void ClearUAV(FColorBuffer& target);
-		void ClearColor(FColorBuffer& target, D3D12_RECT* rect = nullptr);
-		void ClearColor(FColorBuffer& target, const FLinearColor& color, D3D12_RECT* rect = nullptr);
-		void ClearDepth(FDepthBuffer& target);
-		void ClearStencil(FDepthBuffer& target);
-		void ClearDepthAndStencil(FDepthBuffer& target);
+		void ClearUAV(FGpuConstantBufferRef target);
+		void ClearUAV(FColorBufferRef target);
+		void ClearColor(FColorBufferRef target, D3D12_RECT* rect = nullptr);
+		void ClearColor(FColorBufferRef target, const FLinearColor& color, D3D12_RECT* rect = nullptr);
+		void ClearDepth(FDepthBufferRef target);
+		void ClearStencil(FDepthBufferRef target);
+		void ClearDepthAndStencil(FDepthBufferRef target);
 
 		virtual void SetRootSignature(FRootSignatureRef rootSignature) override;
 
-		void SetRenderTargets(UINT numRTVs, FColorBuffer* rtvs);
-		void SetRenderTargets(UINT numRTVs, FColorBuffer* rtvs, FDepthBuffer& depthBuffer);
-		void SetRenderTarget(FColorBuffer& colorBuffer) { SetRenderTargets(1, &colorBuffer); }
-		void SetRenderTarget(FColorBuffer& colorBuffer, FDepthBuffer& depthBuffer) { SetRenderTargets(1, &colorBuffer, depthBuffer); }
-		void SetDepthStencilTarget(FDepthBuffer& depthBuffer) { SetRenderTargets(1, nullptr, depthBuffer); }
+		void SetRenderTargets(UINT numRTVs, FColorBufferRef* rtvs);
+		void SetRenderTargets(UINT numRTVs, FColorBufferRef* rtvs, FDepthBufferRef depthBuffer);
+		void SetRenderTarget(FColorBufferRef colorBuffer) { SetRenderTargets(1, &colorBuffer); }
+		void SetRenderTarget(FColorBufferRef colorBuffer, FDepthBufferRef depthBuffer) { SetRenderTargets(1, &colorBuffer, depthBuffer); }
+		void SetDepthStencilTarget(FDepthBufferRef depthBuffer) { SetRenderTargets(1, nullptr, depthBuffer); }
 
 		void SetViewport(const FViewport& vp);
 		void SetViewport(Scalar x, Scalar y, Scalar w, Scalar h, Scalar minDepth = 0.0f, Scalar maxDepth = 1.0f);
@@ -166,28 +167,6 @@ namespace Dash
 
 		//Set Root Parameters
 
-		void Set32BitConstants(UINT rootIndex, UINT numConstants, const void* constants);
-		template<typename T>
-		void Set32BitConstants(UINT rootIndex, const T& constants)
-		{
-			STATIC_ASSERT_MSG(sizeof(T) % sizeof(uint32_t) == 0, "Size of type must be a multiple of 4 bytes");
-			Set32BitConstants(rootIndex, sizeof(T) / sizeof(uint32_t), &constants);
-		}
-
-		void SetRootConstantBufferView(UINT rootIndex, size_t sizeInBytes, const void* constants);
-		template<typename T>
-		void SetRootConstantBufferView(UINT rootIndex, const T& constants)
-		{
-			SetRootConstantBufferView(rootIndex, sizeof(T), &constants);
-		}
-
-		void SetRootShaderResourceView(UINT rootIndex, size_t sizeInBytes, const void* constants);
-		template<typename T>
-		void SetRootShaderResourceView(UINT rootIndex, const T& constants)
-		{
-			SetRootShaderResourceView(rootIndex, sizeof(T), &constants);
-		}
-
 		void SetRootConstantBufferView(const std::string& bufferName, size_t sizeInBytes, const void* constants);
 		template<typename T>
 		void SetRootConstantBufferView(const std::string& bufferName, const T& constants)
@@ -196,41 +175,13 @@ namespace Dash
 		}
 
 		// FGpuConstantBuffer 初始状态 D3D12_RESOURCE_STATE_COMMON 不可直接作为 SRV 和 UAV，需要转换为 D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER (D3D12_RESOURCE_STATE_GENERIC_READ) 状态
-		void SetRootConstantBufferView(UINT rootIndex, FGpuConstantBuffer& constantBuffer, size_t bufferOffset = 0, 
-			EResourceState stateAfter = EResourceState::ConstantBuffer);
-
-		void SetRootShaderResourceView(UINT rootIndex, FGpuConstantBuffer& constantBuffer, size_t bufferOffset = 0,
-			EResourceState stateAfter = EResourceState::AnyShaderAccess);
-
-		void SetRootUnorderAccessView(UINT rootIndex, FGpuConstantBuffer& constantBuffer, size_t bufferOffset = 0,
-			EResourceState stateAfter = EResourceState::UnorderedAccess);
-
-		void SetRootConstantBufferView(const std::string& bufferName, FGpuConstantBuffer& constantBuffer, EResourceState stateAfter = EResourceState::ConstantBuffer);
-
+		
 		// Set descriptor table parameters
 
-		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FGpuConstantBuffer& buffer,
-			EResourceState stateAfter = EResourceState::AnyShaderAccess);
-
-		void SetUnorderAccessView(UINT rootIndex, UINT descriptorOffset, FGpuConstantBuffer& buffer,
-			EResourceState stateAfter = EResourceState::UnorderedAccess);
-
-		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FColorBuffer& buffer,
+		void SetShaderResourceView(const std::string& srvrName, FColorBufferRef buffer,
 			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0,
 			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
-
-		void SetShaderResourceView(const std::string& srvrName, FColorBuffer& buffer,
-			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0,
-			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
-
-		void SetUnorderAccessView(UINT rootIndex, UINT descriptorOffset, FColorBuffer& buffer,
-			EResourceState stateAfter = EResourceState::UnorderedAccess, UINT firstSubResource = 0,
-			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
-
-		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FDepthBuffer& buffer,
-			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0,
-			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
-
+		
 		void SetDynamicSampler(UINT rootIndex, UINT descriptorOffset, D3D12_CPU_DESCRIPTOR_HANDLE handle);
 		void SetDynamicSamplers(UINT rootIndex, UINT descriptorOffset, UINT count, D3D12_CPU_DESCRIPTOR_HANDLE handles[]);
 
@@ -247,5 +198,26 @@ namespace Dash
 			UINT startVertexLocation = 0, UINT startInstanceLocation = 0);
 		void DrawIndexedInstanced(UINT indexCountPerInstance, UINT instanceCount, UINT startIndexLocation,
 			INT baseVertexLocation, UINT startInstanceLocation);
+
+	protected:
+
+		void SetRootConstantBufferView(UINT rootIndex, size_t sizeInBytes, const void* constants);
+		template<typename T>
+		void SetRootConstantBufferView(UINT rootIndex, const T& constants)
+		{
+			SetRootConstantBufferView(rootIndex, sizeof(T), &constants);
+		}
+
+		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FColorBufferRef buffer,
+			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0,
+			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+
+		void SetUnorderAccessView(UINT rootIndex, UINT descriptorOffset, FColorBufferRef buffer,
+			EResourceState stateAfter = EResourceState::UnorderedAccess, UINT firstSubResource = 0,
+			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+
+		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FDepthBufferRef buffer,
+			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0,
+			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 	};
 }

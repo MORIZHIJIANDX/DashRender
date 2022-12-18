@@ -5,6 +5,16 @@
 
 namespace Dash
 {
+	class FGpuBuffer;
+	class FGpuConstantBuffer;
+	class FGpuVertexBuffer;
+	class FGpuIndexBuffer;
+
+	using FGpuBufferRef = std::shared_ptr<FGpuBuffer>;
+	using FGpuConstantBufferRef = std::shared_ptr<FGpuConstantBuffer>;
+	using FGpuVertexBufferRef = std::shared_ptr<FGpuVertexBuffer>;
+	using FGpuIndexBufferRef = std::shared_ptr<FGpuIndexBuffer>;
+
 	class FGpuBuffer : public FGpuResource
 	{
 	public:

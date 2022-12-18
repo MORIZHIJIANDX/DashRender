@@ -5,6 +5,9 @@
 
 namespace Dash
 {
+	class FDepthBuffer;
+	using FDepthBufferRef = std::shared_ptr<FDepthBuffer>;
+
 	class FDepthBuffer : public FPixelBuffer
 	{
 	public:
@@ -18,11 +21,9 @@ namespace Dash
 		virtual uint32_t GetDepth() const { return mDesc.Magnitude.Depth; }
 		virtual const EResourceFormat& GetFormat() const { return mDesc.Format; }
 
-		void Create(const std::string& name, const FDepthBufferDescription& desc);
-
-		void Create(const std::string& name, uint32_t width, uint32_t height, EResourceFormat format);
-
-		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, uint32_t sampleQuality, EResourceFormat format);
+		static FDepthBufferRef MakeDepthBuffer(const std::string& name, const FDepthBufferDescription& desc);
+		static FDepthBufferRef MakeDepthBuffer(const std::string& name, uint32_t width, uint32_t height, EResourceFormat format);
+		static FDepthBufferRef MakeDepthBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, uint32_t sampleQuality, EResourceFormat format);
 
 		D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE GetShaderResourceView() const;
@@ -33,6 +34,9 @@ namespace Dash
 		const FDepthBufferDescription& GetDesc() const { return mDesc; }
 
 	protected:
+		void Create(const std::string& name, const FDepthBufferDescription& desc);
+		void Create(const std::string& name, uint32_t width, uint32_t height, EResourceFormat format);
+		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, uint32_t sampleQuality, EResourceFormat format);
 			
 		void CreateViews();
 
