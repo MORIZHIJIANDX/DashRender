@@ -1,6 +1,7 @@
 #include "PCH.h"
 #include "ResourceDescription.h"
 #include "GraphicsCore.h"
+#include "RenderDevice.h"
 
 namespace Dash
 {

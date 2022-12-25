@@ -2,8 +2,8 @@
 #include "ColorBuffer.h"
 #include "GraphicsCore.h"
 #include "CpuDescriptorAllocator.h"
-
 #include "ResourceFormat.h"
+#include "RenderDevice.h"
 
 namespace Dash
 {

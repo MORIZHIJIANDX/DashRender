@@ -4,6 +4,7 @@
 #include "GraphicsCore.h"
 #include "DX12Helper.h"
 #include "GpuResourcesStateTracker.h"
+#include "RenderDevice.h"
 
 namespace Dash
 {	
@@ -27,7 +28,7 @@ namespace Dash
 		Destroy();
 
 		CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_DEFAULT);
-		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_COMMON, &clearValue, IID_PPV_ARGS(&mResource)));
+		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_COMMON, &clearValue, mResource));
 
 		SetName(name);
 

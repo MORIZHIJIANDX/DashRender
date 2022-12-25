@@ -33,7 +33,7 @@ namespace Dash
 			return mShaderPass->GetRootSignature();
 		}
 
-		ID3D12PipelineState* GetPipelineState() const { return mPSO; }
+		ID3D12PipelineState* GetPipelineState() const { return mPSO.Get(); }
 		
 		virtual void SetShader(FShaderResourceRef shader) = 0;
 		void SetShaderPass(FShaderPassRef shaderPass) { mShaderPass = shaderPass; }
@@ -51,7 +51,7 @@ namespace Dash
 
 		bool mIsFinalized = false;
 
-		ID3D12PipelineState* mPSO = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12PipelineState> mPSO = nullptr;
 		FShaderPassRef mShaderPass = nullptr;
 	};
 

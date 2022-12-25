@@ -2,6 +2,7 @@
 #include "DepthBuffer.h"
 #include "GraphicsCore.h"
 #include "CpuDescriptorAllocator.h"
+#include "RenderDevice.h"
 
 namespace Dash
 {

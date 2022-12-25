@@ -164,7 +164,7 @@ namespace Dash
 			return mParameterArray.get()[parameterIndex];
 		}
 
-		ID3D12RootSignature* GetSignature() const { return mRootSignature; }
+		ID3D12RootSignature* GetSignature() const { return mRootSignature.Get(); }
 
 		bool IsFinalized() const { return mFinalized; }
 
@@ -179,7 +179,7 @@ namespace Dash
 		uint32_t mNumDescriptorsPerTable[32];
 		std::unique_ptr<D3D12_STATIC_SAMPLER_DESC[]> mSamplerArray;
 		std::unique_ptr<FRootParameter[]> mParameterArray;
-		ID3D12RootSignature* mRootSignature;
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature;
 	};
 
 	

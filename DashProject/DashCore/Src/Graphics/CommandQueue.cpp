@@ -2,14 +2,15 @@
 #include "CommandQueue.h"
 #include "GraphicsCore.h"
 #include "DX12Helper.h"
+#include "RenderDevice.h"
 
 namespace Dash
 {
 	FCommandList::FCommandList(D3D12_COMMAND_LIST_TYPE type)
 		: mType(type)
 	{
-		DX_CALL(FGraphicsCore::Device->CreateCommandAllocator(type, IID_PPV_ARGS(&mCommandAllocator)));
-		DX_CALL(FGraphicsCore::Device->CreateCommandList(0, type, mCommandAllocator.Get(), nullptr, IID_PPV_ARGS(&mGraphicsCommandList)));
+		DX_CALL(FGraphicsCore::Device->CreateCommandAllocator(type, mCommandAllocator));
+		DX_CALL(FGraphicsCore::Device->CreateCommandList(0, type, mCommandAllocator.Get(), nullptr, mGraphicsCommandList));
 
 		SetD3D12DebugName(mCommandAllocator.Get(), L"CommandAllocator");
 		SetD3D12DebugName(mGraphicsCommandList.Get(), L"CommandList");
@@ -99,10 +100,10 @@ namespace Dash
 		commandQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 		commandQueueDesc.NodeMask = 0;
 
-		DX_CALL(FGraphicsCore::Device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&mCommandQueue)));
+		DX_CALL(FGraphicsCore::Device->CreateCommandQueue(&commandQueueDesc, mCommandQueue));
 
 		uint64_t initFenceValue = ((uint64_t)type) << COMMAND_TYPE_MASK;
-		DX_CALL(FGraphicsCore::Device->CreateFence(initFenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&mFence)));
+		DX_CALL(FGraphicsCore::Device->CreateFence(initFenceValue, D3D12_FENCE_FLAG_NONE, mFence));
 
 		switch (type)
 		{

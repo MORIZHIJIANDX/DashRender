@@ -3,6 +3,7 @@
 #include "GraphicsCore.h"
 #include "DX12Helper.h"
 #include "Utility/Visitor.h"
+#include "RenderDevice.h"
 
 namespace Dash
 {

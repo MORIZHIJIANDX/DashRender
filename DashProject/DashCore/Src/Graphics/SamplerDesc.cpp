@@ -4,6 +4,7 @@
 #include "CpuDescriptorAllocator.h"
 #include "GraphicsCore.h"
 #include "Utility/Hash.h"
+#include "RenderDevice.h"
 
 namespace Dash
 {

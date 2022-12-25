@@ -9,6 +9,7 @@ namespace Dash
 	class FCpuDescriptorAllocatorManager;
 	class FCommandContextManager;
 	class FSwapChain;
+	class FRenderDevice;
 
 	class FGraphicsCore
 	{
@@ -18,7 +19,7 @@ namespace Dash
 
 		static D3D_ROOT_SIGNATURE_VERSION GetRootSignatureVersion();
 
-		static ID3D12Device5* Device;
+		static FRenderDevice* Device;
 		static FCommandQueueManager* CommandQueueManager;
 		static FCommandListManager* CommandListManager;
 		static FCpuDescriptorAllocatorManager* DescriptorAllocator;
@@ -28,8 +29,8 @@ namespace Dash
 		static constexpr int BackBufferCount = 3;
 
 	private:
-		static void InitD3DDevice();
-		static void DestroyD3Device();
+		//static void InitD3DDevice();
+		//static void DestroyD3Device();
 
 	private:
 		static bool mTypedUAVLoadSupport_R11G11B10_FLOAT;

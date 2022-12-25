@@ -4,9 +4,12 @@
 #include "GraphicsCore.h"
 #include "DX12Helper.h"
 #include "Utility/Hash.h"
+#include "RenderDevice.h"
 
 namespace Dash
 {
+	using namespace Microsoft::WRL;
+
 	static std::map<size_t, Microsoft::WRL::ComPtr<ID3D12PipelineState>> GraphicsPipelineStateHashMap;
 	static std::map<size_t, Microsoft::WRL::ComPtr<ID3D12PipelineState>> ComputePipelineStateHashMap;
 
@@ -168,7 +171,7 @@ namespace Dash
 		hashCode = HashState(mPSODesc.InputLayout.pInputElementDescs, mPSODesc.InputLayout.NumElements, hashCode);
 
 		static std::mutex posMutex;
-		ID3D12PipelineState** psoRef = nullptr;
+		ComPtr<ID3D12PipelineState>* psoRef = nullptr;
 		bool firstTimeCompile = false;
 		{
 			std::lock_guard<std::mutex> lock(posMutex);
@@ -176,20 +179,20 @@ namespace Dash
 			auto iter = GraphicsPipelineStateHashMap.find(hashCode);
 			if (iter == GraphicsPipelineStateHashMap.end())
 			{
-				psoRef = GraphicsPipelineStateHashMap[hashCode].GetAddressOf();
+				psoRef = &GraphicsPipelineStateHashMap[hashCode];
 				firstTimeCompile = true;
 			}
 			else
 			{
-				psoRef = iter->second.GetAddressOf();
+				psoRef = &iter->second;
 			}
 		}
 
 		if (firstTimeCompile == true)
 		{
-			DX_CALL(FGraphicsCore::Device->CreateGraphicsPipelineState(&mPSODesc, IID_PPV_ARGS(&mPSO)));
-			SetD3D12DebugName(mPSO, mName.c_str());
-			GraphicsPipelineStateHashMap[hashCode].Attach(mPSO);
+			DX_CALL(FGraphicsCore::Device->CreateGraphicsPipelineState(&mPSODesc, mPSO));
+			SetD3D12DebugName(mPSO.Get(), mName.c_str());
+			GraphicsPipelineStateHashMap[hashCode] = mPSO;
 		}
 		else
 		{
@@ -244,7 +247,7 @@ namespace Dash
 		size_t hashCode = HashState(&mPSODesc);
 
 		static std::mutex posMutex;
-		ID3D12PipelineState** psoRef = nullptr;
+		ComPtr<ID3D12PipelineState>* psoRef = nullptr;
 		bool firstTimeCompile = false;
 		{
 			std::lock_guard<std::mutex> lock(posMutex);
@@ -252,20 +255,20 @@ namespace Dash
 			auto iter = ComputePipelineStateHashMap.find(hashCode);
 			if (iter == ComputePipelineStateHashMap.end())
 			{
-				psoRef = ComputePipelineStateHashMap[hashCode].GetAddressOf();
+				psoRef = &ComputePipelineStateHashMap[hashCode];
 				firstTimeCompile = true;
 			}
 			else
 			{
-				psoRef = iter->second.GetAddressOf();
+				psoRef = &iter->second;
 			}
 		}
 
 		if (firstTimeCompile == true)
 		{
-			DX_CALL(FGraphicsCore::Device->CreateComputePipelineState(&mPSODesc, IID_PPV_ARGS(&mPSO)));
-			SetD3D12DebugName(mPSO, mName.c_str());
-			ComputePipelineStateHashMap[hashCode].Attach(mPSO);
+			DX_CALL(FGraphicsCore::Device->CreateComputePipelineState(&mPSODesc, mPSO));
+			SetD3D12DebugName(mPSO.Get(), mName.c_str());
+			ComputePipelineStateHashMap[hashCode] = mPSO;
 		}
 		else
 		{

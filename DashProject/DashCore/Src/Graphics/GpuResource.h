@@ -46,12 +46,12 @@ namespace Dash
 		{
 		}
 
-		FGpuResource(ID3D12Resource* resource)
+		FGpuResource(Microsoft::WRL::ComPtr<ID3D12Resource> resource)
 			: mResource(resource)
 		{
 		}
 
-		Microsoft::WRL::ComPtr<ID3D12Resource> mResource;
+		Microsoft::WRL::ComPtr<ID3D12Resource> mResource = nullptr;
 		D3D12_GPU_VIRTUAL_ADDRESS mGpuVirtualAddress = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
 
 		std::string mResourceName;

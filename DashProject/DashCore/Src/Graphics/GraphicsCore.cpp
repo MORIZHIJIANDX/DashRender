@@ -13,10 +13,8 @@
 #include "GameApp.h"
 #include "Utility/StringUtility.h"
 #include "ShaderMap.h"
+#include "RenderDevice.h"
 
-#pragma comment(lib, "dxguid.lib")
-#pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "d3d12.lib")
 //#pragma comment(lib, "d3dcompiler.lib")
 
 using namespace Microsoft::WRL;
@@ -27,7 +25,7 @@ namespace Dash
 	static const uint32_t VendorID_AMD = 0x1002;
 	static const uint32_t VendorID_Intel = 0x8086;
 
-	ID3D12Device5* FGraphicsCore::Device = nullptr;
+	FRenderDevice* FGraphicsCore::Device = nullptr;
 	FCommandQueueManager* FGraphicsCore::CommandQueueManager = nullptr;
 	FCommandListManager* FGraphicsCore::CommandListManager = nullptr;
 	FCpuDescriptorAllocatorManager* FGraphicsCore::DescriptorAllocator = nullptr;
@@ -45,8 +43,9 @@ namespace Dash
 		LOG_INFO << "FGraphicsCore::Initialize Begin.";
 
 		FShaderMap::Init();
-		FGraphicsCore::InitD3DDevice();
-
+		//FGraphicsCore::InitD3DDevice();
+		
+		Device = new FRenderDevice();
 		CommandQueueManager = new FCommandQueueManager();
 		CommandListManager = new FCommandListManager();
 		DescriptorAllocator = new FCpuDescriptorAllocatorManager();
@@ -111,7 +110,14 @@ namespace Dash
 		FRootSignature::DestroyAll();
 		FSamplerDesc::DestroyAll();
 
-		DestroyD3Device();
+		//DestroyD3Device();
+		if (Device)
+		{
+			Device->Destroy();
+			delete Device;
+
+			LOG_INFO << "Destroy Render Device.";
+		}
 		FShaderMap::Destroy();
 	
 		LOG_INFO << "FGraphicsCore::Shutdown End.";
@@ -122,6 +128,7 @@ namespace Dash
 		return FGraphicsCore::mHighestRootSignatureVersion;
 	}
 
+	/*
 	void FGraphicsCore::InitD3DDevice()
 	{
 		ASSERT_MSG(FGraphicsCore::Device == nullptr, "FGraphicsCore Has Already Been Initialized!");
@@ -379,4 +386,5 @@ namespace Dash
 		}
 #endif
 	}
+	*/
 }

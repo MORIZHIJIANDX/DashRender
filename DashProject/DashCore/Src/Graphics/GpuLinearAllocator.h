@@ -45,7 +45,7 @@ namespace Dash
 		class FPage : public FGpuResource
 		{
 		public:
-			FPage(ID3D12Resource* resource, D3D12_RESOURCE_STATES defaultState, size_t pageSize);
+			FPage(Microsoft::WRL::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES defaultState, size_t pageSize);
 
 			// Check to see if the page has room to satisfy the requested
 			// allocation.

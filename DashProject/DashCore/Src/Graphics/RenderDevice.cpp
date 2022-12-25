@@ -1,0 +1,466 @@
+#include "PCH.h"
+#include "RenderDevice.h"
+#include "DX12Helper.h"
+#include <wrl.h>
+#include <dxgi1_6.h>
+#include <dxgidebug.h>
+
+#pragma comment(lib, "dxguid.lib")
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d3d12.lib")
+
+using namespace Microsoft::WRL;
+
+namespace Dash
+{
+	static const uint32_t VendorID_Nvidia = 0x10DE;
+	static const uint32_t VendorID_AMD = 0x1002;
+	static const uint32_t VendorID_Intel = 0x8086;
+
+	FRenderDevice::FRenderDevice()
+	{
+		if(mDevice == nullptr)
+		{
+			Init();
+		}
+	}
+
+	FRenderDevice::~FRenderDevice()
+	{
+		if (mDevice != nullptr)
+		{	
+			Destroy();
+		}
+	}
+
+	void FRenderDevice::Init()
+	{
+		ASSERT_MSG(mDevice == nullptr, "FGraphicsCore Has Already Been Initialized!");
+
+		UINT dxgiFactoryFlags = 0;
+
+#if DASH_DEBUG
+		//Enable debug layer
+		{
+			ComPtr<ID3D12Debug> debugInterface;
+			if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugInterface))))
+			{
+				debugInterface->EnableDebugLayer();
+
+				ComPtr<ID3D12Debug1> debugInterface1;
+				if (SUCCEEDED(debugInterface->QueryInterface(IID_PPV_ARGS(&debugInterface1))))
+				{
+					debugInterface1->SetEnableGPUBasedValidation(TRUE);
+				}
+			}
+			else
+			{
+				LOG_WARNING << "Unable To Enable D3D12 Debug Layer!";
+			}
+
+			ComPtr<IDXGIInfoQueue> dxgiInfoQueue;
+			if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(dxgiInfoQueue.GetAddressOf()))))
+			{
+				dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
+
+				dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY::DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true);
+				dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY::DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true);
+
+				DXGI_INFO_QUEUE_MESSAGE_ID hide[] =
+				{
+					//IDXGISwapChain::GetContainingOutput: The swapchain's adapter does not control the output on which the swapchain's window resides.
+					80,
+				};
+
+				DXGI_INFO_QUEUE_FILTER infoFiter = {};
+				infoFiter.DenyList.NumIDs = _countof(hide);
+				infoFiter.DenyList.pIDList = hide;
+				dxgiInfoQueue->AddStorageFilterEntries(DXGI_DEBUG_DXGI, &infoFiter);
+			}
+		}
+#endif // DASH_DEBUG
+
+		//Create DXGI Factory
+		ComPtr<IDXGIFactory6> dxgiFactory;
+		DX_CALL(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&dxgiFactory)));
+
+		//Enumerate adapter and create device
+		ComPtr<IDXGIAdapter1> dxgiAdapter;
+		for (UINT adapterIndex = 0;
+			DXGI_ERROR_NOT_FOUND != dxgiFactory->EnumAdapterByGpuPreference(adapterIndex, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&dxgiAdapter));
+			++adapterIndex)
+		{
+			DXGI_ADAPTER_DESC1 desc;
+			dxgiAdapter->GetDesc1(&desc);
+
+			// Skip the basic render driver adapter.
+			if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
+			{
+				continue;
+			}
+
+			if (SUCCEEDED(D3D12CreateDevice(dxgiAdapter.Get(), D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(&mDevice))))
+			{
+				LOG_INFO << "Create Device With Adapter : " << FStringUtility::WideStringToUTF8(desc.Description);
+				LOG_INFO << "Adapter Memory " << desc.DedicatedVideoMemory / (1024 * 1024) << " MB";
+
+				std::string vendorType = "Adapter Type : ";
+				switch (desc.VendorId)
+				{
+				case VendorID_Nvidia:
+					vendorType += "Nvidia";
+					break;
+				case VendorID_AMD:
+					vendorType += "AMD";
+					break;
+				case VendorID_Intel:
+					vendorType += "Intel";
+					break;
+				default:
+					vendorType += "Unknown";
+					break;
+				}
+
+				LOG_INFO << vendorType;
+				break;
+			}
+		}
+
+		if (mDevice == nullptr)
+		{
+			LOG_ERROR << "Failed To Create D3D12 Device!";
+		}
+
+#ifndef DASH_RELEASE
+		//Enable stable power state
+		{
+			bool developerModeEnabled = false;
+
+			// Look in the Windows Registry to determine if Developer Mode is enabled
+			HKEY hKey;
+			LSTATUS result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\AppModelUnlock", 0, KEY_READ, &hKey);
+			if (result == ERROR_SUCCESS)
+			{
+				DWORD keyValue, keySize = sizeof(DWORD);
+				result = RegQueryValueEx(hKey, "AllowDevelopmentWithoutDevLicense", 0, NULL, (byte*)&keyValue, &keySize);
+				if (result == ERROR_SUCCESS && keyValue == 1)
+					developerModeEnabled = true;
+				RegCloseKey(hKey);
+			}
+
+			if (developerModeEnabled == false)
+			{
+				LOG_INFO << "Enable Developer Mode on Windows 10 to get consistent profiling results";
+			}
+
+			// Prevent the GPU from overclocking or underclocking to get consistent timings
+			if (developerModeEnabled)
+				mDevice->SetStablePowerState(TRUE);
+		}
+#endif // !DASH_RELEASE
+
+#if DASH_DEBUG
+		// Enable debug messages (only works if the debug layer has already been enabled).
+		ID3D12InfoQueue* d3dInfoQueue = nullptr;
+		if (SUCCEEDED(mDevice->QueryInterface(IID_PPV_ARGS(&d3dInfoQueue))))
+		{
+			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_ERROR, true);
+			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_WARNING, true);
+
+			// Suppress messages based on their severity level
+			D3D12_MESSAGE_SEVERITY severities[] =
+			{
+				D3D12_MESSAGE_SEVERITY_INFO
+			};
+
+			// Suppress individual messages by their ID
+			D3D12_MESSAGE_ID denyIds[] =
+			{
+				// This occurs when there are uninitialized descriptors in a descriptor table, even when a
+				// shader does not access the missing descriptors.  I find this is common when switching
+				// shader permutations and not wanting to change much code to reorder resources.
+				D3D12_MESSAGE_ID_INVALID_DESCRIPTOR_HANDLE,
+
+				// Triggered when a shader does not export all color components of a render target, such as
+				// when only writing RGB to an R10G10B10A2 buffer, ignoring alpha.
+				D3D12_MESSAGE_ID_CREATEGRAPHICSPIPELINESTATE_PS_OUTPUT_RT_OUTPUT_MISMATCH,
+
+				// This occurs when a descriptor table is unbound even when a shader does not access the missing
+				// descriptors.  This is common with a root signature shared between disparate shaders that
+				// don't all need the same types of resources.
+				D3D12_MESSAGE_ID_COMMAND_LIST_DESCRIPTOR_TABLE_NOT_SET,
+
+				// RESOURCE_BARRIER_DUPLICATE_SUBRESOURCE_TRANSITIONS
+				(D3D12_MESSAGE_ID)1008,
+			};
+
+			D3D12_INFO_QUEUE_FILTER newFilter = {};
+			newFilter.DenyList.NumSeverities = _countof(severities);
+			newFilter.DenyList.pSeverityList = severities;
+			newFilter.DenyList.NumIDs = _countof(denyIds);
+			newFilter.DenyList.pIDList = denyIds;
+
+			d3dInfoQueue->PushStorageFilter(&newFilter);
+			d3dInfoQueue->Release();
+		}
+#endif // DASH_DEBUG
+
+		// Check features
+		{
+			// We like to do read-modify-write operations on UAVs during post processing.  To support that, we
+			// need to either have the hardware do typed UAV loads of R11G11B10_FLOAT or we need to manually
+			// decode an R32_UINT representation of the same buffer.  This code determines if we get the hardware
+			// load support.
+			D3D12_FEATURE_DATA_D3D12_OPTIONS featureDataOptions = {};
+			if (SUCCEEDED(mDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS, &featureDataOptions, sizeof(featureDataOptions))))
+			{
+				if (featureDataOptions.TypedUAVLoadAdditionalFormats)
+				{
+					D3D12_FEATURE_DATA_FORMAT_SUPPORT Support =
+					{
+						DXGI_FORMAT_R11G11B10_FLOAT, D3D12_FORMAT_SUPPORT1_NONE, D3D12_FORMAT_SUPPORT2_NONE
+					};
+
+					if (SUCCEEDED(mDevice->CheckFeatureSupport(D3D12_FEATURE_FORMAT_SUPPORT, &Support, sizeof(Support))) &&
+						(Support.Support2 & D3D12_FORMAT_SUPPORT2_UAV_TYPED_LOAD) != 0)
+					{
+						mTypedUAVLoadSupport_R11G11B10_FLOAT = true;
+					}
+
+					Support.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+
+					if (SUCCEEDED(mDevice->CheckFeatureSupport(D3D12_FEATURE_FORMAT_SUPPORT, &Support, sizeof(Support))) &&
+						(Support.Support2 & D3D12_FORMAT_SUPPORT2_UAV_TYPED_LOAD) != 0)
+					{
+						mTypedUAVLoadSupport_R16G16B16A16_FLOAT = true;
+					}
+				}
+
+				if (featureDataOptions.ResourceHeapTier != D3D12_RESOURCE_HEAP_TIER_1)
+				{
+					mSupportsUniversalHeaps = true;
+				}
+			}
+
+			D3D12_FEATURE_DATA_ROOT_SIGNATURE featureDataSignature;
+			featureDataSignature.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;
+			if (FAILED(mDevice->CheckFeatureSupport(D3D12_FEATURE_ROOT_SIGNATURE, &featureDataSignature,
+				sizeof(D3D12_FEATURE_DATA_ROOT_SIGNATURE))))
+			{
+				featureDataSignature.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_0;
+			}
+			mHighestRootSignatureVersion = featureDataSignature.HighestVersion;
+		}
+	}
+
+	void FRenderDevice::Destroy()
+	{
+#if DASH_DEBUG
+		ID3D12InfoQueue* d3dInfoQueue = nullptr;
+		if (SUCCEEDED(mDevice->QueryInterface(IID_PPV_ARGS(&d3dInfoQueue))))
+		{
+			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_CORRUPTION, false);
+			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_ERROR, false);
+			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_WARNING, false);
+			d3dInfoQueue->Release();
+		}
+
+		ID3D12DebugDevice* debugInterface;
+		if (SUCCEEDED(mDevice->QueryInterface(&debugInterface)))
+		{
+			debugInterface->ReportLiveDeviceObjects(D3D12_RLDO_FLAGS(D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL));
+			debugInterface->Release();
+		}
+#endif
+
+		if (mDevice != nullptr)
+		{
+			mDevice = nullptr;
+			LOG_INFO << "Destroy D3D Device.";
+		}
+
+#if DASH_DEBUG
+		ComPtr<IDXGIDebug1> dxgiDebug;
+		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
+		{
+			dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_FLAGS(DXGI_DEBUG_RLO_SUMMARY | DXGI_DEBUG_RLO_IGNORE_INTERNAL));
+		}
+#endif
+	}
+
+	HRESULT FRenderDevice::CheckFeatureSupport(D3D12_FEATURE feature, void* pFeatureSupportData, UINT featureSupportDataSize)
+	{
+		return mDevice->CheckFeatureSupport(feature, pFeatureSupportData, featureSupportDataSize);
+	}
+
+	void FRenderDevice::CopyDescriptors(UINT numDestDescriptorRanges, const D3D12_CPU_DESCRIPTOR_HANDLE* pDestDescriptorRangeStarts, const UINT* pDestDescriptorRangeSizes, UINT numSrcDescriptorRanges, const D3D12_CPU_DESCRIPTOR_HANDLE* pSrcDescriptorRangeStarts, const UINT* pSrcDescriptorRangeSizes, D3D12_DESCRIPTOR_HEAP_TYPE descriptorHeapsType)
+	{
+		mDevice->CopyDescriptors(numDestDescriptorRanges, pDestDescriptorRangeStarts, pDestDescriptorRangeSizes, numSrcDescriptorRanges, pSrcDescriptorRangeStarts, pSrcDescriptorRangeSizes, descriptorHeapsType);
+	}
+
+	void FRenderDevice::CopyDescriptorsSimple(UINT numDescriptors, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptorRangeStart, D3D12_CPU_DESCRIPTOR_HANDLE srcDescriptorRangeStart, D3D12_DESCRIPTOR_HEAP_TYPE descriptorHeapsType)
+	{
+		mDevice->CopyDescriptorsSimple(numDescriptors, destDescriptorRangeStart, srcDescriptorRangeStart, descriptorHeapsType);
+	}
+
+	HRESULT FRenderDevice::CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE type, Microsoft::WRL::ComPtr<ID3D12CommandAllocator>& pCommandAllocator)
+	{
+		return mDevice->CreateCommandAllocator(type, IID_PPV_ARGS(&pCommandAllocator));
+	}
+
+	HRESULT FRenderDevice::CreateCommandList(UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, ID3D12CommandAllocator* pCommandAllocator, ID3D12PipelineState* pInitialState, Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& pCommandList)
+	{
+		return mDevice->CreateCommandList(nodeMask, type, pCommandAllocator, pInitialState, IID_PPV_ARGS(&pCommandList));
+	}
+
+	HRESULT FRenderDevice::CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC* pDesc, Microsoft::WRL::ComPtr<ID3D12CommandQueue>& pCommandQueue)
+	{
+		return mDevice->CreateCommandQueue(pDesc, IID_PPV_ARGS(&pCommandQueue));
+	}
+
+	HRESULT FRenderDevice::CreateCommandSignature(const D3D12_COMMAND_SIGNATURE_DESC* pDesc, ID3D12RootSignature* pRootSignature, Microsoft::WRL::ComPtr<ID3D12CommandSignature>& pvCommandSignature)
+	{
+		return mDevice->CreateCommandSignature(pDesc, pRootSignature, IID_PPV_ARGS(&pvCommandSignature));
+	}
+
+	HRESULT FRenderDevice::CreateCommittedResource(const D3D12_HEAP_PROPERTIES* pHeapProperties, D3D12_HEAP_FLAGS heapFlags, const D3D12_RESOURCE_DESC* pDesc, D3D12_RESOURCE_STATES initialResourceState, const D3D12_CLEAR_VALUE* pOptimizedClearValue, Microsoft::WRL::ComPtr<ID3D12Resource>& pvResource)
+	{
+		return mDevice->CreateCommittedResource(pHeapProperties, heapFlags, pDesc, initialResourceState, pOptimizedClearValue, IID_PPV_ARGS(&pvResource));
+	}
+
+	HRESULT FRenderDevice::CreateComputePipelineState(const D3D12_COMPUTE_PIPELINE_STATE_DESC* pDesc, Microsoft::WRL::ComPtr<ID3D12PipelineState>& pPipelineState)
+	{
+		return mDevice->CreateComputePipelineState(pDesc, IID_PPV_ARGS(&pPipelineState));
+	}
+
+	void FRenderDevice::CreateConstantBufferView(const D3D12_CONSTANT_BUFFER_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor)
+	{
+		mDevice->CreateConstantBufferView(pDesc, destDescriptor);
+	}
+
+	void FRenderDevice::CreateDepthStencilView(ID3D12Resource* pResource, const D3D12_DEPTH_STENCIL_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor)
+	{
+		mDevice->CreateDepthStencilView(pResource, pDesc, destDescriptor);
+	}
+
+	HRESULT FRenderDevice::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC* pDescriptorHeapDesc, Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& ppvHeap)
+	{
+		return mDevice->CreateDescriptorHeap(pDescriptorHeapDesc, IID_PPV_ARGS(&ppvHeap));
+	}
+
+	HRESULT FRenderDevice::CreateFence(UINT64 initialValue, D3D12_FENCE_FLAGS flags, Microsoft::WRL::ComPtr<ID3D12Fence>& ppFence)
+	{
+		return mDevice->CreateFence(initialValue, flags, IID_PPV_ARGS(&ppFence));
+	}
+
+	HRESULT FRenderDevice::CreateGraphicsPipelineState(const D3D12_GRAPHICS_PIPELINE_STATE_DESC* pDesc, Microsoft::WRL::ComPtr<ID3D12PipelineState>& ppPipelineState)
+	{
+		return mDevice->CreateGraphicsPipelineState(pDesc, IID_PPV_ARGS(&ppPipelineState));
+	}
+
+	HRESULT FRenderDevice::CreateHeap(const D3D12_HEAP_DESC* pDesc, Microsoft::WRL::ComPtr<ID3D12Heap>& ppvHeap)
+	{
+		return mDevice->CreateHeap(pDesc, IID_PPV_ARGS(&ppvHeap));
+	}
+
+	HRESULT FRenderDevice::CreatePlacedResource(ID3D12Heap* pHeap, UINT64 heapOffset, const D3D12_RESOURCE_DESC* pDesc, D3D12_RESOURCE_STATES initialState, const D3D12_CLEAR_VALUE* pOptimizedClearValue, Microsoft::WRL::ComPtr<ID3D12Resource>& pvResource)
+	{
+		return mDevice->CreatePlacedResource(pHeap, heapOffset, pDesc, initialState, pOptimizedClearValue, IID_PPV_ARGS(&pvResource));
+	}
+
+	HRESULT FRenderDevice::CreateQueryHeap(const D3D12_QUERY_HEAP_DESC* pDesc, Microsoft::WRL::ComPtr<ID3D12QueryHeap>& ppvHeap)
+	{
+		return mDevice->CreateQueryHeap(pDesc, IID_PPV_ARGS(&ppvHeap));
+	}
+
+	void FRenderDevice::CreateRenderTargetView(ID3D12Resource* pResource, const D3D12_RENDER_TARGET_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor)
+	{
+		mDevice->CreateRenderTargetView(pResource, pDesc, destDescriptor);
+	}
+
+	HRESULT FRenderDevice::CreateReservedResource(const D3D12_RESOURCE_DESC* pDesc, D3D12_RESOURCE_STATES initialState, const D3D12_CLEAR_VALUE* pOptimizedClearValue, Microsoft::WRL::ComPtr<ID3D12Resource>& pvResource)
+	{
+		return mDevice->CreateReservedResource(pDesc, initialState, pOptimizedClearValue, IID_PPV_ARGS(&pvResource));
+	}
+
+	HRESULT FRenderDevice::CreateRootSignature(UINT nodeMask, const void* pBlobWithRootSignature, SIZE_T blobLengthInBytes, Microsoft::WRL::ComPtr<ID3D12RootSignature>& pvRootSignature)
+	{
+		return mDevice->CreateRootSignature(nodeMask, pBlobWithRootSignature, blobLengthInBytes, IID_PPV_ARGS(&pvRootSignature));
+	}
+
+	void FRenderDevice::CreateSampler(const D3D12_SAMPLER_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor)
+	{
+		mDevice->CreateSampler(pDesc, destDescriptor);
+	}
+
+	void FRenderDevice::CreateShaderResourceView(ID3D12Resource* pResource, const D3D12_SHADER_RESOURCE_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor)
+	{
+		mDevice->CreateShaderResourceView(pResource, pDesc, destDescriptor);
+	}
+
+	HRESULT FRenderDevice::CreateSharedHandle(ID3D12DeviceChild* pObject, const SECURITY_ATTRIBUTES* pAttributes, DWORD access, LPCWSTR name, HANDLE* pHandle)
+	{
+		return mDevice->CreateSharedHandle(pObject, pAttributes, access, name, pHandle);
+	}
+
+	void FRenderDevice::CreateUnorderedAccessView(ID3D12Resource* pResource, ID3D12Resource* pCounterResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor)
+	{
+		mDevice->CreateUnorderedAccessView(pResource, pCounterResource, pDesc, destDescriptor);
+	}
+
+	HRESULT FRenderDevice::Evict(UINT numObjects, ID3D12Pageable* const* ppObjects)
+	{
+		return mDevice->Evict(numObjects, ppObjects);
+	}
+
+	LUID FRenderDevice::GetAdapterLuid()
+	{
+		return mDevice->GetAdapterLuid();
+	}
+
+	void FRenderDevice::GetCopyableFootprints(const D3D12_RESOURCE_DESC* pResourceDesc, UINT firstSubresource, UINT numSubresources, UINT64 baseOffset, D3D12_PLACED_SUBRESOURCE_FOOTPRINT* pLayouts, UINT* pNumRows, UINT64* pRowSizeInBytes, UINT64* pTotalBytes)
+	{
+		mDevice->GetCopyableFootprints(pResourceDesc, firstSubresource, numSubresources, baseOffset, pLayouts, pNumRows, pRowSizeInBytes, pTotalBytes);
+	}
+
+	D3D12_HEAP_PROPERTIES FRenderDevice::GetCustomHeapProperties(UINT nodeMask, D3D12_HEAP_TYPE heapType)
+	{
+		return mDevice->GetCustomHeapProperties(nodeMask, heapType);
+	}
+
+	UINT FRenderDevice::GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE descriptorHeapType)
+	{
+		return mDevice->GetDescriptorHandleIncrementSize(descriptorHeapType);
+	}
+
+	HRESULT FRenderDevice::GetDeviceRemovedReason()
+	{
+		return mDevice->GetDeviceRemovedReason();
+	}
+
+	UINT FRenderDevice::GetNodeCount()
+	{
+		return mDevice->GetNodeCount();
+	}
+
+	D3D12_RESOURCE_ALLOCATION_INFO FRenderDevice::GetResourceAllocationInfo(UINT visibleMask, UINT numResourceDescs, const D3D12_RESOURCE_DESC* pResourceDescs)
+	{
+		return mDevice->GetResourceAllocationInfo(visibleMask, numResourceDescs, pResourceDescs);
+	}
+
+	void FRenderDevice::GetResourceTiling(ID3D12Resource* pTiledResource, UINT* pNumTilesForEntireResource, D3D12_PACKED_MIP_INFO* pPackedMipDesc, D3D12_TILE_SHAPE* pStandardTileShapeForNonPackedMips, UINT* pNumSubresourceTilings, UINT firstSubresourceTilingToGet, D3D12_SUBRESOURCE_TILING* pSubresourceTilingsForNonPackedMips)
+	{
+		mDevice->GetResourceTiling(pTiledResource, pNumTilesForEntireResource, pPackedMipDesc, pStandardTileShapeForNonPackedMips, pNumSubresourceTilings, firstSubresourceTilingToGet, pSubresourceTilingsForNonPackedMips);
+	}
+
+	HRESULT FRenderDevice::MakeResident(UINT NumObjects, ID3D12Pageable* const* ppObjects)
+	{
+		return mDevice->MakeResident(NumObjects, ppObjects);
+	}
+
+	HRESULT FRenderDevice::SetStablePowerState(BOOL enable)
+	{
+		return mDevice->SetStablePowerState(enable);
+	}
+}

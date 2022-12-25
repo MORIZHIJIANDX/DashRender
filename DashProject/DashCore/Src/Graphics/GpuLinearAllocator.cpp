@@ -4,18 +4,19 @@
 #include "CommandQueue.h"
 #include "DX12Helper.h"
 #include "GpuResourcesStateTracker.h"
+#include "RenderDevice.h"
 
 namespace Dash
 {
 	FGpuLinearAllocator::AllocatorType FGpuLinearAllocator::FPageManager::AutoAllocatorType = GpuExclusive;
 	FGpuLinearAllocator::FPageManager FGpuLinearAllocator::AllocatorPageManger[2];
 	 
-	FGpuLinearAllocator::FPage::FPage(ID3D12Resource* resource, D3D12_RESOURCE_STATES defaultState, size_t pageSize)
+	FGpuLinearAllocator::FPage::FPage(Microsoft::WRL::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES defaultState, size_t pageSize)
 		: mPageSie(pageSize)
 		, mOffset(0)
 	{
-		mResource.Attach(resource);
-		FGpuResourcesStateTracker::AddGlobalResourceState(resource, defaultState);
+		mResource = resource;
+		FGpuResourcesStateTracker::AddGlobalResourceState(resource.Get(), defaultState);
 		mGpuAddress = mResource->GetGPUVirtualAddress();
 		mResource->Map(0, nullptr, &mCpuAddress);
 	}
@@ -138,10 +139,10 @@ namespace Dash
 			resourceState = D3D12_RESOURCE_STATE_GENERIC_READ;
 		}
 
-		ID3D12Resource* Buffer;
-		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, resourceState, nullptr, IID_PPV_ARGS(&Buffer)));
+		Microsoft::WRL::ComPtr<ID3D12Resource> Buffer;
+		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, resourceState, nullptr, Buffer));
 
-		SetD3D12DebugName(Buffer, L"CpuLinearAllocatorPage");
+		SetD3D12DebugName(Buffer.Get(), L"CpuLinearAllocatorPage");
 
 		return new FPage(Buffer, resourceState, resourceDesc.Width);
 	}

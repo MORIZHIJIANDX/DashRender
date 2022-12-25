@@ -3,9 +3,12 @@
 #include "DX12Helper.h"
 #include "GraphicsCore.h"
 #include "Utility/Hash.h"
+#include "RenderDevice.h"
 
 namespace Dash
 {
+	using namespace Microsoft::WRL;
+
 	static std::map<size_t, Microsoft::WRL::ComPtr<ID3D12RootSignature>> RootSignatureHashMap;
 
 	FRootSignatureRef FRootSignature::MakeRootSignature(UINT numRootParameters, UINT numStaticSamplers)
@@ -139,7 +142,7 @@ namespace Dash
 		}
 
 		static std::mutex signatureMutex;
-		ID3D12RootSignature** signatureRef = nullptr;
+		ComPtr<ID3D12RootSignature>* signatureRef = nullptr;
 		bool firstTimeCompile = false;
 		{
 			std::lock_guard<std::mutex> lock(signatureMutex);
@@ -147,12 +150,12 @@ namespace Dash
 			auto iter = RootSignatureHashMap.find(hashCode);
 			if (iter == RootSignatureHashMap.end())
 			{
-				signatureRef = RootSignatureHashMap[hashCode].GetAddressOf();
+				signatureRef = &RootSignatureHashMap[hashCode];
 				firstTimeCompile = true;
 			}
 			else
 			{
-				signatureRef = iter->second.GetAddressOf();
+				signatureRef = &iter->second;
 			}
 		}
 
@@ -167,11 +170,11 @@ namespace Dash
 			VersionedrootSigDesc.Desc_1_1 = desc;
 
 			DX_CALL(D3D12SerializeVersionedRootSignature(&VersionedrootSigDesc, &outBlob, &errorBlob));
-			DX_CALL(FGraphicsCore::Device->CreateRootSignature(0, outBlob->GetBufferPointer(), outBlob->GetBufferSize(), IID_PPV_ARGS(&mRootSignature)));
+			DX_CALL(FGraphicsCore::Device->CreateRootSignature(0, outBlob->GetBufferPointer(), outBlob->GetBufferSize(), mRootSignature));
 
-			SetD3D12DebugName(mRootSignature, name.c_str());
+			SetD3D12DebugName(mRootSignature.Get(), name.c_str());
 
-			RootSignatureHashMap[hashCode].Attach(mRootSignature);
+			RootSignatureHashMap[hashCode] = mRootSignature;
 
 			ASSERT(*signatureRef == mRootSignature);
 		}

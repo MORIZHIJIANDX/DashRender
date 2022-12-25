@@ -4,6 +4,7 @@
 #include "RootSignature.h"
 #include "DX12Helper.h"
 #include "CommandContext.h"
+#include "RenderDevice.h"
 
 namespace Dash
 {
@@ -205,7 +206,7 @@ namespace Dash
 		desc.Type = mDescriptorHeapType;
 
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap;
-		DX_CALL(FGraphicsCore::Device->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&descriptorHeap)));
+		DX_CALL(FGraphicsCore::Device->CreateDescriptorHeap(&desc, descriptorHeap));
 		mDescriptorHeapPool.push(descriptorHeap);
 
 		SetD3D12DebugName(descriptorHeap.Get(), L"DynamicDescriptorHeap");

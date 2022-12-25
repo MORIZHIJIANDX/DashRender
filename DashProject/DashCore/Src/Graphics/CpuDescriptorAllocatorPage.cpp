@@ -2,6 +2,7 @@
 #include "CpuDescriptorAllocatorPage.h"
 #include "GraphicsCore.h"
 #include "DX12Helper.h"
+#include "RenderDevice.h"
 
 namespace Dash
 {
@@ -15,7 +16,7 @@ namespace Dash
 		desc.NumDescriptors = numDescriptors;
 		desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 
-		DX_CALL(FGraphicsCore::Device->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&mDescriptorHeap)));
+		DX_CALL(FGraphicsCore::Device->CreateDescriptorHeap(&desc, mDescriptorHeap));
 
 		SetD3D12DebugName(mDescriptorHeap.Get(), L"CpuDescriptorHeap");
 
