@@ -1,9 +1,15 @@
 #pragma once
 
 #include "d3dx12.h"
+#include "ResourceState.h"
+#include "ResourceFormat.h"
+#include "ResourceDescription.h"
 
 namespace Dash
 {
+	class FColorBuffer;
+	using FColorBufferRef = std::shared_ptr<FColorBuffer>;
+	
 	class FRenderDevice
 	{
 	public:
@@ -257,6 +263,11 @@ namespace Dash
 		HRESULT SetStablePowerState(
 			BOOL enable
 		);
+
+		FColorBufferRef CreateColorBuffer(const std::string& name, ID3D12Resource* resource, EResourceState initStates = EResourceState::Common);
+		FColorBufferRef CreateColorBuffer(const std::string& name, const FColorBufferDescription& desc, const FLinearColor& clearColor = FLinearColor{});
+		FColorBufferRef CreateColorBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format);
+		FColorBufferRef CreateColorBufferArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format);
 
 		bool UAVLoadSupportR11G11B10Float() const { return mTypedUAVLoadSupport_R11G11B10_FLOAT; }
 		bool UAVLoadSupportR16G16B16A16Float() const { return mTypedUAVLoadSupport_R16G16B16A16_FLOAT; }

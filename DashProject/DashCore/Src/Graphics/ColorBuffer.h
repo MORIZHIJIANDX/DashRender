@@ -6,8 +6,8 @@
 
 namespace Dash
 {
-	class FColorBuffer;
-	using FColorBufferRef = std::shared_ptr<FColorBuffer>;
+	//class FColorBuffer;
+	//using FColorBufferRef = std::shared_ptr<FColorBuffer>;
 
 	class FColorBuffer : public FPixelBuffer
 	{
@@ -17,15 +17,12 @@ namespace Dash
 			mDesc.ClearValue = clearColor;
 		}
 
+		virtual ~FColorBuffer() {}
+
 		virtual uint32_t GetWidth() const { return mDesc.Magnitude.Width; }
 		virtual uint32_t GetHeight() const { return mDesc.Magnitude.Height; }
 		virtual uint32_t GetDepth() const { return mDesc.Magnitude.Depth; }
 		virtual const EResourceFormat& GetFormat() const { return mDesc.Format; }
-
-		static FColorBufferRef MakeColorBuffer(const std::string& name, ID3D12Resource* resource, EResourceState initStates = EResourceState::Common);
-		static FColorBufferRef MakeColorBuffer(const std::string& name, const FColorBufferDescription& desc, const FLinearColor& clearColor = FLinearColor{});
-		static FColorBufferRef MakeColorBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format);
-		static FColorBufferRef MakeColorBufferArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format);
 
 		D3D12_CPU_DESCRIPTOR_HANDLE GetRenderTargetView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE GetShaderResourceView() const;

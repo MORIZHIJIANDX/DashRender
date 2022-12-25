@@ -7,34 +7,6 @@
 
 namespace Dash
 {
-	FColorBufferRef FColorBuffer::MakeColorBuffer(const std::string& name, ID3D12Resource* resource, EResourceState initStates /*= EResourceState::Common*/)
-	{
-        FColorBufferRef bufferRef = std::make_shared<FColorBuffer>();
-        bufferRef->Create(name, resource, initStates);
-        return bufferRef;
-	}
-
-    FColorBufferRef FColorBuffer::MakeColorBuffer(const std::string& name, const FColorBufferDescription& desc, const FLinearColor& clearColor /*= FLinearColor{}*/)
-	{
-		FColorBufferRef bufferRef = std::make_shared<FColorBuffer>();
-		bufferRef->Create(name, desc, clearColor);
-		return bufferRef;
-	}
-
-	FColorBufferRef FColorBuffer::MakeColorBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format)
-	{
-		FColorBufferRef bufferRef = std::make_shared<FColorBuffer>();
-		bufferRef->Create(name, width, height, numMips, format);
-		return bufferRef;
-	}
-
-	FColorBufferRef FColorBuffer::MakeColorBufferArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format)
-	{
-		FColorBufferRef bufferRef = std::make_shared<FColorBuffer>();
-		bufferRef->CreateArray(name, width, height, arrayCount, numMips, format);
-		return bufferRef;
-	}
-
 	void FColorBuffer::Create(const std::string& name, ID3D12Resource* resource, EResourceState initStates)
     {
         ASSERT(resource != nullptr);

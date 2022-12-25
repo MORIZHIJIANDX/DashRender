@@ -10,6 +10,7 @@
 #include "GpuLinearAllocator.h"
 #include "ShaderPass.h"
 #include "GpuResourcesStateTracker.h"
+#include "RenderDevice.h"
 
 namespace Dash
 {

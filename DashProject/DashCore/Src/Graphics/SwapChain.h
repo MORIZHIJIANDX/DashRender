@@ -2,6 +2,7 @@
 
 #include "ColorBuffer.h"
 #include <dxgi1_6.h>
+#include "RenderDevice.h"
 
 namespace Dash
 {

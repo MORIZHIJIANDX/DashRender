@@ -4,6 +4,7 @@
 #include <wrl.h>
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
+#include "ColorBuffer.h"
 
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -16,6 +17,33 @@ namespace Dash
 	static const uint32_t VendorID_Nvidia = 0x10DE;
 	static const uint32_t VendorID_AMD = 0x1002;
 	static const uint32_t VendorID_Intel = 0x8086;
+
+	class FMakeColorBuffer : public FColorBuffer
+	{
+	public:
+		FMakeColorBuffer(const std::string& name, ID3D12Resource* resource, EResourceState initStates = EResourceState::Common)
+		{	
+			Create(name, resource, initStates);
+		}
+
+		FMakeColorBuffer(const std::string& name, const FColorBufferDescription& desc, const FLinearColor& clearColor = FLinearColor{})
+			: FColorBuffer(clearColor)
+		{
+			Create(name, desc, clearColor);
+		}
+
+		FMakeColorBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format)
+		{
+			Create(name, width, height, numMips, format);
+		}
+
+		FMakeColorBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format)
+		{
+			CreateArray(name, width, height, arrayCount, numMips, format);
+		}
+
+		virtual ~FMakeColorBuffer() {}
+	};
 
 	FRenderDevice::FRenderDevice()
 	{
@@ -463,4 +491,29 @@ namespace Dash
 	{
 		return mDevice->SetStablePowerState(enable);
 	}
+
+	FColorBufferRef FRenderDevice::CreateColorBuffer(const std::string& name, ID3D12Resource* resource, EResourceState initStates /*= EResourceState::Common*/)
+	{
+		std::shared_ptr<FMakeColorBuffer> bufferRef = std::make_shared<FMakeColorBuffer>(name, resource, initStates);
+		return bufferRef;
+	}
+
+	FColorBufferRef FRenderDevice::CreateColorBuffer(const std::string& name, const FColorBufferDescription& desc, const FLinearColor& clearColor /*= FLinearColor{}*/)
+	{
+		std::shared_ptr<FMakeColorBuffer> bufferRef = std::make_shared<FMakeColorBuffer>(name, desc, clearColor);
+		return bufferRef;
+	}
+
+	FColorBufferRef FRenderDevice::CreateColorBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format)
+	{
+		std::shared_ptr<FMakeColorBuffer> bufferRef = std::make_shared<FMakeColorBuffer>(name, width, height, numMips, format);
+		return bufferRef;
+	}
+
+	FColorBufferRef FRenderDevice::CreateColorBufferArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format)
+	{
+		std::shared_ptr<FMakeColorBuffer> bufferRef = std::make_shared<FMakeColorBuffer>(name, width, height, arrayCount, numMips, format);
+		return bufferRef;
+	}
+
 }

@@ -205,12 +205,13 @@ namespace Dash
 		{
 			ComPtr<ID3D12Resource> backBuffer;
 			DX_CALL(mSwapChain->GetBuffer(index, IID_PPV_ARGS(&backBuffer)));
-			mSwapChainBuffer[index] = FColorBuffer::MakeColorBuffer("Swap Chain Buffer[" + FStringUtility::ToString(index) + "]", backBuffer.Detach(), EResourceState::Common); // D3D12_RESOURCE_STATE_PRESENT ?
+			//mSwapChainBuffer[index] = FColorBuffer::MakeColorBuffer("Swap Chain Buffer[" + FStringUtility::ToString(index) + "]", backBuffer.Detach(), EResourceState::Common); // D3D12_RESOURCE_STATE_PRESENT ?
+			mSwapChainBuffer[index] = FGraphicsCore::Device->CreateColorBuffer("Swap Chain Buffer[" + FStringUtility::ToString(index) + "]", backBuffer.Detach(), EResourceState::Common); // D3D12_RESOURCE_STATE_PRESENT ?
 		}
 
 		mDisplayWdith = static_cast<uint32_t>(FMath::AlignUp(mSwapChainBuffer[0]->GetWidth() * mDisplayRate, 2));
 		mDisplayHeight = static_cast<uint32_t>(FMath::AlignUp(mSwapChainBuffer[0]->GetHeight() * mDisplayRate, 2));
-		mDisplayBuffer = FColorBuffer::MakeColorBuffer("SwapChain Buffer", mDisplayWdith, mDisplayHeight, 1, mSwapChainFormat);
+		mDisplayBuffer = FGraphicsCore::Device->CreateColorBuffer("SwapChain Buffer", mDisplayWdith, mDisplayHeight, 1, mSwapChainFormat);
 		LOG_INFO << "Set SwapChain Width : " << mDisplayWdith << ", SwapChain Height : " << mDisplayHeight;
 
 		mCurrentBackBufferIndex = mSwapChain->GetCurrentBackBufferIndex();
