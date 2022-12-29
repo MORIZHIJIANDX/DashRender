@@ -5,6 +5,8 @@
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
 #include "ColorBuffer.h"
+#include "DepthBuffer.h"
+#include "GpuBuffer.h"
 
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -43,6 +45,58 @@ namespace Dash
 		}
 
 		virtual ~FMakeColorBuffer() {}
+	};
+
+	class FMakeDepthBuffer : public FDepthBuffer
+	{
+	public:
+		FMakeDepthBuffer(const std::string& name, const FDepthBufferDescription& desc)
+		{
+			mDesc = desc;
+
+			CreateTextureResource(mDesc.D3DResourceDescription(), GetD3DClearValue(), name);
+			CreateViews();
+		}
+
+		FMakeDepthBuffer(const std::string& name, uint32_t width, uint32_t height, EResourceFormat format)
+		{
+			Create(name, width, height, 1, 0, format);
+		}
+
+		FMakeDepthBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, uint32_t sampleQuality, EResourceFormat format)
+		{
+			ASSERT(IsDepthStencilFormat(format));
+
+			mDesc = FDepthBufferDescription::Create(format, width, height, mDesc.ClearValue, 1, EResourceState::Common, sampleCount, sampleQuality);
+
+			CreateTextureResource(mDesc.D3DResourceDescription(), GetD3DClearValue(), name);
+			CreateViews();
+		}
+
+		virtual ~FMakeDepthBuffer() {}
+	};
+
+	class FMakeVertexBuffer : public FGpuVertexBuffer
+	{
+	public:
+		FMakeVertexBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData = nullptr)
+		{
+			Create(name, numElements, elementSize, initData);
+		}
+
+		virtual ~FMakeVertexBuffer() {}
+	};
+
+	class FMakeIndexBuffer : public FGpuIndexBuffer
+	{
+	public:
+		FMakeIndexBuffer(const std::string& name, uint32_t numElements, const void* initData = nullptr, bool is32Bit = false)
+		{
+			Create(name, numElements, is32Bit ? sizeof(uint32_t) : sizeof(uint16_t), initData);
+			mIs32Bit = is32Bit;
+		}
+
+		virtual ~FMakeIndexBuffer() {}
 	};
 
 	FRenderDevice::FRenderDevice()
@@ -513,6 +567,36 @@ namespace Dash
 	FColorBufferRef FRenderDevice::CreateColorBufferArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format)
 	{
 		std::shared_ptr<FMakeColorBuffer> bufferRef = std::make_shared<FMakeColorBuffer>(name, width, height, arrayCount, numMips, format);
+		return bufferRef;
+	}
+
+	FDepthBufferRef FRenderDevice::CreateDepthBuffer(const std::string& name, const FDepthBufferDescription& desc)
+	{
+		std::shared_ptr<FMakeDepthBuffer> bufferRef = std::make_shared<FMakeDepthBuffer>(name, desc);
+		return bufferRef;
+	}
+
+	FDepthBufferRef FRenderDevice::CreateDepthBuffer(const std::string& name, uint32_t width, uint32_t height, EResourceFormat format)
+	{
+		std::shared_ptr<FMakeDepthBuffer> bufferRef = std::make_shared<FMakeDepthBuffer>(name, width, height, format);
+		return bufferRef;
+	}
+
+	FDepthBufferRef FRenderDevice::CreateDepthBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, uint32_t sampleQuality, EResourceFormat format)
+	{
+		std::shared_ptr<FMakeDepthBuffer> bufferRef = std::make_shared<FMakeDepthBuffer>(name, width, height, sampleCount, sampleQuality, format);
+		return bufferRef;
+	}
+
+	FGpuVertexBufferRef FRenderDevice::CreateVertexBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData)
+	{
+		std::shared_ptr<FMakeVertexBuffer> bufferRef = std::make_shared<FMakeVertexBuffer>(name, numElements, elementSize, initData);
+		return bufferRef;
+	}
+
+	FGpuIndexBufferRef FRenderDevice::CreateIndexBuffer(const std::string& name, uint32_t numElements, const void* initData, bool is32Bit)
+	{
+		std::shared_ptr<FMakeIndexBuffer> bufferRef = std::make_shared<FMakeIndexBuffer>(name, numElements, initData, is32Bit);
 		return bufferRef;
 	}
 

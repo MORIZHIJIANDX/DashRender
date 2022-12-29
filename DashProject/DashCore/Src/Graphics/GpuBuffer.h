@@ -5,35 +5,35 @@
 
 namespace Dash
 {
-	class FGpuBuffer;
-	class FGpuConstantBuffer;
-	class FGpuVertexBuffer;
-	class FGpuIndexBuffer;
-
-	using FGpuBufferRef = std::shared_ptr<FGpuBuffer>;
-	using FGpuConstantBufferRef = std::shared_ptr<FGpuConstantBuffer>;
-	using FGpuVertexBufferRef = std::shared_ptr<FGpuVertexBuffer>;
-	using FGpuIndexBufferRef = std::shared_ptr<FGpuIndexBuffer>;
-
 	class FGpuBuffer : public FGpuResource
 	{
 	public:
-		void Create(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData = nullptr, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
-
 		uint64_t GetBufferSize() const { return mDesc.Size; }
 		uint64_t GetElementCount() const { return mDesc.Count; }
 		uint64_t GetElementSize() const { return mDesc.Stride; }
 
+		bool SupportConstantBufferView() const;
+		bool SupportShaderResourceView() const;
+		bool SupportUnorderedAccessView() const;
+
+		D3D12_CPU_DESCRIPTOR_HANDLE GetConstantBufferView() const;
+		D3D12_CPU_DESCRIPTOR_HANDLE GetShaderResourceView() const;
+		D3D12_CPU_DESCRIPTOR_HANDLE GetUnorderedAccessView() const;
+
 	protected:
+		FGpuBuffer() {}
+		virtual ~FGpuBuffer() {}
+
+		void Create(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData = nullptr, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
 		void CreateBufferResource(const D3D12_RESOURCE_DESC& desc);
-		
 		virtual void CreateViews() = 0;
 
 	protected:
-		FGpuBuffer()
-		{}
-
 		FBufferDescription mDesc;
+
+		FCpuDescriptorAllocation mConstantBufferView;
+		FCpuDescriptorAllocation mShaderResourceView;
+		FCpuDescriptorAllocation mUnorderedAccessView;
 	};
 
 	// 大部分情况下不需要使用 CreateConstantBufferView 来创建 constant buffer view ，且 constant buffer 更新需要对 resource 进行 map 和 unmap 或者是 CopyBuffer. 
@@ -42,28 +42,27 @@ namespace Dash
 	{
 	public:
 		D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress(size_t offset = 0) const;
-
-		D3D12_CPU_DESCRIPTOR_HANDLE GetShaderResourceView() const;
-		D3D12_CPU_DESCRIPTOR_HANDLE GetUnorderedAccessView() const;
 	
-	protected:
-		FCpuDescriptorAllocation mShaderResourceView;
-		FCpuDescriptorAllocation mUnorderedAccessView;
-	};
-
-	class FByteAddressBuffer : public FGpuConstantBuffer
-	{
 	protected:
 		virtual void CreateViews() override;
 	};
 
-	class FStructuredBuffer : public FGpuConstantBuffer
+	class FByteAddressBuffer : public FGpuBuffer
+	{
+	public:
+		friend class FStructuredBuffer;
+
+	protected:
+		virtual void CreateViews() override;
+	};
+
+	class FStructuredBuffer : public FGpuBuffer
 	{
 	public:
 		virtual void Destroy()
 		{
 			mCounterBuffer.Destroy();
-			FGpuConstantBuffer::Destroy();
+			FGpuBuffer::Destroy();
 		}
 
 		FByteAddressBuffer& GetCounterBuffer() { return mCounterBuffer; };
@@ -78,7 +77,7 @@ namespace Dash
 		FByteAddressBuffer mCounterBuffer;
 	};
 
-	class FTypedBuffer : public FGpuConstantBuffer
+	class FTypedBuffer : public FGpuBuffer
 	{
 	public:
 		FTypedBuffer(EResourceFormat format)
@@ -106,6 +105,7 @@ namespace Dash
 		}
 
 	protected:
+		virtual ~FGpuVertexBuffer() {}
 		virtual void CreateViews() override {};
 	};
 
@@ -121,9 +121,10 @@ namespace Dash
 		}
 
 	protected:
+		virtual ~FGpuIndexBuffer() {}
 		virtual void CreateViews() override {};
-
+	
 	protected:
-		D3D12_INDEX_BUFFER_VIEW mIndexBufferView;
+		bool mIs32Bit = false;
 	};
 }

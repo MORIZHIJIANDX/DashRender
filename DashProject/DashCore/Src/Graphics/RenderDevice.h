@@ -10,6 +10,21 @@ namespace Dash
 	class FColorBuffer;
 	using FColorBufferRef = std::shared_ptr<FColorBuffer>;
 	
+	class FDepthBuffer;
+	using FDepthBufferRef = std::shared_ptr<FDepthBuffer>;
+
+	class FGpuBuffer;
+	using FGpuBufferRef = std::shared_ptr<FGpuBuffer>;
+
+	class FGpuConstantBuffer;
+	using FGpuConstantBufferRef = std::shared_ptr<FGpuConstantBuffer>;
+
+	class FGpuVertexBuffer;
+	using FGpuVertexBufferRef = std::shared_ptr<FGpuVertexBuffer>;
+
+	class FGpuIndexBuffer;
+	using FGpuIndexBufferRef = std::shared_ptr<FGpuIndexBuffer>;
+
 	class FRenderDevice
 	{
 	public:
@@ -268,6 +283,19 @@ namespace Dash
 		FColorBufferRef CreateColorBuffer(const std::string& name, const FColorBufferDescription& desc, const FLinearColor& clearColor = FLinearColor{});
 		FColorBufferRef CreateColorBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format);
 		FColorBufferRef CreateColorBufferArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format);
+
+		FDepthBufferRef CreateDepthBuffer(const std::string& name, const FDepthBufferDescription& desc);
+		FDepthBufferRef CreateDepthBuffer(const std::string& name, uint32_t width, uint32_t height, EResourceFormat format);
+		FDepthBufferRef CreateDepthBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, uint32_t sampleQuality, EResourceFormat format);
+
+		FGpuVertexBufferRef CreateVertexBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData = nullptr);
+		template<typename VertexType>
+		FGpuVertexBufferRef CreateVertexBuffer(const std::string& name, uint32_t numElements, const void* initData = nullptr)
+		{
+			return CreateVertexBuffer(name, numElements, sizeof(VertexType), initData);
+		}
+
+		FGpuIndexBufferRef CreateIndexBuffer(const std::string& name, uint32_t numElements, const void* initData = nullptr, bool is32Bit = false);
 
 		bool UAVLoadSupportR11G11B10Float() const { return mTypedUAVLoadSupport_R11G11B10_FLOAT; }
 		bool UAVLoadSupportR16G16B16A16Float() const { return mTypedUAVLoadSupport_R16G16B16A16_FLOAT; }

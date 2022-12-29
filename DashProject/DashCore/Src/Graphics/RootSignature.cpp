@@ -169,14 +169,16 @@ namespace Dash
 			VersionedrootSigDesc.Version = version;
 			VersionedrootSigDesc.Desc_1_1 = desc;
 
+			Microsoft::WRL::ComPtr<ID3D12RootSignature> newRootSignature;
 			DX_CALL(D3D12SerializeVersionedRootSignature(&VersionedrootSigDesc, &outBlob, &errorBlob));
-			DX_CALL(FGraphicsCore::Device->CreateRootSignature(0, outBlob->GetBufferPointer(), outBlob->GetBufferSize(), mRootSignature));
+			DX_CALL(FGraphicsCore::Device->CreateRootSignature(0, outBlob->GetBufferPointer(), outBlob->GetBufferSize(), newRootSignature));
 
-			SetD3D12DebugName(mRootSignature.Get(), name.c_str());
+			SetD3D12DebugName(newRootSignature.Get(), name.c_str());
 
-			RootSignatureHashMap[hashCode] = mRootSignature;
+			RootSignatureHashMap[hashCode] = newRootSignature;
+			mRootSignature = newRootSignature.Get();
 
-			ASSERT(*signatureRef == mRootSignature);
+			ASSERT(*signatureRef == newRootSignature);
 		}
 		else
 		{
@@ -185,7 +187,7 @@ namespace Dash
 				std::this_thread::yield();
 			}
 
-			mRootSignature = *signatureRef;
+			mRootSignature = signatureRef->Get();
 		}
 
 		mFinalized = true;

@@ -141,7 +141,7 @@ namespace Dash
 			return FCommandContext::Begin(id, D3D12_COMMAND_LIST_TYPE_DIRECT).GetGraphicsCommandContext();
 		}
 
-		void ClearUAV(FGpuConstantBufferRef target);
+		void ClearUAV(FGpuBufferRef target);
 		void ClearUAV(FColorBufferRef target);
 		void ClearColor(FColorBufferRef target, D3D12_RECT* rect = nullptr);
 		void ClearColor(FColorBufferRef target, const FLinearColor& color, D3D12_RECT* rect = nullptr);

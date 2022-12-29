@@ -8,6 +8,36 @@
 
 namespace Dash
 {
+	bool FGpuBuffer::SupportConstantBufferView() const
+	{
+		return mConstantBufferView.IsValid();
+	}
+
+	bool FGpuBuffer::SupportShaderResourceView() const
+	{
+		return mShaderResourceView.IsValid();
+	}
+
+	bool FGpuBuffer::SupportUnorderedAccessView() const
+	{
+		return mUnorderedAccessView.IsValid();
+	}
+
+	D3D12_CPU_DESCRIPTOR_HANDLE FGpuBuffer::GetConstantBufferView() const
+	{
+		return mConstantBufferView.GetDescriptorHandle();
+	}
+
+	D3D12_CPU_DESCRIPTOR_HANDLE FGpuBuffer::GetShaderResourceView() const
+	{
+		return mShaderResourceView.GetDescriptorHandle();
+	}
+
+	D3D12_CPU_DESCRIPTOR_HANDLE FGpuBuffer::GetUnorderedAccessView() const
+	{
+		return mUnorderedAccessView.GetDescriptorHandle();
+	}
+
 	void FGpuBuffer::Create(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData /*= nullptr*/, D3D12_RESOURCE_FLAGS flags /*D3D12_RESOURCE_FLAG_NONE*/)
 	{
 		Destroy();
@@ -47,14 +77,26 @@ namespace Dash
 		return mGpuVirtualAddress + mDesc.Stride * offset;
 	}
 
-	D3D12_CPU_DESCRIPTOR_HANDLE FGpuConstantBuffer::GetShaderResourceView() const
+	void FGpuConstantBuffer::CreateViews()
 	{
-		return mShaderResourceView.GetDescriptorHandle();
-	}
+		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		srvDesc.Buffer.FirstElement = 0;
+		srvDesc.Buffer.NumElements = mDesc.Count;
+		srvDesc.Buffer.StructureByteStride = mDesc.Stride;
+		srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_RAW;
 
-	D3D12_CPU_DESCRIPTOR_HANDLE FGpuConstantBuffer::GetUnorderedAccessView() const
-	{
-		return mUnorderedAccessView.GetDescriptorHandle();
+		mShaderResourceView = FGraphicsCore::DescriptorAllocator->AllocateSRVDescriptor();
+		FGraphicsCore::Device->CreateShaderResourceView(mResource.Get(), &srvDesc, mShaderResourceView.GetDescriptorHandle());
+
+		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc{};
+		cbvDesc.BufferLocation = mResource->GetGPUVirtualAddress();
+		cbvDesc.SizeInBytes = mDesc.Size;
+
+		mConstantBufferView = FGraphicsCore::DescriptorAllocator->AllocateCBVDescriptor();
+		FGraphicsCore::Device->CreateConstantBufferView(&cbvDesc, mConstantBufferView.GetDescriptorHandle());
 	}
 
 	void FByteAddressBuffer::CreateViews()
@@ -80,7 +122,7 @@ namespace Dash
 	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE FStructuredBuffer::GetCounterBufferShaderResourceView() const
-	{	
+	{
 		return mCounterBuffer.GetShaderResourceView();
 	}
 

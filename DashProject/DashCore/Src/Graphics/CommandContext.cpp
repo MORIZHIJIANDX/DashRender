@@ -409,8 +409,13 @@ namespace Dash
 		mD3DCommandList = nullptr;
 	}
 
-	void FGraphicsCommandContext::ClearUAV(FGpuConstantBufferRef target)
+	void FGraphicsCommandContext::ClearUAV(FGpuBufferRef target)
 	{
+		if (!target->SupportUnorderedAccessView())
+		{
+			return;
+		}
+
 		UAVBarrier(target, true);
 
 		D3D12_GPU_DESCRIPTOR_HANDLE handle = mDynamicViewDescriptor.CopyAndSetDescriptor(*this, target->GetUnorderedAccessView());

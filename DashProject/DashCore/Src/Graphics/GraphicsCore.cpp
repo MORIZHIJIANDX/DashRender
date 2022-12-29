@@ -111,6 +111,9 @@ namespace Dash
 		FSamplerDesc::DestroyAll();
 
 		//DestroyD3Device();
+
+		FShaderMap::Destroy();
+
 		if (Device)
 		{
 			Device->Destroy();
@@ -118,7 +121,6 @@ namespace Dash
 
 			LOG_INFO << "Destroy Render Device.";
 		}
-		FShaderMap::Destroy();
 	
 		LOG_INFO << "FGraphicsCore::Shutdown End.";
 	}

@@ -190,9 +190,11 @@ namespace Dash
 
 		if (firstTimeCompile == true)
 		{
-			DX_CALL(FGraphicsCore::Device->CreateGraphicsPipelineState(&mPSODesc, mPSO));
-			SetD3D12DebugName(mPSO.Get(), mName.c_str());
-			GraphicsPipelineStateHashMap[hashCode] = mPSO;
+			ComPtr<ID3D12PipelineState> newPSO;
+			DX_CALL(FGraphicsCore::Device->CreateGraphicsPipelineState(&mPSODesc, newPSO));
+			SetD3D12DebugName(newPSO.Get(), mName.c_str());
+			GraphicsPipelineStateHashMap[hashCode] = newPSO;
+			mPSO = newPSO.Get();
 		}
 		else
 		{
@@ -201,7 +203,7 @@ namespace Dash
 				std::this_thread::yield();
 			}
 
-			mPSO = *psoRef;
+			mPSO = psoRef->Get();
 		}
 
 		mIsFinalized = true;
@@ -266,9 +268,10 @@ namespace Dash
 
 		if (firstTimeCompile == true)
 		{
-			DX_CALL(FGraphicsCore::Device->CreateComputePipelineState(&mPSODesc, mPSO));
-			SetD3D12DebugName(mPSO.Get(), mName.c_str());
-			ComputePipelineStateHashMap[hashCode] = mPSO;
+			ComPtr<ID3D12PipelineState> newPSO;
+			DX_CALL(FGraphicsCore::Device->CreateComputePipelineState(&mPSODesc, newPSO));
+			SetD3D12DebugName(newPSO.Get(), mName.c_str());
+			ComputePipelineStateHashMap[hashCode] = newPSO;
 		}
 		else
 		{
@@ -277,7 +280,7 @@ namespace Dash
 				std::this_thread::yield();
 			}
 
-			mPSO = *psoRef;
+			mPSO = psoRef->Get();
 		}
 
 		mIsFinalized = true;
