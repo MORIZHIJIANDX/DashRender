@@ -38,7 +38,7 @@ namespace Dash
 		return mUnorderedAccessView.GetDescriptorHandle();
 	}
 
-	void FGpuBuffer::Create(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData /*= nullptr*/, D3D12_RESOURCE_FLAGS flags /*D3D12_RESOURCE_FLAG_NONE*/)
+	void FGpuBuffer::Create(const std::string& name, uint32_t numElements, uint32_t elementSize, D3D12_RESOURCE_FLAGS flags /*D3D12_RESOURCE_FLAG_NONE*/)
 	{
 		Destroy();
 
@@ -48,11 +48,6 @@ namespace Dash
 		resourceDesc.Flags |= flags;
 
 		CreateBufferResource(resourceDesc);
-
-		if (initData)
-		{
-			//FCommandContext::InitializeBuffer(*this, initData, mDesc.Size);
-		}
 
 		CreateViews();
 
@@ -84,8 +79,8 @@ namespace Dash
 		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 		srvDesc.Buffer.FirstElement = 0;
-		srvDesc.Buffer.NumElements = mDesc.Count;
-		srvDesc.Buffer.StructureByteStride = mDesc.Stride;
+		srvDesc.Buffer.NumElements = static_cast<UINT>(mDesc.Count);
+		srvDesc.Buffer.StructureByteStride = static_cast<UINT>(mDesc.Stride);
 		srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_RAW;
 
 		mShaderResourceView = FGraphicsCore::DescriptorAllocator->AllocateSRVDescriptor();
@@ -93,7 +88,7 @@ namespace Dash
 
 		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc{};
 		cbvDesc.BufferLocation = mResource->GetGPUVirtualAddress();
-		cbvDesc.SizeInBytes = mDesc.Size;
+		cbvDesc.SizeInBytes = static_cast<UINT>(mDesc.Size);
 
 		mConstantBufferView = FGraphicsCore::DescriptorAllocator->AllocateCBVDescriptor();
 		FGraphicsCore::Device->CreateConstantBufferView(&cbvDesc, mConstantBufferView.GetDescriptorHandle());

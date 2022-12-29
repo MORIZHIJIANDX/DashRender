@@ -24,7 +24,7 @@ namespace Dash
 		FGpuBuffer() {}
 		virtual ~FGpuBuffer() {}
 
-		void Create(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData = nullptr, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
+		void Create(const std::string& name, uint32_t numElements, uint32_t elementSize, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
 		void CreateBufferResource(const D3D12_RESOURCE_DESC& desc);
 		virtual void CreateViews() = 0;
 
@@ -51,6 +51,7 @@ namespace Dash
 	{
 	public:
 		friend class FStructuredBuffer;
+		virtual ~FByteAddressBuffer() {}
 
 	protected:
 		virtual void CreateViews() override;
@@ -59,6 +60,8 @@ namespace Dash
 	class FStructuredBuffer : public FGpuBuffer
 	{
 	public:
+		virtual ~FStructuredBuffer() {}
+
 		virtual void Destroy()
 		{
 			mCounterBuffer.Destroy();
@@ -84,6 +87,8 @@ namespace Dash
 			: mFormat(format)
 		{}
 
+		virtual ~FTypedBuffer() {}
+
 		EResourceFormat GetFormat() const { return mFormat; };
 
 	protected:
@@ -96,6 +101,8 @@ namespace Dash
 	class FGpuVertexBuffer : public FGpuBuffer
 	{
 	public:
+		virtual ~FGpuVertexBuffer() {}
+
 		D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView(size_t offset, uint32_t size, uint32_t stride) const;
 		D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView(size_t baseVertexIndex = 0) const
 		{
@@ -105,13 +112,14 @@ namespace Dash
 		}
 
 	protected:
-		virtual ~FGpuVertexBuffer() {}
 		virtual void CreateViews() override {};
 	};
 
 	class FGpuIndexBuffer : public FGpuBuffer
 	{
 	public:
+		virtual ~FGpuIndexBuffer() {}
+
 		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView(size_t offset, uint32_t size, bool is32Bit = false) const;
 		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView(size_t startIndex = 0) const
 		{
@@ -120,8 +128,7 @@ namespace Dash
 			return GetIndexBufferView(offset, static_cast<uint32_t>(mDesc.Size - offset), mDesc.Stride == 4);
 		}
 
-	protected:
-		virtual ~FGpuIndexBuffer() {}
+	protected:	
 		virtual void CreateViews() override {};
 	
 	protected:

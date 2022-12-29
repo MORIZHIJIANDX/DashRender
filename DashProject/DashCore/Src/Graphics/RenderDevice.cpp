@@ -7,6 +7,7 @@
 #include "ColorBuffer.h"
 #include "DepthBuffer.h"
 #include "GpuBuffer.h"
+#include "CommandContext.h"
 
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -79,9 +80,9 @@ namespace Dash
 	class FMakeVertexBuffer : public FGpuVertexBuffer
 	{
 	public:
-		FMakeVertexBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData = nullptr)
+		FMakeVertexBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize)
 		{
-			Create(name, numElements, elementSize, initData);
+			Create(name, numElements, elementSize);
 		}
 
 		virtual ~FMakeVertexBuffer() {}
@@ -90,13 +91,24 @@ namespace Dash
 	class FMakeIndexBuffer : public FGpuIndexBuffer
 	{
 	public:
-		FMakeIndexBuffer(const std::string& name, uint32_t numElements, const void* initData = nullptr, bool is32Bit = false)
+		FMakeIndexBuffer(const std::string& name, uint32_t numElements, bool is32Bit = false)
 		{
-			Create(name, numElements, is32Bit ? sizeof(uint32_t) : sizeof(uint16_t), initData);
+			Create(name, numElements, is32Bit ? sizeof(uint32_t) : sizeof(uint16_t));
 			mIs32Bit = is32Bit;
 		}
 
 		virtual ~FMakeIndexBuffer() {}
+	};
+
+	class FMakeConstantBuffer : public FGpuConstantBuffer
+	{
+	public:
+		FMakeConstantBuffer(const std::string& name, uint32_t sizeInBytes)
+		{
+			Create(name, 1, sizeInBytes);
+		}
+
+		virtual ~FMakeConstantBuffer() {}
 	};
 
 	FRenderDevice::FRenderDevice()
@@ -590,13 +602,22 @@ namespace Dash
 
 	FGpuVertexBufferRef FRenderDevice::CreateVertexBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData)
 	{
-		std::shared_ptr<FMakeVertexBuffer> bufferRef = std::make_shared<FMakeVertexBuffer>(name, numElements, elementSize, initData);
+		std::shared_ptr<FMakeVertexBuffer> bufferRef = std::make_shared<FMakeVertexBuffer>(name, numElements, elementSize);
+		FCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
 		return bufferRef;
 	}
 
 	FGpuIndexBufferRef FRenderDevice::CreateIndexBuffer(const std::string& name, uint32_t numElements, const void* initData, bool is32Bit)
 	{
-		std::shared_ptr<FMakeIndexBuffer> bufferRef = std::make_shared<FMakeIndexBuffer>(name, numElements, initData, is32Bit);
+		std::shared_ptr<FMakeIndexBuffer> bufferRef = std::make_shared<FMakeIndexBuffer>(name, numElements, is32Bit);
+		FCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
+		return bufferRef;
+	}
+
+	FGpuConstantBufferRef FRenderDevice::CreateConstantBuffer(const std::string& name, uint32_t dataSize, const void* initData)
+	{
+		std::shared_ptr<FMakeConstantBuffer> bufferRef = std::make_shared<FMakeConstantBuffer>(name, dataSize);
+		FCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
 		return bufferRef;
 	}
 

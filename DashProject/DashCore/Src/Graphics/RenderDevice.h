@@ -290,12 +290,19 @@ namespace Dash
 
 		FGpuVertexBufferRef CreateVertexBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData = nullptr);
 		template<typename VertexType>
-		FGpuVertexBufferRef CreateVertexBuffer(const std::string& name, uint32_t numElements, const void* initData = nullptr)
+		FGpuVertexBufferRef CreateVertexBuffer(const std::string& name, uint32_t numElements, const void* initData)
 		{
 			return CreateVertexBuffer(name, numElements, sizeof(VertexType), initData);
 		}
 
-		FGpuIndexBufferRef CreateIndexBuffer(const std::string& name, uint32_t numElements, const void* initData = nullptr, bool is32Bit = false);
+		FGpuIndexBufferRef CreateIndexBuffer(const std::string& name, uint32_t numElements, const void* initData, bool is32Bit = false);
+
+		FGpuConstantBufferRef CreateConstantBuffer(const std::string& name, uint32_t sizeInBytes, const void* initData);
+		template<typename ConstantBufferType>
+		FGpuConstantBufferRef CreateConstantBuffer(const std::string& name, const ConstantBufferType* initData)
+		{
+			CreateConstantBuffer(name, sizeof(ConstantBufferType), initData);
+		}
 
 		bool UAVLoadSupportR11G11B10Float() const { return mTypedUAVLoadSupport_R11G11B10_FLOAT; }
 		bool UAVLoadSupportR16G16B16A16Float() const { return mTypedUAVLoadSupport_R16G16B16A16_FLOAT; }
