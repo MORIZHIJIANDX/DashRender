@@ -670,25 +670,25 @@ namespace Dash
 		}
 	}
 
-	void FGraphicsCommandContext::SetIndexBuffer(FGpuIndexBuffer& indexBuffer)
+	void FGraphicsCommandContext::SetIndexBuffer(FGpuIndexBufferRef indexBuffer)
 	{
-		std::vector<D3D12_INDEX_BUFFER_VIEW> indexBufferViews = { indexBuffer.GetIndexBufferView() };
+		std::vector<D3D12_INDEX_BUFFER_VIEW> indexBufferViews = { indexBuffer->GetIndexBufferView() };
 		mD3DCommandList->IASetIndexBuffer(indexBufferViews.data());
 	}
 
-	void FGraphicsCommandContext::SetVertexBuffer(UINT slot, FGpuVertexBuffer& vertexBuffer)
+	void FGraphicsCommandContext::SetVertexBuffer(UINT slot, FGpuVertexBufferRef vertexBuffer)
 	{
 		SetVertexBuffers(slot, 1, &vertexBuffer);
 	}
 
-	void FGraphicsCommandContext::SetVertexBuffers(UINT startSlot, UINT count, FGpuVertexBuffer* vertexBuffer)
+	void FGraphicsCommandContext::SetVertexBuffers(UINT startSlot, UINT count, FGpuVertexBufferRef* vertexBuffer)
 	{
 		std::vector<D3D12_VERTEX_BUFFER_VIEW> vetexBufferViews;
 		for (UINT index = 0; index < count; ++index)
 		{
-			vetexBufferViews.emplace_back(vertexBuffer[index].GetVertexBufferView());
+			vetexBufferViews.emplace_back(vertexBuffer[index]->GetVertexBufferView());
 		}
-		mD3DCommandList->IASetVertexBuffers(startSlot, 1, vetexBufferViews.data());
+		mD3DCommandList->IASetVertexBuffers(startSlot, static_cast<UINT>(vetexBufferViews.size()), vetexBufferViews.data());
 	}
 
 	void FGraphicsCommandContext::SetDynamicIndexBuffer(size_t indexCount, const uint16_t* data)

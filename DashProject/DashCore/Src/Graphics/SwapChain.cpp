@@ -25,6 +25,17 @@ namespace Dash
 	FShaderPassRef DrawPass = FShaderPass::MakeShaderPass();
 	FShaderPassRef PresentPass = FShaderPass::MakeShaderPass();
 
+	FGpuVertexBufferRef VertexBuffer;
+
+	struct Vertex
+	{
+		FVector3f Pos;
+		FVector2f UV;
+		FVector4f Color;
+	};
+
+	std::vector<Vertex> VertexData;
+
 	void FSwapChain::Initialize()
 	{
 		mDisplayWdith = IGameApp::GetInstance()->GetWindowWidth();
@@ -63,6 +74,7 @@ namespace Dash
 		FInputAssemblerLayout inputLayout;
 		inputLayout.AddPerVertexLayoutElement("POSITION", 0, EResourceFormat::RGB32_Float, 0, 0);
 		inputLayout.AddPerVertexLayoutElement("TEXCOORD", 0, EResourceFormat::RG32_Float, 0, 12);
+		inputLayout.AddPerVertexLayoutElement("COLOR", 0, EResourceFormat::RGBA32_Float, 0, 20);
 
 		DrawPSO->SetBlendState(BlendDisable);
 		DrawPSO->SetDepthStencilState(DepthStateDisabled);
@@ -83,6 +95,22 @@ namespace Dash
 		PresentPSO->SetSamplerMask(UINT_MAX);
 		PresentPSO->SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
 		PresentPSO->Finalize();
+
+		VertexData.resize(3);
+		VertexData[0].Pos = FVector3f{ -1.0f, 3.0f, 0.5f };
+		VertexData[0].UV = FVector2f{ 0.0f, -1.0f };
+		VertexData[0].Color = FVector4f{ 1.0f, 0.0f, 0.0f, 1.0f };
+
+		VertexData[1].Pos = FVector3f{ 3.0f, -1.0f, 0.5f };
+		VertexData[1].UV = FVector2f{ 2.0f, 1.0f };
+		VertexData[1].Color = FVector4f{ 0.0f, 1.0f, 0.0f, 1.0f };
+
+		VertexData[2].Pos = FVector3f{ -1.0f, -1.0f, 0.5f };
+		VertexData[2].UV = FVector2f{ 0.0f, 1.0f };
+		VertexData[2].Color = FVector4f{ 0.0f, 0.0f, 1.0f, 1.0f };
+		VertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("DisplayVertexBuffer", 3, sizeof(Vertex), VertexData.data());
+
+		D3D12_RESOURCE_DESC desc = VertexBuffer->GetResource()->GetDesc();
 	}
 
 	void FSwapChain::Destroy()
@@ -92,6 +120,8 @@ namespace Dash
 		DestroyBuffers();
 
 		mSwapChain = nullptr;
+
+		VertexBuffer->Destroy();
 	}
 
 	void FSwapChain::SetDisplayRate(float displayRate)
@@ -123,6 +153,7 @@ namespace Dash
 			graphicsContext.SetPipelineState(DrawPSO);
 			graphicsContext.SetViewportAndScissor(0, 0, mDisplayBuffer->GetWidth(), mDisplayBuffer->GetHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			graphicsContext.SetVertexBuffer(0, VertexBuffer);
 			graphicsContext.Draw(3);
 		}
 		
@@ -133,6 +164,7 @@ namespace Dash
 			graphicsContext.SetViewportAndScissor(0, 0, FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetWidth(), FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			graphicsContext.SetShaderResourceView("DisplayTexture", mDisplayBuffer);
+			graphicsContext.SetVertexBuffer(0, VertexBuffer);
 			graphicsContext.Draw(3);
 		}
 

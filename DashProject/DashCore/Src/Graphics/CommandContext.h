@@ -186,9 +186,9 @@ namespace Dash
 		void SetDynamicSampler(UINT rootIndex, UINT descriptorOffset, D3D12_CPU_DESCRIPTOR_HANDLE handle);
 		void SetDynamicSamplers(UINT rootIndex, UINT descriptorOffset, UINT count, D3D12_CPU_DESCRIPTOR_HANDLE handles[]);
 
-		void SetIndexBuffer(FGpuIndexBuffer& indexBuffer);
-		void SetVertexBuffer(UINT slot, FGpuVertexBuffer& vertexBuffer);
-		void SetVertexBuffers(UINT startSlot, UINT count, FGpuVertexBuffer* vertexBuffer);
+		void SetIndexBuffer(FGpuIndexBufferRef indexBuffer);
+		void SetVertexBuffer(UINT slot, FGpuVertexBufferRef vertexBuffer);
+		void SetVertexBuffers(UINT startSlot, UINT count, FGpuVertexBufferRef* vertexBuffer);
 
 		void SetDynamicIndexBuffer(size_t indexCount, const uint16_t* data);
 		void SetDynamicVertexBuffer(UINT slot, size_t vertexCount, size_t vertexStride, const void* data);
@@ -203,11 +203,6 @@ namespace Dash
 	protected:
 
 		void SetRootConstantBufferView(UINT rootIndex, size_t sizeInBytes, const void* constants);
-		template<typename T>
-		void SetRootConstantBufferView(UINT rootIndex, const T& constants)
-		{
-			SetRootConstantBufferView(rootIndex, sizeof(T), &constants);
-		}
 
 		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FColorBufferRef buffer,
 			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0,
