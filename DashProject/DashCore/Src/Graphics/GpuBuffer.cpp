@@ -59,17 +59,41 @@ namespace Dash
 		// D3D12_HEAP_TYPE_DEFAULT can not be accessed by CPU
 		CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_DEFAULT);
 		// D3D12_RESOURCE_STATE_COMMON 不可直接作为 SRV 和 UAV，需要转换为 D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER (D3D12_RESOURCE_STATE_GENERIC_READ) 状态
-		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_COMMON, nullptr, mResource));
+		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, mResource));
 
-		FGpuResourcesStateTracker::AddGlobalResourceState(this->GetResource(), D3D12_RESOURCE_STATE_COMMON);
+		FGpuResourcesStateTracker::AddGlobalResourceState(this->GetResource(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
 		//GetGPUVirtualAddress is only useful for buffer resources, it will return zero for all texture resources.
 		mGpuVirtualAddress = mResource->GetGPUVirtualAddress();
 	}
 
+	FGpuConstantBuffer::~FGpuConstantBuffer()
+	{
+		Unmap();
+	}
+
 	D3D12_GPU_VIRTUAL_ADDRESS FGpuConstantBuffer::GetGpuVirtualAddress(size_t offset /*= 0*/) const
 	{
 		return mGpuVirtualAddress + mDesc.Stride * offset;
+	}
+
+	void* FGpuConstantBuffer::Map()
+	{
+		if (mMappedData == nullptr)
+		{
+			DX_CALL(mResource->Map(0, nullptr, &mMappedData));
+		}
+		
+		return mMappedData;
+	}
+
+	void FGpuConstantBuffer::Unmap()
+	{
+		if (mMappedData)
+		{
+			mResource->Unmap(0, nullptr);
+			mMappedData = nullptr;
+		}
 	}
 
 	void FGpuConstantBuffer::CreateViews()

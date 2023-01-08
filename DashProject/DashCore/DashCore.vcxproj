@@ -200,6 +200,7 @@
     <ClInclude Include="Src\Graphics\PipelineStateObject.h" />
     <ClInclude Include="Src\Graphics\PixelBuffer.h" />
     <ClInclude Include="Src\Graphics\RasterizerState.h" />
+    <ClInclude Include="Src\Graphics\ReadbackBuffer.h" />
     <ClInclude Include="Src\Graphics\RenderDevice.h" />
     <ClInclude Include="Src\Graphics\RenderTarget.h" />
     <ClInclude Include="Src\Graphics\ResourceDescription.h" />
@@ -294,6 +295,7 @@
     <ClCompile Include="Src\Graphics\PipelineStateObject.cpp" />
     <ClCompile Include="Src\Graphics\PixelBuffer.cpp" />
     <ClCompile Include="Src\Graphics\RasterizerState.cpp" />
+    <ClCompile Include="Src\Graphics\ReadbackBuffer.cpp" />
     <ClCompile Include="Src\Graphics\RenderDevice.cpp" />
     <ClCompile Include="Src\Graphics\ResourceDescription.cpp" />
     <ClCompile Include="Src\Graphics\ResourceFormat.cpp" />

@@ -8,7 +8,7 @@ namespace Dash
 	{
 		mDesc.FillMode = GetD3DFillMode(fillMode);
 		mDesc.CullMode = GetD3DCullMode(cullMode);
-		mDesc.FrontCounterClockwise = frontIsClockwise;
+		mDesc.FrontCounterClockwise = !frontIsClockwise;
 		mDesc.DepthBias = depthBias;
 		mDesc.DepthBiasClamp = depthBiasClamp;
 		mDesc.SlopeScaledDepthBias = slopeScaledDepthBias;

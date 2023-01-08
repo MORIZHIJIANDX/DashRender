@@ -627,7 +627,6 @@ namespace Dash
 			int32_t shaderParameterIndex = shaderPass->FindSRVParameterByName(srvrName);
 			if (shaderParameterIndex != INDEX_NONE)
 			{
-				//ASSERT(shaderParameter.value().BindCount == 1);
 				const std::vector<FShaderParameter>& parameters = shaderPass->GetSRVParameters();
 				SetShaderResourceView(parameters[shaderParameterIndex].RootParameterIndex, parameters[shaderParameterIndex].DescriptorOffset, buffer, stateAfter, firstSubResource, numSubResources);
 				mShaderResourceViewBindState[shaderParameterIndex] = true;

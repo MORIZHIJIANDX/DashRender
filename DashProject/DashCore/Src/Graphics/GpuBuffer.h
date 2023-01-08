@@ -41,10 +41,17 @@ namespace Dash
 	class FGpuConstantBuffer : public FGpuBuffer
 	{
 	public:
+		virtual ~FGpuConstantBuffer();
 		D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress(size_t offset = 0) const;
-	
+		
+		void* Map();
+		void Unmap();
+
 	protected:
 		virtual void CreateViews() override;
+	
+	private:
+		void* mMappedData = nullptr;
 	};
 
 	class FByteAddressBuffer : public FGpuBuffer
