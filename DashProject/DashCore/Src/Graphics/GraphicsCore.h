@@ -29,8 +29,7 @@ namespace Dash
 		static constexpr int BackBufferCount = 3;
 
 	private:
-		//static void InitD3DDevice();
-		//static void DestroyD3Device();
+		static void EnablePixCapture();
 
 	private:
 		static bool mTypedUAVLoadSupport_R11G11B10_FLOAT;

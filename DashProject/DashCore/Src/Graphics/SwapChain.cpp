@@ -66,7 +66,7 @@ namespace Dash
 		PresentPass->SetShader(EShaderStage::Pixel, psPresentInfo);
 		PresentPass->SetPassName("PresentPass");
 
-		FRasterizerState rasterizerDefault{ ERasterizerFillMode::Solid, ERasterizerCullMode::Back };
+		FRasterizerState rasterizerDefault{ ERasterizerFillMode::Solid, ERasterizerCullMode::None };
 
 		FBlendState BlendDisable{false, false};
 		FDepthStencilState DepthStateDisabled{false, false};
