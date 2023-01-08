@@ -103,7 +103,6 @@ namespace Dash
 
 		LOG_INFO << " ---------------------------------------------------- ";
 
-
 		std::map<std::string, UINT> bufferSizeMap;
 		for (UINT constantBufferIndex = 0; constantBufferIndex < shaderDesc.ConstantBuffers; ++constantBufferIndex)
 		{
@@ -156,6 +155,27 @@ namespace Dash
 			LOG_INFO << "Resource uID : " << resourceDesc.uID;
 
 			LOG_INFO << " ================================== ";
+		}
+
+		if (mCreationInfo.Stage == EShaderStage::Vertex)
+		{
+			for (UINT parameterIndex = 0; parameterIndex < shaderDesc.InputParameters; ++parameterIndex)
+			{
+				D3D12_SIGNATURE_PARAMETER_DESC inputSignatureParameterDesc;
+				reflector->GetInputParameterDesc(parameterIndex, &inputSignatureParameterDesc);
+
+				LOG_INFO << "Input Parameter Name : " << std::string(inputSignatureParameterDesc.SemanticName);
+				LOG_INFO << "Input Parameter Index : " << inputSignatureParameterDesc.SemanticIndex;
+				LOG_INFO << "Input Parameter Mask : " << int(inputSignatureParameterDesc.Mask);
+				LOG_INFO << "Input Parameter Component Type: " << inputSignatureParameterDesc.ComponentType;
+				LOG_INFO << "Input Parameter Register : " << inputSignatureParameterDesc.Register;
+				LOG_INFO << "Input Parameter SystemValueType : " << int(inputSignatureParameterDesc.SystemValueType);
+				LOG_INFO << "Input Parameter MinPrecision : " << inputSignatureParameterDesc.MinPrecision;
+				LOG_INFO << "Input Parameter Stream : " << inputSignatureParameterDesc.Stream;
+				LOG_INFO << "Input Parameter ReadWriteMask : " << int(inputSignatureParameterDesc.ReadWriteMask);
+
+				LOG_INFO << " ================================== ";
+			}
 		}
 	}
 }

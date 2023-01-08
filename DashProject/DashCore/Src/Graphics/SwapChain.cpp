@@ -145,8 +145,7 @@ namespace Dash
 
 		mCurrentBackBufferIndex = mSwapChain->GetCurrentBackBufferIndex();
 		uint64_t nextBufferFenceValue = mFenceValue[mCurrentBackBufferIndex];
-		FGraphicsCore::CommandQueueManager->GetGraphicsQueue().WaitForFence(nextBufferFenceValue);
-		
+		FGraphicsCore::CommandQueueManager->GetGraphicsQueue().WaitForFence(nextBufferFenceValue);	
 	}
 
 	FColorBufferRef FSwapChain::GetDisplayBuffer()
