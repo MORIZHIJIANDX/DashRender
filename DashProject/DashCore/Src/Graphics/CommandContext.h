@@ -83,6 +83,10 @@ namespace Dash
 		void SetPipelineState(FPipelineStateObjectRef pso);
 		virtual void SetRootSignature(FRootSignatureRef rootSignature) = 0;
 
+		void PIXBeginEvent(const std::string& label);
+		void PIXEndEvent();
+		void PIXSetMarker(const std::string& label);
+
 		static void InitializeBuffer(FGpuBufferRef dest, const void* bufferData, size_t numBytes, size_t offset = 0);
 
 	protected:

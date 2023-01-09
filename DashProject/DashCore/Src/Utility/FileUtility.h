@@ -2,7 +2,7 @@
 
 namespace Dash
 {
-	class FileUtility
+	class FFileUtility
 	{
 	public:
 		using ByteArray = std::shared_ptr<std::vector<unsigned char>>;
@@ -33,6 +33,8 @@ namespace Dash
 		static std::string GetRootPath(const std::string& str);
 
 		static std::string GetFileName(const std::string& str);
+
+		static std::string CombinePath(const std::string& lhs, const std::string& rhs);
 
 		static std::string GetCurrentPath();
 

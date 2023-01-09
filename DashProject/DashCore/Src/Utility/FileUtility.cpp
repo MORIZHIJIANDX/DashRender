@@ -3,25 +3,25 @@
 
 namespace Dash
 {
-	FileUtility::ByteArray FileUtility::NullFile{};
+	FFileUtility::ByteArray FFileUtility::NullFile{};
 
-	FileUtility::ByteArray ReadBinaryFileHelper(const std::string& fileName)
+	FFileUtility::ByteArray ReadBinaryFileHelper(const std::string& fileName)
 	{
 		std::filesystem::path filePath{ fileName };
 		if (!(std::filesystem::exists(filePath) && std::filesystem::is_regular_file(filePath)))
 		{
-			return FileUtility::NullFile;
+			return FFileUtility::NullFile;
 		}
 
 		std::ifstream file(fileName, std::ios::in | std::ios::binary);
 		if (!file)
 		{
-			return FileUtility::NullFile;
+			return FFileUtility::NullFile;
 		}
 
 		long fileSizeInByte = static_cast<long>(file.seekg(0, std::ios::end).tellg());
 
-		FileUtility::ByteArray byteArray = std::make_shared<std::vector<unsigned char>>(fileSizeInByte);
+		FFileUtility::ByteArray byteArray = std::make_shared<std::vector<unsigned char>>(fileSizeInByte);
 		file.seekg(0, std::ios::beg).read((char*)byteArray->data(), byteArray->size());
 		file.close();
 
@@ -30,23 +30,27 @@ namespace Dash
 		return byteArray;
 	}
 
-	FileUtility::ByteArray FileUtility::ReadBinaryFileSync(const std::string& fileName)
+	FFileUtility::ByteArray FFileUtility::ReadBinaryFileSync(const std::string& fileName)
 	{
 		return ReadBinaryFileHelper(fileName);
 	}
 
-	std::future<FileUtility::ByteArray> FileUtility::ReadBinaryFileAsync(const std::string& fileName)
+	std::future<FFileUtility::ByteArray> FFileUtility::ReadBinaryFileAsync(const std::string& fileName)
 	{
 		std::future<ByteArray> readTask = std::async(std::launch::async, ReadBinaryFileHelper, fileName);
 		return readTask;
 	}
-
 
 	bool WriteBinaryFileHelper(const std::string& fileName, unsigned char* data, size_t count)
 	{
 		if (data == nullptr)
 		{
 			return false;
+		}
+
+		if (!std::filesystem::exists(fileName))
+		{
+			std::filesystem::create_directory(std::filesystem::path(fileName).parent_path());
 		}
 
 		std::ofstream file(fileName, std::ios::out | std::ios::binary);
@@ -62,18 +66,18 @@ namespace Dash
 		return true;
 	}
 
-	bool FileUtility::WriteBinaryFileSync(const std::string& fileName, unsigned char* data, size_t count)
+	bool FFileUtility::WriteBinaryFileSync(const std::string& fileName, unsigned char* data, size_t count)
 	{
 		return WriteBinaryFileHelper(fileName, data, count);
 	}
 
-	std::future<bool> FileUtility::WriteBinaryFileAsync(const std::string& fileName, unsigned char* data, size_t count)
+	std::future<bool> FFileUtility::WriteBinaryFileAsync(const std::string& fileName, unsigned char* data, size_t count)
 	{
 		std::future<bool> writeTask = std::async(std::launch::async, WriteBinaryFileHelper, fileName, data, count);
 		return writeTask;
 	}
 
-	std::string FileUtility::GetBasePath(const std::string& str)
+	std::string FFileUtility::GetBasePath(const std::string& str)
 	{
 		size_t lastSlash;
 		if ((lastSlash = str.rfind('/')) != std::string::npos)
@@ -84,7 +88,7 @@ namespace Dash
 			return "";
 	}
 
-	std::string FileUtility::RemoveBasePath(const std::string& str)
+	std::string FFileUtility::RemoveBasePath(const std::string& str)
 	{
 		size_t lastSlash;
 		if ((lastSlash = str.rfind('/')) != std::string::npos)
@@ -95,7 +99,7 @@ namespace Dash
 			return str;
 	}
 
-	std::string FileUtility::GetFileExtension(const std::string& str)
+	std::string FFileUtility::GetFileExtension(const std::string& str)
 	{
 		std::string fileName = RemoveBasePath(str);
 		size_t extOffset = fileName.rfind('.');
@@ -105,62 +109,67 @@ namespace Dash
 		return fileName.substr(extOffset + 1);
 	}
 
-	std::string FileUtility::RemoveExtension(const std::string& str)
+	std::string FFileUtility::RemoveExtension(const std::string& str)
 	{
 		return str.substr(0, str.rfind("."));
 	}
 
-	std::string FileUtility::GetAbsolutePath(const std::string& str)
+	std::string FFileUtility::GetAbsolutePath(const std::string& str)
 	{
 		return std::filesystem::absolute(std::filesystem::path(str)).string();
 	}
 
-	std::string FileUtility::GetRelativePath(const std::string& str, const std::string& base)
+	std::string FFileUtility::GetRelativePath(const std::string& str, const std::string& base)
 	{
 		return std::filesystem::relative(str, base).string();
 	}
 
-	std::string FileUtility::GetParentPath(const std::string& str)
+	std::string FFileUtility::GetParentPath(const std::string& str)
 	{
 		return std::filesystem::path(str).parent_path().string();
 	}
 
-	std::string FileUtility::GetRootPath(const std::string& str)
+	std::string FFileUtility::GetRootPath(const std::string& str)
 	{
 		return std::filesystem::path(str).root_path().string();
 	}
 
-	std::string FileUtility::GetFileName(const std::string& str)
+	std::string FFileUtility::GetFileName(const std::string& str)
 	{
 		return std::filesystem::path(str).filename().string();
 	}
 
-	std::string FileUtility::GetCurrentPath()
+	std::string FFileUtility::CombinePath(const std::string& lhs, const std::string& rhs)
+	{
+		return (std::filesystem::path(lhs) / std::filesystem::path(rhs)).string();
+	}
+
+	std::string FFileUtility::GetCurrentPath()
 	{
 		return std::filesystem::current_path().string();
 	}
 
-	Dash::FileUtility::FileTimeType FileUtility::GetFileLastWriteTime(const std::string& str)
+	Dash::FFileUtility::FileTimeType FFileUtility::GetFileLastWriteTime(const std::string& str)
 	{
 		return std::filesystem::last_write_time(std::filesystem::path(str));
 	}
 
-	bool FileUtility::IsPathExistent(const std::string& str)
+	bool FFileUtility::IsPathExistent(const std::string& str)
 	{
 		return std::filesystem::exists(std::filesystem::path(str));
 	}
 
-	bool FileUtility::IsPath(const std::string& str)
+	bool FFileUtility::IsPath(const std::string& str)
 	{
 		return std::filesystem::is_directory(std::filesystem::path(str));
 	}
 
-	bool FileUtility::IsFile(const std::string& str)
+	bool FFileUtility::IsFile(const std::string& str)
 	{
 		return std::filesystem::is_regular_file(std::filesystem::path(str));
 	}
 
-	void FileUtility::DeletePath(const std::string& str)
+	void FFileUtility::DeletePath(const std::string& str)
 	{
 		std::filesystem::remove(std::filesystem::path(str));
 	}

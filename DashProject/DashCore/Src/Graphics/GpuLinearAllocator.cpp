@@ -142,7 +142,7 @@ namespace Dash
 		Microsoft::WRL::ComPtr<ID3D12Resource> Buffer;
 		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, resourceState, nullptr, Buffer));
 
-		SetD3D12DebugName(Buffer.Get(), L"CpuLinearAllocatorPage");
+		SetD3D12DebugName(Buffer.Get(), "CpuLinearAllocatorPage");
 
 		return new FPage(Buffer, resourceState, resourceDesc.Width);
 	}

@@ -14,10 +14,12 @@ namespace Dash
 	#define PIXEL_SHADER_PROFILE "ps"
 	#define COMPUTE_SHADER_PROFILE "cs"
 
+	#define SHADER_BLOB_PATH "ShaderBlob"
 
 	void FShaderCreationInfo::Finalize()
 	{
-		std::string hasedName = FileUtility::RemoveExtension(FileName) + "_" + EntryPoint;
+		std::string blobFileName = FFileUtility::CombinePath(FFileUtility::CombinePath(FFileUtility::GetParentPath(FileName), SHADER_BLOB_PATH), FFileUtility::GetFileName(FileName));
+		std::string hasedName = FFileUtility::RemoveExtension(blobFileName) + "_" + EntryPoint;
 
 		std::sort(Defines.begin(), Defines.end());
 		for (const std::string& define : Defines)
@@ -35,7 +37,7 @@ namespace Dash
 	{
 		std::string hasedShaderName = GetHashedFileName() + SHADER_BLOB_FILE_EXTENSION;
 		std::string reflectionName = GetHashedFileName() + REFLECTION_BLOB_FILE_EXTENSION;
-		return !FileUtility::IsPathExistent(hasedShaderName) || !FileUtility::IsPathExistent(reflectionName) || FileUtility::GetFileLastWriteTime(FileName) > FileUtility::GetFileLastWriteTime(hasedShaderName);
+		return !FFileUtility::IsPathExistent(hasedShaderName) || !FFileUtility::IsPathExistent(reflectionName) || FFileUtility::GetFileLastWriteTime(FileName) > FFileUtility::GetFileLastWriteTime(hasedShaderName);
 	}
 
 	void FShaderCreationInfo::ComputeShaderTargetFromEntryPoint()

@@ -3,6 +3,8 @@
 #include "GraphicsCore.h"
 #include "RootSignature.h"
 
+#include <pix3.h>
+
 namespace Dash
 {
 	FCommandContext* FCommandContextManager::AllocateContext(D3D12_COMMAND_LIST_TYPE type)
@@ -130,6 +132,7 @@ namespace Dash
 	{
 		FCommandContext* newContext = FGraphicsCore::ContextManager->AllocateContext(type);
 		newContext->SetID(id);
+		newContext->PIXBeginEvent(id);
 		return *newContext;
 	}
 
@@ -171,6 +174,8 @@ namespace Dash
 	uint64_t FCommandContext::Finish(bool waitForCompletion /*= false*/)
 	{
 		FlushResourceBarriers();
+
+		PIXEndEvent();
 
 		uint64_t fenceValue = Execute();
 
@@ -273,6 +278,27 @@ namespace Dash
 		mPSORef = pso;
 
 		InitParameterBindState();
+	}
+
+	void FCommandContext::PIXBeginEvent(const std::string& label)
+	{
+#ifdef DASH_DEBUG
+		::PIXBeginEvent(mCommandList->GetCommandList(), 0, label.c_str());
+#endif
+	}
+
+	void FCommandContext::PIXEndEvent()
+	{
+#ifdef DASH_DEBUG
+		::PIXEndEvent(mCommandList->GetCommandList());
+#endif
+	}
+
+	void FCommandContext::PIXSetMarker(const std::string& label)
+	{
+#ifdef DASH_DEBUG
+		::PIXSetMarker(mCommandList->GetCommandList(), 0, label.c_str());
+#endif	
 	}
 
 	void FCommandContext::InitializeBuffer(FGpuBufferRef dest, const void* bufferData, size_t numBytes, size_t offset /*= 0*/)

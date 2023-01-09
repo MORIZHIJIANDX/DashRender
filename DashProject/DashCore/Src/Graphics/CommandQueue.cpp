@@ -12,8 +12,8 @@ namespace Dash
 		DX_CALL(FGraphicsCore::Device->CreateCommandAllocator(type, mCommandAllocator));
 		DX_CALL(FGraphicsCore::Device->CreateCommandList(0, type, mCommandAllocator.Get(), nullptr, mGraphicsCommandList));
 
-		SetD3D12DebugName(mCommandAllocator.Get(), L"CommandAllocator");
-		SetD3D12DebugName(mGraphicsCommandList.Get(), L"CommandList");
+		SetD3D12DebugName(mCommandAllocator.Get(), "CommandAllocator");
+		SetD3D12DebugName(mGraphicsCommandList.Get(), "CommandList");
 	}
 
 	FCommandList::~FCommandList()
@@ -109,20 +109,20 @@ namespace Dash
 		{
 		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
 			{
-				SetD3D12DebugName(mCommandQueue.Get(), L"ComputeQueue");
-				SetD3D12DebugName(mFence.Get(), L"ComputeFence");
+				SetD3D12DebugName(mCommandQueue.Get(), "ComputeQueue");
+				SetD3D12DebugName(mFence.Get(), "ComputeFence");
 				break;
 			}
 		case D3D12_COMMAND_LIST_TYPE_COPY:
 			{
-				SetD3D12DebugName(mCommandQueue.Get(), L"CopyQueue");
-				SetD3D12DebugName(mFence.Get(), L"CopyFence");
+				SetD3D12DebugName(mCommandQueue.Get(), "CopyQueue");
+				SetD3D12DebugName(mFence.Get(), "CopyFence");
 				break;
 			}
 		default:
 			{
-				SetD3D12DebugName(mCommandQueue.Get(), L"GraphicsQueue");
-				SetD3D12DebugName(mFence.Get(), L"GraphicsFence");
+				SetD3D12DebugName(mCommandQueue.Get(), "GraphicsQueue");
+				SetD3D12DebugName(mFence.Get(), "GraphicsFence");
 				break;
 			}
 		}

@@ -209,7 +209,7 @@ namespace Dash
 		DX_CALL(FGraphicsCore::Device->CreateDescriptorHeap(&desc, descriptorHeap));
 		mDescriptorHeapPool.push(descriptorHeap);
 
-		SetD3D12DebugName(descriptorHeap.Get(), L"DynamicDescriptorHeap");
+		SetD3D12DebugName(descriptorHeap.Get(), "DynamicDescriptorHeap");
 
 		return descriptorHeap.Get();
 	}

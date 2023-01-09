@@ -11,6 +11,7 @@ namespace Dash
 {
 	#define SHADER_BLOB_FILE_EXTENSION ".cso"
 	#define REFLECTION_BLOB_FILE_EXTENSION ".refect"
+	#define PDB_BLOB_FILE_EXTENSION ".pdb"
 
 	enum class EShaderStage : uint16_t
 	{

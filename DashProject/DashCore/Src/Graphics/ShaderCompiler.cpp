@@ -42,7 +42,7 @@ namespace Dash
 
 	FDX12CompiledShader FShaderCompiler::CompileShaderInternal(const FShaderCreationInfo& info)
 	{
-		if (!FileUtility::IsPathExistent(info.FileName))
+		if (!FFileUtility::IsPathExistent(info.FileName))
 		{
 			LOG_WARNING << "Cannot found file : " << info.FileName;
 			return FDX12CompiledShader{};
@@ -135,7 +135,7 @@ namespace Dash
 
 		ComPtr<IDxcBlob> reflectionBlob;
 		ComPtr<IDxcBlobWide> reflectionOutputName;
-		compiledResult->GetOutput(DXC_OUT_REFLECTION, IID_PPV_ARGS(&reflectionBlob), &reflectionOutputName);
+		DX_CALL(compiledResult->GetOutput(DXC_OUT_REFLECTION, IID_PPV_ARGS(&reflectionBlob), &reflectionOutputName));
 		if (reflectionBlob != nullptr)
 		{
 			// Create reflection interface.
@@ -146,6 +146,22 @@ namespace Dash
 
 			mUtils->CreateReflection(&reflectionData, IID_PPV_ARGS(&shaderReflector));
 		}
+
+#if defined(DASH_DEBUG)
+		ComPtr<IDxcBlob> pdbBlob;
+		ComPtr<IDxcBlobWide> pdbOutputName;
+		DX_CALL(compiledResult->GetOutput(DXC_OUT_PDB, IID_PPV_ARGS(&pdbBlob), &pdbOutputName));
+		std::string pdbPath = info.GetHashedFileName() + PDB_BLOB_FILE_EXTENSION;
+
+		if (FFileUtility::WriteBinaryFileSync(pdbPath, reinterpret_cast<unsigned char*>(pdbBlob->GetBufferPointer()), pdbBlob->GetBufferSize()))
+		{
+			LOG_INFO << "Success to save compiled shader pdb : " << pdbPath;
+		}
+		else
+		{
+			LOG_ERROR << "Failed to save compiled shader pdb : " << pdbPath;
+		}
+#endif
 
 		FDX12CompiledShader compiledShader;
 		compiledShader.CompiledShaderBlob = shaderBlob;
@@ -159,7 +175,7 @@ namespace Dash
 	{
 		std::string hasedShaderName = info.GetHashedFileName() + SHADER_BLOB_FILE_EXTENSION;
 
-		if (FileUtility::WriteBinaryFileSync(hasedShaderName, reinterpret_cast<unsigned char*>(compiledShader.CompiledShaderBlob->GetBufferPointer()), compiledShader.CompiledShaderBlob->GetBufferSize()))
+		if (FFileUtility::WriteBinaryFileSync(hasedShaderName, reinterpret_cast<unsigned char*>(compiledShader.CompiledShaderBlob->GetBufferPointer()), compiledShader.CompiledShaderBlob->GetBufferSize()))
 		{
 			LOG_INFO << "Success to save compiled shader blob : " << hasedShaderName;
 		}
@@ -170,7 +186,7 @@ namespace Dash
 
 		std::string hasedRefectionName = info.GetHashedFileName() + REFLECTION_BLOB_FILE_EXTENSION;
 
-		if (FileUtility::WriteBinaryFileSync(hasedRefectionName, reinterpret_cast<unsigned char*>(compiledShader.ShaderRelectionBlob->GetBufferPointer()), compiledShader.ShaderRelectionBlob->GetBufferSize()))
+		if (FFileUtility::WriteBinaryFileSync(hasedRefectionName, reinterpret_cast<unsigned char*>(compiledShader.ShaderRelectionBlob->GetBufferPointer()), compiledShader.ShaderRelectionBlob->GetBufferSize()))
 		{
 			LOG_INFO << "Success to save shader reflection blob : " << hasedRefectionName;
 		}
@@ -214,7 +230,7 @@ namespace Dash
 
 		std::wstring wShaderFileName = FStringUtility::UTF8ToWideString(fileName);
 
-		if (FileUtility::IsPathExistent(fileName))
+		if (FFileUtility::IsPathExistent(fileName))
 		{
 			DX_CALL(mUtils->LoadFile(wShaderFileName.c_str(), nullptr, &blob));
 

@@ -18,7 +18,7 @@ namespace Dash
 
 		DX_CALL(FGraphicsCore::Device->CreateDescriptorHeap(&desc, mDescriptorHeap));
 
-		SetD3D12DebugName(mDescriptorHeap.Get(), L"CpuDescriptorHeap");
+		SetD3D12DebugName(mDescriptorHeap.Get(), "CpuDescriptorHeap");
 
 		mBaseDescriptor = mDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 		mDescriptorHandelIncrementSize = FGraphicsCore::Device->GetDescriptorHandleIncrementSize(type);
