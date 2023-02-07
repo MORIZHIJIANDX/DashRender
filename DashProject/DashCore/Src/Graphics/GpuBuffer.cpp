@@ -57,11 +57,12 @@ namespace Dash
 	void FGpuBuffer::CreateBufferResource(const D3D12_RESOURCE_DESC& desc)
 	{
 		// D3D12_HEAP_TYPE_DEFAULT can not be accessed by CPU
-		CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_DEFAULT);
+		CD3DX12_HEAP_PROPERTIES heapProps(mCpuAccess ? D3D12_HEAP_TYPE_UPLOAD : D3D12_HEAP_TYPE_DEFAULT);
+		D3D12_RESOURCE_STATES initD3DState = D3DResourceState(mDesc.InitialStateMask);
 		// D3D12_RESOURCE_STATE_COMMON 不可直接作为 SRV 和 UAV，需要转换为 D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER (D3D12_RESOURCE_STATE_GENERIC_READ) 状态
-		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, mResource));
+		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &desc, initD3DState, nullptr, mResource));
 
-		FGpuResourcesStateTracker::AddGlobalResourceState(this->GetResource(), D3D12_RESOURCE_STATE_GENERIC_READ);
+		FGpuResourcesStateTracker::AddGlobalResourceState(this->GetResource(), initD3DState);
 
 		//GetGPUVirtualAddress is only useful for buffer resources, it will return zero for all texture resources.
 		mGpuVirtualAddress = mResource->GetGPUVirtualAddress();
@@ -215,6 +216,44 @@ namespace Dash
 		view.SizeInBytes = size;
 		view.Format = is32Bit ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT;
 		return view;
+	}
+
+	void* FGpuDynamicVertexBuffer::Map()
+	{
+		if (mMappedData == nullptr)
+		{
+			DX_CALL(mResource->Map(0, nullptr, &mMappedData));
+		}
+
+		return mMappedData;
+	}
+
+	void FGpuDynamicVertexBuffer::Unmap()
+	{
+		if (mMappedData)
+		{
+			mResource->Unmap(0, nullptr);
+			mMappedData = nullptr;
+		}
+	}
+
+	void* FGpuDynamicIndexBuffer::Map()
+	{
+		if (mMappedData == nullptr)
+		{
+			DX_CALL(mResource->Map(0, nullptr, &mMappedData));
+		}
+
+		return mMappedData;
+	}
+
+	void FGpuDynamicIndexBuffer::Unmap()
+	{
+		if (mMappedData)
+		{
+			mResource->Unmap(0, nullptr);
+			mMappedData = nullptr;
+		}
 	}
 
 }

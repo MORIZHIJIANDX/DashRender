@@ -34,6 +34,8 @@ namespace Dash
 		FCpuDescriptorAllocation mConstantBufferView;
 		FCpuDescriptorAllocation mShaderResourceView;
 		FCpuDescriptorAllocation mUnorderedAccessView;
+
+		bool mCpuAccess = false;
 	};
 
 	// 大部分情况下不需要使用 CreateConstantBufferView 来创建 constant buffer view ，且 constant buffer 更新需要对 resource 进行 map 和 unmap 或者是 CopyBuffer. 
@@ -41,6 +43,7 @@ namespace Dash
 	class FGpuConstantBuffer : public FGpuBuffer
 	{
 	public:
+		FGpuConstantBuffer(){ mCpuAccess = true; }
 		virtual ~FGpuConstantBuffer();
 		D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress(size_t offset = 0) const;
 		
@@ -140,5 +143,31 @@ namespace Dash
 	
 	protected:
 		bool mIs32Bit = false;
+	};
+
+	class FGpuDynamicVertexBuffer : public FGpuVertexBuffer
+	{
+	public:
+		FGpuDynamicVertexBuffer() { mCpuAccess = true; }
+		virtual ~FGpuDynamicVertexBuffer() {}
+
+		void* Map();
+		void Unmap();
+
+	private:
+		void* mMappedData = nullptr;
+	};
+
+	class FGpuDynamicIndexBuffer : public FGpuIndexBuffer
+	{
+	public:
+		FGpuDynamicIndexBuffer() { mCpuAccess = true; }
+		virtual ~FGpuDynamicIndexBuffer() {}
+
+		void* Map();
+		void Unmap();
+
+	private:
+		void* mMappedData = nullptr;
 	};
 }

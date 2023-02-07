@@ -26,7 +26,7 @@ namespace Dash
 		return mipMagnitude;
 	}
 
-	void FTextureDescription::ResolveResourceDimensionData()
+	void FTextureDescription::ResolveResourceDimensionData(bool allowUAV, bool allowRTV)
 	{
 		switch (Dimension)
 		{
@@ -58,12 +58,12 @@ namespace Dash
 
 		QueryAllocationInfo();
 
-		if (MsaaSampleCount == 1)
+		if (allowUAV && MsaaSampleCount == 1)
 		{
 			mDescription.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 		}
 
-		if (!IsCompressedFormat(mDescription.Format))
+		if (allowRTV && !IsCompressedFormat(mDescription.Format))
 		{
 			mDescription.Flags |= D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 		}
@@ -89,7 +89,7 @@ namespace Dash
 		desc.MsaaQuality = msaaQuality;
 		desc.ClearValue = optimizedClearValue;
 
-		desc.ResolveResourceDimensionData();
+		desc.ResolveResourceDimensionData(true, true);
 
 		return desc;
 	}
@@ -127,7 +127,7 @@ namespace Dash
 		desc.MsaaQuality = msaaQuality;
 		desc.ClearValue = optimizedClearValue;
 
-		desc.ResolveResourceDimensionData();
+		desc.ResolveResourceDimensionData(false, true);
 
 		return desc;
 	}
@@ -142,12 +142,12 @@ namespace Dash
 		desc.Size = desc.Stride * elementCount;
 		desc.InitialStateMask = initialStateMask;
 
-		desc.ResolveResourceDimensionData();
+		desc.ResolveResourceDimensionData(true, false);
 
 		return desc;
 	}
 
-	void FBufferDescription::ResolveResourceDimensionData()
+	void FBufferDescription::ResolveResourceDimensionData(bool allowUAV, bool allowRTV)
 	{
 		mSubresourceCount = 1;
 
@@ -156,7 +156,7 @@ namespace Dash
 		mDescription.Height = 1;
 		mDescription.DepthOrArraySize = 1;
 		mDescription.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-		mDescription.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+		mDescription.Flags = allowUAV ? D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS : D3D12_RESOURCE_FLAG_NONE;
 		mDescription.Format = DXGI_FORMAT_UNKNOWN;
 		mDescription.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 		mDescription.MipLevels = 1;
@@ -164,6 +164,42 @@ namespace Dash
 		mDescription.SampleDesc.Quality = 0;
 
 		QueryAllocationInfo();
+	}
+
+	FTextureBufferDescription FTextureBufferDescription::Create(EResourceFormat format, ETextureDimension dimension, const FResourceMagnitude& magnitude, uint32_t mipCount, EResourceState initialStateMask)
+	{
+		FTextureBufferDescription desc;
+		desc.Dimension = dimension;
+		desc.Format = format;
+		desc.InitialStateMask = initialStateMask;
+		desc.Magnitude = magnitude;
+		desc.MipCount = mipCount;
+		desc.MsaaSampleCount = 1;
+		desc.MsaaQuality = 0;
+
+		desc.ResolveResourceDimensionData(true, false);
+
+		return desc;
+	}
+
+	FTextureBufferDescription FTextureBufferDescription::Create1D(EResourceFormat format, uint32_t width, uint32_t mipCount, EResourceState initialStateMask)
+	{
+		return Create(format, ETextureDimension::Texture1D, FResourceMagnitude(width), mipCount, initialStateMask);
+	}
+
+	FTextureBufferDescription FTextureBufferDescription::Create2D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t mipCount, EResourceState initialStateMask)
+	{
+		return Create(format, ETextureDimension::Texture2D, FResourceMagnitude(width, height), mipCount, initialStateMask);
+	}
+
+	FTextureBufferDescription FTextureBufferDescription::Create2DArray(EResourceFormat format, uint32_t width, uint32_t height, uint32_t arraySize, uint32_t mipCount, EResourceState initialStateMask)
+	{
+		return Create(format, ETextureDimension::Texture2D, FResourceMagnitude(width, height, arraySize), mipCount, initialStateMask);
+	}
+
+	FTextureBufferDescription FTextureBufferDescription::Create3D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipCount, EResourceState initialStateMask)
+	{
+		return Create(format, ETextureDimension::Texture3D, FResourceMagnitude(width, height, depth), mipCount, initialStateMask);
 	}
 
 }

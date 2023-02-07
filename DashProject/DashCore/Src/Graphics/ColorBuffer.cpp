@@ -40,7 +40,7 @@ namespace Dash
     {
         mDesc = desc;
 
-        CreateTextureResource(mDesc.D3DResourceDescription(), GetD3DClearValue(), name);
+        CreateTextureResource(mDesc.D3DResourceDescription(), GetD3DClearValue(), name, desc.InitialStateMask);
         CreateViews();
     }
 

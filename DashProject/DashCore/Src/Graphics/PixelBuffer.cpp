@@ -23,16 +23,17 @@ namespace Dash
 		FGpuResourcesStateTracker::AddGlobalResourceState(this->GetResource(), D3DResourceState(currentState));	
 	}
 
-	void FPixelBuffer::CreateTextureResource(const D3D12_RESOURCE_DESC& resourceDesc, D3D12_CLEAR_VALUE clearValue, const std::string& name)
+	void FPixelBuffer::CreateTextureResource(const D3D12_RESOURCE_DESC& resourceDesc, D3D12_CLEAR_VALUE clearValue, const std::string& name, EResourceState initState)
 	{
 		Destroy();
 
 		CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_DEFAULT);
-		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_COMMON, &clearValue, mResource));
+		D3D12_RESOURCE_STATES initD3DState = D3DResourceState(initState);
+		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, initD3DState, &clearValue, mResource));
 
 		SetName(name);
 
-		FGpuResourcesStateTracker::AddGlobalResourceState(this->GetResource(), D3D12_RESOURCE_STATE_COMMON);
+		FGpuResourcesStateTracker::AddGlobalResourceState(this->GetResource(), initD3DState);
 
 		mGpuVirtualAddress = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
 	}

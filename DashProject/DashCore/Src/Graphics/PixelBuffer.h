@@ -18,6 +18,6 @@ namespace Dash
 	protected:
 
 		void AssociateWithResource(ID3D12Resource* resource, EResourceState currentState, const std::string& name = "");
-		void CreateTextureResource(const D3D12_RESOURCE_DESC& resourceDesc, D3D12_CLEAR_VALUE clearValue, const std::string& name = "");
+		void CreateTextureResource(const D3D12_RESOURCE_DESC& resourceDesc, D3D12_CLEAR_VALUE clearValue, const std::string& name = "", EResourceState initState = EResourceState::Common);
 	};
 }

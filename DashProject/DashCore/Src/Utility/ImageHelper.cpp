@@ -1,7 +1,7 @@
 #include "PCH.h"
 
 #include "ImageHelper.h"
-#include "../Graphics/DX12Helper.h"
+#include "Graphics/DX12Helper.h"
 
 namespace Dash
 {

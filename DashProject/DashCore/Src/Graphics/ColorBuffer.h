@@ -6,9 +6,6 @@
 
 namespace Dash
 {
-	//class FColorBuffer;
-	//using FColorBufferRef = std::shared_ptr<FColorBuffer>;
-
 	class FColorBuffer : public FPixelBuffer
 	{
 	public:

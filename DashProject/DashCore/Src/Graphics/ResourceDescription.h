@@ -14,7 +14,7 @@ namespace Dash
 
 	protected:
 		void QueryAllocationInfo();
-		virtual void ResolveResourceDimensionData() {};
+		virtual void ResolveResourceDimensionData(bool allowUAV = true, bool allowRTV = true) {};
 
 	public:
 		EResourceState InitialStateMask = EResourceState::Common;
@@ -39,7 +39,7 @@ namespace Dash
 		FResourceMagnitude ComputeMipSize(uint8_t mip) const;
 
 	protected:
-		virtual void ResolveResourceDimensionData() override;
+		virtual void ResolveResourceDimensionData(bool allowUAV, bool allowRTV) override;
 		uint32_t ComputeNumMips() const;
 	};
 
@@ -55,6 +55,18 @@ namespace Dash
 		static FColorBufferDescription Create2D(EResourceFormat format, uint32_t width, uint32_t height, const FLinearColor& optimizedClearValue, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
 		static FColorBufferDescription Create2DArray(EResourceFormat format, uint32_t width, uint32_t height, uint32_t arraySize, const FLinearColor& optimizedClearValue, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
 		static FColorBufferDescription Create3D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t depth, const FLinearColor& optimizedClearValue, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
+	};
+
+	struct FTextureBufferDescription : public FTextureDescription
+	{
+	public:
+		static FTextureBufferDescription Create(EResourceFormat format, ETextureDimension dimension, const FResourceMagnitude& magnitude,
+			uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
+
+		static FTextureBufferDescription Create1D(EResourceFormat format, uint32_t width, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
+		static FTextureBufferDescription Create2D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
+		static FTextureBufferDescription Create2DArray(EResourceFormat format, uint32_t width, uint32_t height, uint32_t arraySize, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
+		static FTextureBufferDescription Create3D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
 	};
 
 	struct FDepthBufferDescription : public FTextureDescription
@@ -73,13 +85,13 @@ namespace Dash
 		uint64_t Count = 1;
 		uint64_t Stride = 1;
 
-		static FBufferDescription Create(uint64_t elementSize, uint64_t elementCount, uint64_t elementAlignment = 1, EResourceState initialStateMask = EResourceState::Common);
+		static FBufferDescription Create(uint64_t elementSize, uint64_t elementCount, uint64_t elementAlignment = 1, EResourceState initialStateMask = EResourceState::GenericRead);
 
 		template<typename ElementType>
-		static FBufferDescription Create(uint64_t elementCount, uint64_t elementAlignment = 1, EResourceState initialStateMask = EResourceState::Common);
+		static FBufferDescription Create(uint64_t elementCount, uint64_t elementAlignment = 1, EResourceState initialStateMask = EResourceState::GenericRead);
 
 	protected:
-		virtual void ResolveResourceDimensionData() override;
+		virtual void ResolveResourceDimensionData(bool allowUAV, bool allowRTV) override;
 	};
 
 	template<typename ElementType>
