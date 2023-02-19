@@ -107,6 +107,8 @@ namespace Dash
 	EResourceFormat ResourceFormatFromD3DFormat(DXGI_FORMAT format);
 	EColorSpace ColorSpaceFromD3DSpace(DXGI_COLOR_SPACE_TYPE space);
 
+	size_t BitsPerPixel(DXGI_FORMAT format);
+
 	size_t BytesPerPixel(DXGI_FORMAT format);
 	size_t BytesPerPixel(EResourceFormat format);
 

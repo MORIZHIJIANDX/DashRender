@@ -6,6 +6,7 @@
 #include <dxgidebug.h>
 #include "ColorBuffer.h"
 #include "DepthBuffer.h"
+#include "TextureBuffer.h"
 #include "GpuBuffer.h"
 #include "CommandContext.h"
 
@@ -53,10 +54,7 @@ namespace Dash
 	public:
 		FMakeDepthBuffer(const std::string& name, const FDepthBufferDescription& desc)
 		{
-			mDesc = desc;
-
-			CreateTextureResource(mDesc.D3DResourceDescription(), GetD3DClearValue(), name);
-			CreateViews();
+			Create(name, desc);
 		}
 
 		FMakeDepthBuffer(const std::string& name, uint32_t width, uint32_t height, EResourceFormat format)
@@ -66,15 +64,31 @@ namespace Dash
 
 		FMakeDepthBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, uint32_t sampleQuality, EResourceFormat format)
 		{
-			ASSERT(IsDepthStencilFormat(format));
-
-			mDesc = FDepthBufferDescription::Create(format, width, height, mDesc.ClearValue, 1, EResourceState::Common, sampleCount, sampleQuality);
-
-			CreateTextureResource(mDesc.D3DResourceDescription(), GetD3DClearValue(), name);
-			CreateViews();
+			Create(name, width, height, sampleCount, sampleQuality, format);
 		}
 
 		virtual ~FMakeDepthBuffer() {}
+	};
+
+	class FMakeTextureBuffer : public FTextureBuffer
+	{
+	public:
+		FMakeTextureBuffer(const std::string& name, const FTextureBufferDescription& desc)
+		{
+			Create(name, desc);
+		}
+
+		FMakeTextureBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format)
+		{
+			Create(name, width, height, numMips, format);
+		}
+
+		FMakeTextureBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format)
+		{
+			Create(name, width, height, arrayCount, numMips, format);
+		}
+
+		virtual ~FMakeTextureBuffer() {}
 	};
 
 	class FMakeVertexBuffer : public FGpuVertexBuffer
@@ -597,6 +611,21 @@ namespace Dash
 	FDepthBufferRef FRenderDevice::CreateDepthBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, uint32_t sampleQuality, EResourceFormat format)
 	{
 		std::shared_ptr<FMakeDepthBuffer> bufferRef = std::make_shared<FMakeDepthBuffer>(name, width, height, sampleCount, sampleQuality, format);
+		return bufferRef;
+	}
+
+	FTextureBufferRef FRenderDevice::CreateTextureBufferFromMemory(const std::string& name, const FTextureBufferDescription& desc, const void* InitialData)
+	{
+		ASSERT(InitialData != nullptr);
+
+		std::shared_ptr<FTextureBuffer> bufferRef = std::make_shared<FMakeTextureBuffer>(name, desc);
+
+		D3D12_SUBRESOURCE_DATA resourceData;
+		resourceData.RowPitch = BytesPerPixel(desc.Format) * desc.Magnitude.Width;
+		resourceData.SlicePitch = resourceData.RowPitch * desc.Magnitude.Height;
+		resourceData.pData = InitialData;
+		
+		FCommandContext::UpdateTextureBuffer(bufferRef, 0, 1, &resourceData);
 		return bufferRef;
 	}
 

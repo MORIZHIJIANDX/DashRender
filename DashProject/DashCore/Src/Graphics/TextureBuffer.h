@@ -7,6 +7,7 @@ namespace Dash
 {
 	class FTextureBuffer : public FPixelBuffer
 	{
+	public:
 		virtual ~FTextureBuffer() {};
 
 		virtual uint32_t GetWidth() const { return mDesc.Magnitude.Width; }
@@ -23,14 +24,9 @@ namespace Dash
 	protected:
 		void Create(const std::string& name, const FTextureBufferDescription& desc);
 		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format);
-		void CreateArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format);
+		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format);
 
-		static inline uint32_t ComputeNumMips(uint32_t width, uint32_t height)
-		{
-			uint32_t highBit;
-			_BitScanReverse((unsigned long*)&highBit, width | height);
-			return highBit + 1;
-		}
+		void CreateBuffer(const std::string& name);
 
 		void CreateViews();
 

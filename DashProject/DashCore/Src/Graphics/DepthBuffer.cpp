@@ -10,8 +10,7 @@ namespace Dash
 	{
         mDesc = desc;
 
-        CreateTextureResource(mDesc.D3DResourceDescription(), GetD3DClearValue(), name);
-        CreateViews();
+        CreateBuffer(name);
 	}
 
     void FDepthBuffer::Create(const std::string& name, uint32_t width, uint32_t height, EResourceFormat format)
@@ -25,9 +24,14 @@ namespace Dash
 
         mDesc = FDepthBufferDescription::Create(format, width, height, mDesc.ClearValue, 1, EResourceState::Common, sampleCount, sampleQuality);
 
-        CreateTextureResource(mDesc.D3DResourceDescription(), GetD3DClearValue(), name);
-        CreateViews();
+        CreateBuffer(name);
     }
+
+	void FDepthBuffer::CreateBuffer(const std::string& name)
+	{
+		CreateTextureResource(mDesc.D3DResourceDescription(), GetD3DClearValue(), name);
+		CreateViews();
+	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE FDepthBuffer::GetDepthStencilView() const
     {

@@ -3,7 +3,7 @@
 #include "GraphicsCore.h"
 #include "RootSignature.h"
 
-#include <pix3.h>
+#include <pix.h>
 
 namespace Dash
 {
@@ -312,6 +312,21 @@ namespace Dash
 		context.mD3DCommandList->CopyBufferRegion(dest->GetResource(), offset, alloc.Resource.GetResource(), alloc.Offset, numBytes);
 		context.TransitionBarrier(dest, EResourceState::GenericRead, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 
+		context.Finish(true);
+	}
+
+	void FCommandContext::UpdateTextureBuffer(FTextureBufferRef dest, uint32_t firstSubresource, uint32_t numSubresources, D3D12_SUBRESOURCE_DATA* subresourceData)
+	{
+		ASSERT(subresourceData != nullptr);
+
+		FCommandContext& context = FCommandContext::Begin("UpdateTextureBuffer");
+
+		UINT64 requiredSize = GetRequiredIntermediateSize(dest->GetResource(), firstSubresource, numSubresources);
+		FGpuLinearAllocator::FAllocation alloc = context.mLinearAllocator.Allocate(requiredSize);
+
+		// Resource must be in the copy-destination state.
+		context.TransitionBarrier(dest, EResourceState::CopyDestination, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
+		UpdateSubresources(context.GetD3DCommandList(), dest->GetResource(), alloc.Resource.GetResource(), alloc.Offset, firstSubresource, numSubresources, subresourceData);
 		context.Finish(true);
 	}
 

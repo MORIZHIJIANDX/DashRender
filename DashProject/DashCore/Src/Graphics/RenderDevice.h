@@ -13,6 +13,9 @@ namespace Dash
 	class FDepthBuffer;
 	using FDepthBufferRef = std::shared_ptr<FDepthBuffer>;
 
+	class FTextureBuffer;
+	using FTextureBufferRef = std::shared_ptr<FTextureBuffer>;
+
 	class FGpuBuffer;
 	using FGpuBufferRef = std::shared_ptr<FGpuBuffer>;
 
@@ -287,6 +290,8 @@ namespace Dash
 		FDepthBufferRef CreateDepthBuffer(const std::string& name, const FDepthBufferDescription& desc);
 		FDepthBufferRef CreateDepthBuffer(const std::string& name, uint32_t width, uint32_t height, EResourceFormat format);
 		FDepthBufferRef CreateDepthBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, uint32_t sampleQuality, EResourceFormat format);
+
+		FTextureBufferRef CreateTextureBufferFromMemory(const std::string& name, const FTextureBufferDescription& desc, const void* InitialData);
 
 		FGpuVertexBufferRef CreateVertexBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData = nullptr);
 		template<typename VertexType>

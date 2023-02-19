@@ -31,7 +31,9 @@ namespace Dash
 		void Create(const std::string& name, const FDepthBufferDescription& desc);
 		void Create(const std::string& name, uint32_t width, uint32_t height, EResourceFormat format);
 		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, uint32_t sampleQuality, EResourceFormat format);
-			
+		
+		void CreateBuffer(const std::string& name);
+
 		void CreateViews();
 
 		D3D12_CLEAR_VALUE GetD3DClearValue() const;

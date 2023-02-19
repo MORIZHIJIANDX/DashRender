@@ -166,40 +166,40 @@ namespace Dash
 		QueryAllocationInfo();
 	}
 
-	FTextureBufferDescription FTextureBufferDescription::Create(EResourceFormat format, ETextureDimension dimension, const FResourceMagnitude& magnitude, uint32_t mipCount, EResourceState initialStateMask)
+	FTextureBufferDescription FTextureBufferDescription::Create(EResourceFormat format, ETextureDimension dimension, const FResourceMagnitude& magnitude, uint32_t mipCount)
 	{
 		FTextureBufferDescription desc;
 		desc.Dimension = dimension;
 		desc.Format = format;
-		desc.InitialStateMask = initialStateMask;
 		desc.Magnitude = magnitude;
 		desc.MipCount = mipCount;
 		desc.MsaaSampleCount = 1;
 		desc.MsaaQuality = 0;
+		desc.InitialStateMask = EResourceState::CopyDestination;
 
 		desc.ResolveResourceDimensionData(true, false);
 
 		return desc;
 	}
 
-	FTextureBufferDescription FTextureBufferDescription::Create1D(EResourceFormat format, uint32_t width, uint32_t mipCount, EResourceState initialStateMask)
+	FTextureBufferDescription FTextureBufferDescription::Create1D(EResourceFormat format, uint32_t width, uint32_t mipCount)
 	{
-		return Create(format, ETextureDimension::Texture1D, FResourceMagnitude(width), mipCount, initialStateMask);
+		return Create(format, ETextureDimension::Texture1D, FResourceMagnitude(width), mipCount);
 	}
 
-	FTextureBufferDescription FTextureBufferDescription::Create2D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t mipCount, EResourceState initialStateMask)
+	FTextureBufferDescription FTextureBufferDescription::Create2D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t mipCount)
 	{
-		return Create(format, ETextureDimension::Texture2D, FResourceMagnitude(width, height), mipCount, initialStateMask);
+		return Create(format, ETextureDimension::Texture2D, FResourceMagnitude(width, height), mipCount);
 	}
 
-	FTextureBufferDescription FTextureBufferDescription::Create2DArray(EResourceFormat format, uint32_t width, uint32_t height, uint32_t arraySize, uint32_t mipCount, EResourceState initialStateMask)
+	FTextureBufferDescription FTextureBufferDescription::Create2DArray(EResourceFormat format, uint32_t width, uint32_t height, uint32_t arraySize, uint32_t mipCount)
 	{
-		return Create(format, ETextureDimension::Texture2D, FResourceMagnitude(width, height, arraySize), mipCount, initialStateMask);
+		return Create(format, ETextureDimension::Texture2D, FResourceMagnitude(width, height, arraySize), mipCount);
 	}
 
-	FTextureBufferDescription FTextureBufferDescription::Create3D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipCount, EResourceState initialStateMask)
+	FTextureBufferDescription FTextureBufferDescription::Create3D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipCount)
 	{
-		return Create(format, ETextureDimension::Texture3D, FResourceMagnitude(width, height, depth), mipCount, initialStateMask);
+		return Create(format, ETextureDimension::Texture3D, FResourceMagnitude(width, height, depth), mipCount);
 	}
 
 }

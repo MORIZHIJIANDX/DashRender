@@ -83,6 +83,17 @@ namespace Dash
 		PresentPSO->SetSamplerMask(UINT_MAX);
 		PresentPSO->SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
 		PresentPSO->Finalize();
+		
+		const int32_t textureWidth = 512;
+		std::vector<FColor> colorData;
+		colorData.reserve(textureWidth * textureWidth);
+		for (int32_t index = 0; index < textureWidth * textureWidth; ++ index)
+		{
+			colorData.push_back(FColor::Cyan);
+		}
+
+		FTextureBufferDescription textureDest = FTextureBufferDescription::Create2D(EResourceFormat::RGBA8_Unsigned_Norm, textureWidth, textureWidth, 1);
+		mTexture = FGraphicsCore::Device->CreateTextureBufferFromMemory("TestTexture", textureDest, colorData.data());
 	}
 
 	void FSwapChain::Destroy()

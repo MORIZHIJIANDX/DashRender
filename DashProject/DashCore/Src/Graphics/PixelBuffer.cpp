@@ -29,7 +29,8 @@ namespace Dash
 
 		CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_DEFAULT);
 		D3D12_RESOURCE_STATES initD3DState = D3DResourceState(initState);
-		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, initD3DState, &clearValue, mResource));
+		const D3D12_CLEAR_VALUE* clearValuePtr = resourceDesc.Flags & (D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET | D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL) ? &clearValue : nullptr;
+		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, initD3DState, clearValuePtr, mResource));
 
 		SetName(name);
 

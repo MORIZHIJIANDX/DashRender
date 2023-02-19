@@ -7,6 +7,7 @@
 #include "DepthBuffer.h"
 #include "Viewport.h"
 #include "GpuBuffer.h"
+#include "TextureBuffer.h"
 #include "GpuLinearAllocator.h"
 #include "ShaderPass.h"
 #include "GpuResourcesStateTracker.h"
@@ -88,6 +89,7 @@ namespace Dash
 		void PIXSetMarker(const std::string& label);
 
 		static void InitializeBuffer(FGpuBufferRef dest, const void* bufferData, size_t numBytes, size_t offset = 0);
+		static void UpdateTextureBuffer(FTextureBufferRef dest, uint32_t firstSubresource, uint32_t numSubresources, D3D12_SUBRESOURCE_DATA* subresourceData);
 
 	protected:
 

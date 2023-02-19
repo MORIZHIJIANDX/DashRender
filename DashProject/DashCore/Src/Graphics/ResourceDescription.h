@@ -61,12 +61,12 @@ namespace Dash
 	{
 	public:
 		static FTextureBufferDescription Create(EResourceFormat format, ETextureDimension dimension, const FResourceMagnitude& magnitude,
-			uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
+			uint32_t mipCount = 1);
 
-		static FTextureBufferDescription Create1D(EResourceFormat format, uint32_t width, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
-		static FTextureBufferDescription Create2D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
-		static FTextureBufferDescription Create2DArray(EResourceFormat format, uint32_t width, uint32_t height, uint32_t arraySize, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
-		static FTextureBufferDescription Create3D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipCount = 1, EResourceState initialStateMask = EResourceState::Common);
+		static FTextureBufferDescription Create1D(EResourceFormat format, uint32_t width, uint32_t mipCount = 1);
+		static FTextureBufferDescription Create2D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t mipCount = 1);
+		static FTextureBufferDescription Create2DArray(EResourceFormat format, uint32_t width, uint32_t height, uint32_t arraySize, uint32_t mipCount = 1);
+		static FTextureBufferDescription Create3D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipCount = 1);
 	};
 
 	struct FDepthBufferDescription : public FTextureDescription

@@ -39,6 +39,8 @@ namespace Dash
 		void Create(const std::string& name, const FColorBufferDescription& desc, const FLinearColor& clearColor = FLinearColor{});
 		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format);
 		void CreateArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format);
+
+		void CreateBuffer(const std::string& name);
 		
 		static inline uint32_t ComputeNumMips(uint32_t width, uint32_t height)
 		{	

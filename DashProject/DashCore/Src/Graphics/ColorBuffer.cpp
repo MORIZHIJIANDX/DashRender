@@ -40,8 +40,7 @@ namespace Dash
     {
         mDesc = desc;
 
-        CreateTextureResource(mDesc.D3DResourceDescription(), GetD3DClearValue(), name, desc.InitialStateMask);
-        CreateViews();
+        CreateBuffer(name);
     }
 
     void FColorBuffer::Create(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format)
@@ -50,8 +49,7 @@ namespace Dash
 
         mDesc = FColorBufferDescription::Create2D(format, width, height, mDesc.ClearValue, numMips);
 
-        CreateTextureResource(mDesc.D3DResourceDescription(), GetD3DClearValue(), name);
-        CreateViews();
+        CreateBuffer(name);
     }
 
     void FColorBuffer::CreateArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format)
@@ -60,11 +58,16 @@ namespace Dash
 
         mDesc = FColorBufferDescription::Create2DArray(format, width, height, arrayCount, mDesc.ClearValue, numMips);
 
-        CreateTextureResource(mDesc.D3DResourceDescription(), GetD3DClearValue(), name);
-        CreateViews();
+        CreateBuffer(name);
     }
 
-    D3D12_UNORDERED_ACCESS_VIEW_DESC FColorBuffer::GetUAVDesc(const D3D12_RESOURCE_DESC& resourceDesc, UINT mipSlice, UINT arraySlice, UINT planeSlice) const
+	void FColorBuffer::CreateBuffer(const std::string& name)
+	{
+		CreateTextureResource(mDesc.D3DResourceDescription(), GetD3DClearValue(), name, mDesc.InitialStateMask);
+		CreateViews();
+	}
+
+	D3D12_UNORDERED_ACCESS_VIEW_DESC FColorBuffer::GetUAVDesc(const D3D12_RESOURCE_DESC& resourceDesc, UINT mipSlice, UINT arraySlice, UINT planeSlice) const
     {
         D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
         uavDesc.Format = D3DUnorderedAccessViewFormat(resourceDesc.Format);

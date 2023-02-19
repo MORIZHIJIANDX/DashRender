@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ColorBuffer.h"
+#include "TextureBuffer.h"
 #include <dxgi1_6.h>
 #include "RenderDevice.h"
 
@@ -46,5 +47,8 @@ namespace Dash
 		Microsoft::WRL::ComPtr<IDXGISwapChain4> mSwapChain;
 
 		UINT mCurrentBackBufferIndex = 0;
+
+
+		FTextureBufferRef mTexture;
 	};
 }
