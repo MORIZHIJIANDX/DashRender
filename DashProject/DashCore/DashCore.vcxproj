@@ -214,6 +214,7 @@
     <ClInclude Include="Src\Graphics\ShaderResource.h" />
     <ClInclude Include="Src\Graphics\ShaderTechnique.h" />
     <ClInclude Include="Src\Graphics\SwapChain.h" />
+    <ClInclude Include="Src\Graphics\TextureBuffer.h" />
     <ClInclude Include="Src\Graphics\Viewport.h" />
     <ClInclude Include="Src\Graphics\d3dx12.h" />
     <ClInclude Include="Src\Math\AABB.h" />
@@ -308,6 +309,7 @@
     <ClCompile Include="Src\Graphics\ShaderResource.cpp" />
     <ClCompile Include="Src\Graphics\ShaderTechnique.cpp" />
     <ClCompile Include="Src\Graphics\SwapChain.cpp" />
+    <ClCompile Include="Src\Graphics\TextureBuffer.cpp" />
     <ClCompile Include="Src\Math\Color.cpp" />
     <ClCompile Include="Src\PCH\PCH.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
