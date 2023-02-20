@@ -2,6 +2,7 @@
 
 #include "ImageHelper.h"
 #include "Graphics/DX12Helper.h"
+#include "Graphics/ResourceFormat.h"
 
 namespace Dash
 {

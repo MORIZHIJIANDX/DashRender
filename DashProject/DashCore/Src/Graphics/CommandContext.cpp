@@ -639,24 +639,6 @@ namespace Dash
 		}
 	}
 
-	void FGraphicsCommandContext::SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FColorBufferRef buffer, EResourceState stateAfter /*= EResourceState::AnyShaderAccess*/, UINT firstSubResource /*= 0*/, UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
-	{
-		if (numSubResources < D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES)
-		{
-			for (UINT index = firstSubResource; index < (firstSubResource + numSubResources); ++index)
-			{
-				TransitionBarrier(buffer, stateAfter, index);
-			}
-		}
-		else
-		{
-			TransitionBarrier(buffer, stateAfter);
-		}
-
-		mDynamicViewDescriptor.StageDescriptors(rootIndex, descriptorOffset, 1, buffer->GetShaderResourceView());
-		TrackResource(buffer);
-	}
-
 	void FGraphicsCommandContext::SetShaderResourceView(const std::string& srvrName, FColorBufferRef buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
 	{
 		ASSERT_MSG(mPSORef != nullptr, "Pipeline State Is Not Set.");
@@ -669,7 +651,29 @@ namespace Dash
 			if (shaderParameterIndex != INDEX_NONE)
 			{
 				const std::vector<FShaderParameter>& parameters = shaderPass->GetSRVParameters();
-				SetShaderResourceView(parameters[shaderParameterIndex].RootParameterIndex, parameters[shaderParameterIndex].DescriptorOffset, buffer, stateAfter, firstSubResource, numSubResources);
+				SetShaderResourceView(parameters[shaderParameterIndex].RootParameterIndex, parameters[shaderParameterIndex].DescriptorOffset, buffer, buffer->GetShaderResourceView(), stateAfter, firstSubResource, numSubResources);
+				mShaderResourceViewBindState[shaderParameterIndex] = true;
+			}
+			else
+			{
+				LOG_WARNING << "Can't Find Shader Resource Parameter : " << srvrName;
+			}
+		}
+	}
+
+	void FGraphicsCommandContext::SetShaderResourceView(const std::string& srvrName, FTextureBufferRef buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
+	{
+		ASSERT_MSG(mPSORef != nullptr, "Pipeline State Is Not Set.");
+
+		FShaderPassRef shaderPass = mPSORef->GetShaderPass();
+
+		if (shaderPass)
+		{
+			int32_t shaderParameterIndex = shaderPass->FindSRVParameterByName(srvrName);
+			if (shaderParameterIndex != INDEX_NONE)
+			{
+				const std::vector<FShaderParameter>& parameters = shaderPass->GetSRVParameters();
+				SetShaderResourceView(parameters[shaderParameterIndex].RootParameterIndex, parameters[shaderParameterIndex].DescriptorOffset, buffer, buffer->GetShaderResourceView(), stateAfter, firstSubResource, numSubResources);
 				mShaderResourceViewBindState[shaderParameterIndex] = true;
 			}
 			else
@@ -695,6 +699,26 @@ namespace Dash
 
 		mDynamicViewDescriptor.StageDescriptors(rootIndex, descriptorOffset, 1, buffer->GetShaderResourceView());
 		TrackResource(buffer);
+	}
+
+	void FGraphicsCommandContext::SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FGpuResourceRef resource, const D3D12_CPU_DESCRIPTOR_HANDLE& srcDescriptors,
+		EResourceState stateAfter /*= EResourceState::AnyShaderAccess*/, UINT firstSubResource /*= 0*/,
+		UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
+	{
+		if (numSubResources < D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES)
+		{
+			for (UINT index = firstSubResource; index < (firstSubResource + numSubResources); ++index)
+			{
+				TransitionBarrier(resource, stateAfter, index);
+			}
+		}
+		else
+		{
+			TransitionBarrier(resource, stateAfter);
+		}
+
+		mDynamicViewDescriptor.StageDescriptors(rootIndex, descriptorOffset, 1, srcDescriptors);
+		TrackResource(resource);
 	}
 
 	void FGraphicsCommandContext::SetDynamicSampler(UINT rootIndex, UINT descriptorOffset, D3D12_CPU_DESCRIPTOR_HANDLE handle)

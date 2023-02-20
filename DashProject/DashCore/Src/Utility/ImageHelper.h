@@ -55,7 +55,7 @@ namespace Dash
 
 	FORCEINLINE FTexture LoadPPMImage(const std::string& name);
 
-
+	/*
 	//--------------------------------------------------------------------------------------
 	// Return the BPP for a particular format
 	//--------------------------------------------------------------------------------------
@@ -224,6 +224,7 @@ namespace Dash
 			return 0;
 		}
 	}
+	*/
 
 	FORCEINLINE DXGI_FORMAT MakeSRGB(DXGI_FORMAT format) noexcept;
 

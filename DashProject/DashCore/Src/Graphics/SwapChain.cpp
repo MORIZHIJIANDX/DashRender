@@ -87,9 +87,16 @@ namespace Dash
 		const int32_t textureWidth = 512;
 		std::vector<FColor> colorData;
 		colorData.reserve(textureWidth * textureWidth);
-		for (int32_t index = 0; index < textureWidth * textureWidth; ++ index)
+		for (int32_t x = 0; x < textureWidth; ++ x)
 		{
-			colorData.push_back(FColor::Cyan);
+			for (int32_t y = 0; y < textureWidth; y++)
+			{
+				Scalar Size = 64;
+				FVector2f Pos= FMath::Floor(FVector2f(x, y) / Size);
+				uint8_t PatternMask = static_cast<uint8_t>(FMath::Fmod(Pos.X + FMath::Fmod(Pos.Y, 2.0f), 2.0f) * 125);
+
+				colorData.push_back(FColor{PatternMask, PatternMask, PatternMask});
+			}	
 		}
 
 		FTextureBufferDescription textureDest = FTextureBufferDescription::Create2D(EResourceFormat::RGBA8_Unsigned_Norm, textureWidth, textureWidth, 1);

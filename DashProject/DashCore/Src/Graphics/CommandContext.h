@@ -187,6 +187,9 @@ namespace Dash
 
 		void SetShaderResourceView(const std::string& srvrName, FColorBufferRef buffer,
 			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0, UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+
+		void SetShaderResourceView(const std::string& srvrName, FTextureBufferRef buffer,
+			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0, UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 		
 		void SetDynamicSampler(UINT rootIndex, UINT descriptorOffset, D3D12_CPU_DESCRIPTOR_HANDLE handle);
 		void SetDynamicSamplers(UINT rootIndex, UINT descriptorOffset, UINT count, D3D12_CPU_DESCRIPTOR_HANDLE handles[]);
@@ -209,7 +212,7 @@ namespace Dash
 
 		void SetRootConstantBufferView(UINT rootIndex, size_t sizeInBytes, const void* constants);
 
-		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FColorBufferRef buffer,
+		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FGpuResourceRef resource, const D3D12_CPU_DESCRIPTOR_HANDLE& srcDescriptors,
 			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0,
 			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 

@@ -378,6 +378,7 @@ namespace Dash
 	struct FColor
 	{
 	public:
+	/*
 		// Variables.
 #if PLATFORM_LITTLE_ENDIAN
 #ifdef _MSC_VER
@@ -391,6 +392,8 @@ namespace Dash
 #else // PLATFORM_LITTLE_ENDIAN
 		union { struct { uint8_t a, r, g, b; }; uint32_t AlignmentDummy; };
 #endif
+*/
+		union { struct { uint8_t r, g, b, a; }; uint32_t AlignmentDummy; };
 
 		uint32_t& DWColor(void) { return *((uint32_t*)this); }
 		const uint32_t& DWColor(void) const { return *((uint32_t*)this); }

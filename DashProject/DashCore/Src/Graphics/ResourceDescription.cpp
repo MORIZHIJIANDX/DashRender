@@ -172,7 +172,7 @@ namespace Dash
 		desc.Dimension = dimension;
 		desc.Format = format;
 		desc.Magnitude = magnitude;
-		desc.MipCount = mipCount;
+		desc.MipCount = desc.AutoGenerateMips ? desc.ComputeNumMips() : mipCount;
 		desc.MsaaSampleCount = 1;
 		desc.MsaaQuality = 0;
 		desc.InitialStateMask = EResourceState::CopyDestination;
