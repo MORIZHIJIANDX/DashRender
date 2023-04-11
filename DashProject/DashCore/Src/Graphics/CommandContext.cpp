@@ -131,7 +131,6 @@ namespace Dash
 	FCommandContext& FCommandContext::Begin(const std::string& id /*= L""*/, D3D12_COMMAND_LIST_TYPE type /*= D3D12_COMMAND_LIST_TYPE_DIRECT*/)
 	{
 		FCommandContext* newContext = FGraphicsCore::ContextManager->AllocateContext(type);
-		newContext->SetID(id);
 		newContext->PIXBeginEvent(id);
 		return *newContext;
 	}

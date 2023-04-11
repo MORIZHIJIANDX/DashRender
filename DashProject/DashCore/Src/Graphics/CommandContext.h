@@ -93,7 +93,6 @@ namespace Dash
 
 	protected:
 
-		void SetID(const std::string& id) { mID = id; }
 		void BindDescriptorHeaps();
 		void TrackResource(FGpuResourceRef resource);
 		void ReleaseTrackedObjects();
@@ -104,7 +103,6 @@ namespace Dash
 		void CheckUnboundShaderParameters();
 
 	protected:
-		std::string mID;
 		D3D12_COMMAND_LIST_TYPE mType;
 
 		FCommandList* mCommandList = nullptr;
