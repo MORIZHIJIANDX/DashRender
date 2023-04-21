@@ -6,6 +6,8 @@
 namespace Dash
 {
 	class FCommandContext;
+	class FComputeCommandContextBase;
+	class FGraphicsCommandContextBase;
 	class FRootSignature;
 
 	class FDynamicDescriptorHeap
@@ -22,12 +24,12 @@ namespace Dash
 
 		void StageInlineUAV(uint32_t rootParameterIndex, D3D12_GPU_VIRTUAL_ADDRESS gpuAddress);
 
-		void CommitStagedDescriptorsForDraw(FCommandContext& context);
-		void CommitStagedDescriptorsForDispatch(FCommandContext& context);
+		void CommitStagedDescriptorsForDraw(FGraphicsCommandContextBase& context);
+		void CommitStagedDescriptorsForDispatch(FComputeCommandContextBase& context);
 
 		void ParseRootSignature(const FRootSignature& rootSignature);
 
-		D3D12_GPU_DESCRIPTOR_HANDLE CopyAndSetDescriptor(FCommandContext& context, D3D12_CPU_DESCRIPTOR_HANDLE srcDescriptor);
+		D3D12_GPU_DESCRIPTOR_HANDLE CopyAndSetDescriptor(FComputeCommandContextBase& context, D3D12_CPU_DESCRIPTOR_HANDLE srcDescriptor);
 
 		void Reset();
 
@@ -39,7 +41,7 @@ namespace Dash
 
 		uint32_t ComputeStaleDescriptorCount() const;
 
-		void CommitDescriptorTables(FCommandContext& context, std::function<void(ID3D12GraphicsCommandList*, UINT, D3D12_GPU_DESCRIPTOR_HANDLE)> setFunc);
+		void CommitDescriptorTables(FComputeCommandContextBase& context, std::function<void(ID3D12GraphicsCommandList*, UINT, D3D12_GPU_DESCRIPTOR_HANDLE)> setFunc);
 		void CommitInlineDescriptors(FCommandContext& context, const D3D12_GPU_VIRTUAL_ADDRESS* gpuAddressArray, uint32_t& bitMask, std::function<void(ID3D12GraphicsCommandList*, UINT, D3D12_GPU_VIRTUAL_ADDRESS)> setFunc);
 
 		static const uint32_t MaxDescriptorTables = 32;

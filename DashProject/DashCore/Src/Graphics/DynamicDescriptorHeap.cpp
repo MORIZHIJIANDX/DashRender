@@ -78,7 +78,7 @@ namespace Dash
 		mStaleUAVBitMask |= (1 << rootParameterIndex);
 	}
 
-	void FDynamicDescriptorHeap::CommitStagedDescriptorsForDraw(FCommandContext& context)
+	void FDynamicDescriptorHeap::CommitStagedDescriptorsForDraw(FGraphicsCommandContextBase& context)
 	{
 		CommitDescriptorTables(context, &ID3D12GraphicsCommandList::SetGraphicsRootDescriptorTable);
 		CommitInlineDescriptors(context, mInlineCBV, mStaleCBVBitMask, &ID3D12GraphicsCommandList::SetGraphicsRootConstantBufferView);
@@ -86,7 +86,7 @@ namespace Dash
 		CommitInlineDescriptors(context, mInlineUAV, mStaleUAVBitMask, &ID3D12GraphicsCommandList::SetGraphicsRootUnorderedAccessView);
 	}
 
-	void FDynamicDescriptorHeap::CommitStagedDescriptorsForDispatch(FCommandContext& context)
+	void FDynamicDescriptorHeap::CommitStagedDescriptorsForDispatch(FComputeCommandContextBase& context)
 	{
 		CommitDescriptorTables(context, &ID3D12GraphicsCommandList::SetComputeRootDescriptorTable);
 		CommitInlineDescriptors(context, mInlineCBV, mStaleCBVBitMask, &ID3D12GraphicsCommandList::SetComputeRootConstantBufferView);
@@ -127,7 +127,7 @@ namespace Dash
 			"The root signature requires more than the maximum number of descriptors per descriptor heap. Consider increasing the maximum number of descriptors per descriptor heap.");
 	}
 
-	D3D12_GPU_DESCRIPTOR_HANDLE FDynamicDescriptorHeap::CopyAndSetDescriptor(FCommandContext& context, D3D12_CPU_DESCRIPTOR_HANDLE srcDescriptor)
+	D3D12_GPU_DESCRIPTOR_HANDLE FDynamicDescriptorHeap::CopyAndSetDescriptor(FComputeCommandContextBase& context, D3D12_CPU_DESCRIPTOR_HANDLE srcDescriptor)
 	{
 		if (mCurrentDescriptorHeap == nullptr || mNumFreeHandles < 1)
 		{
@@ -231,7 +231,7 @@ namespace Dash
 		return numStaleDescriptors;
 	}
 
-	void FDynamicDescriptorHeap::CommitDescriptorTables(FCommandContext& context, std::function<void(ID3D12GraphicsCommandList*, UINT, D3D12_GPU_DESCRIPTOR_HANDLE)> setFunc)
+	void FDynamicDescriptorHeap::CommitDescriptorTables(FComputeCommandContextBase& context, std::function<void(ID3D12GraphicsCommandList*, UINT, D3D12_GPU_DESCRIPTOR_HANDLE)> setFunc)
 	{
 		// Compute the number of descriptors that need to be copied
 		uint32_t staleDescriptorCount = ComputeStaleDescriptorCount();

@@ -625,28 +625,28 @@ namespace Dash
 		resourceData.SlicePitch = resourceData.RowPitch * desc.Magnitude.Height;
 		resourceData.pData = InitialData;
 		
-		FCommandContext::UpdateTextureBuffer(bufferRef, 0, 1, &resourceData);
+		FGraphicsCommandContext::UpdateTextureBuffer(bufferRef, 0, 1, &resourceData);
 		return bufferRef;
 	}
 
 	FGpuVertexBufferRef FRenderDevice::CreateVertexBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData)
 	{
 		std::shared_ptr<FMakeVertexBuffer> bufferRef = std::make_shared<FMakeVertexBuffer>(name, numElements, elementSize);
-		FCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
+		FGraphicsCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
 		return bufferRef;
 	}
 
 	FGpuIndexBufferRef FRenderDevice::CreateIndexBuffer(const std::string& name, uint32_t numElements, const void* initData, bool is32Bit)
 	{
 		std::shared_ptr<FMakeIndexBuffer> bufferRef = std::make_shared<FMakeIndexBuffer>(name, numElements, is32Bit);
-		FCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
+		FGraphicsCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
 		return bufferRef;
 	}
 
 	FGpuConstantBufferRef FRenderDevice::CreateConstantBuffer(const std::string& name, uint32_t dataSize, const void* initData)
 	{
 		std::shared_ptr<FMakeConstantBuffer> bufferRef = std::make_shared<FMakeConstantBuffer>(name, dataSize);
-		FCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
+		FGraphicsCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
 		return bufferRef;
 	}
 

@@ -59,39 +59,16 @@ namespace Dash
 		FCommandContext(const FCommandContext&) = delete;
 		FCommandContext& operator=(const FCommandContext&) = delete;
 
-		static FCommandContext& Begin(const std::string& id = "", D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
-
-		// Flush existing commands to the GPU but keep the context alive
-		uint64_t Flush(bool waitForCompletion = false);
-
-		// Flush existing commands and release the current context
-		uint64_t Finish(bool waitForCompletion = false);
-
-		FGraphicsCommandContext& GetGraphicsCommandContext();
-		//FComputeCommandContext& GetComputeCommandContext();
-
 		FCommandList* GetCommandList() { return mCommandList; }
 		ID3D12GraphicsCommandList* GetD3DCommandList() { return mD3DCommandList; }
-
-		void TransitionBarrier(FGpuResourceRef resource, EResourceState newState, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, bool flushImmediate = false);
-		void UAVBarrier(FGpuResourceRef resource, bool flushImmediate = false);
-		void AliasingBarrier(FGpuResourceRef resourceBefore, FGpuResourceRef resourceAfter, bool flushImmediate = false);
-		void FlushResourceBarriers();
-
-		void SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type, ID3D12DescriptorHeap* heap);
-		void SetDescriptorHeaps(UINT count, D3D12_DESCRIPTOR_HEAP_TYPE types[], ID3D12DescriptorHeap* heaps[]);
-
-		void SetPipelineState(FPipelineStateObjectRef pso);
-		virtual void SetRootSignature(FRootSignatureRef rootSignature) = 0;
 
 		void PIXBeginEvent(const std::string& label);
 		void PIXEndEvent();
 		void PIXSetMarker(const std::string& label);
 
-		static void InitializeBuffer(FGpuBufferRef dest, const void* bufferData, size_t numBytes, size_t offset = 0);
-		static void UpdateTextureBuffer(FTextureBufferRef dest, uint32_t firstSubresource, uint32_t numSubresources, D3D12_SUBRESOURCE_DATA* subresourceData);
-
 	protected:
+		
+		static FCommandContext* Begin(const std::string& id = "", D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
 
 		void BindDescriptorHeaps();
 		void TrackResource(FGpuResourceRef resource);
@@ -133,27 +110,84 @@ namespace Dash
 		std::vector<bool> mSamplerBindState;
 	};
 
-	class FGraphicsCommandContext : public FCommandContext
+	class FCopyCommandContextBase : public FCommandContext
 	{
 	public:
-		FGraphicsCommandContext()
-			: FCommandContext(D3D12_COMMAND_LIST_TYPE_DIRECT)
-		{}
+		using FCommandContext::FCommandContext;
 
-		static FGraphicsCommandContext& Begin(const std::string& id = "")
+		void TransitionBarrier(FGpuResourceRef resource, EResourceState newState, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, bool flushImmediate = false);
+		void UAVBarrier(FGpuResourceRef resource, bool flushImmediate = false);
+		void AliasingBarrier(FGpuResourceRef resourceBefore, FGpuResourceRef resourceAfter, bool flushImmediate = false);
+		void FlushResourceBarriers();
+
+		static void InitializeBuffer(FGpuBufferRef dest, const void* bufferData, size_t numBytes, size_t offset = 0);
+		static void UpdateTextureBuffer(FTextureBufferRef dest, uint32_t firstSubresource, uint32_t numSubresources, D3D12_SUBRESOURCE_DATA* subresourceData);
+
+		// Flush existing commands to the GPU but keep the context alive
+		uint64_t Flush(bool waitForCompletion = false);
+
+		// Flush existing commands and release the current context
+		uint64_t Finish(bool waitForCompletion = false);
+	};
+
+	class FComputeCommandContextBase : public FCopyCommandContextBase
+	{
+	public:
+		using FCopyCommandContextBase::FCopyCommandContextBase;
+
+		void SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type, ID3D12DescriptorHeap* heap);
+		void SetDescriptorHeaps(UINT count, D3D12_DESCRIPTOR_HEAP_TYPE types[], ID3D12DescriptorHeap* heaps[]);
+
+		void SetComputePipelineState(FComputePSORef pso);
+		
+		//Set Root Parameters
+		void SetRootConstantBufferView(const std::string& bufferName, size_t sizeInBytes, const void* constants);
+		template<typename T>
+		void SetRootConstantBufferView(const std::string& bufferName, const T& constants)
 		{
-			return FCommandContext::Begin(id, D3D12_COMMAND_LIST_TYPE_DIRECT).GetGraphicsCommandContext();
+			SetRootConstantBufferView(bufferName, sizeof(T), &constants);
 		}
+
+		// Set descriptor table parameters
+		void SetShaderResourceView(const std::string& srvrName, FColorBufferRef buffer, EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0, UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+		void SetShaderResourceView(const std::string& srvrName, FTextureBufferRef buffer, EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0, UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 
 		void ClearUAV(FGpuBufferRef target);
 		void ClearUAV(FColorBufferRef target);
+
+		void Dispatch(uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ);
+
+	protected:
+
+		void SetComputeRootSignature(FRootSignatureRef rootSignature);
+
+		void SetRootConstantBufferView(UINT rootIndex, size_t sizeInBytes, const void* constants);
+
+		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FGpuResourceRef resource, const D3D12_CPU_DESCRIPTOR_HANDLE& srcDescriptors,
+			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0,
+			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+
+		void SetUnorderAccessView(UINT rootIndex, UINT descriptorOffset, FColorBufferRef buffer,
+			EResourceState stateAfter = EResourceState::UnorderedAccess, UINT firstSubResource = 0,
+			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+
+		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FDepthBufferRef buffer,
+			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0,
+			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+	};
+
+	class FGraphicsCommandContextBase : public FComputeCommandContextBase
+	{
+	public:
+		using FComputeCommandContextBase::FComputeCommandContextBase;
+
 		void ClearColor(FColorBufferRef target, D3D12_RECT* rect = nullptr);
 		void ClearColor(FColorBufferRef target, const FLinearColor& color, D3D12_RECT* rect = nullptr);
 		void ClearDepth(FDepthBufferRef target);
 		void ClearStencil(FDepthBufferRef target);
 		void ClearDepthAndStencil(FDepthBufferRef target);
 
-		virtual void SetRootSignature(FRootSignatureRef rootSignature) override;
+		void SetGraphicsPipelineState(FGraphicsPSORef pso);
 
 		void SetRenderTargets(UINT numRTVs, FColorBufferRef* rtvs);
 		void SetRenderTargets(UINT numRTVs, FColorBufferRef* rtvs, FDepthBufferRef depthBuffer);
@@ -170,25 +204,6 @@ namespace Dash
 		void SetBlendFactor(const FLinearColor& color);
 		void SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY type);
 
-		//Set Root Parameters
-
-		void SetRootConstantBufferView(const std::string& bufferName, size_t sizeInBytes, const void* constants);
-		template<typename T>
-		void SetRootConstantBufferView(const std::string& bufferName, const T& constants)
-		{
-			SetRootConstantBufferView(bufferName, sizeof(T), &constants);
-		}
-
-		// FGpuConstantBuffer 初始状态 D3D12_RESOURCE_STATE_COMMON 不可直接作为 SRV 和 UAV，需要转换为 D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER (D3D12_RESOURCE_STATE_GENERIC_READ) 状态
-		
-		// Set descriptor table parameters
-
-		void SetShaderResourceView(const std::string& srvrName, FColorBufferRef buffer,
-			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0, UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
-
-		void SetShaderResourceView(const std::string& srvrName, FTextureBufferRef buffer,
-			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0, UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
-		
 		void SetDynamicSampler(UINT rootIndex, UINT descriptorOffset, D3D12_CPU_DESCRIPTOR_HANDLE handle);
 		void SetDynamicSamplers(UINT rootIndex, UINT descriptorOffset, UINT count, D3D12_CPU_DESCRIPTOR_HANDLE handles[]);
 
@@ -199,27 +214,46 @@ namespace Dash
 		void SetDynamicIndexBuffer(size_t indexCount, const uint16_t* data);
 		void SetDynamicVertexBuffer(UINT slot, size_t vertexCount, size_t vertexStride, const void* data);
 
-		void Draw(UINT vertexCount, UINT vertexStartOffset = 0);
-		void DrawIndexed(UINT indexCount, UINT startIndexLocation = 0, UINT baseVertexLocation = 0);
-		void DrawInstanced(UINT vertexCountPerInstance, UINT instanceCount,
-			UINT startVertexLocation = 0, UINT startInstanceLocation = 0);
-		void DrawIndexedInstanced(UINT indexCountPerInstance, UINT instanceCount, UINT startIndexLocation,
-			INT baseVertexLocation, UINT startInstanceLocation);
-
 	protected:
 
-		void SetRootConstantBufferView(UINT rootIndex, size_t sizeInBytes, const void* constants);
+		void SetGraphicsRootSignature(FRootSignatureRef rootSignature);
+	};
 
-		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FGpuResourceRef resource, const D3D12_CPU_DESCRIPTOR_HANDLE& srcDescriptors,
-			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0,
-			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+	class FCopyCommandContext : public FCopyCommandContextBase
+	{
+	public:
+		FCopyCommandContext()
+			: FCopyCommandContextBase(D3D12_COMMAND_LIST_TYPE_COPY)
+		{}
+		virtual ~FCopyCommandContext() {}
 
-		void SetUnorderAccessView(UINT rootIndex, UINT descriptorOffset, FColorBufferRef buffer,
-			EResourceState stateAfter = EResourceState::UnorderedAccess, UINT firstSubResource = 0,
-			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+		static FCopyCommandContext& Begin(const std::string& id = "");
+	};
 
-		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FDepthBufferRef buffer,
-			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0,
-			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+	class FComputeCommandContext : public FComputeCommandContextBase
+	{
+	public:
+		FComputeCommandContext()
+			: FComputeCommandContextBase(D3D12_COMMAND_LIST_TYPE_COMPUTE)
+		{}
+		virtual ~FComputeCommandContext() {}
+
+		static FComputeCommandContext& Begin(const std::string& id = "");
+	};
+
+	class FGraphicsCommandContext : public FGraphicsCommandContextBase
+	{
+	public:
+		FGraphicsCommandContext()
+			: FGraphicsCommandContextBase(D3D12_COMMAND_LIST_TYPE_DIRECT)
+		{}
+		virtual ~FGraphicsCommandContext() {}
+
+		static FGraphicsCommandContext& Begin(const std::string& id = "");
+
+		void Draw(UINT vertexCount, UINT vertexStartOffset = 0);
+		void DrawIndexed(UINT indexCount, UINT startIndexLocation = 0, UINT baseVertexLocation = 0);
+		void DrawInstanced(UINT vertexCountPerInstance, UINT instanceCount, UINT startVertexLocation = 0, UINT startInstanceLocation = 0);
+		void DrawIndexedInstanced(UINT indexCountPerInstance, UINT instanceCount, UINT startIndexLocation, INT baseVertexLocation, UINT startInstanceLocation);
 	};
 }

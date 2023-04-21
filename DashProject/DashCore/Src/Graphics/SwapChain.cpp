@@ -137,7 +137,7 @@ namespace Dash
 		{
 			graphicsContext.SetRenderTarget(mDisplayBuffer);
 			//graphicsContext.ClearColor(mDisplayBuffer, mDisplayBuffer->GetClearColor());
-			graphicsContext.SetPipelineState(DrawPSO);
+			graphicsContext.SetGraphicsPipelineState(DrawPSO);
 			graphicsContext.SetViewportAndScissor(0, 0, mDisplayBuffer->GetWidth(), mDisplayBuffer->GetHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			graphicsContext.Draw(3);
@@ -146,7 +146,7 @@ namespace Dash
 		{
 			graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
 			//graphicsContext.ClearColor(FGraphicsCore::SwapChain->GetCurrentBackBuffer(), FLinearColor::Gray);
-			graphicsContext.SetPipelineState(PresentPSO);
+			graphicsContext.SetGraphicsPipelineState(PresentPSO);
 			graphicsContext.SetViewportAndScissor(0, 0, FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetWidth(), FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			graphicsContext.SetShaderResourceView("DisplayTexture", mDisplayBuffer);
