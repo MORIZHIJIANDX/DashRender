@@ -15,8 +15,6 @@ namespace Dash
 
 		bool RayPlaneIntersection(const FRay& r, const FVector3f& normal, const FVector3f& p, Scalar& t) noexcept;
 
-
-
 	
 		FORCEINLINE bool RayTriangleIntersection(const FRay& r, const FVector3f& v0, const FVector3f& v1, const FVector3f& v2) noexcept
 		{

@@ -26,19 +26,19 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Distribution|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -85,6 +85,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <FxCompile>
       <ShaderModel>6.0</ShaderModel>
@@ -118,6 +119,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <FxCompile>
       <ShaderModel>6.0</ShaderModel>
@@ -152,6 +154,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <FxCompile>
       <ShaderModel>6.0</ShaderModel>
@@ -223,7 +226,6 @@
     <ClInclude Include="Src\Math\Algebra.h" />
     <ClInclude Include="Src\Math\BitMask.h" />
     <ClInclude Include="Src\Math\Color.h" />
-    <ClInclude Include="Src\Math\DashFormatEnums.h" />
     <ClInclude Include="Src\Math\Intersection.h" />
     <ClInclude Include="Src\Math\Interval.h" />
     <ClInclude Include="Src\Math\MathType.h" />
@@ -243,6 +245,7 @@
     <ClInclude Include="Src\Math\Vector4.h" />
     <ClInclude Include="Src\Math\Vector4_SSE.h" />
     <ClInclude Include="Src\PCH\PCH.h" />
+    <ClInclude Include="Src\TextureLoader\stb_image.h" />
     <ClInclude Include="Src\ThirdParty\dxc\inc\d3d12shader.h" />
     <ClInclude Include="Src\ThirdParty\dxc\inc\dxcapi.h" />
     <ClInclude Include="Src\ThirdParty\imgui\backends\imgui_impl_dx12.h" />
@@ -256,12 +259,9 @@
     <ClInclude Include="Src\ThirdParty\loguru\loguru.h" />
     <ClInclude Include="Src\Utility\Assert.h" />
     <ClInclude Include="Src\Utility\BitwiseEnum.h" />
-    <ClInclude Include="Src\Utility\DDS.h" />
     <ClInclude Include="Src\Utility\Events.h" />
     <ClInclude Include="Src\Utility\FileUtility.h" />
     <ClInclude Include="Src\Utility\Hash.h" />
-    <ClInclude Include="Src\Utility\Image.h" />
-    <ClInclude Include="Src\Utility\ImageHelper.h" />
     <ClInclude Include="Src\Utility\KeyCodes.h" />
     <ClInclude Include="Src\Utility\Keyboard.h" />
     <ClInclude Include="Src\Utility\LogEnums.h" />
@@ -325,8 +325,6 @@
     <ClCompile Include="Src\Utility\Assert.cpp" />
     <ClCompile Include="Src\Utility\FileUtility.cpp" />
     <ClCompile Include="Src\Utility\Hash.cpp" />
-    <ClCompile Include="Src\Utility\Image.cpp" />
-    <ClCompile Include="Src\Utility\ImageHelper.cpp" />
     <ClCompile Include="Src\Utility\Keyboard.cpp" />
     <ClCompile Include="Src\Utility\LogManager.cpp" />
     <ClCompile Include="Src\Utility\Mouse.cpp" />
@@ -341,17 +339,7 @@
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\WinPixEventRuntime.1.0.220810001\build\WinPixEventRuntime.targets" Condition="Exists('..\packages\WinPixEventRuntime.1.0.220810001\build\WinPixEventRuntime.targets')" />
   </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\WinPixEventRuntime.1.0.220810001\build\WinPixEventRuntime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinPixEventRuntime.1.0.220810001\build\WinPixEventRuntime.targets'))" />
-  </Target>
 </Project>

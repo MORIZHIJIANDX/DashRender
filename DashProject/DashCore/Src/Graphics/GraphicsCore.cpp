@@ -45,7 +45,12 @@ namespace Dash
 		SHGetKnownFolderPath(FOLDERID_ProgramFiles, KF_FLAG_DEFAULT, NULL, &programFilesPath);
 
 		std::filesystem::path pixInstallationPath = programFilesPath;
-		pixInstallationPath /= "Microsoft PIX";
+		pixInstallationPath /= "Microsoft PIX"; 
+
+		if (!std::filesystem::exists(pixInstallationPath))
+		{
+			pixInstallationPath = pixInstallationPath.parent_path() / "Microsoft PIX Preview";
+		}
 
 		std::wstring newestVersionFound;
 

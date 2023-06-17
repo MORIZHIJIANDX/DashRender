@@ -131,4 +131,59 @@ namespace Dash
 		uint32_t Height = 1;
 		uint32_t Depth = 1;
 	};
+
+	template<typename T>
+	FORCEINLINE EResourceFormat GetFormatForType()
+	{
+		ASSERT_FAIL("Invalid Format Type!");
+		return EResourceFormat::UnKwon;
+	}
+
+	template<>
+	FORCEINLINE EResourceFormat GetFormatForType<float>()
+	{
+		return EResourceFormat::R32_Float;
+	}
+
+	template<>
+	FORCEINLINE EResourceFormat GetFormatForType<unsigned short>()
+	{
+		return EResourceFormat::R16_Unsigned;
+	}
+
+	template<>
+	FORCEINLINE EResourceFormat GetFormatForType<unsigned int>()
+	{
+		return EResourceFormat::R32_Unsigned;
+	}
+
+	template<>
+	FORCEINLINE EResourceFormat GetFormatForType<FVector2f>()
+	{
+		return EResourceFormat::RG32_Float;
+	}
+
+	template<>
+	FORCEINLINE EResourceFormat GetFormatForType<FVector3f>()
+	{
+		return EResourceFormat::RGB32_Float;
+	}
+
+	template<>
+	FORCEINLINE EResourceFormat GetFormatForType<FVector4f>()
+	{
+		return EResourceFormat::RGBA32_Float;
+	}
+
+	template<>
+	FORCEINLINE EResourceFormat GetFormatForType<FColor>()
+	{
+		return EResourceFormat::RGBA8_Unsigned;
+	}
+
+	template<>
+	FORCEINLINE EResourceFormat GetFormatForType<FLinearColor>()
+	{
+		return EResourceFormat::RGBA32_Float;
+	}
 }

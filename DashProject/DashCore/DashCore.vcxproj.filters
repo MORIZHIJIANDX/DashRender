@@ -19,6 +19,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{EFAC8DF2-5B8C-0C8E-64A4-9764D00273EF}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TextureLoader">
+      <UniqueIdentifier>{4D05AFAA-B9C5-2AE1-8200-745EEE7F6FBD}</UniqueIdentifier>
+    </Filter>
     <Filter Include="ThirdParty">
       <UniqueIdentifier>{107145F9-FC28-8746-6530-60A251072237}</UniqueIdentifier>
     </Filter>
@@ -169,6 +172,9 @@
     <ClInclude Include="Src\Graphics\SwapChain.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\TextureBuffer.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\Viewport.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -191,9 +197,6 @@
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Color.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Math\DashFormatEnums.h">
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Intersection.h">
@@ -253,6 +256,9 @@
     <ClInclude Include="Src\PCH\PCH.h">
       <Filter>PCH</Filter>
     </ClInclude>
+    <ClInclude Include="Src\TextureLoader\stb_image.h">
+      <Filter>TextureLoader</Filter>
+    </ClInclude>
     <ClInclude Include="Src\ThirdParty\dxc\inc\d3d12shader.h">
       <Filter>ThirdParty\dxc\inc</Filter>
     </ClInclude>
@@ -292,9 +298,6 @@
     <ClInclude Include="Src\Utility\BitwiseEnum.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Utility\DDS.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Utility\Events.h">
       <Filter>Utility</Filter>
     </ClInclude>
@@ -302,12 +305,6 @@
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\Hash.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Utility\Image.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Utility\ImageHelper.h">
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\KeyCodes.h">
@@ -336,9 +333,6 @@
     </ClInclude>
     <ClInclude Include="Src\Utility\Visitor.h">
       <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Graphics\TextureBuffer.h">
-      <Filter>Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -448,6 +442,9 @@
     <ClCompile Include="Src\Graphics\SwapChain.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Graphics\TextureBuffer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Math\Color.cpp">
       <Filter>Math</Filter>
     </ClCompile>
@@ -487,12 +484,6 @@
     <ClCompile Include="Src\Utility\Hash.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Utility\Image.cpp">
-      <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Utility\ImageHelper.cpp">
-      <Filter>Utility</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Utility\Keyboard.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
@@ -508,9 +499,6 @@
     <ClCompile Include="Src\Utility\SystemTimer.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Graphics\TextureBuffer.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\FullScreen_PS.hlsl">
@@ -519,8 +507,5 @@
     <FxCompile Include="Src\Shaders\generateMips.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>

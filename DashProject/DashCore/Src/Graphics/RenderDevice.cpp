@@ -629,6 +629,11 @@ namespace Dash
 		return bufferRef;
 	}
 
+	FTextureBufferRef FRenderDevice::CreateTextureBufferFromFile(const std::string& name, const std::string& fileName)
+	{
+		return FTextureBufferRef();
+	}
+
 	FGpuVertexBufferRef FRenderDevice::CreateVertexBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData)
 	{
 		std::shared_ptr<FMakeVertexBuffer> bufferRef = std::make_shared<FMakeVertexBuffer>(name, numElements, elementSize);
