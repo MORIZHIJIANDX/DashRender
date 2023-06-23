@@ -58,12 +58,14 @@ namespace Dash
 
 		QueryAllocationInfo();
 
-		if (allowUAV && MsaaSampleCount == 1)
+		EFormatSupport formatSupport = CheckFormatSupport(mDescription.Format);
+
+		if (allowUAV && EnumMaskContains(formatSupport, EFormatSupport::UnorderAccessView) && MsaaSampleCount == 1)
 		{
 			mDescription.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 		}
 
-		if (allowRTV && !IsCompressedFormat(mDescription.Format))
+		if (allowRTV && EnumMaskContains(formatSupport, EFormatSupport::RenderTargetView) && !IsCompressedFormat(mDescription.Format))
 		{
 			mDescription.Flags |= D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 		}

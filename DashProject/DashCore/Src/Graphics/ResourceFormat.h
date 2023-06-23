@@ -2,6 +2,9 @@
 
 #include <dxgiformat.h>
 #include <dxgicommon.h>
+#include <variant>
+#include <optional>
+#include "Math/MathType.h"
 #include "ResourceState.h"
 
 namespace Dash

@@ -9,6 +9,8 @@
 #include "TextureBuffer.h"
 #include "GpuBuffer.h"
 #include "CommandContext.h"
+#include "TextureLoader/HDRTextureLoader.h"
+#include "Utility/FileUtility.h"
 
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -631,6 +633,24 @@ namespace Dash
 
 	FTextureBufferRef FRenderDevice::CreateTextureBufferFromFile(const std::string& name, const std::string& fileName)
 	{
+		if(FFileUtility::IsPathExistent(fileName))
+		{
+			std::string fileExtension = FFileUtility::GetFileExtension(fileName);
+			if (fileExtension == "hdr")
+			{
+				FTextureBufferDescription desc;
+				D3D12_SUBRESOURCE_DATA resourceData;
+				std::vector<uint8_t> decodeData; 
+				if(LoadHDRTextureFromFile(fileName, desc, resourceData, decodeData))
+				{
+					std::shared_ptr<FTextureBuffer> bufferRef = std::make_shared<FMakeTextureBuffer>(name, desc);
+
+					FGraphicsCommandContext::UpdateTextureBuffer(bufferRef, 0, 1, &resourceData);
+					return bufferRef;
+				}
+			}
+		}
+		
 		return FTextureBufferRef();
 	}
 

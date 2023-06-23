@@ -256,6 +256,12 @@
     <ClInclude Include="Src\PCH\PCH.h">
       <Filter>PCH</Filter>
     </ClInclude>
+    <ClInclude Include="Src\TextureLoader\HDRTextureLoader.h">
+      <Filter>TextureLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\TextureLoader\WICTextureLoader.h">
+      <Filter>TextureLoader</Filter>
+    </ClInclude>
     <ClInclude Include="Src\TextureLoader\stb_image.h">
       <Filter>TextureLoader</Filter>
     </ClInclude>
@@ -450,6 +456,12 @@
     </ClCompile>
     <ClCompile Include="Src\PCH\PCH.cpp">
       <Filter>PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\TextureLoader\HDRTextureLoader.cpp">
+      <Filter>TextureLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\TextureLoader\WICTextureLoader.cpp">
+      <Filter>TextureLoader</Filter>
     </ClCompile>
     <ClCompile Include="Src\ThirdParty\imgui\backends\imgui_impl_dx12.cpp">
       <Filter>ThirdParty\imgui\backends</Filter>

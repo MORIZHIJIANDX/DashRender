@@ -55,10 +55,11 @@ project "DashCore"
         "dxcompiler.lib"
     }
 
+    defines { 'ENGINE_PATH="' .. path.join(path.getabsolute(""), "%{prj.name}") .. '"' }
+
     -- shader config
     shadermodel ("6.0")
     shaderassembler("AssemblyCode")
-    local shaderdir = "%{prj.name}/Src/Shaders/"
 
     filter { "system:windows" }
         prebuildcommands { "powershell -ExecutionPolicy Bypass -File %{wks.location}/Vendor/GetDXC/GetDXC.ps1 %{wks.location}/%{prj.name}/Src/ThirdParty/dxc" }
@@ -69,26 +70,6 @@ project "DashCore"
     
     filter "files:**.hlsl"
         flags("ExcludeFromBuild")
-        --shaderobjectfileoutput(shaderdir.."%{file.basename}"..".cso")
-        --shaderassembleroutput(shaderdir.."%{file.basename}"..".asm")
-
-    --[[
-    filter "files:**_PS.hlsl"
-        shadertype("Pixel")
-        shaderentry ("PSMain")
-        shaderoptions("-T \"ps_6_0\"")
-        shaderoptions("/WX")
-        --shaderoptions("/Zi")
-        shaderoptions("/Zp")
-        shaderoptions("-Qstrip_debug")
-        shaderoptions("-Qstrip_reflect")
-        
-    
-    filter "files:**_VS.hlsl"
-        shadertype("Vertex")
-        shaderentry ("VSMain")
-        shaderoptions("/WX")
-    ]]
 
     filter "system:windows"
         systemversion "latest"
@@ -122,6 +103,8 @@ project "DashProject"
     objdir ("Bin-Intermediate/"..outputdir.."/%{prj.name}")
 
     characterset ("MBCS")
+
+    defines { 'PROJECT_PATH="' .. path.join(path.getabsolute(""), "%{prj.name}") .. '"' }
 
     --copy dxc dll
     prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\Src\\ThirdParty\\dxc\\bin\\x64\\dxcompiler.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }

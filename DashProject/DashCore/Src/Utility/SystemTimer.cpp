@@ -10,7 +10,7 @@ namespace Dash
 	{
 		LARGE_INTEGER frequency{};
 		ASSERT_MSG(TRUE == QueryPerformanceFrequency(&frequency), "Unable to query performance frequency");
-		mSecondPerTick = 1.0 / static_cast<double>(frequency.QuadPart);
+		mSecondPerTick = 1.0 / FMath::Max(static_cast<double>(frequency.QuadPart), static_cast<double>(0.0f));
 	}
 
 	int64_t FSystemTimer::GetCurrentTick()

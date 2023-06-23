@@ -59,6 +59,12 @@ namespace Dash
 		LOG_INFO << "Parent Path : " << FFileUtility::GetParentPath(FFileUtility::GetAbsolutePath(path));
 		*/
 
+		//std::string projectpath = std::string(PROJECT_PATH);
+
+		//std::string projectpath = FFileUtility::GetCurrentPath();
+
+		//LOG_INFO << "Project Path : " << projectpath;
+
 		LOG_INFO << "Startup";
 	}
 

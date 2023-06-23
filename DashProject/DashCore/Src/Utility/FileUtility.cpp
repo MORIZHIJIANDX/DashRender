@@ -149,6 +149,13 @@ namespace Dash
 		return std::filesystem::current_path().string();
 	}
 
+	std::string FFileUtility::GetEngineDir()
+	{
+		std::string EngineDir;
+
+		return EngineDir;
+	}
+
 	Dash::FFileUtility::FileTimeType FFileUtility::GetFileLastWriteTime(const std::string& str)
 	{
 		return std::filesystem::last_write_time(std::filesystem::path(str));

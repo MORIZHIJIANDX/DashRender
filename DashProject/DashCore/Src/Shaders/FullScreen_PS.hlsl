@@ -1,19 +1,5 @@
-
-struct VSInput
-{
-	float3 Position : POSITION;
-	float2 UV : TEXCOORD;
-};
-
-struct PSInput
-{
-	float4 Position : SV_POSITION;
-	float2 UV : TEXCOORD0;
-};
-
 Texture2D DisplayTexture : register(t0);
 SamplerState StaticSampler : register(s3);
-
 
 void VS_Main(
 	in uint VertID : SV_VertexID,

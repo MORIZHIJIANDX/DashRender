@@ -16,6 +16,8 @@
 #include "BlendState.h"
 #include "DepthStencilState.h"
 
+#include "Utility/FileUtility.h"
+
 namespace Dash
 {
 	using namespace Microsoft::WRL;
@@ -99,8 +101,13 @@ namespace Dash
 			}	
 		}
 
-		FTextureBufferDescription textureDest = FTextureBufferDescription::Create2D(EResourceFormat::RGBA8_Unsigned_Norm, textureWidth, textureWidth, 1);
-		mTexture = FGraphicsCore::Device->CreateTextureBufferFromMemory("TestTexture", textureDest, colorData.data());
+		//FTextureBufferDescription textureDest = FTextureBufferDescription::Create2D(EResourceFormat::RGBA8_Unsigned_Norm, textureWidth, textureWidth, 1);
+		//mTexture = FGraphicsCore::Device->CreateTextureBufferFromMemory("TestTexture", textureDest, colorData.data());
+
+		std::string hdrTexturePath = std::string(ENGINE_PATH) + "/Resource/Newport_Loft_Ref.hdr";
+
+
+		mTexture = FGraphicsCore::Device->CreateTextureBufferFromFile("HDR_Texture", hdrTexturePath);
 	}
 
 	void FSwapChain::Destroy()
@@ -136,7 +143,6 @@ namespace Dash
 
 		{
 			graphicsContext.SetRenderTarget(mDisplayBuffer);
-			//graphicsContext.ClearColor(mDisplayBuffer, mDisplayBuffer->GetClearColor());
 			graphicsContext.SetGraphicsPipelineState(DrawPSO);
 			graphicsContext.SetViewportAndScissor(0, 0, mDisplayBuffer->GetWidth(), mDisplayBuffer->GetHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -145,7 +151,6 @@ namespace Dash
 		
 		{
 			graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
-			//graphicsContext.ClearColor(FGraphicsCore::SwapChain->GetCurrentBackBuffer(), FLinearColor::Gray);
 			graphicsContext.SetGraphicsPipelineState(PresentPSO);
 			graphicsContext.SetViewportAndScissor(0, 0, FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetWidth(), FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

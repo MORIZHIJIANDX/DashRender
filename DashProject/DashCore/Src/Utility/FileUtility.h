@@ -38,6 +38,8 @@ namespace Dash
 
 		static std::string GetCurrentPath();
 
+		static std::string GetEngineDir();
+
 		static FileTimeType GetFileLastWriteTime(const std::string& str);
 
 		static bool IsPathExistent(const std::string& str);
