@@ -10,7 +10,8 @@ namespace Dash
 	{
 		stbi_set_flip_vertically_on_load(true);
 		int width, height, components;
-		float* Data = stbi_loadf(fileName.c_str(), &width, &height, &components, 0);
+		int reqComponents = 4;
+		float* Data = stbi_loadf(fileName.c_str(), &width, &height, &components, reqComponents);
 		ASSERT((components == 3) || (components == 4));
 
 		if (Data)
@@ -30,7 +31,7 @@ namespace Dash
 			subResource.SlicePitch = static_cast<LONG>(NumBytes);
 
 			// TextureInfo
-			EResourceFormat format = (components == 3) ? EResourceFormat::RGB32_Float : EResourceFormat::RGBA32_Float;
+			EResourceFormat format = (reqComponents == 3) ? EResourceFormat::RGB32_Float : EResourceFormat::RGBA32_Float;
 			textureDescription = FTextureBufferDescription::Create2D(format, width, height);
 
 			return true;

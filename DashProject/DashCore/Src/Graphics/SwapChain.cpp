@@ -17,6 +17,7 @@
 #include "DepthStencilState.h"
 
 #include "Utility/FileUtility.h"
+#include "TextureLoader/TGATextureLoader.h"
 
 namespace Dash
 {
@@ -104,10 +105,22 @@ namespace Dash
 		//FTextureBufferDescription textureDest = FTextureBufferDescription::Create2D(EResourceFormat::RGBA8_Unsigned_Norm, textureWidth, textureWidth, 1);
 		//mTexture = FGraphicsCore::Device->CreateTextureBufferFromMemory("TestTexture", textureDest, colorData.data());
 
-		std::string hdrTexturePath = std::string(ENGINE_PATH) + "/Resource/Newport_Loft_Ref.hdr";
+		std::string pngTexturePath = std::string(ENGINE_PATH) + "/Resource/AssaultRifle_BaseColor.png";
 
+		mTexture = FGraphicsCore::Device->CreateTextureBufferFromFile("HDR_Texture", pngTexturePath);
 
-		mTexture = FGraphicsCore::Device->CreateTextureBufferFromFile("HDR_Texture", hdrTexturePath);
+		{
+			FTextureBufferDescription texDesc;
+			D3D12_SUBRESOURCE_DATA resourceData;
+			std::vector<uint8_t> decodeData;
+
+			std::string tgaTexturePath = std::string(ENGINE_PATH) + "/Resource/TestTGA.tga";
+
+			if (FFileUtility::IsPathExistent(tgaTexturePath))
+			{
+				LoadTGATextureFromFile(tgaTexturePath, ETGA_FLAGS::TGA_FLAGS_NONE, texDesc, resourceData, decodeData);
+			}
+		}
 	}
 
 	void FSwapChain::Destroy()
@@ -154,7 +167,7 @@ namespace Dash
 			graphicsContext.SetGraphicsPipelineState(PresentPSO);
 			graphicsContext.SetViewportAndScissor(0, 0, FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetWidth(), FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			graphicsContext.SetShaderResourceView("DisplayTexture", mDisplayBuffer);
+			graphicsContext.SetShaderResourceView("DisplayTexture", mTexture);
 			graphicsContext.Draw(3);
 		}
 

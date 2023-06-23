@@ -340,6 +340,12 @@
     <ClInclude Include="Src\Utility\Visitor.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Src\TextureLoader\TGATextureLoader.h">
+      <Filter>TextureLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\TextureLoader\TextureLoaderHelper.h">
+      <Filter>TextureLoader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\EntryPoint.cpp" />
@@ -510,6 +516,9 @@
     </ClCompile>
     <ClCompile Include="Src\Utility\SystemTimer.cpp">
       <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\TextureLoader\TGATextureLoader.cpp">
+      <Filter>TextureLoader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

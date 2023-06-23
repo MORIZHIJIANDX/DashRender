@@ -76,7 +76,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ENGINE_PATH="E:/DXCode/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -108,7 +108,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ENGINE_PATH="E:/DXCode/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -143,7 +143,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ENGINE_PATH="E:/DXCode/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -246,6 +246,8 @@
     <ClInclude Include="Src\Math\Vector4_SSE.h" />
     <ClInclude Include="Src\PCH\PCH.h" />
     <ClInclude Include="Src\TextureLoader\HDRTextureLoader.h" />
+    <ClInclude Include="Src\TextureLoader\TextureLoaderHelper.h" />
+    <ClInclude Include="Src\TextureLoader\TGATextureLoader.h" />
     <ClInclude Include="Src\TextureLoader\WICTextureLoader.h" />
     <ClInclude Include="Src\TextureLoader\stb_image.h" />
     <ClInclude Include="Src\ThirdParty\dxc\inc\d3d12shader.h" />
@@ -317,6 +319,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Src\TextureLoader\HDRTextureLoader.cpp" />
+    <ClCompile Include="Src\TextureLoader\TGATextureLoader.cpp" />
     <ClCompile Include="Src\TextureLoader\WICTextureLoader.cpp" />
     <ClCompile Include="Src\ThirdParty\imgui\backends\imgui_impl_dx12.cpp" />
     <ClCompile Include="Src\ThirdParty\imgui\backends\imgui_impl_win32.cpp" />

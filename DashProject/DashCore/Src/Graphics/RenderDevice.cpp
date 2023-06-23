@@ -10,6 +10,7 @@
 #include "GpuBuffer.h"
 #include "CommandContext.h"
 #include "TextureLoader/HDRTextureLoader.h"
+#include "TextureLoader/WICTextureLoader.h"
 #include "Utility/FileUtility.h"
 
 #pragma comment(lib, "dxguid.lib")
@@ -636,12 +637,12 @@ namespace Dash
 		if(FFileUtility::IsPathExistent(fileName))
 		{
 			std::string fileExtension = FFileUtility::GetFileExtension(fileName);
-			if (fileExtension == "hdr")
+			if (fileExtension == "png")
 			{
 				FTextureBufferDescription desc;
 				D3D12_SUBRESOURCE_DATA resourceData;
 				std::vector<uint8_t> decodeData; 
-				if(LoadHDRTextureFromFile(fileName, desc, resourceData, decodeData))
+				if(LoadWICTextureFromFile(fileName, EWIC_LOADER_FLAGS::WIC_LOADER_DEFAULT, desc, resourceData, decodeData))
 				{
 					std::shared_ptr<FTextureBuffer> bufferRef = std::make_shared<FMakeTextureBuffer>(name, desc);
 

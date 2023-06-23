@@ -89,6 +89,8 @@ namespace Dash
 	DXGI_FORMAT D3DFormat(EResourceFormat format);
 	DXGI_COLOR_SPACE_TYPE D3DColorSpace(EColorSpace space);
 
+	DXGI_FORMAT MakeSRGB(DXGI_FORMAT format) noexcept;
+
 	EResourceFormat BaseFormat(EResourceFormat format);
 
 	bool IsDepthStencilFormat(DXGI_FORMAT format);

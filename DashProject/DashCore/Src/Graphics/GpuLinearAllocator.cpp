@@ -96,7 +96,7 @@ namespace Dash
 		FPage* newPage = CreateNewPage(pageSize);
 		mLargePagePool.emplace_back(newPage);
 
-		return nullptr;
+		return newPage;
 	}
 
 	FGpuLinearAllocator::FPage* FGpuLinearAllocator::FPageManager::CreateNewPage(size_t pageSize /*= 0*/)
