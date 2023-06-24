@@ -53,6 +53,8 @@ namespace Dash
 
 	void InitializeApplication(IGameApp* app)
 	{
+		::CoInitialize(nullptr);
+
 		FLogManager::Get()->Init();
 
 		FMouse::Get().Initialize(app->GetWindowHandle());

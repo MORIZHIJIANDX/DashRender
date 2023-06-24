@@ -87,6 +87,7 @@ namespace Dash
 		PresentPSO->SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
 		PresentPSO->Finalize();
 		
+		/*
 		const int32_t textureWidth = 512;
 		std::vector<FColor> colorData;
 		colorData.reserve(textureWidth * textureWidth);
@@ -102,13 +103,15 @@ namespace Dash
 			}	
 		}
 
-		//FTextureBufferDescription textureDest = FTextureBufferDescription::Create2D(EResourceFormat::RGBA8_Unsigned_Norm, textureWidth, textureWidth, 1);
-		//mTexture = FGraphicsCore::Device->CreateTextureBufferFromMemory("TestTexture", textureDest, colorData.data());
-
+		FTextureBufferDescription textureDest = FTextureBufferDescription::Create2D(EResourceFormat::RGBA8_Unsigned_Norm, textureWidth, textureWidth, 1);
+		mTexture = FGraphicsCore::Device->CreateTextureBufferFromMemory("TestTexture", textureDest, colorData.data());
+		*/
+		
 		std::string pngTexturePath = std::string(ENGINE_PATH) + "/Resource/AssaultRifle_BaseColor.png";
 
-		mTexture = FGraphicsCore::Device->CreateTextureBufferFromFile("HDR_Texture", pngTexturePath);
+		mTexture = FGraphicsCore::Device->CreateTextureBufferFromFile("WIC_Texture", pngTexturePath);
 
+		/*
 		{
 			FTextureBufferDescription texDesc;
 			D3D12_SUBRESOURCE_DATA resourceData;
@@ -121,6 +124,7 @@ namespace Dash
 				LoadTGATextureFromFile(tgaTexturePath, ETGA_FLAGS::TGA_FLAGS_NONE, texDesc, resourceData, decodeData);
 			}
 		}
+		*/
 	}
 
 	void FSwapChain::Destroy()

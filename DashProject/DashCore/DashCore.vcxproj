@@ -76,7 +76,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENGINE_PATH="E:/DXCode/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -108,7 +108,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENGINE_PATH="E:/DXCode/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -143,7 +143,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENGINE_PATH="E:/DXCode/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -246,10 +246,16 @@
     <ClInclude Include="Src\Math\Vector4_SSE.h" />
     <ClInclude Include="Src\PCH\PCH.h" />
     <ClInclude Include="Src\TextureLoader\HDRTextureLoader.h" />
-    <ClInclude Include="Src\TextureLoader\TextureLoaderHelper.h" />
     <ClInclude Include="Src\TextureLoader\TGATextureLoader.h" />
+    <ClInclude Include="Src\TextureLoader\TextureLoaderHelper.h" />
     <ClInclude Include="Src\TextureLoader\WICTextureLoader.h" />
     <ClInclude Include="Src\TextureLoader\stb_image.h" />
+    <ClInclude Include="Src\ThirdParty\DirectXTex\BC.h" />
+    <ClInclude Include="Src\ThirdParty\DirectXTex\DDS.h" />
+    <ClInclude Include="Src\ThirdParty\DirectXTex\DirectXTex.h" />
+    <ClInclude Include="Src\ThirdParty\DirectXTex\DirectXTexP.h" />
+    <ClInclude Include="Src\ThirdParty\DirectXTex\filters.h" />
+    <ClInclude Include="Src\ThirdParty\DirectXTex\scoped.h" />
     <ClInclude Include="Src\ThirdParty\dxc\inc\d3d12shader.h" />
     <ClInclude Include="Src\ThirdParty\dxc\inc\dxcapi.h" />
     <ClInclude Include="Src\ThirdParty\imgui\backends\imgui_impl_dx12.h" />
@@ -321,6 +327,23 @@
     <ClCompile Include="Src\TextureLoader\HDRTextureLoader.cpp" />
     <ClCompile Include="Src\TextureLoader\TGATextureLoader.cpp" />
     <ClCompile Include="Src\TextureLoader\WICTextureLoader.cpp" />
+    <ClCompile Include="Src\ThirdParty\DirectXTex\BC.cpp" />
+    <ClCompile Include="Src\ThirdParty\DirectXTex\BC4BC5.cpp" />
+    <ClCompile Include="Src\ThirdParty\DirectXTex\BC6HBC7.cpp" />
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexCompress.cpp" />
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexConvert.cpp" />
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexDDS.cpp" />
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexFlipRotate.cpp" />
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexHDR.cpp" />
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexImage.cpp" />
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexMipmaps.cpp" />
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexMisc.cpp" />
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexNormalMaps.cpp" />
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexPMAlpha.cpp" />
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexResize.cpp" />
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexTGA.cpp" />
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexUtil.cpp" />
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexWIC.cpp" />
     <ClCompile Include="Src\ThirdParty\imgui\backends\imgui_impl_dx12.cpp" />
     <ClCompile Include="Src\ThirdParty\imgui\backends\imgui_impl_win32.cpp" />
     <ClCompile Include="Src\ThirdParty\imgui\imgui.cpp" />

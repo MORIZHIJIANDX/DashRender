@@ -25,6 +25,9 @@
     <Filter Include="ThirdParty">
       <UniqueIdentifier>{107145F9-FC28-8746-6530-60A251072237}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ThirdParty\DirectXTex">
+      <UniqueIdentifier>{631DCFD8-CF89-8AD3-987D-223104A9AC3B}</UniqueIdentifier>
+    </Filter>
     <Filter Include="ThirdParty\dxc">
       <UniqueIdentifier>{1EF8D211-0AC6-C617-F359-373EDFC6A27C}</UniqueIdentifier>
     </Filter>
@@ -259,11 +262,35 @@
     <ClInclude Include="Src\TextureLoader\HDRTextureLoader.h">
       <Filter>TextureLoader</Filter>
     </ClInclude>
+    <ClInclude Include="Src\TextureLoader\TGATextureLoader.h">
+      <Filter>TextureLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\TextureLoader\TextureLoaderHelper.h">
+      <Filter>TextureLoader</Filter>
+    </ClInclude>
     <ClInclude Include="Src\TextureLoader\WICTextureLoader.h">
       <Filter>TextureLoader</Filter>
     </ClInclude>
     <ClInclude Include="Src\TextureLoader\stb_image.h">
       <Filter>TextureLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\DirectXTex\BC.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\DirectXTex\DDS.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\DirectXTex\DirectXTex.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\DirectXTex\DirectXTexP.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\DirectXTex\filters.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\DirectXTex\scoped.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
     </ClInclude>
     <ClInclude Include="Src\ThirdParty\dxc\inc\d3d12shader.h">
       <Filter>ThirdParty\dxc\inc</Filter>
@@ -339,12 +366,6 @@
     </ClInclude>
     <ClInclude Include="Src\Utility\Visitor.h">
       <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\TextureLoader\TGATextureLoader.h">
-      <Filter>TextureLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\TextureLoader\TextureLoaderHelper.h">
-      <Filter>TextureLoader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -466,8 +487,62 @@
     <ClCompile Include="Src\TextureLoader\HDRTextureLoader.cpp">
       <Filter>TextureLoader</Filter>
     </ClCompile>
+    <ClCompile Include="Src\TextureLoader\TGATextureLoader.cpp">
+      <Filter>TextureLoader</Filter>
+    </ClCompile>
     <ClCompile Include="Src\TextureLoader\WICTextureLoader.cpp">
       <Filter>TextureLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\DirectXTex\BC.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\DirectXTex\BC4BC5.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\DirectXTex\BC6HBC7.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexCompress.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexConvert.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexDDS.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexFlipRotate.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexHDR.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexImage.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexMipmaps.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexMisc.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexNormalMaps.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexPMAlpha.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexResize.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexTGA.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexUtil.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexWIC.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
     </ClCompile>
     <ClCompile Include="Src\ThirdParty\imgui\backends\imgui_impl_dx12.cpp">
       <Filter>ThirdParty\imgui\backends</Filter>
@@ -516,9 +591,6 @@
     </ClCompile>
     <ClCompile Include="Src\Utility\SystemTimer.cpp">
       <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\TextureLoader\TGATextureLoader.cpp">
-      <Filter>TextureLoader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

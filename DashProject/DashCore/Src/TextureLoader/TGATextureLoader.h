@@ -6,7 +6,7 @@
 
 namespace Dash
 {
-    enum TGA_FLAGS : unsigned long
+    enum class ETGA_LOAD_FLAGS : unsigned long
     {
         TGA_FLAGS_NONE = 0x0,
 
@@ -29,10 +29,13 @@ namespace Dash
         // If no colorspace is specified in TGA 2.0 metadata, assume sRGB
     };
 
-	bool LoadTGATextureFromFile(
+    ENABLE_BITMASK_OPERATORS(ETGA_LOAD_FLAGS);
+
+    bool LoadTGATextureFromFile(
         const std::string& fileName,
-        TGA_FLAGS flags,
+        ETGA_LOAD_FLAGS loadFlags,
         FTextureBufferDescription& textureDescription,
         D3D12_SUBRESOURCE_DATA& subResource,
-        std::vector<uint8_t>& decodedData) noexcept;
+        std::vector<uint8_t>& decodedData);
+
 }

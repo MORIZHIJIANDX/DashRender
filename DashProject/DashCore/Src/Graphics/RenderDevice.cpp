@@ -642,7 +642,7 @@ namespace Dash
 				FTextureBufferDescription desc;
 				D3D12_SUBRESOURCE_DATA resourceData;
 				std::vector<uint8_t> decodeData; 
-				if(LoadWICTextureFromFile(fileName, EWIC_LOADER_FLAGS::WIC_LOADER_DEFAULT, desc, resourceData, decodeData))
+				if(LoadWICTextureFromFile(fileName, EWIC_LOAD_FLAGS::WIC_FLAGS_NONE, desc, resourceData, decodeData))
 				{
 					std::shared_ptr<FTextureBuffer> bufferRef = std::make_shared<FMakeTextureBuffer>(name, desc);
 
