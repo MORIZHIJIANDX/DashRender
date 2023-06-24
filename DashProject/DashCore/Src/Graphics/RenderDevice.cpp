@@ -11,6 +11,7 @@
 #include "CommandContext.h"
 #include "TextureLoader/HDRTextureLoader.h"
 #include "TextureLoader/WICTextureLoader.h"
+#include "TextureLoader/TGATextureLoader.h"
 #include "Utility/FileUtility.h"
 
 #pragma comment(lib, "dxguid.lib")
@@ -637,18 +638,32 @@ namespace Dash
 		if(FFileUtility::IsPathExistent(fileName))
 		{
 			std::string fileExtension = FFileUtility::GetFileExtension(fileName);
+
+			FTextureBufferDescription desc;
+			D3D12_SUBRESOURCE_DATA resourceData;
+			std::vector<uint8_t> decodeData;
+
+			bool loadSucceed = false;
+
 			if (fileExtension == "png")
 			{
-				FTextureBufferDescription desc;
-				D3D12_SUBRESOURCE_DATA resourceData;
-				std::vector<uint8_t> decodeData; 
-				if(LoadWICTextureFromFile(fileName, EWIC_LOAD_FLAGS::WIC_FLAGS_NONE, desc, resourceData, decodeData))
-				{
-					std::shared_ptr<FTextureBuffer> bufferRef = std::make_shared<FMakeTextureBuffer>(name, desc);
+				loadSucceed = LoadWICTextureFromFile(fileName, EWIC_LOAD_FLAGS::WIC_FLAGS_NONE, desc, resourceData, decodeData);
+			}
+			else if (fileExtension == "tga")
+			{
+				loadSucceed = LoadTGATextureFromFile(fileName, ETGA_LOAD_FLAGS::TGA_FLAGS_NONE, desc, resourceData, decodeData);
+			}
+			else if (fileExtension == "hdr")
+			{
+				loadSucceed =  LoadHDRTextureFromFile(fileName, desc, resourceData, decodeData);
+			}
 
-					FGraphicsCommandContext::UpdateTextureBuffer(bufferRef, 0, 1, &resourceData);
-					return bufferRef;
-				}
+			if (loadSucceed)
+			{
+				std::shared_ptr<FTextureBuffer> bufferRef = std::make_shared<FMakeTextureBuffer>(name, desc);
+
+				FGraphicsCommandContext::UpdateTextureBuffer(bufferRef, 0, 1, &resourceData);
+				return bufferRef;
 			}
 		}
 		

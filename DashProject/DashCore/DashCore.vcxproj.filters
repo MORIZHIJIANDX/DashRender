@@ -592,6 +592,9 @@
     <ClCompile Include="Src\Utility\SystemTimer.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
+    <ClCompile Include="Src\TextureLoader\TextureLoaderHelper.cpp">
+      <Filter>TextureLoader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\FullScreen_PS.hlsl">

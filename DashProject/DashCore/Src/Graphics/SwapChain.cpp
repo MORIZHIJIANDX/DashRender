@@ -17,7 +17,7 @@
 #include "DepthStencilState.h"
 
 #include "Utility/FileUtility.h"
-#include "TextureLoader/TGATextureLoader.h"
+#include "TextureLoader/HDRTextureLoader.h"
 
 namespace Dash
 {
@@ -108,6 +108,8 @@ namespace Dash
 		*/
 		
 		std::string pngTexturePath = std::string(ENGINE_PATH) + "/Resource/AssaultRifle_BaseColor.png";
+		//std::string tgaTexturePath = std::string(ENGINE_PATH) + "/Resource/TestTGA.tga";
+		//std::string hdrTexturePath = std::string(ENGINE_PATH) + "/Resource/Newport_Loft_Ref.hdr";
 
 		mTexture = FGraphicsCore::Device->CreateTextureBufferFromFile("WIC_Texture", pngTexturePath);
 
@@ -117,11 +119,11 @@ namespace Dash
 			D3D12_SUBRESOURCE_DATA resourceData;
 			std::vector<uint8_t> decodeData;
 
-			std::string tgaTexturePath = std::string(ENGINE_PATH) + "/Resource/TestTGA.tga";
+			std::string tgaTexturePath = std::string(ENGINE_PATH) + "/Resource/Newport_Loft_Ref.hdr";
 
 			if (FFileUtility::IsPathExistent(tgaTexturePath))
 			{
-				LoadTGATextureFromFile(tgaTexturePath, ETGA_FLAGS::TGA_FLAGS_NONE, texDesc, resourceData, decodeData);
+				LoadHDRTextureFromFile(tgaTexturePath, texDesc, resourceData, decodeData);
 			}
 		}
 		*/

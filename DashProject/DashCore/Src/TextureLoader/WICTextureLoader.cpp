@@ -2,6 +2,7 @@
 #include "WICTextureLoader.h"
 #include "ThirdParty/DirectXTex/DirectXTex.h"
 #include "Utility/StringUtility.h"
+#include "TextureLoaderHelper.h"
 
 using namespace DirectX;
 
@@ -43,18 +44,9 @@ namespace Dash
 		if (FAILED(result))
 		{
 			return false;
-		} 
+		}
 
-		EResourceFormat format = ResourceFormatFromD3DFormat(metadata.format);
-
-		textureDescription = FTextureBufferDescription::Create2D(format, static_cast<uint32_t>(metadata.width), static_cast<uint32_t>(metadata.height), static_cast<uint32_t>(metadata.mipLevels));
-
-		decodedData.resize(image.GetPixelsSize());
-		memcpy_s(decodedData.data(), image.GetPixelsSize(), image.GetPixels(), image.GetPixelsSize());
-
-		subResource.pData = decodedData.data();
-		subResource.RowPitch = image.GetImages()->rowPitch;
-		subResource.SlicePitch = image.GetImages()->slicePitch;
+		InitTextureData(metadata, image, textureDescription, subResource, decodedData);
 
 		return true;
 	}
