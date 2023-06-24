@@ -12,6 +12,7 @@
 #include "TextureLoader/HDRTextureLoader.h"
 #include "TextureLoader/WICTextureLoader.h"
 #include "TextureLoader/TGATextureLoader.h"
+#include "TextureLoader/DDSTextureLoader.h"
 #include "Utility/FileUtility.h"
 
 #pragma comment(lib, "dxguid.lib")
@@ -656,6 +657,10 @@ namespace Dash
 			else if (fileExtension == "hdr")
 			{
 				loadSucceed =  LoadHDRTextureFromFile(fileName, desc, resourceData, decodeData);
+			}
+			else if (fileExtension == "dds")
+			{
+				loadSucceed = LoadDDSTextureFromFile(fileName, EDDS_LOAD_FLAGS::DDS_FLAGS_NONE, desc, resourceData, decodeData);
 			}
 
 			if (loadSucceed)

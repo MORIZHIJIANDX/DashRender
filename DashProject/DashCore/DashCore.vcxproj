@@ -245,6 +245,7 @@
     <ClInclude Include="Src\Math\Vector4.h" />
     <ClInclude Include="Src\Math\Vector4_SSE.h" />
     <ClInclude Include="Src\PCH\PCH.h" />
+    <ClInclude Include="Src\TextureLoader\DDSTextureLoader.h" />
     <ClInclude Include="Src\TextureLoader\HDRTextureLoader.h" />
     <ClInclude Include="Src\TextureLoader\TGATextureLoader.h" />
     <ClInclude Include="Src\TextureLoader\TextureLoaderHelper.h" />
@@ -324,9 +325,10 @@
     <ClCompile Include="Src\PCH\PCH.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Src\TextureLoader\DDSTextureLoader.cpp" />
     <ClCompile Include="Src\TextureLoader\HDRTextureLoader.cpp" />
-    <ClCompile Include="Src\TextureLoader\TextureLoaderHelper.cpp" />
     <ClCompile Include="Src\TextureLoader\TGATextureLoader.cpp" />
+    <ClCompile Include="Src\TextureLoader\TextureLoaderHelper.cpp" />
     <ClCompile Include="Src\TextureLoader\WICTextureLoader.cpp" />
     <ClCompile Include="Src\ThirdParty\DirectXTex\BC.cpp" />
     <ClCompile Include="Src\ThirdParty\DirectXTex\BC4BC5.cpp" />

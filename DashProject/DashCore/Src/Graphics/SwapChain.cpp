@@ -107,11 +107,12 @@ namespace Dash
 		mTexture = FGraphicsCore::Device->CreateTextureBufferFromMemory("TestTexture", textureDest, colorData.data());
 		*/
 		
-		std::string pngTexturePath = std::string(ENGINE_PATH) + "/Resource/AssaultRifle_BaseColor.png";
+		//std::string pngTexturePath = std::string(ENGINE_PATH) + "/Resource/AssaultRifle_BaseColor.png";
 		//std::string tgaTexturePath = std::string(ENGINE_PATH) + "/Resource/TestTGA.tga";
 		//std::string hdrTexturePath = std::string(ENGINE_PATH) + "/Resource/Newport_Loft_Ref.hdr";
+		std::string ddsTexturePath = std::string(ENGINE_PATH) + "/Resource/earth.dds";
 
-		mTexture = FGraphicsCore::Device->CreateTextureBufferFromFile("WIC_Texture", pngTexturePath);
+		mTexture = FGraphicsCore::Device->CreateTextureBufferFromFile("WIC_Texture", ddsTexturePath);
 
 		/*
 		{
