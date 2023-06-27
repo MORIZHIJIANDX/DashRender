@@ -43,7 +43,7 @@ namespace Dash
 	class FGpuConstantBuffer : public FGpuBuffer
 	{
 	public:
-		FGpuConstantBuffer(){ mCpuAccess = true; }
+		FGpuConstantBuffer() { mCpuAccess = true; }
 		virtual ~FGpuConstantBuffer();
 		D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress(size_t offset = 0) const;
 		
@@ -154,6 +154,8 @@ namespace Dash
 		void* Map();
 		void Unmap();
 
+		void UpdateData(void* data, size_t size);
+
 	private:
 		void* mMappedData = nullptr;
 	};
@@ -166,6 +168,8 @@ namespace Dash
 
 		void* Map();
 		void Unmap();
+
+		void UpdateData(void* data, size_t size);
 
 	private:
 		void* mMappedData = nullptr;

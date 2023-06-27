@@ -5,6 +5,11 @@
 
 namespace Dash
 {
+	FReadbackBuffer::FReadbackBuffer()
+	{
+		mCpuAccess = true;
+	}
+
 	FReadbackBuffer::~FReadbackBuffer()
 	{
 		Unmap();
@@ -33,7 +38,7 @@ namespace Dash
 	{
 		Destroy();
 
-		mDesc = FBufferDescription::Create(elementSize, numElements, 1, EResourceState::CopyDestination);
+		mDesc = FBufferDescription::Create(elementSize, numElements, mCpuAccess, 1, EResourceState::CopyDestination);
 
 		// Create a readback buffer large enough to hold all texel data
 		D3D12_HEAP_PROPERTIES HeapProps;

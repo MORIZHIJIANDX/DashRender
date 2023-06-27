@@ -28,6 +28,13 @@ namespace Dash
 	class FGpuIndexBuffer;
 	using FGpuIndexBufferRef = std::shared_ptr<FGpuIndexBuffer>;
 
+	class FGpuDynamicVertexBuffer;
+	using FGpuDynamicVertexBufferRef = std::shared_ptr<FGpuDynamicVertexBuffer>;
+
+	class FGpuDynamicIndexBuffer;
+	using FGpuDynamicIndexBufferRef = std::shared_ptr<FGpuDynamicIndexBuffer>;
+
+
 	class FRenderDevice
 	{
 	public:
@@ -302,6 +309,15 @@ namespace Dash
 		}
 
 		FGpuIndexBufferRef CreateIndexBuffer(const std::string& name, uint32_t numElements, const void* initData, bool is32Bit = false);
+
+		FGpuDynamicVertexBufferRef CreateDynamicVertexBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize);
+		template<typename VertexType>
+		FGpuDynamicVertexBufferRef CreateDynamicVertexBuffer(const std::string& name, uint32_t numElements)
+		{
+			return CreateDynamicVertexBuffer(name, numElements, sizeof(VertexType));
+		}
+
+		FGpuDynamicIndexBufferRef CreateDynamicIndexBuffer(const std::string& name, uint32_t numElements, bool is32Bit = false);
 
 		FGpuConstantBufferRef CreateConstantBuffer(const std::string& name, uint32_t sizeInBytes, const void* initData);
 		template<typename ConstantBufferType>

@@ -1,6 +1,7 @@
 #include "PCH.h"
 #include "GameApp.h"
-
+#include "GraphicsCore.h"
+#include "SwapChain.h"
 #include "Utility/Keyboard.h"
 
 namespace Dash
@@ -14,6 +15,11 @@ namespace Dash
 		, mWindowTitle(title)
 		, mWindowClassName(winClassName)
 	{
+	}
+
+	void IGameApp::Present()
+	{
+		FGraphicsCore::SwapChain->Present();
 	}
 
 	bool IGameApp::IsDone(void)

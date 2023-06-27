@@ -28,6 +28,17 @@ namespace Dash
 	FShaderPassRef DrawPass = FShaderPass::MakeShaderPass();
 	FShaderPassRef PresentPass = FShaderPass::MakeShaderPass();
 
+	FGpuDynamicVertexBufferRef VertexBuffer;
+
+	struct Vertex
+	{
+		FVector3f Pos;
+		FVector2f UV;
+		FVector4f Color;
+	};
+
+	std::vector<Vertex> VertexData;
+
 	void FSwapChain::Initialize()
 	{
 		mDisplayWdith = IGameApp::GetInstance()->GetWindowWidth();
@@ -66,6 +77,7 @@ namespace Dash
 		FInputAssemblerLayout inputLayout;
 		inputLayout.AddPerVertexLayoutElement("POSITION", 0, EResourceFormat::RGB32_Float, 0, 0);
 		inputLayout.AddPerVertexLayoutElement("TEXCOORD", 0, EResourceFormat::RG32_Float, 0, 12);
+		inputLayout.AddPerVertexLayoutElement("COLOR", 0, EResourceFormat::RGBA32_Float, 0, 20);
 
 		DrawPSO->SetBlendState(BlendDisable);
 		DrawPSO->SetDepthStencilState(DepthStateDisabled);
@@ -86,8 +98,24 @@ namespace Dash
 		PresentPSO->SetSamplerMask(UINT_MAX);
 		PresentPSO->SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
 		PresentPSO->Finalize();
+		 
+		VertexData.resize(3);
+		VertexData[0].Pos = FVector3f{ -1.0f, 3.0f, 0.5f };
+		VertexData[0].UV = FVector2f{ 0.0f, -1.0f };
+		VertexData[0].Color = FVector4f{ 1.0f, 0.0f, 0.0f, 1.0f };
+
+		VertexData[1].Pos = FVector3f{ 3.0f, -1.0f, 0.5f };
+		VertexData[1].UV = FVector2f{ 2.0f, 1.0f };
+		VertexData[1].Color = FVector4f{ 0.0f, 1.0f, 0.0f, 1.0f };
+
+		VertexData[2].Pos = FVector3f{ -1.0f, -1.0f, 0.5f };
+		VertexData[2].UV = FVector2f{ 0.0f, 1.0f };
+		VertexData[2].Color = FVector4f{ 0.0f, 0.0f, 1.0f, 1.0f };
+		VertexBuffer = FGraphicsCore::Device->CreateDynamicVertexBuffer("DisplayVertexBuffer", 3, sizeof(Vertex));
+
+		VertexBuffer->UpdateData(VertexData.data(), VertexData.size() * sizeof(Vertex));
+
 		
-		/*
 		const int32_t textureWidth = 512;
 		std::vector<FColor> colorData;
 		colorData.reserve(textureWidth * textureWidth);
@@ -105,29 +133,14 @@ namespace Dash
 
 		FTextureBufferDescription textureDest = FTextureBufferDescription::Create2D(EResourceFormat::RGBA8_Unsigned_Norm, textureWidth, textureWidth, 1);
 		mTexture = FGraphicsCore::Device->CreateTextureBufferFromMemory("TestTexture", textureDest, colorData.data());
-		*/
+		
 		
 		//std::string pngTexturePath = std::string(ENGINE_PATH) + "/Resource/AssaultRifle_BaseColor.png";
 		//std::string tgaTexturePath = std::string(ENGINE_PATH) + "/Resource/TestTGA.tga";
 		//std::string hdrTexturePath = std::string(ENGINE_PATH) + "/Resource/Newport_Loft_Ref.hdr";
-		std::string ddsTexturePath = std::string(ENGINE_PATH) + "/Resource/earth.dds";
+		//std::string ddsTexturePath = std::string(ENGINE_PATH) + "/Resource/earth.dds";
 
-		mTexture = FGraphicsCore::Device->CreateTextureBufferFromFile("WIC_Texture", ddsTexturePath);
-
-		/*
-		{
-			FTextureBufferDescription texDesc;
-			D3D12_SUBRESOURCE_DATA resourceData;
-			std::vector<uint8_t> decodeData;
-
-			std::string tgaTexturePath = std::string(ENGINE_PATH) + "/Resource/Newport_Loft_Ref.hdr";
-
-			if (FFileUtility::IsPathExistent(tgaTexturePath))
-			{
-				LoadHDRTextureFromFile(tgaTexturePath, texDesc, resourceData, decodeData);
-			}
-		}
-		*/
+		//mTexture = FGraphicsCore::Device->CreateTextureBufferFromFile("WIC_Texture", pngTexturePath);
 	}
 
 	void FSwapChain::Destroy()
@@ -137,6 +150,8 @@ namespace Dash
 		DestroyBuffers();
 
 		mSwapChain = nullptr;
+
+		VertexBuffer->Destroy();
 	}
 
 	void FSwapChain::SetDisplayRate(float displayRate)
@@ -166,6 +181,7 @@ namespace Dash
 			graphicsContext.SetGraphicsPipelineState(DrawPSO);
 			graphicsContext.SetViewportAndScissor(0, 0, mDisplayBuffer->GetWidth(), mDisplayBuffer->GetHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			graphicsContext.SetVertexBuffer(0, VertexBuffer);
 			graphicsContext.Draw(3);
 		}
 		
@@ -175,6 +191,7 @@ namespace Dash
 			graphicsContext.SetViewportAndScissor(0, 0, FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetWidth(), FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetHeight());
 			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			graphicsContext.SetShaderResourceView("DisplayTexture", mTexture);
+			graphicsContext.SetVertexBuffer(0, VertexBuffer);
 			graphicsContext.Draw(3);
 		}
 

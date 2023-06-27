@@ -134,7 +134,7 @@ namespace Dash
 		return desc;
 	}
 
-	FBufferDescription FBufferDescription::Create(uint64_t elementSize, uint64_t elementCount, uint64_t elementAlignment /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
+	FBufferDescription FBufferDescription::Create(uint64_t elementSize, uint64_t elementCount, bool cpuAccess, uint64_t elementAlignment /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
 	{
 		ASSERT(elementSize > 0);
 
@@ -144,7 +144,7 @@ namespace Dash
 		desc.Size = desc.Stride * elementCount;
 		desc.InitialStateMask = initialStateMask;
 
-		desc.ResolveResourceDimensionData(true, false);
+		desc.ResolveResourceDimensionData(!cpuAccess, false);
 
 		return desc;
 	}
@@ -177,7 +177,7 @@ namespace Dash
 		desc.MipCount = desc.AutoGenerateMips ? desc.ComputeNumMips() : mipCount;
 		desc.MsaaSampleCount = 1;
 		desc.MsaaQuality = 0;
-		desc.InitialStateMask = EResourceState::CopyDestination;
+		//desc.InitialStateMask = EResourceState::CopyDestination;
 
 		desc.ResolveResourceDimensionData(true, false);
 

@@ -45,12 +45,14 @@ namespace Dash
 			switch (type)
 			{
 			case D3D12_COMMAND_LIST_TYPE_DIRECT:
-				//break;
-			case D3D12_COMMAND_LIST_TYPE_COMPUTE:
-				//break;
-			case D3D12_COMMAND_LIST_TYPE_COPY:
-				//break;
 				context = new FGraphicsCommandContext();
+				break;
+			case D3D12_COMMAND_LIST_TYPE_COMPUTE:
+				context = new FComputeCommandContext();
+				break;
+			case D3D12_COMMAND_LIST_TYPE_COPY:
+				context = new FCopyCommandContext();
+				break;
 			default:
 				break;
 			}
@@ -174,9 +176,9 @@ namespace Dash
 	{
 		FlushResourceBarriers();
 
-		PIXEndEvent();
-
 		uint64_t fenceValue = Execute();
+
+		PIXEndEvent();
 
 		mLinearAllocator.RetireUsedPages(fenceValue);
 
@@ -832,13 +834,13 @@ namespace Dash
 
 	FCopyCommandContext& FCopyCommandContext::Begin(const std::string& id /*= L""*/)
 	{
-		FCopyCommandContext* newContext = reinterpret_cast<FCopyCommandContext*>(FCommandContext::Begin(id, D3D12_COMMAND_LIST_TYPE_DIRECT));
+		FCopyCommandContext* newContext = reinterpret_cast<FCopyCommandContext*>(FCommandContext::Begin(id, D3D12_COMMAND_LIST_TYPE_COPY));
 		return *newContext;
 	}
 
 	FComputeCommandContext& FComputeCommandContext::Begin(const std::string& id /*= L""*/)
 	{
-		FComputeCommandContext* newContext = reinterpret_cast<FComputeCommandContext*>(FCommandContext::Begin(id, D3D12_COMMAND_LIST_TYPE_DIRECT));
+		FComputeCommandContext* newContext = reinterpret_cast<FComputeCommandContext*>(FCommandContext::Begin(id, D3D12_COMMAND_LIST_TYPE_COMPUTE));
 		return *newContext;
 	}
 

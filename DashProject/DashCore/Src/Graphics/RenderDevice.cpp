@@ -119,6 +119,29 @@ namespace Dash
 		virtual ~FMakeIndexBuffer() {}
 	};
 
+	class FMakeDynamicVertexBuffer : public FGpuDynamicVertexBuffer
+	{
+	public:
+		FMakeDynamicVertexBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize)
+		{
+			Create(name, numElements, elementSize);
+		}
+
+		virtual ~FMakeDynamicVertexBuffer() {}
+	};
+
+	class FMakeDynamicIndexBuffer : public FGpuDynamicIndexBuffer
+	{
+	public:
+		FMakeDynamicIndexBuffer(const std::string& name, uint32_t numElements, bool is32Bit = false)
+		{
+			Create(name, numElements, is32Bit ? sizeof(uint32_t) : sizeof(uint16_t));
+			mIs32Bit = is32Bit;
+		}
+
+		virtual ~FMakeDynamicIndexBuffer() {}
+	};
+
 	class FMakeConstantBuffer : public FGpuConstantBuffer
 	{
 	public:
@@ -630,7 +653,7 @@ namespace Dash
 		resourceData.SlicePitch = resourceData.RowPitch * desc.Magnitude.Height;
 		resourceData.pData = InitialData;
 		
-		FGraphicsCommandContext::UpdateTextureBuffer(bufferRef, 0, 1, &resourceData);
+		FCopyCommandContext::UpdateTextureBuffer(bufferRef, 0, 1, &resourceData);
 		return bufferRef;
 	}
 
@@ -667,7 +690,7 @@ namespace Dash
 			{
 				std::shared_ptr<FTextureBuffer> bufferRef = std::make_shared<FMakeTextureBuffer>(name, desc);
 
-				FGraphicsCommandContext::UpdateTextureBuffer(bufferRef, 0, 1, &resourceData);
+				FCopyCommandContext::UpdateTextureBuffer(bufferRef, 0, 1, &resourceData);
 				return bufferRef;
 			}
 		}
@@ -678,14 +701,26 @@ namespace Dash
 	FGpuVertexBufferRef FRenderDevice::CreateVertexBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData)
 	{
 		std::shared_ptr<FMakeVertexBuffer> bufferRef = std::make_shared<FMakeVertexBuffer>(name, numElements, elementSize);
-		FGraphicsCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
+		FCopyCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
 		return bufferRef;
 	}
 
 	FGpuIndexBufferRef FRenderDevice::CreateIndexBuffer(const std::string& name, uint32_t numElements, const void* initData, bool is32Bit)
 	{
 		std::shared_ptr<FMakeIndexBuffer> bufferRef = std::make_shared<FMakeIndexBuffer>(name, numElements, is32Bit);
-		FGraphicsCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
+		FCopyCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
+		return bufferRef;
+	}
+
+	FGpuDynamicVertexBufferRef FRenderDevice::CreateDynamicVertexBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize)
+	{
+		std::shared_ptr<FMakeDynamicVertexBuffer> bufferRef = std::make_shared<FMakeDynamicVertexBuffer>(name, numElements, elementSize);
+		return bufferRef;
+	}
+
+	FGpuDynamicIndexBufferRef FRenderDevice::CreateDynamicIndexBuffer(const std::string& name, uint32_t numElements, bool is32Bit)
+	{
+		std::shared_ptr<FMakeDynamicIndexBuffer> bufferRef = std::make_shared<FMakeDynamicIndexBuffer>(name, numElements, is32Bit);
 		return bufferRef;
 	}
 

@@ -122,9 +122,7 @@ namespace Dash
 	void TestApplication::OnRenderScene(const FRenderEventArgs& e)
 	{
 		FRenderEventArgs Args = e;
-		Args.Camera = mCamera;
-
-		FGraphicsCore::SwapChain->Present();
+		Args.Camera = mCamera; 
 	}
 
 	void TestApplication::OnWindowResize(const FResizeEventArgs& e)

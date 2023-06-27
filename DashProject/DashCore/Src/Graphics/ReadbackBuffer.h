@@ -7,6 +7,7 @@ namespace Dash
 	class FReadbackBuffer : public FGpuBuffer
 	{
 	public:
+		FReadbackBuffer();
 		virtual ~FReadbackBuffer();
 
 		void* Map();

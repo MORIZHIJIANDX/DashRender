@@ -91,9 +91,14 @@ namespace Dash
 
 		app->OnUpdate(updateArgs);
 
-		app->OnRenderScene(RenderArgs);
+		if (!Minimized)
+		{
+			app->OnRenderScene(RenderArgs);
 
-		app->OnRenderUI(RenderArgs);
+			app->OnRenderUI(RenderArgs);
+
+			app->Present();
+		}
 
 		++frameCount;
 	}

@@ -88,18 +88,18 @@ namespace Dash
 		uint64_t Count = 1;
 		uint64_t Stride = 1;
 
-		static FBufferDescription Create(uint64_t elementSize, uint64_t elementCount, uint64_t elementAlignment = 1, EResourceState initialStateMask = EResourceState::GenericRead);
+		static FBufferDescription Create(uint64_t elementSize, uint64_t elementCount, bool cpuAccess = false, uint64_t elementAlignment = 1, EResourceState initialStateMask = EResourceState::GenericRead);
 
 		template<typename ElementType>
-		static FBufferDescription Create(uint64_t elementCount, uint64_t elementAlignment = 1, EResourceState initialStateMask = EResourceState::GenericRead);
+		static FBufferDescription Create(uint64_t elementCount, bool cpuAccess = false, uint64_t elementAlignment = 1, EResourceState initialStateMask = EResourceState::GenericRead);
 
 	protected:
 		virtual void ResolveResourceDimensionData(bool allowUAV, bool allowRTV) override;
 	};
 
 	template<typename ElementType>
-	FBufferDescription FBufferDescription::Create(uint64_t elementCount, uint64_t elementAlignment /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
+	FBufferDescription FBufferDescription::Create(uint64_t elementCount, bool cpuAccess /*= false*/, uint64_t elementAlignment /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
 	{
-		return Create(sizeof(ElementType), elementCount, elementAlignment, initialStateMask);
+		return Create(sizeof(ElementType), elementCount, cpuAccess, elementAlignment, initialStateMask);
 	}
 }

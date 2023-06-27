@@ -42,7 +42,7 @@ namespace Dash
 	{
 		Destroy();
 
-		mDesc = FBufferDescription::Create(elementSize, numElements);
+		mDesc = FBufferDescription::Create(elementSize, numElements, mCpuAccess);
 
 		D3D12_RESOURCE_DESC resourceDesc = mDesc.D3DResourceDescription();
 		resourceDesc.Flags |= flags;
@@ -237,6 +237,18 @@ namespace Dash
 		}
 	}
 
+	void FGpuDynamicVertexBuffer::UpdateData(void* data, size_t size)
+	{
+		ASSERT(data != nullptr);
+		ASSERT(size == mDesc.Size);
+
+		Map();
+
+		memcpy(mMappedData, data, size);
+
+		Unmap();
+	}
+
 	void* FGpuDynamicIndexBuffer::Map()
 	{
 		if (mMappedData == nullptr)
@@ -256,4 +268,15 @@ namespace Dash
 		}
 	}
 
+	void FGpuDynamicIndexBuffer::UpdateData(void* data, size_t size)
+	{
+		ASSERT(data != nullptr);
+		ASSERT(size == mDesc.ResourceSizeInBytes());
+
+		Map();
+
+		memcpy(mMappedData, data, size);
+
+		Unmap();
+	}
 }
