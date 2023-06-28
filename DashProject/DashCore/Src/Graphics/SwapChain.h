@@ -26,6 +26,7 @@ namespace Dash
 		void Present();
 		FColorBufferRef GetDisplayBuffer();
 		FColorBufferRef GetCurrentBackBuffer();
+		EResourceFormat GetBackBufferFormat() const;
 	
 	protected:
 		void Initialize();
@@ -47,7 +48,6 @@ namespace Dash
 		Microsoft::WRL::ComPtr<IDXGISwapChain4> mSwapChain;
 
 		UINT mCurrentBackBufferIndex = 0;
-
 
 		FTextureBufferRef mTexture;
 	};

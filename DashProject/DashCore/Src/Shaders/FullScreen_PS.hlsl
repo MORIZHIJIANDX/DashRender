@@ -47,7 +47,7 @@ PSInput VS_Main(VSInput input)
 	output.Position = float4(input.Position, 1.0f);
 	output.Color = input.Color;
 	output.UV = input.UV;
-
+	 
 	return output;
 }
 

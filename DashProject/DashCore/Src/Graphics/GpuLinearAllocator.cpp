@@ -41,7 +41,12 @@ namespace Dash
 		mOffset += alignedSize;
 
 		return allocation;
-	} 
+	}
+
+	void FGpuLinearAllocator::FPage::Reset()
+	{
+		mOffset = 0;
+	}
 
 	FGpuLinearAllocator::FPageManager::FPageManager()
 	{
@@ -56,6 +61,7 @@ namespace Dash
 
 		while (!mRetiredPages.empty() && FGraphicsCore::CommandQueueManager->IsFenceCompleted(mRetiredPages.front().first))
 		{
+			mRetiredPages.front().second->Reset();
 			mAvailablePages.push(mRetiredPages.front().second);
 			mRetiredPages.pop();
 		}

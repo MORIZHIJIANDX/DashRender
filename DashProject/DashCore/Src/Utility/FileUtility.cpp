@@ -151,9 +151,14 @@ namespace Dash
 
 	std::string FFileUtility::GetEngineDir()
 	{
-		std::string EngineDir;
+		std::string EngineDir{ ENGINE_PATH };
 
 		return EngineDir;
+	}
+
+	std::string FFileUtility::GetEngineShaderDir(const std::string& shaderFileName)
+	{
+		return GetEngineDir() + "/Src/Shaders/" + shaderFileName;
 	}
 
 	Dash::FFileUtility::FileTimeType FFileUtility::GetFileLastWriteTime(const std::string& str)

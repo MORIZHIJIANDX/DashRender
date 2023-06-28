@@ -30,6 +30,12 @@ namespace Dash
 
 	FGpuDynamicVertexBufferRef VertexBuffer;
 
+	struct ConstantParams
+	{
+		FVector4f TintColor;
+		FVector4f Params;
+	};
+
 	struct Vertex
 	{
 		FVector3f Pos;
@@ -52,13 +58,13 @@ namespace Dash
 			mFenceValue[index] = ((uint64_t)D3D12_COMMAND_LIST_TYPE_DIRECT) << COMMAND_TYPE_MASK;
 		}
 
-		FShaderCreationInfo psInfo{ "..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl" ,  "PS_Main" };
+		FShaderCreationInfo psInfo{ FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "PS_Main"};
 		psInfo.Finalize();
 
-		FShaderCreationInfo psPresentInfo{ "..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl" ,  "PS_SampleColor" };
+		FShaderCreationInfo psPresentInfo{ FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "PS_SampleColor" };
 		psPresentInfo.Finalize();
 
-		FShaderCreationInfo vsInfo{ "..\\DashCore\\Src\\Shaders\\FullScreen_PS.hlsl" ,  "VS_Main" };
+		FShaderCreationInfo vsInfo{ FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "VS_Main" };
 		vsInfo.Finalize();
 	
 		DrawPass->SetShader(EShaderStage::Vertex, vsInfo);
@@ -174,26 +180,11 @@ namespace Dash
 
 	void FSwapChain::Present()
 	{
+		ConstantParams param;
+		param.TintColor = FVector4f{ 1.0f, 1.0f, 0.0f, 1.0f };
+		param.Params = FVector4f{ 1.0f, 1.0f, 0.5f, 1.0f };
+	
 		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("Present");
-
-		{
-			graphicsContext.SetRenderTarget(mDisplayBuffer);
-			graphicsContext.SetGraphicsPipelineState(DrawPSO);
-			graphicsContext.SetViewportAndScissor(0, 0, mDisplayBuffer->GetWidth(), mDisplayBuffer->GetHeight());
-			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			graphicsContext.SetVertexBuffer(0, VertexBuffer);
-			graphicsContext.Draw(3);
-		}
-		
-		{
-			graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
-			graphicsContext.SetGraphicsPipelineState(PresentPSO);
-			graphicsContext.SetViewportAndScissor(0, 0, FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetWidth(), FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetHeight());
-			graphicsContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			graphicsContext.SetShaderResourceView("DisplayTexture", mTexture);
-			graphicsContext.SetVertexBuffer(0, VertexBuffer);
-			graphicsContext.Draw(3);
-		}
 
 		graphicsContext.TransitionBarrier(FGraphicsCore::SwapChain->GetCurrentBackBuffer(), EResourceState::Present);
 		
@@ -306,6 +297,11 @@ namespace Dash
 	FColorBufferRef FSwapChain::GetCurrentBackBuffer()
 	{
 		return mSwapChainBuffer[mCurrentBackBufferIndex];
+	}
+
+	EResourceFormat FSwapChain::GetBackBufferFormat() const
+	{
+		return mSwapChainFormat;
 	}
 
 }

@@ -163,6 +163,11 @@ namespace Dash
 	{
 		IGameApp* app = reinterpret_cast<IGameApp*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
+		if (app->ProcessWinMessage(hWnd, message, wParam, lParam))
+		{
+			return true;
+		}
+
 		switch (message)
 		{
 		case WM_CREATE:

@@ -159,7 +159,7 @@ namespace Dash
 			LOG_INFO << " ================================== ";
 		}
 
-		if (mCreationInfo.Stage == EShaderStage::Vertex)
+		if (EnumMaskEquals(mCreationInfo.Stage, EShaderStage::Vertex))
 		{
 			for (UINT parameterIndex = 0; parameterIndex < shaderDesc.InputParameters; ++parameterIndex)
 			{

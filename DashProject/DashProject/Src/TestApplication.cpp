@@ -28,6 +28,8 @@ namespace Dash
 
 	void TestApplication::Startup(void)
 	{
+		IGameApp::Startup();
+
 		float fov = 45.0f;
 		float aspect = IGameApp::GetInstance()->GetWindowWidth() / (float)IGameApp::GetInstance()->GetWindowHeight();
 
@@ -70,6 +72,8 @@ namespace Dash
 
 	void TestApplication::Cleanup(void)
 	{
+		IGameApp::Cleanup();
+
 		FMouse::Get().MouseWheelDown -= OnMouseWheelDownDelegate;
 		FMouse::Get().MouseWheelUp -= OnMouseWheelUpDelegate;
 		FMouse::Get().MouseMoved -= OnMouseMoveDelegate;

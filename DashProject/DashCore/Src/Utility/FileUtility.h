@@ -40,6 +40,8 @@ namespace Dash
 
 		static std::string GetEngineDir();
 
+		static std::string GetEngineShaderDir(const std::string& shaderFileName);
+
 		static FileTimeType GetFileLastWriteTime(const std::string& str);
 
 		static bool IsPathExistent(const std::string& str);

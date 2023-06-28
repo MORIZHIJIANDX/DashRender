@@ -368,6 +368,9 @@
     <FxCompile Include="Src\Shaders\FullScreen_PS.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\IMGUI_shader.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Src\Shaders\generateMips.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>

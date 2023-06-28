@@ -727,7 +727,7 @@ namespace Dash
 	FGpuConstantBufferRef FRenderDevice::CreateConstantBuffer(const std::string& name, uint32_t dataSize, const void* initData)
 	{
 		std::shared_ptr<FMakeConstantBuffer> bufferRef = std::make_shared<FMakeConstantBuffer>(name, dataSize);
-		FGraphicsCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
+		FCopyCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
 		return bufferRef;
 	}
 

@@ -53,6 +53,8 @@ namespace Dash
 
 			FAllocation Allocate(size_t sizeInBytes, size_t alignment);
 
+			void Reset();
+
 			~FPage()
 			{
 				mResource->Unmap(0, nullptr);

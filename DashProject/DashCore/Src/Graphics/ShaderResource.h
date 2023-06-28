@@ -47,7 +47,7 @@ namespace Dash
 		std::string FileName;
 		std::string EntryPoint;
 		std::vector<std::string> Defines;
-		EShaderStage Stage{EShaderStage::Vertex};
+		EShaderStage Stage;
 
 	protected:
 		void ComputeShaderTargetFromEntryPoint();

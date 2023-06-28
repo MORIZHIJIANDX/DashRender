@@ -606,6 +606,9 @@
     <FxCompile Include="Src\Shaders\FullScreen_PS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\IMGUI_shader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
     <FxCompile Include="Src\Shaders\generateMips.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>

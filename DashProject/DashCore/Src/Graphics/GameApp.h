@@ -15,16 +15,18 @@ namespace Dash
 
         static IGameApp* GetInstance() { return  mAppInstance; }
 
-        virtual void Startup(void) = 0;
-        virtual void Cleanup(void) = 0;
+        virtual void Startup(void);
+        virtual void Cleanup(void);
 
         virtual void OnUpdate(const FUpdateEventArgs& e) = 0;
 
         virtual void OnRenderScene(const FRenderEventArgs& e) = 0;
 
-        virtual void OnRenderUI(const FRenderEventArgs& e) {};
+        virtual void OnRenderUI(const FRenderEventArgs& e);
 
         virtual void OnWindowResize(const FResizeEventArgs& e) = 0;
+
+        bool ProcessWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
         void Present();
 

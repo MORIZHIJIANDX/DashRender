@@ -98,7 +98,7 @@ namespace Dash
 		for (int32_t contextType = 0; contextType < 4; ++contextType)
 		{
 			mRetiredContexts[contextType].clear();
-			for (int32_t contextIndex = 0; contextIndex < mContextPool[contextType].size(); ++contextType)
+			for (int32_t contextIndex = 0; contextIndex < mContextPool[contextType].size(); ++contextIndex)
 			{
 				mAvailableContexts[contextType].push(mContextPool[contextType][contextIndex].get());
 			}	
@@ -176,9 +176,9 @@ namespace Dash
 	{
 		FlushResourceBarriers();
 
-		uint64_t fenceValue = Execute();
-
 		PIXEndEvent();
+
+		uint64_t fenceValue = Execute();
 
 		mLinearAllocator.RetireUsedPages(fenceValue);
 
