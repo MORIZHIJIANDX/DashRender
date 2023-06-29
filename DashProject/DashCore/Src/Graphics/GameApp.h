@@ -17,6 +17,9 @@ namespace Dash
 
         virtual void Startup(void);
         virtual void Cleanup(void);
+        
+        virtual void BeginFrame();
+        virtual void EndFrame();
 
         virtual void OnUpdate(const FUpdateEventArgs& e) = 0;
 

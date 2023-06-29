@@ -89,6 +89,8 @@ namespace Dash
 
 		FRenderEventArgs RenderArgs{ deltaTime, totalTime, frameCount };
 
+		app->BeginFrame();
+
 		app->OnUpdate(updateArgs);
 
 		if (!Minimized)
@@ -99,6 +101,8 @@ namespace Dash
 
 			app->Present();
 		}
+
+		app->EndFrame();
 
 		++frameCount;
 	}
