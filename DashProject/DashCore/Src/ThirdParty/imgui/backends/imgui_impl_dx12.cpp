@@ -170,7 +170,7 @@ static void ImGui_ImplDX12_SetupRenderState_Refactoring(ImDrawData* draw_data, F
 
     ctx.SetIndexBuffer(fr->IndexBuffer);
 
-    ctx.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    //ctx.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     ctx.SetGraphicsPipelineState(bd->pPipelineState);
     ctx.SetRootConstantBufferView("constantBuffer", vertex_constant_buffer);
 
@@ -347,7 +347,7 @@ bool ImGui_ImplDX12_CreateDeviceObjects_Refactoring()
         DrawPSO->SetShaderPass(DrawPass);
         DrawPSO->SetDepthStencilState(DepthStateDisabled);
         DrawPSO->SetInputLayout(inputLayout);
-        DrawPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+        DrawPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
         DrawPSO->SetSamplerMask(UINT_MAX);
         DrawPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetBackBufferFormat(), EResourceFormat::Depth32_Float);
         DrawPSO->Finalize();

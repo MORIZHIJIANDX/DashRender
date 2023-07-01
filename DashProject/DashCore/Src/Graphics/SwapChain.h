@@ -19,7 +19,8 @@ namespace Dash
 		{
 			Initialize();
 		}
-			
+		
+		void SetVSyncEnable(bool enable);
 		void Destroy();
 		void SetDisplayRate(float displayRate);
 		void OnWindowResize(uint32_t newWidth, uint32_t newHeight);
@@ -40,6 +41,7 @@ namespace Dash
 		uint32_t mDisplayHeight = 720;
 		float mDisplayRate = 1.0f;
 		EResourceFormat mSwapChainFormat;
+		bool mVSyncEnable = true;
 
 		FColorBufferRef mDisplayBuffer = nullptr;
 		FColorBufferRef mSwapChainBuffer[SWAP_CHAIN_BUFFER_COUNT];

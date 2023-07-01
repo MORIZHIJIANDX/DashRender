@@ -89,20 +89,20 @@ namespace Dash
 
 		FRenderEventArgs RenderArgs{ deltaTime, totalTime, frameCount };
 
-		app->BeginFrame();
-
-		app->OnUpdate(updateArgs);
-
 		if (!Minimized)
 		{
+			app->BeginFrame();
+
+			app->OnUpdate(updateArgs);
+
 			app->OnRenderScene(RenderArgs);
 
 			app->OnRenderUI(RenderArgs);
 
 			app->Present();
-		}
 
-		app->EndFrame();
+			app->EndFrame();
+		}
 
 		++frameCount;
 	}

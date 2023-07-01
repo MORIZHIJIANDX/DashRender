@@ -79,9 +79,10 @@ namespace Dash
 		mPSODesc.DepthStencilState = depthStencilDesc.D3DDepthStencilState();
 	}
 
-	void FGraphicsPSO::SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopologyType)
-	{
-		mPSODesc.PrimitiveTopologyType = primitiveTopologyType;
+	void FGraphicsPSO::SetPrimitiveTopologyType(EPrimitiveTopology primitiveTopology)
+	{	
+		mPrimitiveTopology = primitiveTopology;
+		mPSODesc.PrimitiveTopologyType = D3DPrimitiveTopologyType(primitiveTopology);
 	}
 
 	void FGraphicsPSO::SetDepthTargetFormat(EResourceFormat depthTargetFormat, UINT msaaCount /*= 1*/, UINT msaaQuality /*= 0*/)

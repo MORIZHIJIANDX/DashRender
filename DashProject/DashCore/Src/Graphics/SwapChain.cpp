@@ -15,6 +15,7 @@
 #include "RasterizerState.h"
 #include "BlendState.h"
 #include "DepthStencilState.h"
+#include "PrimitiveTopology.h"
 
 #include "Utility/FileUtility.h"
 #include "TextureLoader/HDRTextureLoader.h"
@@ -90,7 +91,7 @@ namespace Dash
 		DrawPSO->SetShaderPass(DrawPass);
 		DrawPSO->SetRasterizerState(rasterizerDefault);
 		DrawPSO->SetInputLayout(inputLayout);
-		DrawPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+		DrawPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
 		DrawPSO->SetSamplerMask(UINT_MAX);
 		DrawPSO->SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
 		DrawPSO->Finalize();
@@ -100,7 +101,7 @@ namespace Dash
 		PresentPSO->SetShaderPass(PresentPass);
 		PresentPSO->SetRasterizerState(rasterizerDefault);
 		PresentPSO->SetInputLayout(inputLayout);
-		PresentPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+		PresentPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
 		PresentPSO->SetSamplerMask(UINT_MAX);
 		PresentPSO->SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
 		PresentPSO->Finalize();
@@ -149,6 +150,11 @@ namespace Dash
 		//mTexture = FGraphicsCore::Device->CreateTextureBufferFromFile("WIC_Texture", pngTexturePath);
 	}
 
+	void FSwapChain::SetVSyncEnable(bool enable)
+	{
+		mVSyncEnable = enable;
+	}
+
 	void FSwapChain::Destroy()
 	{
 		mSwapChain->SetFullscreenState(FALSE, nullptr);
@@ -190,7 +196,9 @@ namespace Dash
 		
 		graphicsContext.Finish();
 		
-		mSwapChain->Present(1, 0);
+		UINT PresentInterval = mVSyncEnable ? 1 : 0;
+
+		mSwapChain->Present(PresentInterval, 0);
 
 		mFenceValue[mCurrentBackBufferIndex] = FGraphicsCore::CommandQueueManager->GetGraphicsQueue().Signal();
 

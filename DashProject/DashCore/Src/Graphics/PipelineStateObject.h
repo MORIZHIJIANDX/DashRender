@@ -6,6 +6,7 @@
 #include "RasterizerState.h"
 #include "BlendState.h"
 #include "DepthStencilState.h"
+#include "PrimitiveTopology.h"
 
 namespace Dash
 {
@@ -66,7 +67,7 @@ namespace Dash
 		void SetSamplerMask(UINT samperMask);
 		void SetRasterizerState(const FRasterizerState& rasterDesc);
 		void SetDepthStencilState(const FDepthStencilState& depthStencilDesc);
-		void SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopologyType);
+		void SetPrimitiveTopologyType(EPrimitiveTopology primitiveTopologyType);
 		void SetDepthTargetFormat(EResourceFormat depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
 		void SetRenderTargetFormat(EResourceFormat renderTargetFormat, EResourceFormat depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
 		void SetRenderTargetFormats(UINT numRTVs, const EResourceFormat* renderTargetFormats, EResourceFormat depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
@@ -89,9 +90,12 @@ namespace Dash
 
 		virtual void Finalize() override;
 
+		EPrimitiveTopology GetPrimitiveTopology() const { return mPrimitiveTopology; }
+
 	private:
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC mPSODesc{};
 		FInputAssemblerLayout mInputLayout;
+		EPrimitiveTopology mPrimitiveTopology;
 	};
 
 	class FComputePSO : public FPipelineStateObject

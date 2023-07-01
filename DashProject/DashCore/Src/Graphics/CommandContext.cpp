@@ -35,13 +35,6 @@ namespace Dash
 		FCommandContext* context = nullptr;
 		if (availableContext.empty())
 		{
-			LOG_INFO << "Current Completed Fence : " << currentCompletedFence;
-
-			for(auto& pair : mRetiredContexts[D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT])
-			{
-				LOG_INFO << "Unreused Context : " << pair.second << " , Fence : " << pair.first;
-			}
-
 			switch (type)
 			{
 			case D3D12_COMMAND_LIST_TYPE_DIRECT:
@@ -671,6 +664,7 @@ namespace Dash
 
 		SetGraphicsRootSignature(pso->GetRootSignature());
 		mD3DCommandList->SetPipelineState(pipelineState);
+		SetPrimitiveTopology(pso->GetPrimitiveTopology());
 		mCurrentPipelineState = pipelineState;
 
 		mPSORef = pso;
@@ -765,9 +759,9 @@ namespace Dash
 		mD3DCommandList->OMSetBlendFactor(color.Data);
 	}
 
-	void FGraphicsCommandContextBase::SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY type)
+	void FGraphicsCommandContextBase::SetPrimitiveTopology(EPrimitiveTopology primitiveTopology)
 	{
-		mD3DCommandList->IASetPrimitiveTopology(type);
+		mD3DCommandList->IASetPrimitiveTopology(D3DPrimitiveTopology(primitiveTopology));
 	}
 
 	void FGraphicsCommandContextBase::SetDynamicSampler(UINT rootIndex, UINT descriptorOffset, D3D12_CPU_DESCRIPTOR_HANDLE handle)

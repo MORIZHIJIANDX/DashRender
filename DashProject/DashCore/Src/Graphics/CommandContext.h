@@ -202,7 +202,7 @@ namespace Dash
 		void SetViewportAndScissor(UINT x, UINT y, UINT width, UINT height);
 		void SetStencilRef(UINT stencilRef);
 		void SetBlendFactor(const FLinearColor& color);
-		void SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY type);
+		void SetPrimitiveTopology(EPrimitiveTopology primitiveTopology);
 
 		void SetDynamicSampler(UINT rootIndex, UINT descriptorOffset, D3D12_CPU_DESCRIPTOR_HANDLE handle);
 		void SetDynamicSamplers(UINT rootIndex, UINT descriptorOffset, UINT count, D3D12_CPU_DESCRIPTOR_HANDLE handles[]);
