@@ -36,6 +36,7 @@ project "DashCore"
 
     -- add dxc lib dir
     libdirs { "%{wks.location}/%{prj.name}/Src/ThirdParty/dxc/lib/x64" }
+    libdirs { "%{wks.location}/%{prj.name}/Src/ThirdParty/assimp/lib/x64" }
 
     files
     {
@@ -48,11 +49,13 @@ project "DashCore"
     {
         "%{prj.name}/Src/PCH",
         "%{prj.name}/Src",
+        "%{prj.name}/Src/ThirdParty",
     }
 
     links
     {
-        "dxcompiler.lib"
+        "dxcompiler.lib",
+        "assimp-vc143-mtd.lib"
     }
 
     defines { 'ENGINE_PATH="' .. path.join(path.getabsolute(""), "%{prj.name}") .. '"' }
@@ -60,6 +63,8 @@ project "DashCore"
     -- shader config
     shadermodel ("6.0")
     shaderassembler("AssemblyCode")
+
+    --nuget { "Assimp:3.0.0", "Assimp.redist:3.0.0" }
 
     filter { "system:windows" }
         prebuildcommands { "powershell -ExecutionPolicy Bypass -File %{wks.location}/Vendor/GetDXC/GetDXC.ps1 %{wks.location}/%{prj.name}/Src/ThirdParty/dxc" }
@@ -109,6 +114,8 @@ project "DashProject"
     --copy dxc dll
     prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\Src\\ThirdParty\\dxc\\bin\\x64\\dxcompiler.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
     prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\Src\\ThirdParty\\dxc\\bin\\x64\\dxil.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
+
+    --prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\Src\\ThirdParty\\assimp\\lib\\x64\\assimp-vc143-mtd.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
 
     files
     {

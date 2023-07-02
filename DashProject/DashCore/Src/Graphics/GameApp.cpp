@@ -7,6 +7,8 @@
 #include "ThirdParty/imgui/backends/imgui_impl_win32.h"
 #include "ThirdParty/imgui/backends/imgui_impl_dx12.h"
 
+#include "ModelLoader/StaticMeshLoader.h"
+
 namespace Dash
 {
 	IGameApp* IGameApp::mAppInstance = nullptr;
@@ -22,7 +24,16 @@ namespace Dash
 
 	void IGameApp::Startup(void)
 	{
-		//return;
+		FImportedStaticMeshData importedStaticMeshData;
+
+		std::string fbxMeshPath = std::string(ENGINE_PATH) + "/Resource/Cyborg_Weapon.fbx";
+
+		bool result = LoadStaticMeshFromFile(fbxMeshPath, importedStaticMeshData);
+
+		if (result)
+		{
+			FStaticMeshData<FMeshVertexTypePNTVU> meshData = importedStaticMeshData.GetMeshData<FMeshVertexTypePNTVU>();
+		}
 
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
@@ -41,8 +52,6 @@ namespace Dash
 
 	void IGameApp::Cleanup(void)
 	{
-		//return;
-
 		// Cleanup
 		ImGui_ImplDX12_Shutdown_Refactoring();
 		ImGui_ImplWin32_Shutdown();

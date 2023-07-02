@@ -77,7 +77,7 @@
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Src\PCH;Src;Src\ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -96,8 +96,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>dxcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>Src\ThirdParty\dxc\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxcompiler.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Src\ThirdParty\dxc\lib\x64;Src\ThirdParty\assimp\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PreBuildEvent>
       <Command>powershell -ExecutionPolicy Bypass -File $(SolutionDir)/Vendor/GetDXC/GetDXC.ps1 $(SolutionDir)/$(ProjectName)/Src/ThirdParty/dxc</Command>
@@ -109,7 +109,7 @@
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Src\PCH;Src;Src\ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -131,8 +131,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>dxcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>Src\ThirdParty\dxc\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxcompiler.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Src\ThirdParty\dxc\lib\x64;Src\ThirdParty\assimp\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PreBuildEvent>
       <Command>powershell -ExecutionPolicy Bypass -File $(SolutionDir)/Vendor/GetDXC/GetDXC.ps1 $(SolutionDir)/$(ProjectName)/Src/ThirdParty/dxc</Command>
@@ -144,7 +144,7 @@
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Src\PCH;Src;Src\ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -166,14 +166,15 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>dxcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>Src\ThirdParty\dxc\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxcompiler.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Src\ThirdParty\dxc\lib\x64;Src\ThirdParty\assimp\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PreBuildEvent>
       <Command>powershell -ExecutionPolicy Bypass -File $(SolutionDir)/Vendor/GetDXC/GetDXC.ps1 $(SolutionDir)/$(ProjectName)/Src/ThirdParty/dxc</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Asset\StaticMesh.h" />
     <ClInclude Include="Src\Consolid\Consolid.h" />
     <ClInclude Include="Src\Consolid\DashWinAPI.h" />
     <ClInclude Include="Src\DesignPatterns\Delegate.h" />
@@ -245,19 +246,92 @@
     <ClInclude Include="Src\Math\Vector3.h" />
     <ClInclude Include="Src\Math\Vector4.h" />
     <ClInclude Include="Src\Math\Vector4_SSE.h" />
+    <ClInclude Include="Src\ModelLoader\MeshLoaderHelper.h" />
+    <ClInclude Include="Src\ModelLoader\StaticMeshLoader.h" />
     <ClInclude Include="Src\PCH\PCH.h" />
     <ClInclude Include="Src\TextureLoader\DDSTextureLoader.h" />
     <ClInclude Include="Src\TextureLoader\HDRTextureLoader.h" />
     <ClInclude Include="Src\TextureLoader\TGATextureLoader.h" />
     <ClInclude Include="Src\TextureLoader\TextureLoaderHelper.h" />
     <ClInclude Include="Src\TextureLoader\WICTextureLoader.h" />
-    <ClInclude Include="Src\TextureLoader\stb_image.h" />
     <ClInclude Include="Src\ThirdParty\DirectXTex\BC.h" />
     <ClInclude Include="Src\ThirdParty\DirectXTex\DDS.h" />
     <ClInclude Include="Src\ThirdParty\DirectXTex\DirectXTex.h" />
     <ClInclude Include="Src\ThirdParty\DirectXTex\DirectXTexP.h" />
     <ClInclude Include="Src\ThirdParty\DirectXTex\filters.h" />
     <ClInclude Include="Src\ThirdParty\DirectXTex\scoped.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\BaseImporter.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\Bitmap.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\BlobIOSystem.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\ByteSwapper.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\ColladaMetaData.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\Compiler\poppack1.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\Compiler\pstdint.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\Compiler\pushpack1.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\CreateAnimMesh.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\DefaultIOStream.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\DefaultIOSystem.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\Exceptional.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\GenericProperty.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\GltfMaterial.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\Hash.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\IOStreamBuffer.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\LineSplitter.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\LogAux.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\MathFunctions.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\MemoryIOWrapper.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\ObjMaterial.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\ParsingUtils.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\Profiler.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\RemoveComments.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\SGSpatialSort.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\SceneCombiner.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\SkeletonMeshBuilder.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\SmallVector.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\SmoothingGroups.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\SpatialSort.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\StandardShapes.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\StreamReader.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\StreamWriter.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\StringComparison.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\StringUtils.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\Subdivision.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\TinyFormatter.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\Vertex.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\XMLTools.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\XmlParser.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\ZipArchiveIOSystem.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\aabb.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\ai_assert.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\anim.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\camera.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\cexport.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\cfileio.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\cimport.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\color4.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\commonMetaData.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\config.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\defs.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\fast_atof.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\importerdesc.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\light.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\material.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\matrix3x3.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\matrix4x4.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\mesh.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\metadata.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\pbrmaterial.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\port\AndroidJNI\AndroidJNIIOSystem.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\port\AndroidJNI\BundledAssetIOSystem.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\postprocess.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\qnan.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\quaternion.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\scene.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\texture.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\types.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\vector2.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\vector3.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\version.h" />
     <ClInclude Include="Src\ThirdParty\dxc\inc\d3d12shader.h" />
     <ClInclude Include="Src\ThirdParty\dxc\inc\dxcapi.h" />
     <ClInclude Include="Src\ThirdParty\imgui\backends\imgui_impl_dx12.h" />
@@ -285,6 +359,7 @@
     <ClInclude Include="Src\Utility\Visitor.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Asset\StaticMesh.cpp" />
     <ClCompile Include="Src\EntryPoint.cpp" />
     <ClCompile Include="Src\Graphics\BlendState.cpp" />
     <ClCompile Include="Src\Graphics\Camera.cpp" />
@@ -324,6 +399,8 @@
     <ClCompile Include="Src\Graphics\SwapChain.cpp" />
     <ClCompile Include="Src\Graphics\TextureBuffer.cpp" />
     <ClCompile Include="Src\Math\Color.cpp" />
+    <ClCompile Include="Src\ModelLoader\MeshLoaderHelper.cpp" />
+    <ClCompile Include="Src\ModelLoader\StaticMeshLoader.cpp" />
     <ClCompile Include="Src\PCH\PCH.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
