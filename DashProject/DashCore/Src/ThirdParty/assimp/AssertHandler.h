@@ -2,8 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2022, assimp team
-
+Copyright (c) 2006-2020, assimp team
 
 All rights reserved.
 
@@ -40,62 +39,41 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ----------------------------------------------------------------------
 */
 
-/** @file Profiler.h
- *  @brief Utility to measure the respective runtime of each import step
- */
-#pragma once
-#ifndef AI_INCLUDED_PROFILER_H
-#define AI_INCLUDED_PROFILER_H
+/** @file Provides facilities to replace the default assert handler. */
 
-#ifdef __GNUC__
-#   pragma GCC system_header
-#endif
+#ifndef INCLUDED_AI_ASSERTHANDLER_H
+#define INCLUDED_AI_ASSERTHANDLER_H
 
-#include <chrono>
-#include <assimp/DefaultLogger.hpp>
-#include <assimp/TinyFormatter.h>
-
-#include <map>
+#include <assimp/ai_assert.h>
+#include <assimp/defs.h>
 
 namespace Assimp {
-namespace Profiling {
 
-using namespace Formatter;
-
-// ------------------------------------------------------------------------------------------------
-/** Simple wrapper around boost::timer to simplify reporting. Timings are automatically
- *  dumped to the log file.
+// ---------------------------------------------------------------------------
+/**
+ *  @brief  Signature of functions which handle assert violations.
  */
-class Profiler {
-public:
-    Profiler() = default;
+using AiAssertHandler = void (*)(const char* failedExpression, const char* file, int line);
 
+// ---------------------------------------------------------------------------
+/**
+ *  @brief  Set the assert handler.
+ */
+ASSIMP_API void setAiAssertHandler(AiAssertHandler handler);
 
-    /** Start a named timer */
-    void BeginRegion(const std::string& region) {
-        regions[region] = std::chrono::system_clock::now();
-        ASSIMP_LOG_DEBUG("START `",region,"`");
-    }
+// ---------------------------------------------------------------------------
+/** The assert handler which is set by default.
+ *
+ *  @brief  This issues a message to stderr and calls abort.
+ */
+AI_WONT_RETURN ASSIMP_API void defaultAiAssertHandler(const char* failedExpression, const char* file, int line) AI_WONT_RETURN_SUFFIX;
 
+// ---------------------------------------------------------------------------
+/**
+ *  @brief  Dispatches an assert violation to the assert handler.
+ */
+ASSIMP_API void aiAssertViolation(const char* failedExpression, const char* file, int line);
 
-    /** End a specific named timer and write its end time to the log */
-    void EndRegion(const std::string& region) {
-        RegionMap::const_iterator it = regions.find(region);
-        if (it == regions.end()) {
-            return;
-        }
+} // end of namespace Assimp
 
-        std::chrono::duration<double> elapsedSeconds = std::chrono::system_clock::now() - regions[region];
-        ASSIMP_LOG_DEBUG("END   `",region,"`, dt= ", elapsedSeconds.count()," s");
-    }
-
-private:
-    typedef std::map<std::string,std::chrono::time_point<std::chrono::system_clock>> RegionMap;
-    RegionMap regions;
-};
-
-}
-}
-
-#endif // AI_INCLUDED_PROFILER_H
-
+#endif // INCLUDED_AI_ASSERTHANDLER_H

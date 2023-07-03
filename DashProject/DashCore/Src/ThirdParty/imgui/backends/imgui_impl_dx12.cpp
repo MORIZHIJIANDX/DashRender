@@ -170,7 +170,6 @@ static void ImGui_ImplDX12_SetupRenderState_Refactoring(ImDrawData* draw_data, F
 
     ctx.SetIndexBuffer(fr->IndexBuffer);
 
-    //ctx.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     ctx.SetGraphicsPipelineState(bd->pPipelineState);
     ctx.SetRootConstantBufferView("constantBuffer", vertex_constant_buffer);
 

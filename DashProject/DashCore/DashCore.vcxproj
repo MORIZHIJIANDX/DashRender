@@ -76,7 +76,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENGINE_PATH="E:/DXCode/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>Src\PCH;Src;Src\ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -97,7 +97,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>dxcompiler.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>Src\ThirdParty\dxc\lib\x64;Src\ThirdParty\assimp\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>Src\ThirdParty\dxc\lib\x64;Src\ThirdParty\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PreBuildEvent>
       <Command>powershell -ExecutionPolicy Bypass -File $(SolutionDir)/Vendor/GetDXC/GetDXC.ps1 $(SolutionDir)/$(ProjectName)/Src/ThirdParty/dxc</Command>
@@ -108,7 +108,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENGINE_PATH="E:/DXCode/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>Src\PCH;Src;Src\ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -132,7 +132,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>dxcompiler.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>Src\ThirdParty\dxc\lib\x64;Src\ThirdParty\assimp\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>Src\ThirdParty\dxc\lib\x64;Src\ThirdParty\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PreBuildEvent>
       <Command>powershell -ExecutionPolicy Bypass -File $(SolutionDir)/Vendor/GetDXC/GetDXC.ps1 $(SolutionDir)/$(ProjectName)/Src/ThirdParty/dxc</Command>
@@ -143,7 +143,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENGINE_PATH="E:/DXCode/DashRender/DashProject/DashCore";DASH_PLATFORM_WINDOWS;DASH_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>Src\PCH;Src;Src\ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -167,7 +167,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>dxcompiler.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>Src\ThirdParty\dxc\lib\x64;Src\ThirdParty\assimp\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>Src\ThirdParty\dxc\lib\x64;Src\ThirdParty\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PreBuildEvent>
       <Command>powershell -ExecutionPolicy Bypass -File $(SolutionDir)/Vendor/GetDXC/GetDXC.ps1 $(SolutionDir)/$(ProjectName)/Src/ThirdParty/dxc</Command>
@@ -260,6 +260,7 @@
     <ClInclude Include="Src\ThirdParty\DirectXTex\DirectXTexP.h" />
     <ClInclude Include="Src\ThirdParty\DirectXTex\filters.h" />
     <ClInclude Include="Src\ThirdParty\DirectXTex\scoped.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\AssertHandler.h" />
     <ClInclude Include="Src\ThirdParty\assimp\BaseImporter.h" />
     <ClInclude Include="Src\ThirdParty\assimp\Bitmap.h" />
     <ClInclude Include="Src\ThirdParty\assimp\BlobIOSystem.h" />
@@ -329,6 +330,12 @@
     <ClInclude Include="Src\ThirdParty\assimp\scene.h" />
     <ClInclude Include="Src\ThirdParty\assimp\texture.h" />
     <ClInclude Include="Src\ThirdParty\assimp\types.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\utf8cpp\source\utf8.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\utf8cpp\source\utf8\checked.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\utf8cpp\source\utf8\core.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\utf8cpp\source\utf8\cpp11.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\utf8cpp\source\utf8\cpp17.h" />
+    <ClInclude Include="Src\ThirdParty\assimp\utf8cpp\source\utf8\unchecked.h" />
     <ClInclude Include="Src\ThirdParty\assimp\vector2.h" />
     <ClInclude Include="Src\ThirdParty\assimp\vector3.h" />
     <ClInclude Include="Src\ThirdParty\assimp\version.h" />

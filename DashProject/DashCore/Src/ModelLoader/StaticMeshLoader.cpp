@@ -52,6 +52,8 @@ namespace Dash
                 uint32_t total_verts{ 0 };
                 for (uint32_t i = 0; i < scene->mNumMeshes; ++i)
                     total_verts += scene->mMeshes[i]->mNumVertices;
+                
+                ASSERT(total_verts != 0);
 
                 importedMeshData.numVertexes = total_verts;
 
@@ -113,6 +115,11 @@ namespace Dash
                 meshSections.push_back(sectionData);
             }
 
+            importedMeshData.hasNormal = normals.size() > 0;
+            importedMeshData.hasTangent = tangents.size() > 0;
+            importedMeshData.hasUV = uvs.size() > 0;
+            importedMeshData.hasVertexColor = vertexColors.size() > 0;
+
             // Resize standardized buffers
             importedMeshData.vertexData[EVertexAttribute::Position].resize(positions.size() * sizeof(positions[0]));
             importedMeshData.vertexData[EVertexAttribute::UV].resize(uvs.size() * sizeof(uvs[0]));
@@ -127,14 +134,18 @@ namespace Dash
             std::memcpy(importedMeshData.vertexData[EVertexAttribute::Tangent].data(), tangents.data(), tangents.size() * sizeof(tangents[0]));
             std::memcpy(importedMeshData.vertexData[EVertexAttribute::VertexColor].data(), vertexColors.data(), vertexColors.size() * sizeof(vertexColors[0]));
 
-            assert(positions.size() == uvs.size());
-            assert(uvs.size() == normals.size());
-            assert(normals.size() == tangents.size());
-            assert(tangents.size() == vertexColors.size());
+            ASSERT(positions.size() == uvs.size());
+            ASSERT(uvs.size() == normals.size());
+            ASSERT(normals.size() == tangents.size());
+
+            if (importedMeshData.hasVertexColor)
+            {
+                ASSERT(tangents.size() == vertexColors.size());
+            }
         }
 
         // Sanity check
-        assert(meshSections.size() == submesh_to_material_idx.size());
+        ASSERT(meshSections.size() == submesh_to_material_idx.size());
 
         // Extract material load data
         const auto directory = FFileUtility::GetParentPath(filePath);

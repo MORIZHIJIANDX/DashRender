@@ -46,6 +46,15 @@
     <Filter Include="ThirdParty\assimp\port\AndroidJNI">
       <UniqueIdentifier>{710DEF6B-DD7B-44EB-2665-FFEA92123A87}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ThirdParty\assimp\utf8cpp">
+      <UniqueIdentifier>{45E57E60-B1A7-B2EA-FA57-417766598BC8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\assimp\utf8cpp\source">
+      <UniqueIdentifier>{C5C736EE-B118-2230-DA7C-10F2C62CB599}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\assimp\utf8cpp\source\utf8">
+      <UniqueIdentifier>{BB0DA841-27D2-A631-F037-D7FB5CBB4267}</UniqueIdentifier>
+    </Filter>
     <Filter Include="ThirdParty\dxc">
       <UniqueIdentifier>{1EF8D211-0AC6-C617-F359-373EDFC6A27C}</UniqueIdentifier>
     </Filter>
@@ -322,6 +331,9 @@
     <ClInclude Include="Src\ThirdParty\DirectXTex\scoped.h">
       <Filter>ThirdParty\DirectXTex</Filter>
     </ClInclude>
+    <ClInclude Include="Src\ThirdParty\assimp\AssertHandler.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
     <ClInclude Include="Src\ThirdParty\assimp\BaseImporter.h">
       <Filter>ThirdParty\assimp</Filter>
     </ClInclude>
@@ -528,6 +540,24 @@
     </ClInclude>
     <ClInclude Include="Src\ThirdParty\assimp\types.h">
       <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\assimp\utf8cpp\source\utf8.h">
+      <Filter>ThirdParty\assimp\utf8cpp\source</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\assimp\utf8cpp\source\utf8\checked.h">
+      <Filter>ThirdParty\assimp\utf8cpp\source\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\assimp\utf8cpp\source\utf8\core.h">
+      <Filter>ThirdParty\assimp\utf8cpp\source\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\assimp\utf8cpp\source\utf8\cpp11.h">
+      <Filter>ThirdParty\assimp\utf8cpp\source\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\assimp\utf8cpp\source\utf8\cpp17.h">
+      <Filter>ThirdParty\assimp\utf8cpp\source\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ThirdParty\assimp\utf8cpp\source\utf8\unchecked.h">
+      <Filter>ThirdParty\assimp\utf8cpp\source\utf8</Filter>
     </ClInclude>
     <ClInclude Include="Src\ThirdParty\assimp\vector2.h">
       <Filter>ThirdParty\assimp</Filter>

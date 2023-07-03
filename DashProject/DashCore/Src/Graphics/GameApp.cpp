@@ -32,7 +32,9 @@ namespace Dash
 
 		if (result)
 		{
-			FStaticMeshData<FMeshVertexTypePNTVU> meshData = importedStaticMeshData.GetMeshData<FMeshVertexTypePNTVU>();
+			FStaticMeshData<FMeshVertexTypePNTU> meshData = importedStaticMeshData.GetMeshData<FMeshVertexTypePNTU>();
+
+			LOG_INFO << "Load mesh succeed!";
 		}
 
 		// Setup Dear ImGui context

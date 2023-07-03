@@ -11,7 +11,7 @@ workspace "DashProject"
     flags
 	{
         --多核并行编译
-		"MultiProcessorCompile" 
+		"MultiProcessorCompile"
 	}
 
     startproject "DashProject"
@@ -36,7 +36,7 @@ project "DashCore"
 
     -- add dxc lib dir
     libdirs { "%{wks.location}/%{prj.name}/Src/ThirdParty/dxc/lib/x64" }
-    libdirs { "%{wks.location}/%{prj.name}/Src/ThirdParty/assimp/lib/x64" }
+    libdirs { "%{wks.location}/%{prj.name}/Src/ThirdParty/assimp/lib/Debug" }
 
     files
     {
@@ -54,8 +54,8 @@ project "DashCore"
 
     links
     {
-        "dxcompiler.lib",
-        "assimp-vc143-mtd.lib"
+        "dxcompiler",
+        "assimp-vc143-mtd"
     }
 
     defines { 'ENGINE_PATH="' .. path.join(path.getabsolute(""), "%{prj.name}") .. '"' }
@@ -72,7 +72,7 @@ project "DashCore"
     -- used as includes
     filter "files:**.hlsli"
         flags("ExcludeFromBuild")
-    
+
     filter "files:**.hlsl"
         flags("ExcludeFromBuild")
 
@@ -115,7 +115,7 @@ project "DashProject"
     prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\Src\\ThirdParty\\dxc\\bin\\x64\\dxcompiler.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
     prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\Src\\ThirdParty\\dxc\\bin\\x64\\dxil.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
 
-    --prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\Src\\ThirdParty\\assimp\\lib\\x64\\assimp-vc143-mtd.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
+    prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\Src\\ThirdParty\\assimp\\bin\\Debug\\assimp-vc143-mtd.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
 
     files
     {
