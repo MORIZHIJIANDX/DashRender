@@ -7,7 +7,7 @@
 #define LOGURU_WITH_FILEABS     0
 
 #include "DesignPatterns/Singleton.h"
-#include "ThirdParty/loguru/loguru.h"
+#include "loguru/loguru.h"
 
 namespace Dash
 {

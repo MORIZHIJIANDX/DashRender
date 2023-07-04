@@ -1,6 +1,6 @@
 #include "PCH.h"
 #include "TGATextureLoader.h"
-#include "ThirdParty/DirectXTex/DirectXTex.h"
+#include "DirectXTex/DirectXTex.h"
 #include "Utility/StringUtility.h"
 #include "TextureLoaderHelper.h"
 

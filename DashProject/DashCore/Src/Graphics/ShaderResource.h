@@ -4,8 +4,8 @@
 #include <wtypes.h>
 #include <Unknwn.h>
 #include <wrl.h>
-#include "ThirdParty/dxc/inc/dxcapi.h"
-#include "ThirdParty/dxc/inc/d3d12shader.h"
+#include "dxc/inc/dxcapi.h"
+#include "dxc/inc/d3d12shader.h"
 
 namespace Dash
 {

@@ -14,7 +14,7 @@
 
 #pragma once
 //#include "imgui.h"      // IMGUI_IMPL_API
-#include "ThirdParty/imgui/imgui.h"
+#include "imgui/imgui.h"
 
 IMGUI_IMPL_API bool     ImGui_ImplWin32_Init(void* hwnd);
 IMGUI_IMPL_API void     ImGui_ImplWin32_Shutdown();

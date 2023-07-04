@@ -35,13 +35,15 @@ project "DashCore"
     characterset ("MBCS")
 
     -- add dxc lib dir
-    libdirs { "%{wks.location}/%{prj.name}/Src/ThirdParty/dxc/lib/x64" }
-    libdirs { "%{wks.location}/%{prj.name}/Src/ThirdParty/assimp/lib/Debug" }
+    libdirs { "%{wks.location}/%{prj.name}/ThirdParty/dxc/lib/x64" }
+    libdirs { "%{wks.location}/%{prj.name}/ThirdParty/assimp/lib/Debug" }
 
     files
     {
         "%{prj.name}/Src/**.h",
         "%{prj.name}/Src/**.cpp",
+        "%{prj.name}/ThirdParty/**.h",
+        "%{prj.name}/ThirdParty/**.cpp",
         "%{prj.name}/Src/**.hlsl"
     }
 
@@ -49,7 +51,7 @@ project "DashCore"
     {
         "%{prj.name}/Src/PCH",
         "%{prj.name}/Src",
-        "%{prj.name}/Src/ThirdParty",
+        "%{prj.name}/ThirdParty",
     }
 
     links
@@ -67,7 +69,7 @@ project "DashCore"
     --nuget { "Assimp:3.0.0", "Assimp.redist:3.0.0" }
 
     filter { "system:windows" }
-        prebuildcommands { "powershell -ExecutionPolicy Bypass -File %{wks.location}/Vendor/GetDXC/GetDXC.ps1 %{wks.location}/%{prj.name}/Src/ThirdParty/dxc" }
+        prebuildcommands { "powershell -ExecutionPolicy Bypass -File %{wks.location}/Vendor/GetDXC/GetDXC.ps1 %{wks.location}/%{prj.name}/ThirdParty/dxc" }
 
     -- used as includes
     filter "files:**.hlsli"
@@ -112,10 +114,10 @@ project "DashProject"
     defines { 'PROJECT_PATH="' .. path.join(path.getabsolute(""), "%{prj.name}") .. '"' }
 
     --copy dxc dll
-    prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\Src\\ThirdParty\\dxc\\bin\\x64\\dxcompiler.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
-    prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\Src\\ThirdParty\\dxc\\bin\\x64\\dxil.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
+    prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\ThirdParty\\dxc\\bin\\x64\\dxcompiler.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
+    prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\ThirdParty\\dxc\\bin\\x64\\dxil.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
 
-    prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\Src\\ThirdParty\\assimp\\bin\\Debug\\assimp-vc143-mtd.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
+    prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\ThirdParty\\assimp\\bin\\Debug\\assimp-vc143-mtd.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
 
     files
     {
@@ -125,7 +127,8 @@ project "DashProject"
 
     includedirs
     {
-        "DashCore/Src"
+        "DashCore/Src",
+        "DashCore/ThirdParty"
     }
 
     links

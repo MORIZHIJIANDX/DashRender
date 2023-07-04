@@ -15,7 +15,7 @@
 
 #pragma once
 //#include "imgui.h"      // IMGUI_IMPL_API
-#include "ThirdParty/imgui/imgui.h"
+#include "imgui/imgui.h"
 #include <dxgiformat.h> // DXGI_FORMAT
 
 #include "Graphics/CommandContext.h"

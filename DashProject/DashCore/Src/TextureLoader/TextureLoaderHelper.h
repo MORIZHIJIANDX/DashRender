@@ -1,4 +1,4 @@
-#include "ThirdParty/DirectXTex/DirectXTex.h"
+#include "DirectXTex/DirectXTex.h"
 #include "Graphics/ResourceDescription.h"
 
 namespace DirectX

@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>PROJECT_PATH="E:/DXCode/DashRender/DashProject/DashProject";DASH_PLATFORM_WINDOWS;DASH_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\DashCore\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\DashCore\Src;..\DashCore\ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -94,9 +94,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\dxc\bin\x64\dxcompiler.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\
-xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\dxc\bin\x64\dxil.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\
-xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\assimp\bin\Debug\assimp-vc143-mtd.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\</Command>
+      <Command>xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\dxc\bin\x64\dxcompiler.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\
+xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\dxc\bin\x64\dxil.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\
+xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Debug\assimp-vc143-mtd.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -104,7 +104,7 @@ xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\assimp\bin\Debug\assimp-vc143
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>PROJECT_PATH="E:/DXCode/DashRender/DashProject/DashProject";DASH_PLATFORM_WINDOWS;DASH_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\DashCore\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\DashCore\Src;..\DashCore\ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -122,9 +122,9 @@ xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\assimp\bin\Debug\assimp-vc143
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\dxc\bin\x64\dxcompiler.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\
-xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\dxc\bin\x64\dxil.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\
-xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\assimp\bin\Debug\assimp-vc143-mtd.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\</Command>
+      <Command>xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\dxc\bin\x64\dxcompiler.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\
+xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\dxc\bin\x64\dxil.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\
+xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Debug\assimp-vc143-mtd.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Distribution|x64'">
@@ -132,7 +132,7 @@ xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\assimp\bin\Debug\assimp-vc143
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>PROJECT_PATH="E:/DXCode/DashRender/DashProject/DashProject";DASH_PLATFORM_WINDOWS;DASH_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\DashCore\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\DashCore\Src;..\DashCore\ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -150,9 +150,9 @@ xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\assimp\bin\Debug\assimp-vc143
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\dxc\bin\x64\dxcompiler.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\
-xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\dxc\bin\x64\dxil.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\
-xcopy /Y /D $(SolutionDir)\DashCore\Src\ThirdParty\assimp\bin\Debug\assimp-vc143-mtd.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\</Command>
+      <Command>xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\dxc\bin\x64\dxcompiler.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\
+xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\dxc\bin\x64\dxil.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\
+xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Debug\assimp-vc143-mtd.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

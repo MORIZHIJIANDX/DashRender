@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Asset">
-      <UniqueIdentifier>{253FD80C-9153-00BE-5AD5-A31DC6A8FCEE}</UniqueIdentifier>
+    <Filter Include="Src">
+      <UniqueIdentifier>{0D23880B-792C-887C-02A8-9E7C6EB0937C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Consolid">
-      <UniqueIdentifier>{208765BA-0C54-C0C5-356D-AE6D2199F553}</UniqueIdentifier>
+    <Filter Include="Src\Asset">
+      <UniqueIdentifier>{5C2D0723-C897-BB99-11D6-6C3F7D7F99EE}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DesignPatterns">
-      <UniqueIdentifier>{10AA6C8E-FC77-6094-E50B-D1BAD1783CF9}</UniqueIdentifier>
+    <Filter Include="Src\Consolid">
+      <UniqueIdentifier>{F7DD73CC-E340-0371-8CC6-3B277808CFF3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Graphics">
-      <UniqueIdentifier>{1653CE33-0220-293F-2B39-17E717655ECD}</UniqueIdentifier>
+    <Filter Include="Src\DesignPatterns">
+      <UniqueIdentifier>{27868C29-136A-4D7F-7CCA-47D268CD3701}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Math">
-      <UniqueIdentifier>{AFF4887C-9B2B-8A0D-4418-7010302E060F}</UniqueIdentifier>
+    <Filter Include="Src\Graphics">
+      <UniqueIdentifier>{EDA9DC45-D90C-6CEA-8292-A4A06ED4376D}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ModelLoader">
-      <UniqueIdentifier>{AD935FB2-1949-D8A7-A23D-D27E0EF2CEAB}</UniqueIdentifier>
+    <Filter Include="Src\Math">
+      <UniqueIdentifier>{0678E746-F244-4252-1B5E-30FA078A77E0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PCH">
-      <UniqueIdentifier>{2010880B-8C19-887C-1595-9E7C819D937C}</UniqueIdentifier>
+    <Filter Include="Src\ModelLoader">
+      <UniqueIdentifier>{240F4C61-909A-B925-99AB-3C1A05B61526}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{EFAC8DF2-5B8C-0C8E-64A4-9764D00273EF}</UniqueIdentifier>
+    <Filter Include="Src\PCH">
+      <UniqueIdentifier>{9704E809-03E4-66A5-0CFC-F17B785ACD06}</UniqueIdentifier>
     </Filter>
-    <Filter Include="TextureLoader">
-      <UniqueIdentifier>{4D05AFAA-B9C5-2AE1-8200-745EEE7F6FBD}</UniqueIdentifier>
+    <Filter Include="Src\Shaders">
+      <UniqueIdentifier>{E6043150-52BA-A945-DBAE-A31C4763A049}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\TextureLoader">
+      <UniqueIdentifier>{843AA8C6-F050-A65C-39C8-317EA51D77E4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Utility">
+      <UniqueIdentifier>{509EB806-BC53-31FC-4548-2BD3B1FC2700}</UniqueIdentifier>
     </Filter>
     <Filter Include="ThirdParty">
       <UniqueIdentifier>{107145F9-FC28-8746-6530-60A251072237}</UniqueIdentifier>
@@ -70,832 +76,833 @@
     <Filter Include="ThirdParty\loguru">
       <UniqueIdentifier>{3D06AB32-A91C-A9C8-F293-34EA5EE97950}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utility">
-      <UniqueIdentifier>{594615A9-C525-9444-CE3D-1F1B3A9CFAA5}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Asset\StaticMesh.h">
-      <Filter>Asset</Filter>
+      <Filter>Src\Asset</Filter>
     </ClInclude>
     <ClInclude Include="Src\Consolid\Consolid.h">
-      <Filter>Consolid</Filter>
+      <Filter>Src\Consolid</Filter>
     </ClInclude>
     <ClInclude Include="Src\Consolid\DashWinAPI.h">
-      <Filter>Consolid</Filter>
+      <Filter>Src\Consolid</Filter>
     </ClInclude>
     <ClInclude Include="Src\DesignPatterns\Delegate.h">
-      <Filter>DesignPatterns</Filter>
+      <Filter>Src\DesignPatterns</Filter>
     </ClInclude>
     <ClInclude Include="Src\DesignPatterns\DelegateBase.h">
-      <Filter>DesignPatterns</Filter>
+      <Filter>Src\DesignPatterns</Filter>
     </ClInclude>
     <ClInclude Include="Src\DesignPatterns\MulticastDelegate.h">
-      <Filter>DesignPatterns</Filter>
+      <Filter>Src\DesignPatterns</Filter>
     </ClInclude>
     <ClInclude Include="Src\DesignPatterns\Singleton.h">
-      <Filter>DesignPatterns</Filter>
+      <Filter>Src\DesignPatterns</Filter>
     </ClInclude>
-    <ClInclude Include="Src\EntryPoint.h" />
+    <ClInclude Include="Src\EntryPoint.h">
+      <Filter>Src</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\BlendState.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\Camera.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\ColorBuffer.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\CommandContext.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\CommandQueue.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocation.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocator.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocatorPage.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\DX12Helper.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\DepthBuffer.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\DepthStencilState.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\DynamicDescriptorHeap.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\GameApp.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\GpuBuffer.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\GpuLinearAllocator.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\GpuResource.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\GpuResourcesStateTracker.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\GraphicsCore.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\InputAssemblerLayout.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\PipelineStateObject.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\PixelBuffer.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\PrimitiveTopology.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\RasterizerState.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\ReadbackBuffer.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\RenderDevice.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\RenderTarget.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\ResourceDescription.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\ResourceFormat.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\ResourceState.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\RootSignature.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\SamplerDesc.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\ShaderCompiler.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\ShaderMap.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\ShaderPass.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\ShaderResource.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\ShaderTechnique.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\SwapChain.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\TextureBuffer.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\Viewport.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\d3dx12.h">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\AABB.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\AABB2.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\AABB3.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Algebra.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\BitMask.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Color.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Intersection.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Interval.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\MathType.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Matrix3x3.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Matrix4x4.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Metric.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Promote.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Quaternion.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Ray.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Scalar.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\ScalarArray.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\ScalarMatrix.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\ScalarTraits.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Transform.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Vector2.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Vector3.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Vector4.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Vector4_SSE.h">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\ModelLoader\MeshLoaderHelper.h">
-      <Filter>ModelLoader</Filter>
+      <Filter>Src\ModelLoader</Filter>
     </ClInclude>
     <ClInclude Include="Src\ModelLoader\StaticMeshLoader.h">
-      <Filter>ModelLoader</Filter>
+      <Filter>Src\ModelLoader</Filter>
     </ClInclude>
     <ClInclude Include="Src\PCH\PCH.h">
-      <Filter>PCH</Filter>
+      <Filter>Src\PCH</Filter>
     </ClInclude>
     <ClInclude Include="Src\TextureLoader\DDSTextureLoader.h">
-      <Filter>TextureLoader</Filter>
+      <Filter>Src\TextureLoader</Filter>
     </ClInclude>
     <ClInclude Include="Src\TextureLoader\HDRTextureLoader.h">
-      <Filter>TextureLoader</Filter>
+      <Filter>Src\TextureLoader</Filter>
     </ClInclude>
     <ClInclude Include="Src\TextureLoader\TGATextureLoader.h">
-      <Filter>TextureLoader</Filter>
+      <Filter>Src\TextureLoader</Filter>
     </ClInclude>
     <ClInclude Include="Src\TextureLoader\TextureLoaderHelper.h">
-      <Filter>TextureLoader</Filter>
+      <Filter>Src\TextureLoader</Filter>
     </ClInclude>
     <ClInclude Include="Src\TextureLoader\WICTextureLoader.h">
-      <Filter>TextureLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\DirectXTex\BC.h">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\DirectXTex\DDS.h">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\DirectXTex\DirectXTex.h">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\DirectXTex\DirectXTexP.h">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\DirectXTex\filters.h">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\DirectXTex\scoped.h">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\AssertHandler.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\BaseImporter.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\Bitmap.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\BlobIOSystem.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\ByteSwapper.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\ColladaMetaData.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\Compiler\poppack1.h">
-      <Filter>ThirdParty\assimp\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\Compiler\pstdint.h">
-      <Filter>ThirdParty\assimp\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\Compiler\pushpack1.h">
-      <Filter>ThirdParty\assimp\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\CreateAnimMesh.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\DefaultIOStream.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\DefaultIOSystem.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\Exceptional.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\GenericProperty.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\GltfMaterial.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\Hash.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\IOStreamBuffer.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\LineSplitter.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\LogAux.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\MathFunctions.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\MemoryIOWrapper.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\ObjMaterial.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\ParsingUtils.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\Profiler.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\RemoveComments.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\SGSpatialSort.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\SceneCombiner.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\SkeletonMeshBuilder.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\SmallVector.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\SmoothingGroups.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\SpatialSort.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\StandardShapes.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\StreamReader.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\StreamWriter.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\StringComparison.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\StringUtils.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\Subdivision.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\TinyFormatter.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\Vertex.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\XMLTools.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\XmlParser.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\ZipArchiveIOSystem.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\aabb.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\ai_assert.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\anim.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\camera.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\cexport.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\cfileio.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\cimport.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\color4.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\commonMetaData.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\config.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\defs.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\fast_atof.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\importerdesc.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\light.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\material.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\matrix3x3.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\matrix4x4.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\mesh.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\metadata.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\pbrmaterial.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\port\AndroidJNI\AndroidJNIIOSystem.h">
-      <Filter>ThirdParty\assimp\port\AndroidJNI</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\port\AndroidJNI\BundledAssetIOSystem.h">
-      <Filter>ThirdParty\assimp\port\AndroidJNI</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\postprocess.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\qnan.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\quaternion.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\scene.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\texture.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\types.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\utf8cpp\source\utf8.h">
-      <Filter>ThirdParty\assimp\utf8cpp\source</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\utf8cpp\source\utf8\checked.h">
-      <Filter>ThirdParty\assimp\utf8cpp\source\utf8</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\utf8cpp\source\utf8\core.h">
-      <Filter>ThirdParty\assimp\utf8cpp\source\utf8</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\utf8cpp\source\utf8\cpp11.h">
-      <Filter>ThirdParty\assimp\utf8cpp\source\utf8</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\utf8cpp\source\utf8\cpp17.h">
-      <Filter>ThirdParty\assimp\utf8cpp\source\utf8</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\utf8cpp\source\utf8\unchecked.h">
-      <Filter>ThirdParty\assimp\utf8cpp\source\utf8</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\vector2.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\vector3.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\assimp\version.h">
-      <Filter>ThirdParty\assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\dxc\inc\d3d12shader.h">
-      <Filter>ThirdParty\dxc\inc</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\dxc\inc\dxcapi.h">
-      <Filter>ThirdParty\dxc\inc</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\imgui\backends\imgui_impl_dx12.h">
-      <Filter>ThirdParty\imgui\backends</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\imgui\backends\imgui_impl_win32.h">
-      <Filter>ThirdParty\imgui\backends</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\imgui\imconfig.h">
-      <Filter>ThirdParty\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\imgui\imgui.h">
-      <Filter>ThirdParty\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\imgui\imgui_internal.h">
-      <Filter>ThirdParty\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\imgui\imstb_rectpack.h">
-      <Filter>ThirdParty\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\imgui\imstb_textedit.h">
-      <Filter>ThirdParty\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\imgui\imstb_truetype.h">
-      <Filter>ThirdParty\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ThirdParty\loguru\loguru.h">
-      <Filter>ThirdParty\loguru</Filter>
+      <Filter>Src\TextureLoader</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\Assert.h">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\BitwiseEnum.h">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\Events.h">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\FileUtility.h">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\Hash.h">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\KeyCodes.h">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\Keyboard.h">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\LogEnums.h">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\LogManager.h">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\Mouse.h">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\StringUtility.h">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\SystemTimer.h">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\ThreadSafeQueue.h">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\Visitor.h">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\DirectXTex\BC.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\DirectXTex\DDS.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\DirectXTex\DirectXTex.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\DirectXTex\DirectXTexP.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\DirectXTex\filters.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\DirectXTex\scoped.h">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\AssertHandler.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\BaseImporter.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\Bitmap.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\BlobIOSystem.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\ByteSwapper.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\ColladaMetaData.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\Compiler\poppack1.h">
+      <Filter>ThirdParty\assimp\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\Compiler\pstdint.h">
+      <Filter>ThirdParty\assimp\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\Compiler\pushpack1.h">
+      <Filter>ThirdParty\assimp\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\CreateAnimMesh.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\DefaultIOStream.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\DefaultIOSystem.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\Exceptional.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\GenericProperty.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\GltfMaterial.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\Hash.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\IOStreamBuffer.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\LineSplitter.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\LogAux.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\MathFunctions.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\MemoryIOWrapper.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\ObjMaterial.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\ParsingUtils.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\Profiler.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\RemoveComments.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\SGSpatialSort.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\SceneCombiner.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\SkeletonMeshBuilder.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\SmallVector.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\SmoothingGroups.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\SpatialSort.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\StandardShapes.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\StreamReader.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\StreamWriter.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\StringComparison.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\StringUtils.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\Subdivision.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\TinyFormatter.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\Vertex.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\XMLTools.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\XmlParser.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\ZipArchiveIOSystem.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\aabb.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\ai_assert.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\anim.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\camera.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\cexport.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\cfileio.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\cimport.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\color4.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\commonMetaData.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\config.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\defs.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\fast_atof.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\importerdesc.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\light.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\material.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\matrix3x3.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\matrix4x4.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\mesh.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\metadata.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\pbrmaterial.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\port\AndroidJNI\AndroidJNIIOSystem.h">
+      <Filter>ThirdParty\assimp\port\AndroidJNI</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\port\AndroidJNI\BundledAssetIOSystem.h">
+      <Filter>ThirdParty\assimp\port\AndroidJNI</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\postprocess.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\qnan.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\quaternion.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\scene.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\texture.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\types.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\utf8cpp\source\utf8.h">
+      <Filter>ThirdParty\assimp\utf8cpp\source</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\utf8cpp\source\utf8\checked.h">
+      <Filter>ThirdParty\assimp\utf8cpp\source\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\utf8cpp\source\utf8\core.h">
+      <Filter>ThirdParty\assimp\utf8cpp\source\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\utf8cpp\source\utf8\cpp11.h">
+      <Filter>ThirdParty\assimp\utf8cpp\source\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\utf8cpp\source\utf8\cpp17.h">
+      <Filter>ThirdParty\assimp\utf8cpp\source\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\utf8cpp\source\utf8\unchecked.h">
+      <Filter>ThirdParty\assimp\utf8cpp\source\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\vector2.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\vector3.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\assimp\version.h">
+      <Filter>ThirdParty\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\dxc\inc\d3d12shader.h">
+      <Filter>ThirdParty\dxc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\dxc\inc\dxcapi.h">
+      <Filter>ThirdParty\dxc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\imgui\backends\imgui_impl_dx12.h">
+      <Filter>ThirdParty\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\imgui\backends\imgui_impl_win32.h">
+      <Filter>ThirdParty\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\imgui\imconfig.h">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\imgui\imgui.h">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\imgui\imgui_internal.h">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\imgui\imstb_rectpack.h">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\imgui\imstb_textedit.h">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\imgui\imstb_truetype.h">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\loguru\loguru.h">
+      <Filter>ThirdParty\loguru</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Asset\StaticMesh.cpp">
-      <Filter>Asset</Filter>
+      <Filter>Src\Asset</Filter>
     </ClCompile>
-    <ClCompile Include="Src\EntryPoint.cpp" />
+    <ClCompile Include="Src\EntryPoint.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Graphics\BlendState.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\Camera.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\ColorBuffer.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\CommandContext.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\CommandQueue.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocation.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocator.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocatorPage.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\DX12Helper.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\DepthBuffer.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\DepthStencilState.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\DynamicDescriptorHeap.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\GameApp.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\GpuBuffer.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\GpuLinearAllocator.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\GpuResource.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\GpuResourcesStateTracker.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\GraphicsCore.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\InputAssemblerLayout.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\PipelineStateObject.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\PixelBuffer.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\PrimitiveTopology.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\RasterizerState.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\ReadbackBuffer.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\RenderDevice.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\ResourceDescription.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\ResourceFormat.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\ResourceState.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\RootSignature.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\SamplerDesc.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\ShaderCompiler.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\ShaderMap.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\ShaderPass.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\ShaderResource.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\ShaderTechnique.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\SwapChain.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\TextureBuffer.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Math\Color.cpp">
-      <Filter>Math</Filter>
+      <Filter>Src\Math</Filter>
     </ClCompile>
     <ClCompile Include="Src\ModelLoader\MeshLoaderHelper.cpp">
-      <Filter>ModelLoader</Filter>
+      <Filter>Src\ModelLoader</Filter>
     </ClCompile>
     <ClCompile Include="Src\ModelLoader\StaticMeshLoader.cpp">
-      <Filter>ModelLoader</Filter>
+      <Filter>Src\ModelLoader</Filter>
     </ClCompile>
     <ClCompile Include="Src\PCH\PCH.cpp">
-      <Filter>PCH</Filter>
+      <Filter>Src\PCH</Filter>
     </ClCompile>
     <ClCompile Include="Src\TextureLoader\DDSTextureLoader.cpp">
-      <Filter>TextureLoader</Filter>
+      <Filter>Src\TextureLoader</Filter>
     </ClCompile>
     <ClCompile Include="Src\TextureLoader\HDRTextureLoader.cpp">
-      <Filter>TextureLoader</Filter>
+      <Filter>Src\TextureLoader</Filter>
     </ClCompile>
     <ClCompile Include="Src\TextureLoader\TGATextureLoader.cpp">
-      <Filter>TextureLoader</Filter>
+      <Filter>Src\TextureLoader</Filter>
     </ClCompile>
     <ClCompile Include="Src\TextureLoader\TextureLoaderHelper.cpp">
-      <Filter>TextureLoader</Filter>
+      <Filter>Src\TextureLoader</Filter>
     </ClCompile>
     <ClCompile Include="Src\TextureLoader\WICTextureLoader.cpp">
-      <Filter>TextureLoader</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\DirectXTex\BC.cpp">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\DirectXTex\BC4BC5.cpp">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\DirectXTex\BC6HBC7.cpp">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexCompress.cpp">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexConvert.cpp">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexDDS.cpp">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexFlipRotate.cpp">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexHDR.cpp">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexImage.cpp">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexMipmaps.cpp">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexMisc.cpp">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexNormalMaps.cpp">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexPMAlpha.cpp">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexResize.cpp">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexTGA.cpp">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexUtil.cpp">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\DirectXTex\DirectXTexWIC.cpp">
-      <Filter>ThirdParty\DirectXTex</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\imgui\backends\imgui_impl_dx12.cpp">
-      <Filter>ThirdParty\imgui\backends</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\imgui\backends\imgui_impl_win32.cpp">
-      <Filter>ThirdParty\imgui\backends</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\imgui\imgui.cpp">
-      <Filter>ThirdParty\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\imgui\imgui_demo.cpp">
-      <Filter>ThirdParty\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\imgui\imgui_draw.cpp">
-      <Filter>ThirdParty\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\imgui\imgui_tables.cpp">
-      <Filter>ThirdParty\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\imgui\imgui_widgets.cpp">
-      <Filter>ThirdParty\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ThirdParty\loguru\loguru.cpp">
-      <Filter>ThirdParty\loguru</Filter>
+      <Filter>Src\TextureLoader</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\Assert.cpp">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\FileUtility.cpp">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\Hash.cpp">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\Keyboard.cpp">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\LogManager.cpp">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\Mouse.cpp">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\StringUtility.cpp">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\SystemTimer.cpp">
-      <Filter>Utility</Filter>
+      <Filter>Src\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectXTex\BC.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectXTex\BC4BC5.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectXTex\BC6HBC7.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectXTex\DirectXTexCompress.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectXTex\DirectXTexConvert.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectXTex\DirectXTexDDS.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectXTex\DirectXTexFlipRotate.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectXTex\DirectXTexHDR.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectXTex\DirectXTexImage.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectXTex\DirectXTexMipmaps.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectXTex\DirectXTexMisc.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectXTex\DirectXTexNormalMaps.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectXTex\DirectXTexPMAlpha.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectXTex\DirectXTexResize.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectXTex\DirectXTexTGA.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectXTex\DirectXTexUtil.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectXTex\DirectXTexWIC.cpp">
+      <Filter>ThirdParty\DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\imgui\backends\imgui_impl_dx12.cpp">
+      <Filter>ThirdParty\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\imgui\backends\imgui_impl_win32.cpp">
+      <Filter>ThirdParty\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\imgui\imgui.cpp">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\imgui\imgui_demo.cpp">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\imgui\imgui_draw.cpp">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\imgui\imgui_tables.cpp">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\imgui\imgui_widgets.cpp">
+      <Filter>ThirdParty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\loguru\loguru.cpp">
+      <Filter>ThirdParty\loguru</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\FullScreen_PS.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\IMGUI_shader.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\generateMips.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Src\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

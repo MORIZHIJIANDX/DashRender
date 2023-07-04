@@ -2,19 +2,9 @@
 #include "StaticMeshLoader.h"
 #include "Utility/FileUtility.h"
 
-/*
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-*/
-//#include <Assimp/scene.h>           // Output data structure
-//#include <Assimp/Importer.hpp>      // C++ importer interface
-//#include <Assimp/postprocess.h>     // Post processing flags
-//#include <Assimp/pbrmaterial.h>
-
-#include "ThirdParty/assimp/Importer.hpp"
-#include "ThirdParty/assimp/scene.h"
-#include "ThirdParty/assimp/postprocess.h"
+#include "assimp/Importer.hpp"   // C++ importer interface
+#include "assimp/scene.h"        // Output data structure
+#include "assimp/postprocess.h"  // Post processing flags
 
 
 namespace Dash

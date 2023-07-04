@@ -15,7 +15,7 @@
 #include "PCH.h"
 
 //#include "imgui.h"
-#include "ThirdParty/imgui/imgui.h"
+#include "imgui/imgui.h"
 #include "imgui_impl_win32.h"
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
