@@ -53,7 +53,7 @@ PSInput VS_Main(VSInput input)
 
 float4 PS_Main(PSInput input) : SV_Target0
 {
-	float4 Color = float4(input.UV.x, input.UV.y, 0.0f, 1.0f);
+    float4 Color = float4(input.UV.x, input.UV.y, 0.0f, 1.0f) * input.Color;
 	return Color;
 }
 

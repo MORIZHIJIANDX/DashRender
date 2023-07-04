@@ -44,7 +44,7 @@ project "DashCore"
         "%{prj.name}/Src/**.cpp",
         "%{prj.name}/ThirdParty/**.h",
         "%{prj.name}/ThirdParty/**.cpp",
-        "%{prj.name}/Src/**.hlsl"
+        "%{prj.name}/Src/Shaders/**.hlsl"
     }
 
     includedirs
@@ -60,16 +60,12 @@ project "DashCore"
         "assimp-vc143-mtd"
     }
 
-    defines { 'ENGINE_PATH="' .. path.join(path.getabsolute(""), "%{prj.name}") .. '"' }
+    filter { "system:windows" }
+        prebuildcommands { "powershell -ExecutionPolicy Bypass -File %{wks.location}/Vendor/GetDXC/GetDXC.ps1 %{wks.location}/%{prj.name}/ThirdParty/dxc" }
 
     -- shader config
     shadermodel ("6.0")
     shaderassembler("AssemblyCode")
-
-    --nuget { "Assimp:3.0.0", "Assimp.redist:3.0.0" }
-
-    filter { "system:windows" }
-        prebuildcommands { "powershell -ExecutionPolicy Bypass -File %{wks.location}/Vendor/GetDXC/GetDXC.ps1 %{wks.location}/%{prj.name}/ThirdParty/dxc" }
 
     -- used as includes
     filter "files:**.hlsli"
@@ -81,10 +77,8 @@ project "DashCore"
     filter "system:windows"
         systemversion "latest"
 
-        defines
-        {
-            "DASH_PLATFORM_WINDOWS"
-        }
+    defines{"DASH_PLATFORM_WINDOWS"}
+    defines { 'ENGINE_PATH="' .. path.join(path.getabsolute(""), "%{prj.name}") .. '"' }
 
     filter "configurations:Debug"
         defines "DASH_DEBUG"
@@ -110,8 +104,6 @@ project "DashProject"
     objdir ("Bin-Intermediate/"..outputdir.."/%{prj.name}")
 
     characterset ("MBCS")
-
-    defines { 'PROJECT_PATH="' .. path.join(path.getabsolute(""), "%{prj.name}") .. '"' }
 
     --copy dxc dll
     prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\ThirdParty\\dxc\\bin\\x64\\dxcompiler.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
@@ -139,10 +131,8 @@ project "DashProject"
     filter "system:windows"
         systemversion "latest"
 
-        defines
-        {
-            "DASH_PLATFORM_WINDOWS"
-        }
+    defines{"DASH_PLATFORM_WINDOWS"}
+    defines { 'PROJECT_PATH="' .. path.join(path.getabsolute(""), "%{prj.name}") .. '"' }
 
     filter "configurations:Debug"
         defines "DASH_DEBUG"

@@ -31,6 +31,11 @@ namespace Dash
 
 	FGpuDynamicVertexBufferRef VertexBuffer;
 
+	FGpuDynamicVertexBufferRef PositionVertexBuffer;
+	FGpuDynamicVertexBufferRef UVVertexBuffer;
+	FGpuDynamicVertexBufferRef ColorVertexBuffer;
+
+
 	struct ConstantParams
 	{
 		FVector4f TintColor;
@@ -64,7 +69,7 @@ namespace Dash
 
 		FShaderCreationInfo psPresentInfo{ FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "PS_SampleColor" };
 		psPresentInfo.Finalize();
-
+		 
 		FShaderCreationInfo vsInfo{ FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "VS_Main" };
 		vsInfo.Finalize();
 	
@@ -82,9 +87,9 @@ namespace Dash
 		FDepthStencilState DepthStateDisabled{false, false};
 
 		FInputAssemblerLayout inputLayout;
-		inputLayout.AddPerVertexLayoutElement("POSITION", 0, EResourceFormat::RGB32_Float, 0, 0);
-		inputLayout.AddPerVertexLayoutElement("TEXCOORD", 0, EResourceFormat::RG32_Float, 0, 12);
-		inputLayout.AddPerVertexLayoutElement("COLOR", 0, EResourceFormat::RGBA32_Float, 0, 20);
+		inputLayout.AddPerVertexLayoutElement("POSITION", 0, EResourceFormat::RGB32_Float, 0);
+		inputLayout.AddPerVertexLayoutElement("TEXCOORD", 0, EResourceFormat::RG32_Float, 1);
+		inputLayout.AddPerVertexLayoutElement("COLOR", 0, EResourceFormat::RGBA32_Float, 2);
 
 		DrawPSO->SetBlendState(BlendDisable);
 		DrawPSO->SetDepthStencilState(DepthStateDisabled);
@@ -121,6 +126,32 @@ namespace Dash
 		VertexBuffer = FGraphicsCore::Device->CreateDynamicVertexBuffer("DisplayVertexBuffer", 3, sizeof(Vertex));
 
 		VertexBuffer->UpdateData(VertexData.data(), VertexData.size() * sizeof(Vertex));
+
+		std::vector<FVector3f> vertexPositionData;
+		vertexPositionData.reserve(3);
+		vertexPositionData.push_back(FVector3f{ -1.0f, 3.0f, 0.5f });
+		vertexPositionData.push_back(FVector3f{ 3.0f, -1.0f, 0.5f });
+		vertexPositionData.push_back(FVector3f{ -1.0f, -1.0f, 0.5f });
+
+		std::vector<FVector2f> vertexUVData;
+		vertexUVData.reserve(3);
+		vertexUVData.push_back(FVector2f{ 0.0f, -1.0f });
+		vertexUVData.push_back(FVector2f{ 2.0f, 1.0f });
+		vertexUVData.push_back(FVector2f{ 0.0f, 1.0f });
+
+		std::vector<FVector4f> vertexColorData;
+		vertexColorData.reserve(3);
+		vertexColorData.push_back(FVector4f{ 1.0f, 0.0f, 0.0f, 1.0f });
+		vertexColorData.push_back(FVector4f{ 0.0f, 1.0f, 0.0f, 1.0f });
+		vertexColorData.push_back(FVector4f{ 0.0f, 0.0f, 1.0f, 1.0f });
+
+		PositionVertexBuffer = FGraphicsCore::Device->CreateDynamicVertexBuffer("PositionVertexBuffer", 3, sizeof(FVector3f));
+		UVVertexBuffer = FGraphicsCore::Device->CreateDynamicVertexBuffer("UVVertexBuffer", 3, sizeof(FVector2f));
+		ColorVertexBuffer = FGraphicsCore::Device->CreateDynamicVertexBuffer("ColorVertexBuffer", 3, sizeof(FVector4f));
+
+		PositionVertexBuffer->UpdateData(vertexPositionData.data(), vertexPositionData.size() * sizeof(FVector3f));
+		UVVertexBuffer->UpdateData(vertexUVData.data(), vertexUVData.size() * sizeof(FVector2f));
+		ColorVertexBuffer->UpdateData(vertexColorData.data(), vertexColorData.size() * sizeof(FVector4f));
 
 		
 		const int32_t textureWidth = 512;
@@ -164,6 +195,10 @@ namespace Dash
 		mSwapChain = nullptr;
 
 		VertexBuffer->Destroy();
+
+		PositionVertexBuffer->Destroy();
+		UVVertexBuffer->Destroy();
+		ColorVertexBuffer->Destroy();
 	}
 
 	void FSwapChain::SetDisplayRate(float displayRate)
@@ -191,6 +226,27 @@ namespace Dash
 		param.Params = FVector4f{ 1.0f, 1.0f, 0.5f, 1.0f };
 	
 		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("Present");
+
+		FGpuVertexBufferRef vertexBuffers[3] = { PositionVertexBuffer ,UVVertexBuffer, ColorVertexBuffer };
+
+		{
+			graphicsContext.SetRenderTarget(mDisplayBuffer);
+			graphicsContext.SetGraphicsPipelineState(DrawPSO);
+			graphicsContext.SetViewportAndScissor(0, 0, mDisplayBuffer->GetWidth(), mDisplayBuffer->GetHeight());
+			//graphicsContext.SetVertexBuffer(0, VertexBuffer);
+			graphicsContext.SetVertexBuffers(0, 3, vertexBuffers);
+			graphicsContext.Draw(3);
+		}
+
+		{
+			graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
+			graphicsContext.SetGraphicsPipelineState(PresentPSO);
+			graphicsContext.SetViewportAndScissor(0, 0, FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetWidth(), FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetHeight());
+			graphicsContext.SetShaderResourceView("DisplayTexture", mDisplayBuffer);
+			//graphicsContext.SetVertexBuffer(0, VertexBuffer);
+			graphicsContext.SetVertexBuffers(0, 3, vertexBuffers);
+			graphicsContext.Draw(3);
+		}
 
 		graphicsContext.TransitionBarrier(FGraphicsCore::SwapChain->GetCurrentBackBuffer(), EResourceState::Present);
 		

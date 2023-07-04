@@ -24,6 +24,8 @@ namespace Dash
 
 	void IGameApp::Startup(void)
 	{
+		return;
+
 		FImportedStaticMeshData importedStaticMeshData;
 
 		std::string fbxMeshPath = std::string(ENGINE_PATH) + "/Resource/Cyborg_Weapon.fbx";
@@ -54,6 +56,8 @@ namespace Dash
 
 	void IGameApp::Cleanup(void)
 	{
+		return;
+
 		// Cleanup
 		ImGui_ImplDX12_Shutdown_Refactoring();
 		ImGui_ImplWin32_Shutdown();
@@ -62,6 +66,8 @@ namespace Dash
 
 	void IGameApp::BeginFrame()
 	{
+		return;
+
 		// Start the Dear ImGui frame
 		ImGui_ImplDX12_NewFrame_Refactoring();
 		ImGui_ImplWin32_NewFrame();
@@ -112,6 +118,8 @@ namespace Dash
 
 	void IGameApp::OnRenderUI(const FRenderEventArgs& e)
 	{
+		return;
+
 		// Our state
 		bool show_demo_window = false;
 		bool show_another_window = true;
