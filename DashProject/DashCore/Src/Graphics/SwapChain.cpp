@@ -64,21 +64,16 @@ namespace Dash
 			mFenceValue[index] = ((uint64_t)D3D12_COMMAND_LIST_TYPE_DIRECT) << COMMAND_TYPE_MASK;
 		}
 
-		FShaderCreationInfo psInfo{ FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "PS_Main"};
-		psInfo.Finalize();
+		FShaderCreationInfo psInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "PS_Main"};
 
-		FShaderCreationInfo psPresentInfo{ FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "PS_SampleColor" };
-		psPresentInfo.Finalize();
+		FShaderCreationInfo psPresentInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "PS_SampleColor" };
 		 
-		FShaderCreationInfo vsInfo{ FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "VS_Main" };
-		vsInfo.Finalize();
+		FShaderCreationInfo vsInfo{ EShaderStage::Vertex,FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "VS_Main" };
 	
-		DrawPass->SetShader(EShaderStage::Vertex, vsInfo);
-		DrawPass->SetShader(EShaderStage::Pixel, psInfo);
+		DrawPass->SetShaders({ vsInfo, psInfo });
 		DrawPass->SetPassName("DrawPass");
 
-		PresentPass->SetShader(EShaderStage::Vertex, vsInfo);
-		PresentPass->SetShader(EShaderStage::Pixel, psPresentInfo);
+		PresentPass->SetShaders({ vsInfo, psPresentInfo });
 		PresentPass->SetPassName("PresentPass");
 
 		FRasterizerState rasterizerDefault{ ERasterizerFillMode::Solid, ERasterizerCullMode::None };
@@ -89,6 +84,7 @@ namespace Dash
 		FInputAssemblerLayout inputLayout;
 		inputLayout.AddPerVertexLayoutElement("POSITION", 0, EResourceFormat::RGB32_Float, 0);
 		inputLayout.AddPerVertexLayoutElement("TEXCOORD", 0, EResourceFormat::RG32_Float, 1);
+		inputLayout.AddPerVertexLayoutElement("TEXCOORD", 1, EResourceFormat::RG32_Float, 1, sizeof(FVector2f));
 		inputLayout.AddPerVertexLayoutElement("COLOR", 0, EResourceFormat::RGBA32_Float, 2);
 
 		DrawPSO->SetBlendState(BlendDisable);
@@ -136,8 +132,13 @@ namespace Dash
 		std::vector<FVector2f> vertexUVData;
 		vertexUVData.reserve(3);
 		vertexUVData.push_back(FVector2f{ 0.0f, -1.0f });
+		vertexUVData.push_back(FVector2f{ 1.0f, 0.5f });
+
 		vertexUVData.push_back(FVector2f{ 2.0f, 1.0f });
+		vertexUVData.push_back(FVector2f{ 0.5f, 0.5f });
+
 		vertexUVData.push_back(FVector2f{ 0.0f, 1.0f });
+		vertexUVData.push_back(FVector2f{ 1.0f, 0.5f });
 
 		std::vector<FVector4f> vertexColorData;
 		vertexColorData.reserve(3);
@@ -145,8 +146,10 @@ namespace Dash
 		vertexColorData.push_back(FVector4f{ 0.0f, 1.0f, 0.0f, 1.0f });
 		vertexColorData.push_back(FVector4f{ 0.0f, 0.0f, 1.0f, 1.0f });
 
+		uint32_t UVCount = 2;
+
 		PositionVertexBuffer = FGraphicsCore::Device->CreateDynamicVertexBuffer("PositionVertexBuffer", 3, sizeof(FVector3f));
-		UVVertexBuffer = FGraphicsCore::Device->CreateDynamicVertexBuffer("UVVertexBuffer", 3, sizeof(FVector2f));
+		UVVertexBuffer = FGraphicsCore::Device->CreateDynamicVertexBuffer("UVVertexBuffer", 3, sizeof(FVector2f) * UVCount);
 		ColorVertexBuffer = FGraphicsCore::Device->CreateDynamicVertexBuffer("ColorVertexBuffer", 3, sizeof(FVector4f));
 
 		PositionVertexBuffer->UpdateData(vertexPositionData.data(), vertexPositionData.size() * sizeof(FVector3f));

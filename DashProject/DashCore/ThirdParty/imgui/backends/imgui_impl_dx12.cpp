@@ -320,14 +320,13 @@ bool ImGui_ImplDX12_CreateDeviceObjects_Refactoring()
     {
         FShaderPassRef DrawPass = FShaderPass::MakeShaderPass();
 
-        FShaderCreationInfo vsInfo{ FFileUtility::GetEngineShaderDir("IMGUI_shader.hlsl"),  "VS_Main" };
+        FShaderCreationInfo vsInfo{ EShaderStage::Vertex, FFileUtility::GetEngineShaderDir("IMGUI_shader.hlsl"),  "VS_Main" };
         vsInfo.Finalize();
 
-        FShaderCreationInfo psInfo{ FFileUtility::GetEngineShaderDir("IMGUI_shader.hlsl"),  "PS_Main" };
+        FShaderCreationInfo psInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("IMGUI_shader.hlsl"),  "PS_Main" };
         psInfo.Finalize();
 
-        DrawPass->SetShader(EShaderStage::Vertex, vsInfo);
-        DrawPass->SetShader(EShaderStage::Pixel, psInfo);
+        DrawPass->SetShaders({ vsInfo, psInfo });
         DrawPass->SetPassName("UI_Pass");
 
         FInputAssemblerLayout inputLayout;

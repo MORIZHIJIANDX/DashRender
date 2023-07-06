@@ -2,6 +2,7 @@
 #include "ShaderResource.h"
 #include "Utility/StringUtility.h"
 #include "Utility/FileUtility.h"
+#include "ResourceFormat.h"
 
 namespace Dash
 {
@@ -165,6 +166,33 @@ namespace Dash
 			{
 				D3D12_SIGNATURE_PARAMETER_DESC inputSignatureParameterDesc;
 				reflector->GetInputParameterDesc(parameterIndex, &inputSignatureParameterDesc);
+
+				EResourceFormat parameterFormat = EResourceFormat::Unknown;
+
+				if (inputSignatureParameterDesc.Mask == 1)
+				{
+					if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32) parameterFormat = EResourceFormat::R32_Unsigned;
+					else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32) parameterFormat = EResourceFormat::R32_Signed;
+					else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32) parameterFormat = EResourceFormat::R32_Float;
+				}
+				else if (inputSignatureParameterDesc.Mask <= 3)
+				{
+					if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32) parameterFormat = EResourceFormat::RG32_Unsigned;
+					else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32) parameterFormat = EResourceFormat::RG32_Signed;
+					else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32) parameterFormat = EResourceFormat::RG32_Float;
+				}
+				else if (inputSignatureParameterDesc.Mask <= 7)
+				{
+					if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32) parameterFormat = EResourceFormat::RGB32_Unsigned;
+					else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32) parameterFormat = EResourceFormat::RGB32_Signed;
+					else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32) parameterFormat = EResourceFormat::RGB32_Float;
+				}
+				else if (inputSignatureParameterDesc.Mask <= 15)
+				{
+					if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32) parameterFormat = EResourceFormat::RGBA32_Unsigned;
+					else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32) parameterFormat = EResourceFormat::RGBA32_Signed;
+					else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32) parameterFormat = EResourceFormat::RGBA32_Float;
+				}
 
 				LOG_INFO << "Input Parameter Name : " << std::string(inputSignatureParameterDesc.SemanticName);
 				LOG_INFO << "Input Parameter Index : " << inputSignatureParameterDesc.SemanticIndex;

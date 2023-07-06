@@ -12,7 +12,7 @@ namespace Dash
     bool LoadStaticMeshFromFile(const std::string filePath, FImportedStaticMeshData& importedMeshData)
     {
         Assimp::Importer import;
-        const aiScene* scene = import.ReadFile(filePath, aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_FlipUVs);
+        const aiScene* scene = import.ReadFile(filePath, aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_GenNormals);
 
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
         {
@@ -20,38 +20,34 @@ namespace Dash
             return false;
         }
 
-        importedMeshData.vertexData[EVertexAttribute::Position] = {};
-        importedMeshData.vertexData[EVertexAttribute::UV] = {};
-        importedMeshData.vertexData[EVertexAttribute::Normal] = {};
-        importedMeshData.vertexData[EVertexAttribute::Tangent] = {};
-        importedMeshData.vertexData[EVertexAttribute::VertexColor] = {};
-
         // Track material per submesh
-        std::vector<uint32_t> submesh_to_material_idx;
+        std::vector<uint32_t> submeshToMaterialIndex;
         std::vector<FMeshSectionData>& meshSections = importedMeshData.sectionData;
 
         // Load mesh
         {
             std::vector<uint32_t>& indices = importedMeshData.indices;
-            std::vector<FVector3f> positions, normals, tangents;
-            std::vector<FVector4f> vertexColors;
-            std::vector<FVector2f> uvs;
 
             // Reserve space
             {
-                uint32_t total_verts{ 0 };
+                uint32_t totalVertexs{ 0 };
+                uint32_t maxTexCoord{ 0 };
                 for (uint32_t i = 0; i < scene->mNumMeshes; ++i)
-                    total_verts += scene->mMeshes[i]->mNumVertices;
-                
-                ASSERT(total_verts != 0);
+                {
+                    totalVertexs += scene->mMeshes[i]->mNumVertices;
+                    maxTexCoord = FMath::Max(scene->mMeshes[i]->GetNumUVChannels(), maxTexCoord);
+                }
+                               
+                ASSERT(totalVertexs != 0);
 
-                importedMeshData.numVertexes = total_verts;
+                importedMeshData.numVertexes = totalVertexs;
+                importedMeshData.numTexCoord = maxTexCoord;
 
-                positions.reserve(total_verts);
-                uvs.reserve(total_verts);
-                normals.reserve(total_verts);
-                tangents.reserve(total_verts);
-                vertexColors.reserve(total_verts);
+                importedMeshData.PositionData.reserve(totalVertexs);     
+                importedMeshData.NormalData.reserve(totalVertexs);
+                importedMeshData.TangentData.reserve(totalVertexs);
+                importedMeshData.VertexColorData.reserve(totalVertexs);
+                importedMeshData.UVData.reserve(totalVertexs * maxTexCoord);
             }
 
             // Go through all meshes
@@ -62,84 +58,84 @@ namespace Dash
                 // Track submesh
                 FMeshSectionData sectionData{};
                 sectionData.sectionName = mesh->mName.C_Str();
-                sectionData.vertexStart = (uint32_t)positions.size();
+                sectionData.vertexStart = (uint32_t)importedMeshData.PositionData.size();
                 sectionData.vertexCount = mesh->mNumVertices;
                 sectionData.indexStart = (uint32_t)indices.size();
                 sectionData.indexCount = 0;
                 // Count indices
-                for (uint32_t face_idx = 0; face_idx < mesh->mNumFaces; ++face_idx)
+                for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex)
                 {
-                    const aiFace& face = mesh->mFaces[face_idx];
+                    const aiFace& face = mesh->mFaces[faceIndex];
                     for (uint32_t index_idx = 0; index_idx < face.mNumIndices; ++index_idx)
                         indices.push_back(face.mIndices[index_idx]);
                     sectionData.indexCount += face.mNumIndices;
                 }
 
                 // Grab per vertex data
-                for (uint32_t vert_idx = 0; vert_idx < mesh->mNumVertices; ++vert_idx)
+                for (uint32_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; ++vertexIndex)
                 {
-                    positions.push_back(FVector3f{ mesh->mVertices[vert_idx].x, mesh->mVertices[vert_idx].y, mesh->mVertices[vert_idx].z });
+                    importedMeshData.PositionData.push_back(FVector3f{ mesh->mVertices[vertexIndex].x, mesh->mVertices[vertexIndex].y, mesh->mVertices[vertexIndex].z });
 
-                    if (mesh->HasTextureCoords(0))
-                        uvs.push_back(FVector2f{ mesh->mTextureCoords[0][vert_idx].x, mesh->mTextureCoords[0][vert_idx].y });
+                    for (uint32_t uvIndex = 0; uvIndex < importedMeshData.numTexCoord; uvIndex++)
+                    {
+                        if (mesh->HasTextureCoords(uvIndex))
+                        {
+                            importedMeshData.UVData.push_back(FVector2f{ mesh->mTextureCoords[uvIndex][vertexIndex].x, mesh->mTextureCoords[uvIndex][vertexIndex].y });
+                        }
+                        else
+                        {
+                            importedMeshData.UVData.push_back(FVector2f{});
+                        }
+                    }
 
                     if (mesh->HasNormals())
-                        normals.push_back(FVector3f{ mesh->mNormals[vert_idx].x, mesh->mNormals[vert_idx].y, mesh->mNormals[vert_idx].z });
+                    {
+                        importedMeshData.NormalData.push_back(FVector3f{ mesh->mNormals[vertexIndex].x, mesh->mNormals[vertexIndex].y, mesh->mNormals[vertexIndex].z });
+                    }
 
                     if (mesh->HasTangentsAndBitangents())
                     {
-                        tangents.push_back(FVector3f{ mesh->mTangents[vert_idx].x, mesh->mTangents[vert_idx].y, mesh->mTangents[vert_idx].z });
-                        //bitangents.push_back({ mesh->mBitangents[vert_idx].x, mesh->mBitangents[vert_idx].y, mesh->mBitangents[vert_idx].z });
+                        importedMeshData.TangentData.push_back(FVector3f{ mesh->mTangents[vertexIndex].x, mesh->mTangents[vertexIndex].y, mesh->mTangents[vertexIndex].z });
                     }
 
                     if (mesh->HasVertexColors(0))
                     {
-                        vertexColors.push_back(FVector4f{mesh->mColors[0]->r, mesh->mColors[0]->g, mesh->mColors[0]->b, mesh->mColors[0]->a});
+                        importedMeshData.VertexColorData.push_back(FVector4f{mesh->mColors[0]->r, mesh->mColors[0]->g, mesh->mColors[0]->b, mesh->mColors[0]->a});
+                    }
+                    else
+                    {
+                        importedMeshData.VertexColorData.push_back(FVector4f{});
                     }
                 }
 
                 // Track material
-                submesh_to_material_idx.push_back(mesh->mMaterialIndex);
+                submeshToMaterialIndex.push_back(mesh->mMaterialIndex);
 
                 // Track submesh
                 meshSections.push_back(sectionData);
             }
 
-            importedMeshData.hasNormal = normals.size() > 0;
-            importedMeshData.hasTangent = tangents.size() > 0;
-            importedMeshData.hasUV = uvs.size() > 0;
-            importedMeshData.hasVertexColor = vertexColors.size() > 0;
+            importedMeshData.hasNormal = importedMeshData.NormalData.size() > 0;
+            importedMeshData.hasTangent = importedMeshData.TangentData.size() > 0;
+            importedMeshData.hasUV = importedMeshData.UVData.size() > 0;
+            importedMeshData.hasVertexColor = importedMeshData.VertexColorData.size() > 0;
 
-            // Resize standardized buffers
-            importedMeshData.vertexData[EVertexAttribute::Position].resize(positions.size() * sizeof(positions[0]));
-            importedMeshData.vertexData[EVertexAttribute::UV].resize(uvs.size() * sizeof(uvs[0]));
-            importedMeshData.vertexData[EVertexAttribute::Normal].resize(normals.size() * sizeof(normals[0]));
-            importedMeshData.vertexData[EVertexAttribute::Tangent].resize(tangents.size() * sizeof(tangents[0]));
-            importedMeshData.vertexData[EVertexAttribute::VertexColor].resize(vertexColors.size() * sizeof(vertexColors[0]));
-
-            // Copy to standardized buffers
-            std::memcpy(importedMeshData.vertexData[EVertexAttribute::Position].data(), positions.data(), positions.size() * sizeof(positions[0]));
-            std::memcpy(importedMeshData.vertexData[EVertexAttribute::UV].data(), uvs.data(), uvs.size() * sizeof(uvs[0]));
-            std::memcpy(importedMeshData.vertexData[EVertexAttribute::Normal].data(), normals.data(), normals.size() * sizeof(normals[0]));
-            std::memcpy(importedMeshData.vertexData[EVertexAttribute::Tangent].data(), tangents.data(), tangents.size() * sizeof(tangents[0]));
-            std::memcpy(importedMeshData.vertexData[EVertexAttribute::VertexColor].data(), vertexColors.data(), vertexColors.size() * sizeof(vertexColors[0]));
-
-            ASSERT(positions.size() == uvs.size());
-            ASSERT(uvs.size() == normals.size());
-            ASSERT(normals.size() == tangents.size());
+            ASSERT(importedMeshData.PositionData.size() == importedMeshData.UVData.size());
+            ASSERT(importedMeshData.UVData.size() == importedMeshData.NormalData.size());
+            ASSERT(importedMeshData.NormalData.size() == importedMeshData.TangentData.size());
 
             if (importedMeshData.hasVertexColor)
             {
-                ASSERT(tangents.size() == vertexColors.size());
+                ASSERT(importedMeshData.TangentData.size() == importedMeshData.VertexColorData.size());
             }
         }
 
         // Sanity check
-        ASSERT(meshSections.size() == submesh_to_material_idx.size());
+        ASSERT(meshSections.size() == submeshToMaterialIndex.size());
 
         // Extract material load data
         const auto directory = FFileUtility::GetParentPath(filePath);
-        for (auto mat_id : submesh_to_material_idx)
+        for (auto mat_id : submeshToMaterialIndex)
         {
             const aiMaterial* material = scene->mMaterials[mat_id];
 

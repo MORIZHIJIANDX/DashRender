@@ -2,6 +2,9 @@
 #include "ShaderResource.h"
 #include "RootSignature.h"
 #include "SamplerDesc.h"
+#include "BlendState.h"
+#include "RasterizerState.h"
+#include "DepthStencilState.h"
 
 namespace Dash
 {
@@ -20,9 +23,13 @@ namespace Dash
 	public:
 		static FShaderPassRef MakeShaderPass();
 
-		void SetShader(EShaderStage stage, const FShaderCreationInfo& creationInfo);
+		void SetShaders(const std::vector<FShaderCreationInfo>& creationInfos);
 		void SetPassName(const std::string& name) { mPassName = name; }
-		void Finalize(const std::string& passName, bool createStaticSamplers = true);
+		void SetBlendState(const FBlendState& blendState) { mBlendState = blendState; }
+		void SetRasterizerState(const FRasterizerState& rasterizerState) { mRasterizerState = rasterizerState; }
+		void SetDepthStencilState(const FDepthStencilState& depthStencilState) { mDepthStencilState = depthStencilState; }
+
+		void Finalize(bool createStaticSamplers = true);
 
 		EShaderPassType GetPassType() const { return mPassType; }
 		const std::string& GetPassName() const { return mPassName; }
@@ -61,6 +68,10 @@ namespace Dash
 		std::vector<FShaderParameter> mSRVParameters;
 		std::vector<FShaderParameter> mUAVParameters;
 		std::vector<FShaderParameter> mSamplerParameters;
+
+		FBlendState mBlendState{};
+		FRasterizerState mRasterizerState{};
+		FDepthStencilState mDepthStencilState{true, false};
 
 		EShaderPassType mPassType;
 		FRootSignatureRef mRootSignatureRef;

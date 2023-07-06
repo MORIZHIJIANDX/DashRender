@@ -10,10 +10,22 @@ namespace Dash
 		return std::make_shared<FShaderPass>();
 	}
 
-	void FShaderPass::SetShader(EShaderStage stage, const FShaderCreationInfo& creationInfo)
+	void FShaderPass::SetShaders(const std::vector<FShaderCreationInfo>& creationInfos)
 	{
-		mShaders[stage] = FShaderMap::LoadShader(creationInfo);
-		ASSERT(mShaders[stage] != nullptr);
+		std::set<EShaderStage> validShaderStages;
+		for (int32_t i = 0; i < creationInfos.size(); i++)
+		{
+			validShaderStages.insert(creationInfos[i].Stage);
+		}
+		
+		ASSERT_MSG(validShaderStages.size() == creationInfos.size(), "Set duplicates shader stages.");
+
+		for (int32_t i = 0; i < creationInfos.size(); i++)
+		{
+			EShaderStage stage = creationInfos[i].Stage;
+			mShaders[stage] = FShaderMap::LoadShader(creationInfos[i]);
+			ASSERT(mShaders[stage] != nullptr);
+		}
 	}
 
 	struct FParameterKey
@@ -46,10 +58,8 @@ namespace Dash
 		}
 	};
 
-	void FShaderPass::Finalize(const std::string& passName, bool createStaticSamplers)
+	void FShaderPass::Finalize(bool createStaticSamplers)
 	{
-		mPassName = passName;
-
 		std::map<FParameterKey, FShaderParameter> parameterMap;
 		
 		for (auto& pair : mShaders)

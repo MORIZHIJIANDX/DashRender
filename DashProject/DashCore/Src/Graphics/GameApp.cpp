@@ -24,8 +24,6 @@ namespace Dash
 
 	void IGameApp::Startup(void)
 	{
-		return;
-
 		FImportedStaticMeshData importedStaticMeshData;
 
 		std::string fbxMeshPath = std::string(ENGINE_PATH) + "/Resource/Cyborg_Weapon.fbx";
@@ -34,10 +32,12 @@ namespace Dash
 
 		if (result)
 		{
-			FStaticMeshData<FMeshVertexTypePNTU> meshData = importedStaticMeshData.GetMeshData<FMeshVertexTypePNTU>();
+			importedStaticMeshData.hasNormal;
 
 			LOG_INFO << "Load mesh succeed!";
 		}
+
+		return;
 
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();

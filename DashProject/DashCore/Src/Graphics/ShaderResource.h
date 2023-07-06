@@ -31,12 +31,14 @@ namespace Dash
 			: Stage(EShaderStage::Vertex)
 		{}
 
-		FShaderCreationInfo(const std::string& fileName, const std::string& entryPoint, const std::vector<std::string>& defines = {})
+		FShaderCreationInfo(EShaderStage shaderStage, const std::string& fileName, const std::string& entryPoint, const std::vector<std::string>& defines = {})
 			: FileName(fileName)
 			, EntryPoint(entryPoint)
 			, Defines(defines)
-			, Stage(EShaderStage::Vertex)
-		{}
+			, Stage(shaderStage)
+		{
+			Finalize();
+		}
 
 		void Finalize();
 		size_t GetShaderHash() const { return ShaderHash; }

@@ -6,7 +6,7 @@ struct VSInput
 	float3 Position : POSITION;
 	//float3 Normal : NORMAL;
 	//float4 Tangent : TANGENT;
-	float2 UV : TEXCOORD;
+	float2 UV[2] : TEXCOORD;
 	float4 Color : COLOR;
 };
 
@@ -46,14 +46,14 @@ PSInput VS_Main(VSInput input)
 
 	output.Position = float4(input.Position, 1.0f);
 	output.Color = input.Color;
-	output.UV = input.UV;
+	output.UV = input.UV[1];
 	 
 	return output;
 }
 
 float4 PS_Main(PSInput input) : SV_Target0
 {
-    float4 Color = float4(input.UV.x, input.UV.y, 0.0f, 1.0f) * input.Color;
+    float4 Color = float4(input.UV.x, input.UV.x, input.UV.x, 1.0f);
 	return Color;
 }
 

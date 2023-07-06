@@ -29,7 +29,7 @@ namespace Dash
 		{
 			if (!mShaderPass->IsFinalized())
 			{
-				mShaderPass->Finalize(mShaderPass->GetPassName());
+				mShaderPass->Finalize();
 			}
 
 			const std::map<EShaderStage, FShaderResourceRef>& shaders = mShaderPass->GetShaders();
