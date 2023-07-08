@@ -6,10 +6,8 @@ namespace Dash
     FShaderPassRef& FShaderTechnique::AddShaderPass(const std::string& passName, const std::vector<FShaderCreationInfo>& creationInfos,
         const FBlendState& blendState, const FRasterizerState& rasterizerState, const FDepthStencilState& depthStencilState)
     {  
-        FShaderPassRef& shaderPassRef = mShaderPasses.emplace_back(FShaderPass::MakeShaderPass());
-        shaderPassRef->SetPassName(mName + "_" + passName);
-        shaderPassRef->SetShaders(creationInfos);
-        
+        FShaderPassRef& shaderPassRef = mShaderPasses.emplace_back(FShaderPass::MakeShaderPass(mName + "_" + passName, creationInfos, blendState, rasterizerState, depthStencilState)); 
+
         return shaderPassRef;
     }
 

@@ -318,16 +318,11 @@ bool ImGui_ImplDX12_CreateDeviceObjects_Refactoring()
         ImGui_ImplDX12_InvalidateDeviceObjects_Refactoring();
     
     {
-        FShaderPassRef DrawPass = FShaderPass::MakeShaderPass();
-
         FShaderCreationInfo vsInfo{ EShaderStage::Vertex, FFileUtility::GetEngineShaderDir("IMGUI_shader.hlsl"),  "VS_Main" };
         vsInfo.Finalize();
 
         FShaderCreationInfo psInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("IMGUI_shader.hlsl"),  "PS_Main" };
         psInfo.Finalize();
-
-        DrawPass->SetShaders({ vsInfo, psInfo });
-        DrawPass->SetPassName("UI_Pass");
 
         FInputAssemblerLayout inputLayout;
         inputLayout.AddPerVertexLayoutElement("POSITION", 0, EResourceFormat::RG32_Float, 0, (uint32_t)IM_OFFSETOF(ImDrawVert, pos));
@@ -335,22 +330,24 @@ bool ImGui_ImplDX12_CreateDeviceObjects_Refactoring()
         inputLayout.AddPerVertexLayoutElement("COLOR", 0, EResourceFormat::BGRA8_Unsigned_Norm, 0, (uint32_t)IM_OFFSETOF(ImDrawVert, col));
 
         FRasterizerState rasterizerCullOff{ ERasterizerFillMode::Solid, ERasterizerCullMode::None };
-        FBlendState BlendDisable{ true, false };
-        FDepthStencilState DepthStateDisabled{ false, false };
+        FBlendState blendDisable{ true, false };
+        FDepthStencilState depthStateDisabled{ false, false };
 
-        FGraphicsPSORef DrawPSO = FGraphicsPSO::MakeGraphicsPSO("IMGUI_PSO");
+        FShaderPassRef drawPass = FShaderPass::MakeShaderPass("IMGUI_DrawPass", { vsInfo , psInfo }, blendDisable, rasterizerCullOff, depthStateDisabled);
 
-        DrawPSO->SetBlendState(BlendDisable);
-        DrawPSO->SetRasterizerState(rasterizerCullOff);
-        DrawPSO->SetShaderPass(DrawPass);
-        DrawPSO->SetDepthStencilState(DepthStateDisabled);
-        DrawPSO->SetInputLayout(inputLayout);
-        DrawPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
-        DrawPSO->SetSamplerMask(UINT_MAX);
-        DrawPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetBackBufferFormat(), EResourceFormat::Depth32_Float);
-        DrawPSO->Finalize();
+        FGraphicsPSORef drawPSO = FGraphicsPSO::MakeGraphicsPSO("IMGUI_PSO");
 
-        bd->pPipelineState = DrawPSO;
+        drawPSO->SetBlendState(blendDisable);
+        drawPSO->SetRasterizerState(rasterizerCullOff);
+        drawPSO->SetShaderPass(drawPass);
+        drawPSO->SetDepthStencilState(depthStateDisabled);
+        drawPSO->SetInputLayout(inputLayout);
+        drawPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
+        drawPSO->SetSamplerMask(UINT_MAX);
+        drawPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetBackBufferFormat(), EResourceFormat::Depth32_Float);
+        drawPSO->Finalize();
+
+        bd->pPipelineState = drawPSO;
 
         ImGui_ImplDX12_CreateFontsTexture_Refactoring();
     }

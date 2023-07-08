@@ -21,15 +21,8 @@ namespace Dash
 	class FShaderPass
 	{
 	public:
-		static FShaderPassRef MakeShaderPass();
-
-		void SetShaders(const std::vector<FShaderCreationInfo>& creationInfos);
-		void SetPassName(const std::string& name) { mPassName = name; }
-		void SetBlendState(const FBlendState& blendState) { mBlendState = blendState; }
-		void SetRasterizerState(const FRasterizerState& rasterizerState) { mRasterizerState = rasterizerState; }
-		void SetDepthStencilState(const FDepthStencilState& depthStencilState) { mDepthStencilState = depthStencilState; }
-
-		void Finalize(bool createStaticSamplers = true);
+		static FShaderPassRef MakeShaderPass(const std::string& passName, const std::vector<FShaderCreationInfo>& creationInfos,
+			const FBlendState& blendState, const FRasterizerState& rasterizerState, const FDepthStencilState& depthStencilState);
 
 		EShaderPassType GetPassType() const { return mPassType; }
 		const std::string& GetPassName() const { return mPassName; }
@@ -51,9 +44,20 @@ namespace Dash
 		const std::vector<FShaderParameter>& GetUAVParameters() const { return mUAVParameters; }
 		const std::vector<FShaderParameter>& GetSamplerParameters() const { return mSamplerParameters; }
 
+		const FBlendState& GetBlendState() const { return mBlendState; }
+		const FRasterizerState& GetRasterizerState() const { return mRasterizerState; }
+		const FDepthStencilState& GetDepthStencilState() const { return mDepthStencilState; }
+
+		void Finalize(bool createStaticSamplers = true);
 		bool IsFinalized() const;
 
 	protected:
+		void SetShaders(const std::vector<FShaderCreationInfo>& creationInfos);
+		void SetPassName(const std::string& name) { mPassName = name; }
+		void SetBlendState(const FBlendState& blendState) { mBlendState = blendState; }
+		void SetRasterizerState(const FRasterizerState& rasterizerState) { mRasterizerState = rasterizerState; }
+		void SetDepthStencilState(const FDepthStencilState& depthStencilState) { mDepthStencilState = depthStencilState; }
+
 		void CreateRootSignature(bool createStaticSamplers);
 		D3D12_SHADER_VISIBILITY GetShaderVisibility(EShaderStage stage);
 		std::vector<FSamplerDesc> CreateStaticSamplers();

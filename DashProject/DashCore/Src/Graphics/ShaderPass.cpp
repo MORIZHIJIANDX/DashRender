@@ -5,9 +5,17 @@
 
 namespace Dash
 {
-	FShaderPassRef FShaderPass::MakeShaderPass()
+	FShaderPassRef FShaderPass::MakeShaderPass(const std::string& passName, const std::vector<FShaderCreationInfo>& creationInfos,
+		const FBlendState& blendState, const FRasterizerState& rasterizerState, const FDepthStencilState& depthStencilState)
 	{
-		return std::make_shared<FShaderPass>();
+		FShaderPassRef newPass = std::make_shared<FShaderPass>();
+		newPass->SetPassName(passName);
+		newPass->SetShaders(creationInfos);
+		newPass->SetBlendState(blendState);
+		newPass->SetRasterizerState(rasterizerState);
+		newPass->SetDepthStencilState(depthStencilState);
+
+		return newPass;
 	}
 
 	void FShaderPass::SetShaders(const std::vector<FShaderCreationInfo>& creationInfos)

@@ -163,6 +163,13 @@ namespace Dash
 
 		ApplyShaderPass();
 
+		if (mShaderPass)
+		{
+			SetBlendState(mShaderPass->GetBlendState());
+			SetRasterizerState(mShaderPass->GetRasterizerState());
+			SetDepthStencilState(mShaderPass->GetDepthStencilState());
+		}
+
 		ASSERT(mShaderPass != nullptr);
 		ASSERT(mShaderPass->GetRootSignature()->IsFinalized());
 
