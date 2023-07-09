@@ -15,7 +15,15 @@ namespace Dash
 		newPass->SetRasterizerState(rasterizerState);
 		newPass->SetDepthStencilState(depthStencilState);
 
+		newPass->Finalize();
+
 		return newPass;
+	}
+
+	const FInputAssemblerLayout& FShaderPass::GetInputLayout() const
+	{
+		ASSERT(mShaders.contains(EShaderStage::Vertex));
+		return mShaders.at(EShaderStage::Vertex)->GetInputLayout();
 	}
 
 	void FShaderPass::SetShaders(const std::vector<FShaderCreationInfo>& creationInfos)
@@ -68,6 +76,8 @@ namespace Dash
 
 	void FShaderPass::Finalize(bool createStaticSamplers)
 	{
+		mPassType = mShaders.contains(EShaderStage::Compute) ? EShaderPassType::Compute : EShaderPassType::Raster;
+
 		std::map<FParameterKey, FShaderParameter> parameterMap;
 		
 		for (auto& pair : mShaders)
@@ -96,8 +106,6 @@ namespace Dash
 		}
 
 		LOG_INFO << "Num Pass Parameters : " << parameterMap.size();
-
-		mPassType = mShaders.contains(EShaderStage::Compute) ? EShaderPassType::Compute : EShaderPassType::Raster;
 
 		for (auto& pair : parameterMap)
 		{
@@ -168,11 +176,6 @@ namespace Dash
 	int32_t FShaderPass::FindSamplerParameterByName(const std::string& parameterName) const
 	{
 		return FindParameterByName(mSamplerParameters, parameterName);
-	}
-
-	bool FShaderPass::IsFinalized() const
-	{
-		return (mRootSignatureRef != nullptr) && (mRootSignatureRef->GetSignature() != nullptr);
 	}
 
 	void FShaderPass::CreateRootSignature(bool createStaticSamplers)

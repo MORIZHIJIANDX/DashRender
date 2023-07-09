@@ -162,6 +162,10 @@ namespace Dash
 
 		if (EnumMaskEquals(mCreationInfo.Stage, EShaderStage::Vertex))
 		{
+			uint32_t currentInputSlot = 0;
+			std::string prevSemanticName{};
+			uint32_t prevSemanticIndex = 0;
+			
 			for (UINT parameterIndex = 0; parameterIndex < shaderDesc.InputParameters; ++parameterIndex)
 			{
 				D3D12_SIGNATURE_PARAMETER_DESC inputSignatureParameterDesc;
@@ -203,6 +207,30 @@ namespace Dash
 				LOG_INFO << "Input Parameter MinPrecision : " << inputSignatureParameterDesc.MinPrecision;
 				LOG_INFO << "Input Parameter Stream : " << inputSignatureParameterDesc.Stream;
 				LOG_INFO << "Input Parameter ReadWriteMask : " << int(inputSignatureParameterDesc.ReadWriteMask);
+
+				std::string currentSemanticName{inputSignatureParameterDesc.SemanticName};
+				bool isIstanceSemantic = FStringUtility::Contains(currentSemanticName, "Instance");
+
+				if (!prevSemanticName.empty())
+				{
+					if (currentSemanticName != prevSemanticName && (prevSemanticIndex + 1) != inputSignatureParameterDesc.SemanticIndex)
+					{
+						++currentInputSlot;
+					}
+				}
+
+				if (isIstanceSemantic)
+				{
+					mInputLayout.AddPerVertexLayoutElement(inputSignatureParameterDesc.SemanticName, inputSignatureParameterDesc.SemanticIndex, parameterFormat, currentInputSlot);
+				}
+				else
+				{
+					mInputLayout.AddPerVertexLayoutElement(inputSignatureParameterDesc.SemanticName, inputSignatureParameterDesc.SemanticIndex, parameterFormat, currentInputSlot);
+				}
+				
+
+				prevSemanticName = std::string(inputSignatureParameterDesc.SemanticName);
+				prevSemanticIndex = inputSignatureParameterDesc.SemanticIndex;
 
 				LOG_INFO << " ================================== ";
 			}

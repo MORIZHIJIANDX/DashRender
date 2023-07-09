@@ -4,6 +4,7 @@
 #include <wtypes.h>
 #include <Unknwn.h>
 #include <wrl.h>
+#include "InputAssemblerLayout.h"
 #include "dxc/inc/dxcapi.h"
 #include "dxc/inc/d3d12shader.h"
 
@@ -103,6 +104,7 @@ namespace Dash
 		EShaderStage GetShaderStage() const { return mCreationInfo.Stage; }
 		size_t GetShaderHash() const { return mCreationInfo.GetShaderHash(); }
 		const std::vector<FShaderParameter>& GetShaderParameters() const { return mParameters; }
+		const FInputAssemblerLayout& GetInputLayout() const { return mInputLayout; }
 
 	protected:
 		void Init(Microsoft::WRL::ComPtr<IDxcBlob> compiledShaderBlob, Microsoft::WRL::ComPtr<ID3D12ShaderReflection> reflector, const FShaderCreationInfo& creationInfo);
@@ -112,6 +114,7 @@ namespace Dash
 		Microsoft::WRL::ComPtr<IDxcBlob> mCompiledShaderBlob;
 		FCompiledBinary mShaderBinary;
 		std::vector<FShaderParameter> mParameters;
+		FInputAssemblerLayout mInputLayout;
 	}; 
 
 	using FShaderResourceRef = std::shared_ptr<FShaderResource>;

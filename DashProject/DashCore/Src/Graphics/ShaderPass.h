@@ -5,6 +5,7 @@
 #include "BlendState.h"
 #include "RasterizerState.h"
 #include "DepthStencilState.h"
+#include "InputAssemblerLayout.h"
 
 namespace Dash
 {
@@ -15,7 +16,6 @@ namespace Dash
 	};
 
 	class FShaderPass;
-
 	using FShaderPassRef = std::shared_ptr<FShaderPass>;
 
 	class FShaderPass
@@ -47,9 +47,7 @@ namespace Dash
 		const FBlendState& GetBlendState() const { return mBlendState; }
 		const FRasterizerState& GetRasterizerState() const { return mRasterizerState; }
 		const FDepthStencilState& GetDepthStencilState() const { return mDepthStencilState; }
-
-		void Finalize(bool createStaticSamplers = true);
-		bool IsFinalized() const;
+		const FInputAssemblerLayout& GetInputLayout() const;
 
 	protected:
 		void SetShaders(const std::vector<FShaderCreationInfo>& creationInfos);
@@ -57,6 +55,8 @@ namespace Dash
 		void SetBlendState(const FBlendState& blendState) { mBlendState = blendState; }
 		void SetRasterizerState(const FRasterizerState& rasterizerState) { mRasterizerState = rasterizerState; }
 		void SetDepthStencilState(const FDepthStencilState& depthStencilState) { mDepthStencilState = depthStencilState; }
+
+		void Finalize(bool createStaticSamplers = true);
 
 		void CreateRootSignature(bool createStaticSamplers);
 		D3D12_SHADER_VISIBILITY GetShaderVisibility(EShaderStage stage);

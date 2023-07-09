@@ -27,10 +27,6 @@ namespace Dash
 	{
 		if (mShaderPass)
 		{
-			if (!mShaderPass->IsFinalized())
-			{
-				mShaderPass->Finalize();
-			}
 
 			const std::map<EShaderStage, FShaderResourceRef>& shaders = mShaderPass->GetShaders();
 			for (auto& pair : shaders)
@@ -168,6 +164,7 @@ namespace Dash
 			SetBlendState(mShaderPass->GetBlendState());
 			SetRasterizerState(mShaderPass->GetRasterizerState());
 			SetDepthStencilState(mShaderPass->GetDepthStencilState());
+			SetInputLayout(mShaderPass->GetInputLayout());
 		}
 
 		ASSERT(mShaderPass != nullptr);

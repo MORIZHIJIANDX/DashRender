@@ -17,8 +17,6 @@ namespace Dash
 		const FShaderPassRef& GetShaderPass(uint32_t index) const;
 		const std::vector<FShaderPassRef>& GetPasses() const { return mShaderPasses; }
 
-		void Finalize();
-
 	private: 
 		std::string mName;
 		std::vector<FShaderPassRef> mShaderPasses;

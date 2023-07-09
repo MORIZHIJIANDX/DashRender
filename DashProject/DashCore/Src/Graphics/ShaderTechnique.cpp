@@ -17,12 +17,4 @@ namespace Dash
 
         return mShaderPasses[index];
     }
-
-    void FShaderTechnique::Finalize()
-    {
-        for (int32_t i = 0; i < mShaderPasses.size(); i++)
-        {
-            mShaderPasses[i]->Finalize();
-        }
-    }
 }

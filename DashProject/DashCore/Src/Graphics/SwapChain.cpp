@@ -78,27 +78,13 @@ namespace Dash
 		drawPass = FShaderPass::MakeShaderPass("DrawPass", { vsInfo , psInfo }, blendDisable, rasterizerDefault, depthStateDisabled);
 		PresentPass = FShaderPass::MakeShaderPass("PresentPass", { vsInfo , psPresentInfo }, blendDisable, rasterizerDefault, depthStateDisabled);
 
-		FInputAssemblerLayout inputLayout;
-		inputLayout.AddPerVertexLayoutElement("POSITION", 0, EResourceFormat::RGB32_Float, 0);
-		inputLayout.AddPerVertexLayoutElement("TEXCOORD", 0, EResourceFormat::RG32_Float, 1);
-		inputLayout.AddPerVertexLayoutElement("TEXCOORD", 1, EResourceFormat::RG32_Float, 1, sizeof(FVector2f));
-		inputLayout.AddPerVertexLayoutElement("COLOR", 0, EResourceFormat::RGBA32_Float, 2);
-
-		// drawPSO->SetBlendState(blendDisable);
-		// drawPSO->SetDepthStencilState(depthStateDisabled);
 		drawPSO->SetShaderPass(drawPass);
-		// drawPSO->SetRasterizerState(rasterizerDefault);
-		drawPSO->SetInputLayout(inputLayout);
 		drawPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
 		drawPSO->SetSamplerMask(UINT_MAX);
 		drawPSO->SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
 		drawPSO->Finalize();
 
-		// presentPSO->SetBlendState(blendDisable);
-		// presentPSO->SetDepthStencilState(depthStateDisabled);
 		presentPSO->SetShaderPass(PresentPass);
-		// presentPSO->SetRasterizerState(rasterizerDefault);
-		presentPSO->SetInputLayout(inputLayout);
 		presentPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
 		presentPSO->SetSamplerMask(UINT_MAX);
 		presentPSO->SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
