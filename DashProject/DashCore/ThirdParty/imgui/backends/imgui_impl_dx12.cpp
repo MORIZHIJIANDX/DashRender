@@ -278,6 +278,11 @@ namespace Dash
             }
         }
 
+        if (draw_data->CmdListsCount <= 0)
+        {
+            return;
+        }
+
         // Setup desired DX state
         ImGui_ImplDX12_SetupRenderState_Refactoring(draw_data, graphics_command_context, fr);
 
@@ -324,6 +329,8 @@ namespace Dash
             global_idx_offset += cmd_list->IdxBuffer.Size;
             global_vtx_offset += cmd_list->VtxBuffer.Size;
         }
+
+        graphics_command_context.Flush();
     }
 
     void ImGui_ImplDX12_InvalidateDeviceObjects_Refactoring()

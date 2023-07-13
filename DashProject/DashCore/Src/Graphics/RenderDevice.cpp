@@ -316,16 +316,16 @@ namespace Dash
 				// This occurs when there are uninitialized descriptors in a descriptor table, even when a
 				// shader does not access the missing descriptors.  I find this is common when switching
 				// shader permutations and not wanting to change much code to reorder resources.
-				D3D12_MESSAGE_ID_INVALID_DESCRIPTOR_HANDLE,
+				//D3D12_MESSAGE_ID_INVALID_DESCRIPTOR_HANDLE,
 
 				// Triggered when a shader does not export all color components of a render target, such as
 				// when only writing RGB to an R10G10B10A2 buffer, ignoring alpha.
-				D3D12_MESSAGE_ID_CREATEGRAPHICSPIPELINESTATE_PS_OUTPUT_RT_OUTPUT_MISMATCH,
+				//D3D12_MESSAGE_ID_CREATEGRAPHICSPIPELINESTATE_PS_OUTPUT_RT_OUTPUT_MISMATCH,
 
 				// This occurs when a descriptor table is unbound even when a shader does not access the missing
 				// descriptors.  This is common with a root signature shared between disparate shaders that
 				// don't all need the same types of resources.
-				D3D12_MESSAGE_ID_COMMAND_LIST_DESCRIPTOR_TABLE_NOT_SET,
+				//D3D12_MESSAGE_ID_COMMAND_LIST_DESCRIPTOR_TABLE_NOT_SET,
 
 				// Support half type input in vertex shader.
 				D3D12_MESSAGE_ID_CREATEINPUTLAYOUT_TYPE_MISMATCH,

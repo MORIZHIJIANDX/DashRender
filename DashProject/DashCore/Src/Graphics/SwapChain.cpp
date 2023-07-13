@@ -29,8 +29,6 @@ namespace Dash
 	FShaderPassRef drawPass = nullptr;
 	FShaderPassRef PresentPass = nullptr;
 
-	FGpuDynamicVertexBufferRef vertexBuffer;
-
 	FGpuDynamicVertexBufferRef PositionVertexBuffer;
 	FGpuDynamicVertexBufferRef UVVertexBuffer;
 	FGpuDynamicVertexBufferRef ColorVertexBuffer;
@@ -64,7 +62,6 @@ namespace Dash
 			mFenceValue[index] = ((uint64_t)D3D12_COMMAND_LIST_TYPE_DIRECT) << COMMAND_TYPE_MASK;
 		}
 
-		/*
 		FShaderCreationInfo psInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "PS_Main"};
 
 		FShaderCreationInfo psPresentInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "PS_SampleColor" };
@@ -90,22 +87,6 @@ namespace Dash
 		presentPSO->SetSamplerMask(UINT_MAX);
 		presentPSO->SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
 		presentPSO->Finalize();
-		 
-		vertexData.resize(3);
-		vertexData[0].Pos = FVector3f{ -1.0f, 3.0f, 0.5f };
-		vertexData[0].UV = FVector2f{ 0.0f, -1.0f };
-		vertexData[0].Color = FVector4f{ 1.0f, 0.0f, 0.0f, 1.0f };
-
-		vertexData[1].Pos = FVector3f{ 3.0f, -1.0f, 0.5f };
-		vertexData[1].UV = FVector2f{ 2.0f, 1.0f };
-		vertexData[1].Color = FVector4f{ 0.0f, 1.0f, 0.0f, 1.0f };
-
-		vertexData[2].Pos = FVector3f{ -1.0f, -1.0f, 0.5f };
-		vertexData[2].UV = FVector2f{ 0.0f, 1.0f };
-		vertexData[2].Color = FVector4f{ 0.0f, 0.0f, 1.0f, 1.0f };
-		vertexBuffer = FGraphicsCore::Device->CreateDynamicVertexBuffer("DisplayVertexBuffer", 3, sizeof(Vertex));
-
-		vertexBuffer->UpdateData(vertexData.data(), vertexData.size() * sizeof(Vertex));
 
 		std::vector<FVector3f> vertexPositionData;
 		vertexPositionData.reserve(3);
@@ -166,15 +147,6 @@ namespace Dash
 		//std::string ddsTexturePath = std::string(ENGINE_PATH) + "/Resource/earth.dds";
 
 		//mTexture = FGraphicsCore::Device->CreateTextureBufferFromFile("WIC_Texture", pngTexturePath);
-
-		
-		FShaderCreationInfo ImguiVSInfo{ EShaderStage::Vertex, FFileUtility::GetEngineShaderDir("IMGUI_shader.hlsl"),  "VS_Main" };
-		FShaderCreationInfo ImguiPSInfo{ EShaderStage::Vertex, FFileUtility::GetEngineShaderDir("IMGUI_shader.hlsl"),  "PS_Main" };
-
-		FShaderPassRef imguiPass = FShaderPass::MakeShaderPass("IMGUI_DrawPass", { ImguiVSInfo , ImguiPSInfo }, blendDisable, rasterizerDefault, depthStateDisabled);
-		
-
-		*/
 	}
 
 	void FSwapChain::SetVSyncEnable(bool enable)
@@ -190,13 +162,10 @@ namespace Dash
 
 		mSwapChain = nullptr;
 
-		/*
-		vertexBuffer->Destroy();
-
 		PositionVertexBuffer->Destroy();
 		UVVertexBuffer->Destroy();
 		ColorVertexBuffer->Destroy();
-		*/
+
 	}
 
 	void FSwapChain::SetDisplayRate(float displayRate)
@@ -223,16 +192,13 @@ namespace Dash
 		param.TintColor = FVector4f{ 1.0f, 1.0f, 0.0f, 1.0f };
 		param.Params = FVector4f{ 1.0f, 1.0f, 0.5f, 1.0f };
 	
-		//FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("Present");
-
-		/*
+		
 		FGpuVertexBufferRef vertexBuffers[3] = { PositionVertexBuffer ,UVVertexBuffer, ColorVertexBuffer };
 
 		{
 			graphicsContext.SetRenderTarget(mDisplayBuffer);
 			graphicsContext.SetGraphicsPipelineState(drawPSO);
 			graphicsContext.SetViewportAndScissor(0, 0, mDisplayBuffer->GetWidth(), mDisplayBuffer->GetHeight());
-			//graphicsContext.SetVertexBuffer(0, vertexBuffer);
 			graphicsContext.SetVertexBuffers(0, 3, vertexBuffers);
 			graphicsContext.Draw(3);
 		}
@@ -242,12 +208,10 @@ namespace Dash
 			graphicsContext.SetGraphicsPipelineState(presentPSO);
 			graphicsContext.SetViewportAndScissor(0, 0, FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetWidth(), FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetHeight());
 			graphicsContext.SetShaderResourceView("DisplayTexture", mDisplayBuffer);
-			//graphicsContext.SetVertexBuffer(0, vertexBuffer);
 			graphicsContext.SetVertexBuffers(0, 3, vertexBuffers);
 			graphicsContext.Draw(3);
-		}
-		*/
-
+		}	
+		
 		graphicsContext.TransitionBarrier(FGraphicsCore::SwapChain->GetCurrentBackBuffer(), EResourceState::Present);
 		
 		graphicsContext.Finish();
