@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CommandContext.h"
+
 class FRenderEventArgs;
 class FUpdateEventArgs;
 
@@ -18,20 +20,20 @@ namespace Dash
         virtual void Startup(void);
         virtual void Cleanup(void);
         
-        virtual void BeginFrame();
-        virtual void EndFrame();
+        virtual void BeginFrame(FGraphicsCommandContext& graphicsContext);
+        virtual void EndFrame(FGraphicsCommandContext& graphicsContext);
 
         virtual void OnUpdate(const FUpdateEventArgs& e) = 0;
 
-        virtual void OnRenderScene(const FRenderEventArgs& e) = 0;
+        virtual void OnRenderScene(const FRenderEventArgs& e, FGraphicsCommandContext& graphicsContext) = 0;
 
-        virtual void OnRenderUI(const FRenderEventArgs& e);
+        virtual void OnRenderUI(const FRenderEventArgs& e, FGraphicsCommandContext& graphicsContext);
 
         virtual void OnWindowResize(const FResizeEventArgs& e) = 0;
 
         bool ProcessWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-        void Present();
+        void Present(FGraphicsCommandContext& graphicsContext);
 
         virtual bool IsDone(void);
 

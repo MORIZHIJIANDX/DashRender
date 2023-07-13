@@ -5,6 +5,7 @@
 #include "Utility/Mouse.h"
 #include "Utility/SystemTimer.h"
 #include "Graphics/GraphicsCore.h"
+#include "Graphics/CommandContext.h"
 
 namespace Dash
 {
@@ -86,22 +87,21 @@ namespace Dash
 		float totalTime = timer.GetTotalTime();
 
 		FUpdateEventArgs updateArgs{ deltaTime, totalTime, frameCount};
-
 		FRenderEventArgs RenderArgs{ deltaTime, totalTime, frameCount };
 
 		if (!Minimized)
 		{
-			app->BeginFrame();
+			FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("RenderFrame");
+
+			app->BeginFrame(graphicsContext);
 
 			app->OnUpdate(updateArgs);
 
-			app->OnRenderScene(RenderArgs);
+			app->OnRenderScene(RenderArgs, graphicsContext);
 
-			app->OnRenderUI(RenderArgs);
+			app->OnRenderUI(RenderArgs, graphicsContext);
 
-			app->Present();
-
-			app->EndFrame();
+			app->EndFrame(graphicsContext);
 		}
 
 		++frameCount;

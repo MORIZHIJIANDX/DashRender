@@ -123,10 +123,9 @@ namespace Dash
 		}
 	}
 
-	void TestApplication::OnRenderScene(const FRenderEventArgs& e)
+	void TestApplication::OnRenderScene(const FRenderEventArgs& e, FGraphicsCommandContext& graphicsContext)
 	{
-		FRenderEventArgs Args = e;
-		Args.Camera = mCamera; 
+		//IGameApp::OnRenderScene(e, graphicsContext);
 	}
 
 	void TestApplication::OnWindowResize(const FResizeEventArgs& e)

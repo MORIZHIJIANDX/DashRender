@@ -217,13 +217,13 @@ namespace Dash
 		}
 	}
 
-	void FSwapChain::Present()
+	void FSwapChain::Present(FGraphicsCommandContext& graphicsContext)
 	{
 		ConstantParams param;
 		param.TintColor = FVector4f{ 1.0f, 1.0f, 0.0f, 1.0f };
 		param.Params = FVector4f{ 1.0f, 1.0f, 0.5f, 1.0f };
 	
-		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("Present");
+		//FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("Present");
 
 		/*
 		FGpuVertexBufferRef vertexBuffers[3] = { PositionVertexBuffer ,UVVertexBuffer, ColorVertexBuffer };

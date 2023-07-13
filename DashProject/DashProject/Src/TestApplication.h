@@ -16,7 +16,7 @@ namespace Dash
 
 		virtual void OnUpdate(const FUpdateEventArgs& e) override;
 
-		virtual void OnRenderScene(const FRenderEventArgs& e) override;
+		virtual void OnRenderScene(const FRenderEventArgs& e, FGraphicsCommandContext& graphicsContext) override;
 		
 		virtual void OnWindowResize(const FResizeEventArgs& e) override;
 

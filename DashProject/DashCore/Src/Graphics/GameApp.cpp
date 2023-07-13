@@ -25,7 +25,7 @@ namespace Dash
 	{
 	}
 
-	void IGameApp::Startup(void)
+	void IGameApp::Startup()
 	{
 		FImportedStaticMeshData importedStaticMeshData;
 
@@ -57,7 +57,7 @@ namespace Dash
 		ImGui_ImplDX12_Init_Refactoring(3);
 	}
 
-	void IGameApp::Cleanup(void)
+	void IGameApp::Cleanup()
 	{
 		//return;
 
@@ -67,7 +67,7 @@ namespace Dash
 		ImGui::DestroyContext();
 	}
 
-	void IGameApp::BeginFrame()
+	void IGameApp::BeginFrame(FGraphicsCommandContext& graphicsContext)
 	{
 		// Start the Dear ImGui frame
 		ImGui_ImplDX12_NewFrame_Refactoring();
@@ -110,12 +110,12 @@ namespace Dash
 		}
 	}
 
-	void IGameApp::EndFrame()
+	void IGameApp::EndFrame(FGraphicsCommandContext& graphicsContext)
 	{
-		
+		Present(graphicsContext);
 	}
 
-	void IGameApp::OnRenderUI(const FRenderEventArgs& e)
+	void IGameApp::OnRenderUI(const FRenderEventArgs& e, FGraphicsCommandContext& graphicsContext)
 	{
 		//return;
 
@@ -128,14 +128,14 @@ namespace Dash
 			// Rendering
 			ImGui::Render();
 
-			FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("RenderUI");
+			//FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("RenderUI");
 
 			graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
 			graphicsContext.ClearColor(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
 
 			ImGui_ImplDX12_RenderDrawData_Refactoring(ImGui::GetDrawData(), graphicsContext);
 
-			graphicsContext.Finish();
+			graphicsContext.Flush();
 		}
 	}
 
@@ -144,9 +144,9 @@ namespace Dash
 		return ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
 	}
 
-	void IGameApp::Present()
+	void IGameApp::Present(FGraphicsCommandContext& graphicsContext)
 	{
-		FGraphicsCore::SwapChain->Present();
+		FGraphicsCore::SwapChain->Present(graphicsContext);
 	}
 
 	bool IGameApp::IsDone(void)

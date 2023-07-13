@@ -4,6 +4,7 @@
 #include "TextureBuffer.h"
 #include <dxgi1_6.h>
 #include "RenderDevice.h"
+#include "CommandContext.h"
 
 namespace Dash
 {
@@ -24,7 +25,7 @@ namespace Dash
 		void Destroy();
 		void SetDisplayRate(float displayRate);
 		void OnWindowResize(uint32_t newWidth, uint32_t newHeight);
-		void Present();
+		void Present(FGraphicsCommandContext& graphicsContext);
 		FColorBufferRef GetDisplayBuffer();
 		FColorBufferRef GetCurrentBackBuffer();
 		EResourceFormat GetBackBufferFormat() const;
@@ -41,7 +42,7 @@ namespace Dash
 		uint32_t mDisplayHeight = 720;
 		float mDisplayRate = 1.0f;
 		EResourceFormat mSwapChainFormat;
-		bool mVSyncEnable = true;
+		bool mVSyncEnable = false;
 
 		FColorBufferRef mDisplayBuffer = nullptr;
 		FColorBufferRef mSwapChainBuffer[SWAP_CHAIN_BUFFER_COUNT];

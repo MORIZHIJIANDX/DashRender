@@ -1,6 +1,8 @@
 #pragma once
 
 #include <stringapiset.h>
+#include <map>
+#include <regex>
 
 namespace Dash
 {
