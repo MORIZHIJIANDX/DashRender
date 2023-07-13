@@ -11,6 +11,9 @@
 
 namespace Dash
 {
+	bool show_demo_window = false;
+	bool show_another_window = true;
+
 	IGameApp* IGameApp::mAppInstance = nullptr;
 
 	IGameApp::IGameApp(UINT width, UINT height, const std::string& title, const std::string& winClassName)
@@ -37,7 +40,7 @@ namespace Dash
 			LOG_INFO << "Load mesh succeed!";
 		}
 
-		return;
+		//return;
 
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
@@ -56,7 +59,7 @@ namespace Dash
 
 	void IGameApp::Cleanup(void)
 	{
-		return;
+		//return;
 
 		// Cleanup
 		ImGui_ImplDX12_Shutdown_Refactoring();
@@ -66,15 +69,11 @@ namespace Dash
 
 	void IGameApp::BeginFrame()
 	{
-		return;
-
 		// Start the Dear ImGui frame
 		ImGui_ImplDX12_NewFrame_Refactoring();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 
-		bool show_demo_window = false;
-		bool show_another_window = true;
 		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 		// 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
@@ -118,7 +117,7 @@ namespace Dash
 
 	void IGameApp::OnRenderUI(const FRenderEventArgs& e)
 	{
-		return;
+		//return;
 
 		// Our state
 		bool show_demo_window = false;

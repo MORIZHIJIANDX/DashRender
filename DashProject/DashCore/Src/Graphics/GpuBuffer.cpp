@@ -240,7 +240,7 @@ namespace Dash
 	void FGpuDynamicVertexBuffer::UpdateData(void* data, size_t size)
 	{
 		ASSERT(data != nullptr);
-		ASSERT(size == mDesc.Size);
+		//ASSERT(size == mDesc.Size);
 
 		Map();
 

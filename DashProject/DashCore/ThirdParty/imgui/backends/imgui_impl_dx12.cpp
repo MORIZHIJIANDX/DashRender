@@ -66,293 +66,343 @@ struct VERTEX_CONSTANT_BUFFER_DX12
 
 namespace Dash
 {
-struct ImGui_ImplDX12_RenderBuffers_Refactoring
-{
-    FGpuDynamicIndexBufferRef IndexBuffer;
-    FGpuDynamicVertexBufferRef VertexBuffer;
-    int                 IndexBufferSize;
-    int                 VertexBufferSize;
-};
-
-struct ImGui_ImplDX12_Data_Refactoring
-{
-    FGraphicsPSORef pPipelineState;
-    FTextureBufferRef pFontTextureResource;
-    ImGui_ImplDX12_RenderBuffers_Refactoring* pFrameResources;
-    UINT                            numFramesInFlight;
-    UINT                            frameIndex;
-
-    ImGui_ImplDX12_Data_Refactoring() { memset((void*)this, 0, sizeof(*this)); frameIndex = UINT_MAX; }
-};
-
-static ImGui_ImplDX12_Data_Refactoring* ImGui_ImplDX12_GetBackendData_Refactoring()
-{
-    return ImGui::GetCurrentContext() ? (ImGui_ImplDX12_Data_Refactoring*)ImGui::GetIO().BackendRendererUserData : NULL;
-}
-
-bool ImGui_ImplDX12_Init_Refactoring(int num_frames_in_flight)
-{
-    ImGuiIO& io = ImGui::GetIO();
-    IM_ASSERT(io.BackendRendererUserData == NULL && "Already initialized a renderer backend!");
-
-    // Setup backend capabilities flags
-    ImGui_ImplDX12_Data_Refactoring* bd = IM_NEW(ImGui_ImplDX12_Data_Refactoring)();
-    io.BackendRendererUserData = (void*)bd;
-    io.BackendRendererName = "imgui_impl_dx12";
-    io.BackendFlags |= ImGuiBackendFlags_RendererHasVtxOffset;  // We can honor the ImDrawCmd::VtxOffset field, allowing for large meshes.
-
-    bd->pFrameResources = new ImGui_ImplDX12_RenderBuffers_Refactoring[num_frames_in_flight];
-    bd->numFramesInFlight = num_frames_in_flight;
-    bd->frameIndex = UINT_MAX;
-
-    // Create buffers with a default size (they will later be grown as needed)
-    for (int i = 0; i < num_frames_in_flight; i++)
+    struct ImGui_VertexDataBuffer
     {
-        ImGui_ImplDX12_RenderBuffers_Refactoring* fr = &bd->pFrameResources[i];
-        fr->IndexBuffer = nullptr;
-        fr->VertexBuffer = nullptr;
-        fr->IndexBufferSize = 10000;
-        fr->VertexBufferSize = 5000;
-    }
+        std::vector<FVector2f> Positions;
+        std::vector<FVector2f> UVs;
+        std::vector<FColor> Colors;
 
-    return true;
-}
-
-void ImGui_ImplDX12_Shutdown_Refactoring()
-{
-    ImGui_ImplDX12_Data_Refactoring* bd = ImGui_ImplDX12_GetBackendData_Refactoring();
-    IM_ASSERT(bd != NULL && "No renderer backend to shutdown, or already shutdown?");
-    ImGuiIO& io = ImGui::GetIO();
-
-    ImGui_ImplDX12_InvalidateDeviceObjects_Refactoring();
-    delete[] bd->pFrameResources;
-    io.BackendRendererName = NULL;
-    io.BackendRendererUserData = NULL;
-    IM_DELETE(bd);
-}
-
-void ImGui_ImplDX12_NewFrame_Refactoring()
-{
-    ImGui_ImplDX12_Data_Refactoring* bd = ImGui_ImplDX12_GetBackendData_Refactoring();
-    IM_ASSERT(bd != NULL && "Did you call ImGui_ImplDX12_Init()?");
-
-    if (!bd->pPipelineState)
-        ImGui_ImplDX12_CreateDeviceObjects_Refactoring();
-}
-
-// Functions
-static void ImGui_ImplDX12_SetupRenderState_Refactoring(ImDrawData* draw_data, FGraphicsCommandContext& ctx, ImGui_ImplDX12_RenderBuffers_Refactoring* fr)
-{
-    ImGui_ImplDX12_Data_Refactoring* bd = ImGui_ImplDX12_GetBackendData_Refactoring();
-
-    // Setup orthographic projection matrix into our constant buffer
-    // Our visible imgui space lies from draw_data->DisplayPos (top left) to draw_data->DisplayPos+data_data->DisplaySize (bottom right).
-    VERTEX_CONSTANT_BUFFER_DX12 vertex_constant_buffer;
-    {
-        float L = draw_data->DisplayPos.x;
-        float R = draw_data->DisplayPos.x + draw_data->DisplaySize.x;
-        float T = draw_data->DisplayPos.y;
-        float B = draw_data->DisplayPos.y + draw_data->DisplaySize.y;
-
-        float mvp[4][4] =
+        void Reserve(int32_t size)
         {
-            { 2.0f / (R - L),   0.0f,           0.0f,       0.0f },
-            { 0.0f,         2.0f / (T - B),     0.0f,       0.0f },
-            { 0.0f,         0.0f,           0.5f,       0.0f },
-            { (R + L) / (L - R),  (T + B) / (B - T),    0.5f,       1.0f },
-        };
-        memcpy(&vertex_constant_buffer.mvp, mvp, sizeof(mvp));
+            Positions.reserve(size);
+            UVs.reserve(size);
+            Colors.reserve(size);
+        }
+
+        void AddVertex(const FVector2f& position, const FVector2f& uv, const FColor& color)
+        {
+            Positions.emplace_back(position);
+            UVs.emplace_back(uv);
+            Colors.emplace_back(color);
+        }
+    };
+
+    struct ImGui_ImplDX12_RenderBuffers_Refactoring
+    {
+        FGpuDynamicIndexBufferRef IndexBuffer;
+
+        FGpuDynamicVertexBufferRef VertexPositonBuffer;
+        FGpuDynamicVertexBufferRef VertexUVBuffer;
+        FGpuDynamicVertexBufferRef VertexColorBuffer;
+
+        int                 IndexBufferSize;
+        int                 VertexBufferSize;
+    };
+
+    struct ImGui_ImplDX12_Data_Refactoring
+    {
+        FGraphicsPSORef pPipelineState;
+        FTextureBufferRef pFontTextureResource;
+        ImGui_ImplDX12_RenderBuffers_Refactoring* pFrameResources;
+        UINT                            numFramesInFlight;
+        UINT                            frameIndex;
+
+        ImGui_ImplDX12_Data_Refactoring() { memset((void*)this, 0, sizeof(*this)); frameIndex = UINT_MAX; }
+    };
+
+    static ImGui_ImplDX12_Data_Refactoring* ImGui_ImplDX12_GetBackendData_Refactoring()
+    {
+        return ImGui::GetCurrentContext() ? (ImGui_ImplDX12_Data_Refactoring*)ImGui::GetIO().BackendRendererUserData : NULL;
     }
+
+    bool ImGui_ImplDX12_Init_Refactoring(int num_frames_in_flight)
+    {
+        ImGuiIO& io = ImGui::GetIO();
+        IM_ASSERT(io.BackendRendererUserData == NULL && "Already initialized a renderer backend!");
+
+        // Setup backend capabilities flags
+        ImGui_ImplDX12_Data_Refactoring* bd = IM_NEW(ImGui_ImplDX12_Data_Refactoring)();
+        io.BackendRendererUserData = (void*)bd;
+        io.BackendRendererName = "imgui_impl_dx12";
+        io.BackendFlags |= ImGuiBackendFlags_RendererHasVtxOffset;  // We can honor the ImDrawCmd::VtxOffset field, allowing for large meshes.
+
+        bd->pFrameResources = new ImGui_ImplDX12_RenderBuffers_Refactoring[num_frames_in_flight];
+        bd->numFramesInFlight = num_frames_in_flight;
+        bd->frameIndex = UINT_MAX;
+
+        // Create buffers with a default size (they will later be grown as needed)
+        for (int i = 0; i < num_frames_in_flight; i++)
+        {
+            ImGui_ImplDX12_RenderBuffers_Refactoring* fr = &bd->pFrameResources[i];
+            fr->IndexBuffer = nullptr;
+            //fr->VertexBuffer = nullptr;
+            fr->IndexBufferSize = 10000;
+            fr->VertexBufferSize = 5000;
+
+            fr->VertexPositonBuffer = nullptr;
+            fr->VertexUVBuffer = nullptr;
+            fr->VertexColorBuffer = nullptr;
+        }
+
+        return true;
+    }
+
+    void ImGui_ImplDX12_Shutdown_Refactoring()
+    {
+        ImGui_ImplDX12_Data_Refactoring* bd = ImGui_ImplDX12_GetBackendData_Refactoring();
+        IM_ASSERT(bd != NULL && "No renderer backend to shutdown, or already shutdown?");
+        ImGuiIO& io = ImGui::GetIO();
+
+        ImGui_ImplDX12_InvalidateDeviceObjects_Refactoring();
+        delete[] bd->pFrameResources;
+        io.BackendRendererName = NULL;
+        io.BackendRendererUserData = NULL;
+        IM_DELETE(bd);
+    }
+
+    void ImGui_ImplDX12_NewFrame_Refactoring()
+    {
+        ImGui_ImplDX12_Data_Refactoring* bd = ImGui_ImplDX12_GetBackendData_Refactoring();
+        IM_ASSERT(bd != NULL && "Did you call ImGui_ImplDX12_Init()?");
+
+        if (!bd->pPipelineState)
+            ImGui_ImplDX12_CreateDeviceObjects_Refactoring();
+    }
+
+    // Functions
+    static void ImGui_ImplDX12_SetupRenderState_Refactoring(ImDrawData* draw_data, FGraphicsCommandContext& ctx, ImGui_ImplDX12_RenderBuffers_Refactoring* fr)
+    {
+        ImGui_ImplDX12_Data_Refactoring* bd = ImGui_ImplDX12_GetBackendData_Refactoring();
+
+        // Setup orthographic projection matrix into our constant buffer
+        // Our visible imgui space lies from draw_data->DisplayPos (top left) to draw_data->DisplayPos+data_data->DisplaySize (bottom right).
+        VERTEX_CONSTANT_BUFFER_DX12 vertex_constant_buffer;
+        {
+            float L = draw_data->DisplayPos.x;
+            float R = draw_data->DisplayPos.x + draw_data->DisplaySize.x;
+            float T = draw_data->DisplayPos.y;
+            float B = draw_data->DisplayPos.y + draw_data->DisplaySize.y;
+
+            float mvp[4][4] =
+            {
+                { 2.0f / (R - L),   0.0f,           0.0f,       0.0f },
+                { 0.0f,         2.0f / (T - B),     0.0f,       0.0f },
+                { 0.0f,         0.0f,           0.5f,       0.0f },
+                { (R + L) / (L - R),  (T + B) / (B - T),    0.5f,       1.0f },
+            };
+            memcpy(&vertex_constant_buffer.mvp, mvp, sizeof(mvp));
+        }
     
-    ctx.SetViewport(FViewport{0.0f, 0.0f, draw_data->DisplaySize.x, draw_data->DisplaySize.y});
+        ctx.SetViewport(FViewport{0.0f, 0.0f, draw_data->DisplaySize.x, draw_data->DisplaySize.y});
 
-    ctx.SetVertexBuffer(0, fr->VertexBuffer);
+        FGpuVertexBufferRef vertexBuffers[3] = { fr->VertexPositonBuffer ,fr->VertexUVBuffer, fr->VertexColorBuffer };
 
-    ctx.SetIndexBuffer(fr->IndexBuffer);
+        ctx.SetVertexBuffers(0, 3, vertexBuffers);
 
-    ctx.SetGraphicsPipelineState(bd->pPipelineState);
-    ctx.SetRootConstantBufferView("constantBuffer", vertex_constant_buffer);
+        ctx.SetIndexBuffer(fr->IndexBuffer);
 
-    ctx.SetBlendFactor(FLinearColor{0.0f, 0.0f, 0.0f, 0.0f});
-}
+        ctx.SetGraphicsPipelineState(bd->pPipelineState);
+        ctx.SetRootConstantBufferView("constantBuffer", vertex_constant_buffer);
 
-void ImGui_ImplDX12_RenderDrawData_Refactoring(ImDrawData* draw_data, FGraphicsCommandContext& graphics_command_context)
-{
-    // Avoid rendering when minimized
-    if (draw_data->DisplaySize.x <= 0.0f || draw_data->DisplaySize.y <= 0.0f)
-        return;
-
-    // FIXME: I'm assuming that this only gets called once per frame!
-    // If not, we can't just re-allocate the IB or VB, we'll have to do a proper allocator.
-    ImGui_ImplDX12_Data_Refactoring* bd = ImGui_ImplDX12_GetBackendData_Refactoring();
-    bd->frameIndex = bd->frameIndex + 1;
-    ImGui_ImplDX12_RenderBuffers_Refactoring* fr = &bd->pFrameResources[bd->frameIndex % bd->numFramesInFlight];
-
-    // Create and grow vertex/index buffers if needed
-    if (fr->VertexBuffer == NULL || fr->VertexBufferSize < draw_data->TotalVtxCount)
-    {
-        fr->VertexBuffer = nullptr;
-
-        fr->VertexBufferSize = draw_data->TotalVtxCount + 5000;
-        fr->VertexBuffer = FGraphicsCore::Device->CreateDynamicVertexBuffer("IMGUI_VertexBuffer", fr->VertexBufferSize, sizeof(ImDrawVert));
-    }
-    if (fr->IndexBuffer == NULL || fr->IndexBufferSize < draw_data->TotalIdxCount)
-    {
-        fr->IndexBuffer = nullptr;
-
-        fr->IndexBufferSize = draw_data->TotalIdxCount + 10000;
-        fr->IndexBuffer = FGraphicsCore::Device->CreateDynamicIndexBuffer("IMGUI_IndexBuffer", fr->IndexBufferSize, sizeof(ImDrawIdx) != 2);
+        ctx.SetBlendFactor(FLinearColor{0.0f, 0.0f, 0.0f, 0.0f});
     }
 
-    // Upload vertex/index data into a single contiguous GPU buffer
-    void* vtx_resource, * idx_resource;
-
-    vtx_resource = fr->VertexBuffer->Map();
-    idx_resource = fr->IndexBuffer->Map();
-
-    ImDrawVert* vtx_dst = (ImDrawVert*)vtx_resource;
-    ImDrawIdx* idx_dst = (ImDrawIdx*)idx_resource;
-    for (int n = 0; n < draw_data->CmdListsCount; n++)
+    void ImGui_CopyVertexData(ImGui_VertexDataBuffer& VertexDataBuffer, const ImVector<ImDrawVert>& ImguiVertexes)
     {
-        const ImDrawList* cmd_list = draw_data->CmdLists[n];
-        memcpy(vtx_dst, cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(ImDrawVert));
-        memcpy(idx_dst, cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx));
-        vtx_dst += cmd_list->VtxBuffer.Size;
-        idx_dst += cmd_list->IdxBuffer.Size;
-    }
-    fr->VertexBuffer->Unmap();
-    fr->IndexBuffer->Unmap();
-
-    // Setup desired DX state
-    ImGui_ImplDX12_SetupRenderState_Refactoring(draw_data, graphics_command_context, fr);
-
-    graphics_command_context.SetShaderResourceView("texture0", bd->pFontTextureResource);
-
-    // Render command lists
-    // (Because we merged all buffers into a single one, we maintain our own offset into them)
-    int global_vtx_offset = 0;
-    int global_idx_offset = 0;
-    ImVec2 clip_off = draw_data->DisplayPos;
-    for (int n = 0; n < draw_data->CmdListsCount; n++)
-    {
-        const ImDrawList* cmd_list = draw_data->CmdLists[n];
-        for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
+        VertexDataBuffer.Reserve((int32_t)VertexDataBuffer.Positions.size() + ImguiVertexes.Size);
+        
+        for (int32_t i = 0; i < ImguiVertexes.Size; i++)
         {
-            const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
-            if (pcmd->UserCallback != NULL)
+            const ImDrawVert& vertex = ImguiVertexes.Data[i];
+
+            VertexDataBuffer.AddVertex(FVector2f{ vertex.pos.x, vertex.pos.y }, FVector2f{ vertex.uv.x, vertex.uv.y }, FColor{ vertex.col });
+        }
+    }
+
+    void ImGui_ImplDX12_RenderDrawData_Refactoring(ImDrawData* draw_data, FGraphicsCommandContext& graphics_command_context)
+    {
+        // Avoid rendering when minimized
+        if (draw_data->DisplaySize.x <= 0.0f || draw_data->DisplaySize.y <= 0.0f)
+            return;
+
+        // FIXME: I'm assuming that this only gets called once per frame!
+        // If not, we can't just re-allocate the IB or VB, we'll have to do a proper allocator.
+        ImGui_ImplDX12_Data_Refactoring* bd = ImGui_ImplDX12_GetBackendData_Refactoring();
+        bd->frameIndex = bd->frameIndex + 1;
+        ImGui_ImplDX12_RenderBuffers_Refactoring* fr = &bd->pFrameResources[bd->frameIndex % bd->numFramesInFlight];
+
+        {
+            // Create and grow vertex/index buffers if needed
+            if (fr->VertexPositonBuffer == NULL || fr->VertexBufferSize < draw_data->TotalVtxCount)
             {
-                // User callback, registered via ImDrawList::AddCallback()
-                // (ImDrawCallback_ResetRenderState is a special callback value used by the user to request the renderer to reset render state.)
-                if (pcmd->UserCallback == ImDrawCallback_ResetRenderState)
-                    ImGui_ImplDX12_SetupRenderState_Refactoring(draw_data, graphics_command_context, fr);
-                else
-                    pcmd->UserCallback(cmd_list, pcmd);
+                fr->VertexPositonBuffer = nullptr;
+                fr->VertexUVBuffer = nullptr;
+                fr->VertexColorBuffer = nullptr;
+
+                fr->VertexBufferSize = draw_data->TotalVtxCount + 5000;
+                fr->VertexPositonBuffer = FGraphicsCore::Device->CreateDynamicVertexBuffer("IMGUI_VertexPositonBuffer", fr->VertexBufferSize, sizeof(FVector2f));
+                fr->VertexUVBuffer = FGraphicsCore::Device->CreateDynamicVertexBuffer("IMGUI_VertexUVBuffer", fr->VertexBufferSize, sizeof(FVector2f));
+                fr->VertexColorBuffer = FGraphicsCore::Device->CreateDynamicVertexBuffer("IMGUI_VertexColorBuffer", fr->VertexBufferSize, sizeof(FColor));
             }
-            else
+            if (fr->IndexBuffer == NULL || fr->IndexBufferSize < draw_data->TotalIdxCount)
             {
-                // Project scissor/clipping rectangles into framebuffer space
-                ImVec2 clip_min(pcmd->ClipRect.x - clip_off.x, pcmd->ClipRect.y - clip_off.y);
-                ImVec2 clip_max(pcmd->ClipRect.z - clip_off.x, pcmd->ClipRect.w - clip_off.y);
-                if (clip_max.x <= clip_min.x || clip_max.y <= clip_min.y)
-                    continue;
+                fr->IndexBuffer = nullptr;
 
-                // Apply Scissor/clipping rectangle, Bind texture, Draw
-                const D3D12_RECT r = { (LONG)clip_min.x, (LONG)clip_min.y, (LONG)clip_max.x, (LONG)clip_max.y };
-                D3D12_GPU_DESCRIPTOR_HANDLE texture_handle = {};
-                texture_handle.ptr = (UINT64)pcmd->GetTexID();
+                fr->IndexBufferSize = draw_data->TotalIdxCount + 10000;
+                fr->IndexBuffer = FGraphicsCore::Device->CreateDynamicIndexBuffer("IMGUI_IndexBuffer", fr->IndexBufferSize, sizeof(ImDrawIdx) != 2);
+            }
 
-                graphics_command_context.SetScissor(r);
+            ImGui_VertexDataBuffer vertexData;
 
-                graphics_command_context.DrawIndexedInstanced(pcmd->ElemCount, 1, pcmd->IdxOffset + global_idx_offset, pcmd->VtxOffset + global_vtx_offset, 0);
+            for (int n = 0; n < draw_data->CmdListsCount; n++)
+            {
+                const ImDrawList* cmd_list = draw_data->CmdLists[n];
+                ImGui_CopyVertexData(vertexData, cmd_list->VtxBuffer);
+            }
+
+            if (vertexData.Positions.size() > 0)
+            {
+                fr->VertexPositonBuffer->UpdateData(vertexData.Positions.data(), vertexData.Positions.size() * sizeof(FVector2f));
+                fr->VertexUVBuffer->UpdateData(vertexData.UVs.data(), vertexData.UVs.size() * sizeof(FVector2f));
+                fr->VertexColorBuffer->UpdateData(vertexData.Colors.data(), vertexData.Colors.size() * sizeof(FColor));
+            }
+
+            void* idx_resource = fr->IndexBuffer->Map();
+            ImDrawIdx* idx_dst = (ImDrawIdx*)idx_resource;
+
+            for (int n = 0; n < draw_data->CmdListsCount; n++)
+            {
+                const ImDrawList* cmd_list = draw_data->CmdLists[n];
+                memcpy(idx_dst, cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx));
+                idx_dst += cmd_list->IdxBuffer.Size;
             }
         }
-        global_idx_offset += cmd_list->IdxBuffer.Size;
-        global_vtx_offset += cmd_list->VtxBuffer.Size;
+
+        // Setup desired DX state
+        ImGui_ImplDX12_SetupRenderState_Refactoring(draw_data, graphics_command_context, fr);
+
+        graphics_command_context.SetShaderResourceView("texture0", bd->pFontTextureResource);
+
+        // Render command lists
+        // (Because we merged all buffers into a single one, we maintain our own offset into them)
+        int global_vtx_offset = 0;
+        int global_idx_offset = 0;
+        ImVec2 clip_off = draw_data->DisplayPos;
+        for (int n = 0; n < draw_data->CmdListsCount; n++)
+        {
+            const ImDrawList* cmd_list = draw_data->CmdLists[n];
+            for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
+            {
+                const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
+                if (pcmd->UserCallback != NULL)
+                {
+                    // User callback, registered via ImDrawList::AddCallback()
+                    // (ImDrawCallback_ResetRenderState is a special callback value used by the user to request the renderer to reset render state.)
+                    if (pcmd->UserCallback == ImDrawCallback_ResetRenderState)
+                        ImGui_ImplDX12_SetupRenderState_Refactoring(draw_data, graphics_command_context, fr);
+                    else
+                        pcmd->UserCallback(cmd_list, pcmd);
+                }
+                else
+                {
+                    // Project scissor/clipping rectangles into framebuffer space
+                    ImVec2 clip_min(pcmd->ClipRect.x - clip_off.x, pcmd->ClipRect.y - clip_off.y);
+                    ImVec2 clip_max(pcmd->ClipRect.z - clip_off.x, pcmd->ClipRect.w - clip_off.y);
+                    if (clip_max.x <= clip_min.x || clip_max.y <= clip_min.y)
+                        continue;
+
+                    // Apply Scissor/clipping rectangle, Bind texture, Draw
+                    const D3D12_RECT r = { (LONG)clip_min.x, (LONG)clip_min.y, (LONG)clip_max.x, (LONG)clip_max.y };
+                    D3D12_GPU_DESCRIPTOR_HANDLE texture_handle = {};
+                    texture_handle.ptr = (UINT64)pcmd->GetTexID();
+
+                    graphics_command_context.SetScissor(r);
+
+                    graphics_command_context.DrawIndexedInstanced(pcmd->ElemCount, 1, pcmd->IdxOffset + global_idx_offset, pcmd->VtxOffset + global_vtx_offset, 0);
+                }
+            }
+            global_idx_offset += cmd_list->IdxBuffer.Size;
+            global_vtx_offset += cmd_list->VtxBuffer.Size;
+        }
     }
-}
 
-void ImGui_ImplDX12_InvalidateDeviceObjects_Refactoring()
-{
-    ImGui_ImplDX12_Data_Refactoring* bd = ImGui_ImplDX12_GetBackendData_Refactoring();
-    if (!bd)
-        return;
-    ImGuiIO& io = ImGui::GetIO();
-
-    bd->pPipelineState = nullptr;
-    bd->pFontTextureResource = nullptr;
-
-    io.Fonts->SetTexID(NULL); // We copied bd->pFontTextureView to io.Fonts->TexID so let's clear that as well.
-
-    for (UINT i = 0; i < bd->numFramesInFlight; i++)
+    void ImGui_ImplDX12_InvalidateDeviceObjects_Refactoring()
     {
-        ImGui_ImplDX12_RenderBuffers_Refactoring* fr = &bd->pFrameResources[i];
+        ImGui_ImplDX12_Data_Refactoring* bd = ImGui_ImplDX12_GetBackendData_Refactoring();
+        if (!bd)
+            return;
+        ImGuiIO& io = ImGui::GetIO();
 
-        fr->IndexBuffer = nullptr;
-        fr->VertexBuffer = nullptr;
+        bd->pPipelineState = nullptr;
+        bd->pFontTextureResource = nullptr;
+
+        io.Fonts->SetTexID(NULL); // We copied bd->pFontTextureView to io.Fonts->TexID so let's clear that as well.
+
+        for (UINT i = 0; i < bd->numFramesInFlight; i++)
+        {
+            ImGui_ImplDX12_RenderBuffers_Refactoring* fr = &bd->pFrameResources[i];
+
+            fr->IndexBuffer = nullptr;
+            //fr->VertexBuffer = nullptr;
+
+            fr->VertexPositonBuffer = nullptr;
+            fr->VertexUVBuffer = nullptr;
+            fr->VertexColorBuffer = nullptr;
+        }
     }
-}
 
-static void ImGui_ImplDX12_CreateFontsTexture_Refactoring()
-{
-    // Build texture atlas
-    ImGuiIO& io = ImGui::GetIO();
-    ImGui_ImplDX12_Data_Refactoring* bd = ImGui_ImplDX12_GetBackendData_Refactoring();
-    unsigned char* pixels;
-    int width, height;
-    io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
+    static void ImGui_ImplDX12_CreateFontsTexture_Refactoring()
+    {
+        // Build texture atlas
+        ImGuiIO& io = ImGui::GetIO();
+        ImGui_ImplDX12_Data_Refactoring* bd = ImGui_ImplDX12_GetBackendData_Refactoring();
+        unsigned char* pixels;
+        int width, height;
+        io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
 
-    bd->pFontTextureResource = nullptr;
+        bd->pFontTextureResource = nullptr;
 
-    FTextureBufferDescription textureDest = FTextureBufferDescription::Create2D(EResourceFormat::RGBA8_Unsigned_Norm, width, height, 1);
-    bd->pFontTextureResource = FGraphicsCore::Device->CreateTextureBufferFromMemory("TestTexture", textureDest, pixels);
+        FTextureBufferDescription textureDest = FTextureBufferDescription::Create2D(EResourceFormat::RGBA8_Unsigned_Norm, width, height, 1);
+        bd->pFontTextureResource = FGraphicsCore::Device->CreateTextureBufferFromMemory("TestTexture", textureDest, pixels);
 
-    io.Fonts->SetTexID((ImTextureID)bd->pFontTextureResource->GetShaderResourceView().ptr);
-}
+        io.Fonts->SetTexID((ImTextureID)bd->pFontTextureResource->GetShaderResourceView().ptr);
+    }
 
-bool ImGui_ImplDX12_CreateDeviceObjects_Refactoring()
-{
-    ImGui_ImplDX12_Data_Refactoring* bd = ImGui_ImplDX12_GetBackendData_Refactoring();
-    if (!bd)
-        return false;
-    if (bd->pPipelineState)
-        ImGui_ImplDX12_InvalidateDeviceObjects_Refactoring();
+    bool ImGui_ImplDX12_CreateDeviceObjects_Refactoring()
+    {
+        ImGui_ImplDX12_Data_Refactoring* bd = ImGui_ImplDX12_GetBackendData_Refactoring();
+        if (!bd)
+            return false;
+        if (bd->pPipelineState)
+            ImGui_ImplDX12_InvalidateDeviceObjects_Refactoring();
     
-    {
-        FShaderCreationInfo vsInfo{ EShaderStage::Vertex, FFileUtility::GetEngineShaderDir("IMGUI_shader.hlsl"),  "VS_Main" };
-        vsInfo.Finalize();
+        {
+            FShaderCreationInfo vsInfo{ EShaderStage::Vertex, FFileUtility::GetEngineShaderDir("IMGUI_shader.hlsl"),  "VS_Main" };
+            vsInfo.Finalize();
 
-        FShaderCreationInfo psInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("IMGUI_shader.hlsl"),  "PS_Main" };
-        psInfo.Finalize();
+            FShaderCreationInfo psInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("IMGUI_shader.hlsl"),  "PS_Main" };
+            psInfo.Finalize();
 
-        FInputAssemblerLayout inputLayout;
-        inputLayout.AddPerVertexLayoutElement("POSITION", 0, EResourceFormat::RG32_Float, 0, (uint32_t)IM_OFFSETOF(ImDrawVert, pos));
-        inputLayout.AddPerVertexLayoutElement("TEXCOORD", 0, EResourceFormat::RG32_Float, 0, (uint32_t)IM_OFFSETOF(ImDrawVert, uv));
-        inputLayout.AddPerVertexLayoutElement("COLOR", 0, EResourceFormat::BGRA8_Unsigned_Norm, 0, (uint32_t)IM_OFFSETOF(ImDrawVert, col));
+            FRasterizerState rasterizerCullOff{ ERasterizerFillMode::Solid, ERasterizerCullMode::None };
+            FBlendState blendDisable{ true, false };
+            FDepthStencilState depthStateDisabled{ false, false };
 
-        FRasterizerState rasterizerCullOff{ ERasterizerFillMode::Solid, ERasterizerCullMode::None };
-        FBlendState blendDisable{ true, false };
-        FDepthStencilState depthStateDisabled{ false, false };
+            FShaderPassRef drawPass = FShaderPass::MakeShaderPass("IMGUI_DrawPass", { vsInfo , psInfo }, blendDisable, rasterizerCullOff, depthStateDisabled);
 
-        FShaderPassRef drawPass = FShaderPass::MakeShaderPass("IMGUI_DrawPass", { vsInfo , psInfo }, blendDisable, rasterizerCullOff, depthStateDisabled);
+            FGraphicsPSORef drawPSO = FGraphicsPSO::MakeGraphicsPSO("IMGUI_PSO");
 
-        FGraphicsPSORef drawPSO = FGraphicsPSO::MakeGraphicsPSO("IMGUI_PSO");
+            drawPSO->SetShaderPass(drawPass);
+            drawPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
+            drawPSO->SetSamplerMask(UINT_MAX);
+            drawPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetBackBufferFormat(), EResourceFormat::Depth32_Float);
+            drawPSO->Finalize();
 
-        drawPSO->SetBlendState(blendDisable);
-        drawPSO->SetRasterizerState(rasterizerCullOff);
-        drawPSO->SetShaderPass(drawPass);
-        drawPSO->SetDepthStencilState(depthStateDisabled);
-        drawPSO->SetInputLayout(inputLayout);
-        drawPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
-        drawPSO->SetSamplerMask(UINT_MAX);
-        drawPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetBackBufferFormat(), EResourceFormat::Depth32_Float);
-        drawPSO->Finalize();
+            bd->pPipelineState = drawPSO;
 
-        bd->pPipelineState = drawPSO;
+            ImGui_ImplDX12_CreateFontsTexture_Refactoring();
+        }
 
-        ImGui_ImplDX12_CreateFontsTexture_Refactoring();
+        return true;
     }
-
-    return true;
-}
 
 }

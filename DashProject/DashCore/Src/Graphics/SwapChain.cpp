@@ -64,6 +64,7 @@ namespace Dash
 			mFenceValue[index] = ((uint64_t)D3D12_COMMAND_LIST_TYPE_DIRECT) << COMMAND_TYPE_MASK;
 		}
 
+		/*
 		FShaderCreationInfo psInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "PS_Main"};
 
 		FShaderCreationInfo psPresentInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "PS_SampleColor" };
@@ -165,6 +166,15 @@ namespace Dash
 		//std::string ddsTexturePath = std::string(ENGINE_PATH) + "/Resource/earth.dds";
 
 		//mTexture = FGraphicsCore::Device->CreateTextureBufferFromFile("WIC_Texture", pngTexturePath);
+
+		
+		FShaderCreationInfo ImguiVSInfo{ EShaderStage::Vertex, FFileUtility::GetEngineShaderDir("IMGUI_shader.hlsl"),  "VS_Main" };
+		FShaderCreationInfo ImguiPSInfo{ EShaderStage::Vertex, FFileUtility::GetEngineShaderDir("IMGUI_shader.hlsl"),  "PS_Main" };
+
+		FShaderPassRef imguiPass = FShaderPass::MakeShaderPass("IMGUI_DrawPass", { ImguiVSInfo , ImguiPSInfo }, blendDisable, rasterizerDefault, depthStateDisabled);
+		
+
+		*/
 	}
 
 	void FSwapChain::SetVSyncEnable(bool enable)
@@ -180,11 +190,13 @@ namespace Dash
 
 		mSwapChain = nullptr;
 
+		/*
 		vertexBuffer->Destroy();
 
 		PositionVertexBuffer->Destroy();
 		UVVertexBuffer->Destroy();
 		ColorVertexBuffer->Destroy();
+		*/
 	}
 
 	void FSwapChain::SetDisplayRate(float displayRate)
@@ -213,6 +225,7 @@ namespace Dash
 	
 		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("Present");
 
+		/*
 		FGpuVertexBufferRef vertexBuffers[3] = { PositionVertexBuffer ,UVVertexBuffer, ColorVertexBuffer };
 
 		{
@@ -233,6 +246,7 @@ namespace Dash
 			graphicsContext.SetVertexBuffers(0, 3, vertexBuffers);
 			graphicsContext.Draw(3);
 		}
+		*/
 
 		graphicsContext.TransitionBarrier(FGraphicsCore::SwapChain->GetCurrentBackBuffer(), EResourceState::Present);
 		

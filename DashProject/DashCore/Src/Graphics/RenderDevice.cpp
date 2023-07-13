@@ -327,6 +327,9 @@ namespace Dash
 				// don't all need the same types of resources.
 				D3D12_MESSAGE_ID_COMMAND_LIST_DESCRIPTOR_TABLE_NOT_SET,
 
+				// Support half type input in vertex shader.
+				D3D12_MESSAGE_ID_CREATEINPUTLAYOUT_TYPE_MISMATCH,
+
 				// RESOURCE_BARRIER_DUPLICATE_SUBRESOURCE_TRANSITIONS
 				(D3D12_MESSAGE_ID)1008,
 			};

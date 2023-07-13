@@ -85,6 +85,12 @@ namespace Dash
 
 		args.push_back(L"-Qstrip_debug");
 		args.push_back(L"-Qstrip_reflect");
+
+		args.push_back(L"-HV 2021");
+
+		args.push_back(L"-enable-16bit-types");
+
+		args.push_back(L"-Wno-parentheses-equality");
 		
 		std::string combinedStr;
 		for (const std::string& define : info.Defines)
