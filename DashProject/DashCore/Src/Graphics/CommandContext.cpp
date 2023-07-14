@@ -30,6 +30,8 @@ namespace Dash
 		
 		int64_t currentCompletedFence = FGraphicsCore::CommandQueueManager->GetGraphicsQueue().GetCompletedFence();
 
+		LOG_INFO << "Current Completed Fence " << currentCompletedFence;
+
 		auto& availableContext = mAvailableContexts[type];
 
 		FCommandContext* context = nullptr;
@@ -39,12 +41,15 @@ namespace Dash
 			{
 			case D3D12_COMMAND_LIST_TYPE_DIRECT:
 				context = new FGraphicsCommandContext();
+				LOG_INFO << "New GraphicsCommandContext " << context;
 				break;
-			case D3D12_COMMAND_LIST_TYPE_COMPUTE:
+			case D3D12_COMMAND_LIST_TYPE_COMPUTE:			
 				context = new FComputeCommandContext();
+				LOG_INFO << "New ComputeCommandContext " << context;
 				break;
-			case D3D12_COMMAND_LIST_TYPE_COPY:
+			case D3D12_COMMAND_LIST_TYPE_COPY:		
 				context = new FCopyCommandContext();
+				LOG_INFO << "New CopyCommandContext " << context;
 				break;
 			default:
 				break;
@@ -57,12 +62,16 @@ namespace Dash
 			context = availableContext.front();
 			context->Reset();
 			availableContext.pop();
+
+			LOG_INFO << "Reset CommandContext " << context;
 		}
 
 		ASSERT(context != nullptr);
 		ASSERT(context->mType == type);
 
 		context->Initialize();
+
+		LOG_INFO << "Initialize CommandContext " << context;
 
 		return context;
 	}
@@ -73,7 +82,7 @@ namespace Dash
 		std::lock_guard<std::mutex> lock(mAllocationMutex);
 		FGraphicsCore::CommandListManager->RetiredUsedCommandList(fenceValue, context->GetCommandList());
 		mRetiredContexts[context->mType].emplace_back(std::make_pair(fenceValue, context));
-		//LOG_INFO << "Free Context : " << context << " , Fence : " << fenceValue;
+		LOG_INFO << "Free Context : " << context << " , Fence : " << fenceValue;
 	}
 
 	void FCommandContextManager::ResetAllContext()
@@ -523,6 +532,10 @@ namespace Dash
 			if (shaderParameterIndex != INDEX_NONE)
 			{
 				const std::vector<FShaderParameter>& parameters = shaderPass->GetSRVParameters();
+
+				LOG_INFO << "SetShaderResourceView ColorBuffer " << srvrName << " , RootParameterIndex " << parameters[shaderParameterIndex].RootParameterIndex << " , DescriptorOffset " << parameters[shaderParameterIndex].DescriptorOffset
+					<< " Descriptor " << buffer->GetShaderResourceView().ptr;
+
 				SetShaderResourceView(parameters[shaderParameterIndex].RootParameterIndex, parameters[shaderParameterIndex].DescriptorOffset, buffer, buffer->GetShaderResourceView(), stateAfter, firstSubResource, numSubResources);
 				mShaderResourceViewBindState[shaderParameterIndex] = true;
 			}
@@ -545,6 +558,9 @@ namespace Dash
 			if (shaderParameterIndex != INDEX_NONE)
 			{
 				const std::vector<FShaderParameter>& parameters = shaderPass->GetSRVParameters();
+
+				LOG_INFO << "SetShaderResourceView TextureBuffer " << srvrName << " , RootParameterIndex " << parameters[shaderParameterIndex].RootParameterIndex << " , DescriptorOffset " << parameters[shaderParameterIndex].DescriptorOffset 
+					<< " Descriptor " << buffer->GetShaderResourceView().ptr;
 				SetShaderResourceView(parameters[shaderParameterIndex].RootParameterIndex, parameters[shaderParameterIndex].DescriptorOffset, buffer, buffer->GetShaderResourceView(), stateAfter, firstSubResource, numSubResources);
 				mShaderResourceViewBindState[shaderParameterIndex] = true;
 			}

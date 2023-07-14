@@ -283,6 +283,11 @@ namespace Dash
             return;
         }
 
+        LOG_INFO << "Begin Draw GUI";
+
+        graphics_command_context.SetRenderTarget(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
+        graphics_command_context.ClearColor(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
+
         // Setup desired DX state
         ImGui_ImplDX12_SetupRenderState_Refactoring(draw_data, graphics_command_context, fr);
 
@@ -330,7 +335,9 @@ namespace Dash
             global_vtx_offset += cmd_list->VtxBuffer.Size;
         }
 
-        graphics_command_context.Flush();
+        //graphics_command_context.Flush();
+
+        LOG_INFO << "End Draw GUI";
     }
 
     void ImGui_ImplDX12_InvalidateDeviceObjects_Refactoring()

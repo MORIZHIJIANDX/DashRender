@@ -82,6 +82,8 @@ namespace Dash
 
 	void UpdateApplication(IGameApp* app, size_t& frameCount, FCpuTimer& timer)
 	{
+		LOG_INFO << "Star Render Frame : " << frameCount;
+
 		timer.Tick();
 		float deltaTime = timer.GetDeltaTime();
 		float totalTime = timer.GetTotalTime();
@@ -103,6 +105,8 @@ namespace Dash
 
 			app->EndFrame(graphicsContext);
 		}
+
+		LOG_INFO << "End Render Frame : " << frameCount;
 
 		++frameCount;
 	}
