@@ -27,7 +27,6 @@ namespace Dash
 
 	void IGameApp::Startup()
 	{
-		/*
 		FImportedStaticMeshData importedStaticMeshData;
 
 		std::string fbxMeshPath = std::string(ENGINE_PATH) + "/Resource/Cyborg_Weapon.fbx";
@@ -40,8 +39,8 @@ namespace Dash
 
 			LOG_INFO << "Load mesh succeed!";
 		}
-		*/
-		//return;
+
+		return;
 
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
@@ -60,7 +59,7 @@ namespace Dash
 
 	void IGameApp::Cleanup()
 	{
-		//return;
+		return;
 
 		// Cleanup
 		ImGui_ImplDX12_Shutdown_Refactoring();
@@ -70,7 +69,7 @@ namespace Dash
 
 	void IGameApp::BeginFrame(FGraphicsCommandContext& graphicsContext)
 	{
-		//return;
+		return;
 
 		// Start the Dear ImGui frame
 		ImGui_ImplDX12_NewFrame_Refactoring();
@@ -120,9 +119,7 @@ namespace Dash
 
 	void IGameApp::OnRenderUI(const FRenderEventArgs& e, FGraphicsCommandContext& graphicsContext)
 	{
-		//return;
-
-		LOG_INFO << "Begin OnRenderUI";
+		return;
 
 		// Our state
 		bool show_demo_window = false;
@@ -135,10 +132,11 @@ namespace Dash
 
 			//FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("RenderUI");
 
+			graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
+			graphicsContext.ClearColor(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
+
 			ImGui_ImplDX12_RenderDrawData_Refactoring(ImGui::GetDrawData(), graphicsContext);
 		}
-
-		LOG_INFO << "End OnRenderUI";
 	}
 
 	bool IGameApp::ProcessWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)

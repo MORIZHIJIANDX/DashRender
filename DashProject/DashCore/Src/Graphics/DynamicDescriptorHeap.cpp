@@ -233,15 +233,11 @@ namespace Dash
 
 	void FDynamicDescriptorHeap::CommitDescriptorTables(FComputeCommandContextBase& context, std::function<void(ID3D12GraphicsCommandList*, UINT, D3D12_GPU_DESCRIPTOR_HANDLE)> setFunc)
 	{
-		LOG_INFO << "CommitDescriptorTables";
-
 		// Compute the number of descriptors that need to be copied
 		uint32_t staleDescriptorCount = ComputeStaleDescriptorCount();
 
 		if (staleDescriptorCount > 0)
 		{
-			LOG_INFO << "Stale Descriptor Count " << staleDescriptorCount << " , Stale Descriptor Table BitMask " << mStaleDescriptorTableBitMask;
-
 			if (!mCurrentDescriptorHeap || mNumFreeHandles < staleDescriptorCount)
 			{
 				mCurrentDescriptorHeap = RequestDescriptorHeap();
@@ -251,8 +247,6 @@ namespace Dash
 
 				context.SetDescriptorHeap(mDescriptorHeapType, mCurrentDescriptorHeap);
 				mStaleDescriptorTableBitMask = mDescriptorTableBitMask;
-
-				LOG_INFO << "Set Descriptor Heap " << mCurrentDescriptorHeap << " , Stale Descriptor Table BitMask " << mStaleDescriptorTableBitMask;
 			}
 
 			DWORD rootParameterIndex;
@@ -263,8 +257,6 @@ namespace Dash
 
 				UINT destDescriptorRanges[] = { srcNumDescriptors };
 				D3D12_CPU_DESCRIPTOR_HANDLE destDescriptorHandles[] = { mCurrentCpuDescriptorHandle };
-
-				LOG_INFO << "Copy Descriptors, Root ParameterIndex " << rootParameterIndex << ", Src DescriptorHandle " << srcDescriptorHandlePtr->ptr << ", Dest DescriptorHandle " << mCurrentCpuDescriptorHandle.ptr << ", Gpu DescriptorHandle " << mCurrentGpuDescriptorHandle.ptr;
 
 				FGraphicsCore::Device->CopyDescriptors(1, destDescriptorHandles, destDescriptorRanges, srcNumDescriptors, srcDescriptorHandlePtr, nullptr, mDescriptorHeapType);
 

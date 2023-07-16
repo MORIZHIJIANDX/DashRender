@@ -192,8 +192,7 @@ namespace Dash
 		param.TintColor = FVector4f{ 1.0f, 1.0f, 0.0f, 1.0f };
 		param.Params = FVector4f{ 1.0f, 1.0f, 0.5f, 1.0f };
 	
-		LOG_INFO << "Begin Present";
-
+		
 		FGpuVertexBufferRef vertexBuffers[3] = { PositionVertexBuffer ,UVVertexBuffer, ColorVertexBuffer };
 
 		{
@@ -226,8 +225,6 @@ namespace Dash
 		mCurrentBackBufferIndex = mSwapChain->GetCurrentBackBufferIndex();
 		uint64_t nextBufferFenceValue = mFenceValue[mCurrentBackBufferIndex];
 		FGraphicsCore::CommandQueueManager->GetGraphicsQueue().WaitForFence(nextBufferFenceValue);	
-
-		LOG_INFO << "End Present";
 	}
 
 	FColorBufferRef FSwapChain::GetDisplayBuffer()

@@ -108,12 +108,10 @@ namespace Dash
 		D3D12_SHADER_DESC shaderDesc;
 		reflector->GetDesc(&shaderDesc);
 
-		/*
 		LOG_INFO << "Num ConstantBuffers : " << shaderDesc.ConstantBuffers;
 		LOG_INFO << "Num BoundResources : " << shaderDesc.BoundResources;
 
 		LOG_INFO << " ---------------------------------------------------- ";
-		*/
 
 		std::map<std::string, UINT> bufferSizeMap;
 		for (UINT constantBufferIndex = 0; constantBufferIndex < shaderDesc.ConstantBuffers; ++constantBufferIndex)
@@ -125,16 +123,14 @@ namespace Dash
 
 			bufferSizeMap.emplace(bufferDesc.Name, bufferDesc.Size);
 
-			/*
 			LOG_INFO << "Buffer Name : " << std::string(bufferDesc.Name);
 			LOG_INFO << "Buffer Type : " << bufferDesc.Type;
 			LOG_INFO << "Buffer Variables : " << bufferDesc.Variables;
 			LOG_INFO << "Buffer Size : " << bufferDesc.Size;
 			LOG_INFO << "Buffer uFlags : " << bufferDesc.uFlags;
-			*/
 		}
 
-		// LOG_INFO << " ---------------------------------------------------- ";
+		LOG_INFO << " ---------------------------------------------------- ";
 
 		for (UINT resourceIndex = 0; resourceIndex < shaderDesc.BoundResources; ++resourceIndex)
 		{
@@ -157,7 +153,6 @@ namespace Dash
 
 			mParameters.push_back(resourceParameter);
 
-			/*
 			LOG_INFO << "Resource Name : " << std::string(resourceDesc.Name);
 			LOG_INFO << "Resource Type : " << resourceDesc.Type;
 			LOG_INFO << "Resource BindPoint : " << resourceDesc.BindPoint;
@@ -170,7 +165,6 @@ namespace Dash
 			LOG_INFO << "Resource uID : " << resourceDesc.uID;
 
 			LOG_INFO << " ================================== ";
-			*/
 		}
 
 		if (EnumMaskEquals(mCreationInfo.Stage, EShaderStage::Vertex))
@@ -410,7 +404,6 @@ namespace Dash
 					}
 				}
 
-				/*
 				LOG_INFO << "Input Parameter Name : " << std::string(inputSignatureParameterDesc.SemanticName);
 				LOG_INFO << "Input Parameter Index : " << inputSignatureParameterDesc.SemanticIndex;
 				LOG_INFO << "Input Parameter Mask : " << int(inputSignatureParameterDesc.Mask);
@@ -420,7 +413,6 @@ namespace Dash
 				LOG_INFO << "Input Parameter MinPrecision : " << inputSignatureParameterDesc.MinPrecision;
 				LOG_INFO << "Input Parameter Stream : " << inputSignatureParameterDesc.Stream;
 				LOG_INFO << "Input Parameter ReadWriteMask : " << int(inputSignatureParameterDesc.ReadWriteMask);
-				*/
 
 				if (!prevSemanticName.empty())
 				{
@@ -442,7 +434,7 @@ namespace Dash
 				prevSemanticName = std::string(inputSignatureParameterDesc.SemanticName);
 				prevSemanticIndex = inputSignatureParameterDesc.SemanticIndex;
 
-				// LOG_INFO << " ================================== ";
+				LOG_INFO << " ================================== ";
 			}
 		}
 	}
