@@ -45,28 +45,6 @@ namespace Dash
 		FMouse::Get().MouseWheelUp += OnMouseWheelUpDelegate;
 		FMouse::Get().MouseMoved += OnMouseMoveDelegate;
 
-		/*
-		std::string path{ "Src\\ovra.png" };
-		LOG_INFO << "Is Path : " << FFileUtility::IsPath(path);
-		LOG_INFO << "Is File : " << FFileUtility::IsFile(path);
-		LOG_INFO << "Is Path Exists : " << FFileUtility::IsPathExistent(path);
-		LOG_INFO << "Absolute Path : " << FFileUtility::GetAbsolutePath(path);
-		LOG_INFO << "RemoveBasePath Path : " << FFileUtility::RemoveBasePath(path);
-		LOG_INFO << "BasePath : " << FFileUtility::GetBasePath(path);
-		LOG_INFO << "Extension : " << FFileUtility::GetFileExtension(path);
-		LOG_INFO << "Last write time : " << FFileUtility::GetFileLastWriteTime(path);
-		LOG_INFO << "Current Path : " << FFileUtility::GetCurrentPath();
-		LOG_INFO << "File Name : " << FFileUtility::GetFileName(path);
-		LOG_INFO << "Relative Path : " << FFileUtility::GetRelativePath(FFileUtility::GetAbsolutePath(path));
-		LOG_INFO << "Parent Path : " << FFileUtility::GetParentPath(FFileUtility::GetAbsolutePath(path));
-		*/
-
-		//std::string projectpath = std::string(PROJECT_PATH);
-
-		//std::string projectpath = FFileUtility::GetCurrentPath();
-
-		//LOG_INFO << "Project Path : " << projectpath;
-
 		LOG_INFO << "Startup";
 	}
 

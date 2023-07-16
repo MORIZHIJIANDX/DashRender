@@ -51,7 +51,5 @@ namespace Dash
 		Microsoft::WRL::ComPtr<IDXGISwapChain4> mSwapChain;
 
 		UINT mCurrentBackBufferIndex = 0;
-
-		FTextureBufferRef mTexture;
 	};
 }

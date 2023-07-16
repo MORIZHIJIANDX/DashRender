@@ -24,30 +24,8 @@ namespace Dash
 {
 	using namespace Microsoft::WRL;
 
-	FGraphicsPSORef drawPSO = FGraphicsPSO::MakeGraphicsPSO("DisplayPSO");//{ "DisplayPSO" };
 	FGraphicsPSORef presentPSO = FGraphicsPSO::MakeGraphicsPSO("presentPSO");//{ "presentPSO" };
-	FShaderPassRef drawPass = nullptr;
-	FShaderPassRef PresentPass = nullptr;
-
-	FGpuDynamicVertexBufferRef PositionVertexBuffer;
-	FGpuDynamicVertexBufferRef UVVertexBuffer;
-	FGpuDynamicVertexBufferRef ColorVertexBuffer;
-
-
-	struct ConstantParams
-	{
-		FVector4f TintColor;
-		FVector4f Params;
-	};
-
-	struct Vertex
-	{
-		FVector3f Pos;
-		FVector2f UV;
-		FVector4f Color;
-	};
-
-	std::vector<Vertex> vertexData;
+	FShaderPassRef presentPass = nullptr;
 
 	void FSwapChain::Initialize()
 	{
@@ -62,9 +40,7 @@ namespace Dash
 			mFenceValue[index] = ((uint64_t)D3D12_COMMAND_LIST_TYPE_DIRECT) << COMMAND_TYPE_MASK;
 		}
 
-		FShaderCreationInfo psInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "PS_Main"};
-
-		FShaderCreationInfo psPresentInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "PS_SampleColor" };
+		FShaderCreationInfo psPresentInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "PS_Main" };
 		 
 		FShaderCreationInfo vsInfo{ EShaderStage::Vertex,FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "VS_Main" };
 	
@@ -73,80 +49,13 @@ namespace Dash
 		FBlendState blendDisable{false, false};
 		FDepthStencilState depthStateDisabled{false, false};
 
-		drawPass = FShaderPass::MakeShaderPass("DrawPass", { vsInfo , psInfo }, blendDisable, rasterizerDefault, depthStateDisabled);
-		PresentPass = FShaderPass::MakeShaderPass("PresentPass", { vsInfo , psPresentInfo }, blendDisable, rasterizerDefault, depthStateDisabled);
+		presentPass = FShaderPass::MakeShaderPass("PresentPass", { vsInfo , psPresentInfo }, blendDisable, rasterizerDefault, depthStateDisabled);
 
-		drawPSO->SetShaderPass(drawPass);
-		drawPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
-		drawPSO->SetSamplerMask(UINT_MAX);
-		drawPSO->SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
-		drawPSO->Finalize();
-
-		presentPSO->SetShaderPass(PresentPass);
+		presentPSO->SetShaderPass(presentPass);
 		presentPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
 		presentPSO->SetSamplerMask(UINT_MAX);
 		presentPSO->SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
 		presentPSO->Finalize();
-
-		std::vector<FVector3f> vertexPositionData;
-		vertexPositionData.reserve(3);
-		vertexPositionData.push_back(FVector3f{ -1.0f, 3.0f, 0.5f });
-		vertexPositionData.push_back(FVector3f{ 3.0f, -1.0f, 0.5f });
-		vertexPositionData.push_back(FVector3f{ -1.0f, -1.0f, 0.5f });
-
-		std::vector<FVector2f> vertexUVData;
-		vertexUVData.reserve(3);
-		vertexUVData.push_back(FVector2f{ 0.0f, -1.0f });
-		vertexUVData.push_back(FVector2f{ 1.0f, 0.5f });
-
-		vertexUVData.push_back(FVector2f{ 2.0f, 1.0f });
-		vertexUVData.push_back(FVector2f{ 0.5f, 0.5f });
-
-		vertexUVData.push_back(FVector2f{ 0.0f, 1.0f });
-		vertexUVData.push_back(FVector2f{ 1.0f, 0.5f });
-
-		std::vector<FVector4f> vertexColorData;
-		vertexColorData.reserve(3);
-		vertexColorData.push_back(FVector4f{ 1.0f, 0.0f, 0.0f, 1.0f });
-		vertexColorData.push_back(FVector4f{ 0.0f, 1.0f, 0.0f, 1.0f });
-		vertexColorData.push_back(FVector4f{ 0.0f, 0.0f, 1.0f, 1.0f });
-
-		uint32_t UVCount = 2;
-
-		PositionVertexBuffer = FGraphicsCore::Device->CreateDynamicVertexBuffer("PositionVertexBuffer", 3, sizeof(FVector3f));
-		UVVertexBuffer = FGraphicsCore::Device->CreateDynamicVertexBuffer("UVVertexBuffer", 3, sizeof(FVector2f) * UVCount);
-		ColorVertexBuffer = FGraphicsCore::Device->CreateDynamicVertexBuffer("ColorVertexBuffer", 3, sizeof(FVector4f));
-
-		PositionVertexBuffer->UpdateData(vertexPositionData.data(), vertexPositionData.size() * sizeof(FVector3f));
-		UVVertexBuffer->UpdateData(vertexUVData.data(), vertexUVData.size() * sizeof(FVector2f));
-		ColorVertexBuffer->UpdateData(vertexColorData.data(), vertexColorData.size() * sizeof(FVector4f));
-
-		
-		const int32_t textureWidth = 512;
-		std::vector<FColor> colorData;
-		colorData.reserve(textureWidth * textureWidth);
-		for (int32_t x = 0; x < textureWidth; ++ x)
-		{
-			for (int32_t y = 0; y < textureWidth; y++)
-			{
-				Scalar Size = 64;
-				FVector2f Pos= FMath::Floor(FVector2f(x, y) / Size);
-				uint8_t PatternMask = static_cast<uint8_t>(FMath::Fmod(Pos.X + FMath::Fmod(Pos.Y, 2.0f), 2.0f) * 125);
-
-				colorData.push_back(FColor{PatternMask, PatternMask, PatternMask});
-			}	
-		}
-
-		FTextureBufferDescription textureDest = FTextureBufferDescription::Create2D(EResourceFormat::RGBA8_Unsigned_Norm, textureWidth, textureWidth, 1);
-		mTexture = FGraphicsCore::Device->CreateTextureBufferFromMemory("TestTexture", textureDest, colorData.data());
-		
-		
-		//std::string pngTexturePath = std::string(ENGINE_PATH) + "/Resource/AssaultRifle_BaseColor.png";
-		//std::string tgaTexturePath = std::string(ENGINE_PATH) + "/Resource/TestTGA.tga";
-		//std::string hdrTexturePath = std::string(ENGINE_PATH) + "/Resource/Newport_Loft_Ref.hdr";
-		//std::string ddsTexturePath = std::string(ENGINE_PATH) + "/Resource/earth.dds";
-
-		//mTexture = FGraphicsCore::Device->CreateTextureBufferFromFile("WIC_Texture", pngTexturePath);
 	}
 
 	void FSwapChain::SetVSyncEnable(bool enable)
@@ -161,11 +70,6 @@ namespace Dash
 		DestroyBuffers();
 
 		mSwapChain = nullptr;
-
-		PositionVertexBuffer->Destroy();
-		UVVertexBuffer->Destroy();
-		ColorVertexBuffer->Destroy();
-
 	}
 
 	void FSwapChain::SetDisplayRate(float displayRate)
@@ -188,29 +92,11 @@ namespace Dash
 
 	void FSwapChain::Present(FGraphicsCommandContext& graphicsContext)
 	{
-		ConstantParams param;
-		param.TintColor = FVector4f{ 1.0f, 1.0f, 0.0f, 1.0f };
-		param.Params = FVector4f{ 1.0f, 1.0f, 0.5f, 1.0f };
-	
-		
-		FGpuVertexBufferRef vertexBuffers[3] = { PositionVertexBuffer ,UVVertexBuffer, ColorVertexBuffer };
-
-		/*
-		{
-			graphicsContext.SetRenderTarget(mDisplayBuffer);
-			graphicsContext.SetGraphicsPipelineState(drawPSO);
-			graphicsContext.SetViewportAndScissor(0, 0, mDisplayBuffer->GetWidth(), mDisplayBuffer->GetHeight());
-			graphicsContext.SetVertexBuffers(0, 3, vertexBuffers);
-			graphicsContext.Draw(3);
-		}
-		*/
-
 		{
 			graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
 			graphicsContext.SetGraphicsPipelineState(presentPSO);
 			graphicsContext.SetViewportAndScissor(0, 0, FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetWidth(), FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetHeight());
 			graphicsContext.SetShaderResourceView("DisplayTexture", mDisplayBuffer);
-			graphicsContext.SetVertexBuffers(0, 3, vertexBuffers);
 			graphicsContext.Draw(3);
 		}	
 		
@@ -333,5 +219,4 @@ namespace Dash
 	{
 		return mSwapChainFormat;
 	}
-
 }

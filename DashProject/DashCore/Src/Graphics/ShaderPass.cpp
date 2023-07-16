@@ -142,7 +142,7 @@ namespace Dash
 			}
 			case D3D_SHADER_INPUT_TYPE::D3D_SIT_SAMPLER:
 			{
-				if (!FStringUtility::Contains(pair.second.Name, "StaticSampler"))
+				if (!FStringUtility::Contains(pair.second.Name, "_Static"))
 				{
 					mSamplerParameters.push_back(pair.second);
 					LOG_INFO << "Add Sampler Pass Parameter : " << pair.second.Name;
