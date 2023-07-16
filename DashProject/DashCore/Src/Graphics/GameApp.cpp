@@ -11,6 +11,10 @@
 
 namespace Dash
 {
+	FGpuVertexBufferRef PositionVertexBuffer;
+	FGpuVertexBufferRef NormalVertexBuffer;
+	FGpuVertexBufferRef UVVertexBuffer;
+
 	bool show_demo_window = false;
 	bool show_another_window = true;
 
@@ -25,6 +29,35 @@ namespace Dash
 	{
 	}
 
+	void CreateVertexBuffers(const FImportedStaticMeshData& meshData)
+	{
+		const uint32_t numVertexes = meshData.numVertexes;
+		if (numVertexes > 0)
+		{
+			PositionVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshPositionVertexBuffer", numVertexes, sizeof(meshData.PositionData[0]), meshData.PositionData.data());
+			NormalVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshNormalVertexBuffer", numVertexes, sizeof(meshData.NormalData[0]), meshData.NormalData.data());
+			UVVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshUVVertexBuffer", numVertexes, sizeof(meshData.UVData[0]), meshData.UVData.data());
+		}	
+	}
+
+	void ReleaseVertexBuffers()
+	{
+		if (PositionVertexBuffer)
+		{
+			PositionVertexBuffer->Destroy();
+		}
+
+		if(NormalVertexBuffer)
+		{
+			NormalVertexBuffer->Destroy();
+		}
+
+		if (UVVertexBuffer)
+		{
+			UVVertexBuffer->Destroy();
+		}
+	}
+
 	void IGameApp::Startup()
 	{
 		FImportedStaticMeshData importedStaticMeshData;
@@ -36,6 +69,8 @@ namespace Dash
 		if (result)
 		{
 			importedStaticMeshData.hasNormal;
+
+			CreateVertexBuffers(importedStaticMeshData);
 
 			LOG_INFO << "Load mesh succeed!";
 		}
@@ -59,7 +94,7 @@ namespace Dash
 
 	void IGameApp::Cleanup()
 	{
-		//return;
+		ReleaseVertexBuffers();
 
 		// Cleanup
 		ImGui_ImplDX12_Shutdown_Refactoring();

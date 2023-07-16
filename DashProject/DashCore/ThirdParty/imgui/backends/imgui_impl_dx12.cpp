@@ -283,6 +283,8 @@ namespace Dash
             return;
         }
 
+        graphics_command_context.PIXBeginEvent("Render_IMGUI");
+
         graphics_command_context.SetRenderTarget(FGraphicsCore::SwapChain->GetDisplayBuffer());
         graphics_command_context.ClearColor(FGraphicsCore::SwapChain->GetDisplayBuffer());
 
@@ -333,7 +335,8 @@ namespace Dash
             global_vtx_offset += cmd_list->VtxBuffer.Size;
         }
 
-        graphics_command_context.Flush();
+        //graphics_command_context.Flush();
+        graphics_command_context.PIXEndEvent();
     }
 
     void ImGui_ImplDX12_InvalidateDeviceObjects_Refactoring()

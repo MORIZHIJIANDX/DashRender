@@ -92,6 +92,8 @@ namespace Dash
 
 	void FSwapChain::Present(FGraphicsCommandContext& graphicsContext)
 	{
+		graphicsContext.PIXBeginEvent("Present");
+
 		{
 			graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
 			graphicsContext.SetGraphicsPipelineState(presentPSO);
@@ -102,6 +104,8 @@ namespace Dash
 		
 		graphicsContext.TransitionBarrier(FGraphicsCore::SwapChain->GetCurrentBackBuffer(), EResourceState::Present);
 		
+		graphicsContext.PIXEndEvent();
+
 		graphicsContext.Finish();
 		
 		UINT PresentInterval = mVSyncEnable ? 1 : 0;
