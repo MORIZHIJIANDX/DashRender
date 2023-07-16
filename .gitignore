@@ -352,3 +352,7 @@ MigrationBackup/
 DashProject/Bin/
 
 DashProject/Bin-Intermediate/
+
+# compiled shader
+*.cso
+*.refect

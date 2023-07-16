@@ -195,6 +195,7 @@ namespace Dash
 		
 		FGpuVertexBufferRef vertexBuffers[3] = { PositionVertexBuffer ,UVVertexBuffer, ColorVertexBuffer };
 
+		/*
 		{
 			graphicsContext.SetRenderTarget(mDisplayBuffer);
 			graphicsContext.SetGraphicsPipelineState(drawPSO);
@@ -202,6 +203,7 @@ namespace Dash
 			graphicsContext.SetVertexBuffers(0, 3, vertexBuffers);
 			graphicsContext.Draw(3);
 		}
+		*/
 
 		{
 			graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetCurrentBackBuffer());

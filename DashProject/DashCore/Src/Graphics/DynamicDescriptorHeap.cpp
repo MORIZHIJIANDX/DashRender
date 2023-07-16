@@ -262,8 +262,8 @@ namespace Dash
 
 				setFunc(context.GetD3DCommandList(), rootParameterIndex, mCurrentGpuDescriptorHandle);
 
-				mCurrentCpuDescriptorHandle.Offset(srcNumDescriptors);
-				mCurrentGpuDescriptorHandle.Offset(srcNumDescriptors);
+				mCurrentCpuDescriptorHandle.Offset(srcNumDescriptors, mDescriptorHandleIncrementSize);
+				mCurrentGpuDescriptorHandle.Offset(srcNumDescriptors, mDescriptorHandleIncrementSize);
 				mNumFreeHandles -= srcNumDescriptors;
 
 				// Flip the stale bit so the descriptor table is not recopied again unless it is updated with a new

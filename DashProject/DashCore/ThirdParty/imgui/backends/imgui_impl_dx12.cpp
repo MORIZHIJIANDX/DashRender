@@ -283,6 +283,9 @@ namespace Dash
             return;
         }
 
+        graphics_command_context.SetRenderTarget(FGraphicsCore::SwapChain->GetDisplayBuffer());
+        graphics_command_context.ClearColor(FGraphicsCore::SwapChain->GetDisplayBuffer());
+
         // Setup desired DX state
         ImGui_ImplDX12_SetupRenderState_Refactoring(draw_data, graphics_command_context, fr);
 

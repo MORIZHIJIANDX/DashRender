@@ -38,7 +38,7 @@ float4 PS_SampleColor(float4 position : SV_Position, float2 uv : TexCoord0) : SV
 {
 	return DisplayTexture.Sample(StaticSampler, uv);
 }
-*/
+*/ 
 
 PSInput VS_Main(VSInput input)
 {
@@ -46,7 +46,7 @@ PSInput VS_Main(VSInput input)
 
 	output.Position = float4(input.Position, 1.0f);
 	output.Color = input.Color;
-	output.UV = input.UV[1];
+	output.UV = input.UV[0];
 	 
 	return output;
 }
@@ -59,5 +59,5 @@ float4 PS_Main(PSInput input) : SV_Target0
 
 float4 PS_SampleColor(PSInput input) : SV_Target0
 {
-	return DisplayTexture.Sample(StaticSampler, input.UV);
+	return DisplayTexture.Sample(StaticSampler, input.UV); 
 }
