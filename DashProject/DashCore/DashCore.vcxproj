@@ -451,10 +451,13 @@
     <ClCompile Include="ThirdParty\loguru\loguru.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Src\Shaders\FullScreen_PS.hlsl">
+    <FxCompile Include="Src\Shaders\IMGUIShader.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\IMGUI_shader.hlsl">
+    <FxCompile Include="Src\Shaders\MeshShader.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\PresentShader.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Src\Shaders\generateMips.hlsl">

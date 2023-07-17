@@ -8,12 +8,15 @@
 #include "imgui/backends/imgui_impl_dx12.h"
 
 #include "ModelLoader/StaticMeshLoader.h"
+#include "Utility/FileUtility.h"
 
 namespace Dash
 {
 	FGpuVertexBufferRef PositionVertexBuffer;
 	FGpuVertexBufferRef NormalVertexBuffer;
 	FGpuVertexBufferRef UVVertexBuffer;
+	FGpuIndexBufferRef IndexBuffer;
+	FGraphicsPSORef MeshDrawPSO;
 
 	bool show_demo_window = false;
 	bool show_another_window = true;
@@ -37,7 +40,45 @@ namespace Dash
 			PositionVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshPositionVertexBuffer", numVertexes, sizeof(meshData.PositionData[0]), meshData.PositionData.data());
 			NormalVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshNormalVertexBuffer", numVertexes, sizeof(meshData.NormalData[0]), meshData.NormalData.data());
 			UVVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshUVVertexBuffer", numVertexes, sizeof(meshData.UVData[0]), meshData.UVData.data());
-		}	
+
+			IndexBuffer = FGraphicsCore::Device->CreateIndexBuffer("MeshIndexBuffer", numVertexes, meshData.indices.data(), true);
+		}
+		
+		FShaderCreationInfo psPresentInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("MeshShader.hlsl"),  "PS_Main" };
+
+		FShaderCreationInfo vsInfo{ EShaderStage::Vertex,FFileUtility::GetEngineShaderDir("MeshShader.hlsl"),  "VS_Main" };
+
+		FRasterizerState rasterizerDefault{ ERasterizerFillMode::Solid, ERasterizerCullMode::None };
+
+		FBlendState blendDisable{ false, false };
+		FDepthStencilState depthStateDisabled{ false, false };
+
+		FShaderPassRef meshDrawPass = FShaderPass::MakeShaderPass("PresentPass", { vsInfo , psPresentInfo }, blendDisable, rasterizerDefault, depthStateDisabled);
+
+		MeshDrawPSO->SetShaderPass(meshDrawPass);
+		MeshDrawPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
+		MeshDrawPSO->SetSamplerMask(UINT_MAX);
+		MeshDrawPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetDisplayBuffer()->GetFormat(), EResourceFormat::Depth32_Float);
+		MeshDrawPSO->Finalize();
+	}
+
+	void RenderMesh(FGraphicsCommandContext& graphicsContext)
+	{
+		FResourceMagnitude RenderTargetMagnitude = FGraphicsCore::SwapChain->GetDisplayBuffer()->GetDesc().Magnitude;
+
+		FGpuVertexBufferRef vertexBuffers[3] = { PositionVertexBuffer ,NormalVertexBuffer, UVVertexBuffer };
+
+		graphicsContext.SetGraphicsPipelineState(MeshDrawPSO);
+
+		graphicsContext.SetViewportAndScissor(0, 0, RenderTargetMagnitude.Width, RenderTargetMagnitude.Height);
+
+		graphicsContext.SetVertexBuffers(0, 3, vertexBuffers);
+
+		graphicsContext.SetIndexBuffer(IndexBuffer);
+
+		graphicsContext.DrawIndexed(IndexBuffer->GetElementCount());
+		
+		//graphicsContext.SetRootConstantBufferView("constantBuffer", vertex_constant_buffer);
 	}
 
 	void ReleaseVertexBuffers()
@@ -75,8 +116,6 @@ namespace Dash
 			LOG_INFO << "Load mesh succeed!";
 		}
 
-		//return;
-
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -104,7 +143,8 @@ namespace Dash
 
 	void IGameApp::BeginFrame(FGraphicsCommandContext& graphicsContext)
 	{
-		//return;
+		graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetDisplayBuffer());
+		graphicsContext.ClearColor(FGraphicsCore::SwapChain->GetDisplayBuffer());
 
 		// Start the Dear ImGui frame
 		ImGui_ImplDX12_NewFrame_Refactoring();

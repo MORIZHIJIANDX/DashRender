@@ -895,10 +895,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Src\Shaders\FullScreen_PS.hlsl">
+    <FxCompile Include="Src\Shaders\IMGUIShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\IMGUI_shader.hlsl">
+    <FxCompile Include="Src\Shaders\MeshShader.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\PresentShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\generateMips.hlsl">

@@ -285,9 +285,6 @@ namespace Dash
 
         graphics_command_context.PIXBeginEvent("Render_IMGUI");
 
-        graphics_command_context.SetRenderTarget(FGraphicsCore::SwapChain->GetDisplayBuffer());
-        graphics_command_context.ClearColor(FGraphicsCore::SwapChain->GetDisplayBuffer());
-
         // Setup desired DX state
         ImGui_ImplDX12_SetupRenderState_Refactoring(draw_data, graphics_command_context, fr);
 
@@ -390,11 +387,9 @@ namespace Dash
             ImGui_ImplDX12_InvalidateDeviceObjects_Refactoring();
     
         {
-            FShaderCreationInfo vsInfo{ EShaderStage::Vertex, FFileUtility::GetEngineShaderDir("IMGUI_shader.hlsl"),  "VS_Main" };
-            vsInfo.Finalize();
+            FShaderCreationInfo vsInfo{ EShaderStage::Vertex, FFileUtility::GetEngineShaderDir("IMGUIShader.hlsl"),  "VS_Main" };
 
-            FShaderCreationInfo psInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("IMGUI_shader.hlsl"),  "PS_Main" };
-            psInfo.Finalize();
+            FShaderCreationInfo psInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("IMGUIShader.hlsl"),  "PS_Main" };
 
             FRasterizerState rasterizerCullOff{ ERasterizerFillMode::Solid, ERasterizerCullMode::None };
             FBlendState blendDisable{ true, false };

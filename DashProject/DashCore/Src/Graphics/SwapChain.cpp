@@ -40,9 +40,9 @@ namespace Dash
 			mFenceValue[index] = ((uint64_t)D3D12_COMMAND_LIST_TYPE_DIRECT) << COMMAND_TYPE_MASK;
 		}
 
-		FShaderCreationInfo psPresentInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "PS_Main" };
+		FShaderCreationInfo psPresentInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("PresentShader.hlsl"),  "PS_Main" };
 		 
-		FShaderCreationInfo vsInfo{ EShaderStage::Vertex,FFileUtility::GetEngineShaderDir("FullScreen_PS.hlsl"),  "VS_Main" };
+		FShaderCreationInfo vsInfo{ EShaderStage::Vertex,FFileUtility::GetEngineShaderDir("PresentShader.hlsl"),  "VS_Main" };
 	
 		FRasterizerState rasterizerDefault{ ERasterizerFillMode::Solid, ERasterizerCullMode::None };
 
