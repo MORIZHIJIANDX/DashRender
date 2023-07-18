@@ -8,9 +8,10 @@ namespace Dash
 	class FGpuBuffer : public FGpuResource
 	{
 	public:
-		uint64_t GetBufferSize() const { return mDesc.Size; }
-		uint64_t GetElementCount() const { return mDesc.Count; }
-		uint64_t GetElementSize() const { return mDesc.Stride; }
+		uint32_t GetBufferSize() const { return mDesc.Size; }
+		uint32_t GetElementCount() const { return mDesc.Count; }
+		uint32_t GetElementSize() const { return mDesc.Stride; }
+		bool GetCpuAccess() const { return mCpuAccess; }
 
 		bool SupportConstantBufferView() const;
 		bool SupportShaderResourceView() const;

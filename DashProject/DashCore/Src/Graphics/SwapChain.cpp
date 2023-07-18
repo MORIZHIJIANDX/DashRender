@@ -98,7 +98,7 @@ namespace Dash
 			graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
 			graphicsContext.SetGraphicsPipelineState(presentPSO);
 			graphicsContext.SetViewportAndScissor(0, 0, FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetWidth(), FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetHeight());
-			graphicsContext.SetShaderResourceView("DisplayTexture", mDisplayBuffer);
+			graphicsContext.SetShaderResourceView("DisplayTexture", mColorBuffer);
 			graphicsContext.Draw(3);
 		}	
 		
@@ -119,9 +119,14 @@ namespace Dash
 		FGraphicsCore::CommandQueueManager->GetGraphicsQueue().WaitForFence(nextBufferFenceValue);	
 	}
 
-	FColorBufferRef FSwapChain::GetDisplayBuffer()
+	FColorBufferRef FSwapChain::GetColorBuffer()
 	{
-		return mDisplayBuffer;
+		return mColorBuffer;
+	}
+
+	FDepthBufferRef FSwapChain::GetDepthBuffer()
+	{
+		return mDepthBuffer;
 	}
 
 	void FSwapChain::CreateSwapChain(uint32_t displayWdith, uint32_t displayHeight)
@@ -179,7 +184,8 @@ namespace Dash
 
 		mDisplayWdith = static_cast<uint32_t>(FMath::AlignUp(mSwapChainBuffer[0]->GetWidth() * mDisplayRate, 2));
 		mDisplayHeight = static_cast<uint32_t>(FMath::AlignUp(mSwapChainBuffer[0]->GetHeight() * mDisplayRate, 2));
-		mDisplayBuffer = FGraphicsCore::Device->CreateColorBuffer("Display Buffer", mDisplayWdith, mDisplayHeight, 1, mSwapChainFormat);
+		mColorBuffer = FGraphicsCore::Device->CreateColorBuffer("Color Buffer", mDisplayWdith, mDisplayHeight, 1, mColorBufferFormat);
+		mDepthBuffer = FGraphicsCore::Device->CreateDepthBuffer("Depth Buffer", mDisplayWdith, mDisplayHeight, mDepthBufferFormat);
 		LOG_INFO << "Set Display Width : " << mDisplayWdith << ", Display Height : " << mDisplayHeight;
 
 		mCurrentBackBufferIndex = mSwapChain->GetCurrentBackBufferIndex();
@@ -193,8 +199,11 @@ namespace Dash
 			mSwapChainBuffer[index] = nullptr;
 		}
 
-		mDisplayBuffer->Destroy();
-		mDisplayBuffer = nullptr;
+		mColorBuffer->Destroy();
+		mColorBuffer = nullptr;
+
+		mDepthBuffer->Destroy();
+		mDepthBuffer = nullptr;
 	}
 
 	void FSwapChain::ForceRecreateBuffers(uint32_t newWidth, uint32_t newHeight)

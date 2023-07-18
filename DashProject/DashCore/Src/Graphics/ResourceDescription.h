@@ -8,9 +8,9 @@ namespace Dash
 	{
 	public:
 		D3D12_RESOURCE_DESC D3DResourceDescription() const { return mDescription; }
-		uint64_t SubresourceCount() const { return mSubresourceCount; }
-		uint64_t ResourceAlignment() const { return mResourceAlignment; }
-		uint64_t ResourceSizeInBytes() const { return mResourceSizeInBytes; }
+		uint32_t SubresourceCount() const { return mSubresourceCount; }
+		uint32_t ResourceAlignment() const { return mResourceAlignment; }
+		uint32_t ResourceSizeInBytes() const { return mResourceSizeInBytes; }
 
 	protected:
 		void QueryAllocationInfo();
@@ -21,9 +21,9 @@ namespace Dash
 
 	protected:
 		D3D12_RESOURCE_DESC mDescription{};
-		uint64_t mSubresourceCount = 1;
-		uint64_t mResourceAlignment = 0;
-		uint64_t mResourceSizeInBytes = 0;
+		uint32_t mSubresourceCount = 1;
+		uint32_t mResourceAlignment = 0;
+		uint32_t mResourceSizeInBytes = 0;
 	};
 
 	struct FTextureDescription : public FResourceDescription
@@ -84,21 +84,21 @@ namespace Dash
 	struct FBufferDescription : public FResourceDescription
 	{
 	public:
-		uint64_t Size = 1;
-		uint64_t Count = 1;
-		uint64_t Stride = 1;
+		uint32_t Size = 1;
+		uint32_t Count = 1;
+		uint32_t Stride = 1;
 
-		static FBufferDescription Create(uint64_t elementSize, uint64_t elementCount, bool cpuAccess = false, uint64_t elementAlignment = 1, EResourceState initialStateMask = EResourceState::GenericRead);
+		static FBufferDescription Create(uint32_t elementSize, uint32_t elementCount, bool cpuAccess = false, uint32_t elementAlignment = 1, EResourceState initialStateMask = EResourceState::Common);
 
 		template<typename ElementType>
-		static FBufferDescription Create(uint64_t elementCount, bool cpuAccess = false, uint64_t elementAlignment = 1, EResourceState initialStateMask = EResourceState::GenericRead);
+		static FBufferDescription Create(uint32_t elementCount, bool cpuAccess = false, uint32_t elementAlignment = 1, EResourceState initialStateMask = EResourceState::Common);
 
 	protected:
 		virtual void ResolveResourceDimensionData(bool allowUAV, bool allowRTV) override;
 	};
 
 	template<typename ElementType>
-	FBufferDescription FBufferDescription::Create(uint64_t elementCount, bool cpuAccess /*= false*/, uint64_t elementAlignment /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
+	FBufferDescription FBufferDescription::Create(uint32_t elementCount, bool cpuAccess /*= false*/, uint32_t elementAlignment /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
 	{
 		return Create(sizeof(ElementType), elementCount, cpuAccess, elementAlignment, initialStateMask);
 	}

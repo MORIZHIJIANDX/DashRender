@@ -76,7 +76,7 @@ namespace Dash
 	struct FCompiledBinary
 	{
 		void* Data = nullptr;
-		uint64_t Size = 0;
+		uint32_t Size = 0;
 	};
 
 	struct FShaderParameter

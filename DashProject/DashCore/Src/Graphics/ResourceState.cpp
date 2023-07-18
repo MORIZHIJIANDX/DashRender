@@ -14,7 +14,9 @@ namespace Dash
             (EnumMaskContains(state, EResourceState::Predication)) ||
             (EnumMaskContains(state, EResourceState::Present)) ||
             (EnumMaskContains(state, EResourceState::DepthRead)) ||
-            (EnumMaskContains(state, EResourceState::ConstantBuffer));
+            (EnumMaskContains(state, EResourceState::ConstantBuffer)) ||
+            (EnumMaskContains(state, EResourceState::VertexBuffer)) || 
+            (EnumMaskContains(state, EResourceState::IndexBuffer));
 	}
 
     bool IsResourceStateUsageSupportedOnGraphicsQueue(EResourceState state)
@@ -90,6 +92,8 @@ namespace Dash
         if (EnumMaskContains(state, EResourceState::DepthRead)) states |= D3D12_RESOURCE_STATE_DEPTH_READ;
         if (EnumMaskContains(state, EResourceState::DepthWrite)) states |= D3D12_RESOURCE_STATE_DEPTH_WRITE;
         if (EnumMaskContains(state, EResourceState::ConstantBuffer)) states |= D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
+        if (EnumMaskContains(state, EResourceState::VertexBuffer)) states |= D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
+        if (EnumMaskContains(state, EResourceState::IndexBuffer)) states |= D3D12_RESOURCE_STATE_INDEX_BUFFER;
         return states;
     }
 
@@ -124,6 +128,8 @@ namespace Dash
         if (EnumMaskContains(state, EResourceState::DepthRead))  addStateString("DepthRead");
         if (EnumMaskContains(state, EResourceState::DepthWrite))  addStateString("DepthWrite");
         if (EnumMaskContains(state, EResourceState::ConstantBuffer))  addStateString("ConstantBuffer");
+        if (EnumMaskContains(state, EResourceState::VertexBuffer))  addStateString("VertexBuffer");
+        if (EnumMaskContains(state, EResourceState::IndexBuffer))  addStateString("IndexBuffer");
 
         if (string.empty())
         {

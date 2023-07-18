@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ColorBuffer.h"
+#include "DepthBuffer.h"
 #include "TextureBuffer.h"
 #include <dxgi1_6.h>
 #include "RenderDevice.h"
@@ -13,8 +14,11 @@ namespace Dash
 	class FSwapChain
 	{
 	public:
-		FSwapChain(uint32_t displayWdith, uint32_t displayHeight, EResourceFormat swapChainFormat = EResourceFormat::RGB10A2_Unorm)
+		FSwapChain(uint32_t displayWdith, uint32_t displayHeight, EResourceFormat colorBufferFormat =
+			EResourceFormat::RGBA16_Float, EResourceFormat depthBufferFormat = EResourceFormat::Depth32_Float, EResourceFormat swapChainFormat = EResourceFormat::RGB10A2_Unorm)
 			: mDisplayWdith(displayWdith)
+			, mColorBufferFormat(colorBufferFormat)
+			, mDepthBufferFormat(depthBufferFormat)
 			, mDisplayHeight(displayHeight)
 			, mSwapChainFormat(swapChainFormat)
 		{
@@ -26,7 +30,8 @@ namespace Dash
 		void SetDisplayRate(float displayRate);
 		void OnWindowResize(uint32_t newWidth, uint32_t newHeight);
 		void Present(FGraphicsCommandContext& graphicsContext);
-		FColorBufferRef GetDisplayBuffer();
+		FColorBufferRef GetColorBuffer();
+		FDepthBufferRef GetDepthBuffer();
 		FColorBufferRef GetCurrentBackBuffer();
 		EResourceFormat GetBackBufferFormat() const;
 	
@@ -41,10 +46,13 @@ namespace Dash
 		uint32_t mDisplayWdith = 1080;
 		uint32_t mDisplayHeight = 720;
 		float mDisplayRate = 1.0f;
+		EResourceFormat mColorBufferFormat;
+		EResourceFormat mDepthBufferFormat;
 		EResourceFormat mSwapChainFormat;
 		bool mVSyncEnable = false;
 
-		FColorBufferRef mDisplayBuffer = nullptr;
+		FColorBufferRef mColorBuffer = nullptr;
+		FDepthBufferRef mDepthBuffer = nullptr;
 		FColorBufferRef mSwapChainBuffer[SWAP_CHAIN_BUFFER_COUNT];
 		uint64_t mFenceValue[SWAP_CHAIN_BUFFER_COUNT];
 

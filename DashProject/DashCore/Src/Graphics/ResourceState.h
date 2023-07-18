@@ -25,6 +25,8 @@ namespace Dash
         DepthRead = 1 << 15,
         DepthWrite = 1 << 16,
         ConstantBuffer = 1 << 18,
+        IndexBuffer = 1 << 19,
+        VertexBuffer = 1 << 20,
 
         AnyShaderAccess = PixelShaderAccess | NonPixelShaderAccess
     };

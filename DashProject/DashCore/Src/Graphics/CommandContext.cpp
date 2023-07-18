@@ -229,7 +229,7 @@ namespace Dash
 
 		context.TransitionBarrier(dest, EResourceState::CopyDestination, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 		context.mD3DCommandList->CopyBufferRegion(dest->GetResource(), offset, alloc.Resource.GetResource(), alloc.Offset, numBytes);
-		context.TransitionBarrier(dest, EResourceState::GenericRead, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
+		context.TransitionBarrier(dest, EResourceState::Common, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 
 		context.Finish(true);
 	}
@@ -780,6 +780,8 @@ namespace Dash
 	void FGraphicsCommandContextBase::SetIndexBuffer(FGpuIndexBufferRef indexBuffer)
 	{
 		std::vector<D3D12_INDEX_BUFFER_VIEW> indexBufferViews = { indexBuffer->GetIndexBufferView() };
+		TrackResource(indexBuffer);
+		TransitionBarrier(indexBuffer, indexBuffer->GetCpuAccess() ? EResourceState::GenericRead : EResourceState::IndexBuffer);
 		mD3DCommandList->IASetIndexBuffer(indexBufferViews.data());
 	}
 
@@ -794,6 +796,8 @@ namespace Dash
 		for (UINT index = 0; index < count; ++index)
 		{
 			vetexBufferViews.emplace_back(vertexBuffer[index]->GetVertexBufferView());
+			TrackResource(vertexBuffer[index]);
+			TransitionBarrier(vertexBuffer[index], vertexBuffer[index]->GetCpuAccess() ? EResourceState::GenericRead : EResourceState::VertexBuffer);
 		}
 		mD3DCommandList->IASetVertexBuffers(startSlot, static_cast<UINT>(vetexBufferViews.size()), vetexBufferViews.data());
 	}

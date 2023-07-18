@@ -14,8 +14,8 @@ namespace Dash
 
 		D3D12_RESOURCE_ALLOCATION_INFO allocInfo = FGraphicsCore::Device->GetResourceAllocationInfo(0, 1, &mDescription);
 		
-		mResourceAlignment = allocInfo.Alignment;
-		mResourceSizeInBytes = allocInfo.SizeInBytes;
+		mResourceAlignment = static_cast<uint32_t>(allocInfo.Alignment);
+		mResourceSizeInBytes = static_cast<uint32_t>(allocInfo.SizeInBytes);
 		mDescription.Alignment = mResourceAlignment;
 	}
 
@@ -134,7 +134,7 @@ namespace Dash
 		return desc;
 	}
 
-	FBufferDescription FBufferDescription::Create(uint64_t elementSize, uint64_t elementCount, bool cpuAccess, uint64_t elementAlignment /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
+	FBufferDescription FBufferDescription::Create(uint32_t elementSize, uint32_t elementCount, bool cpuAccess, uint32_t elementAlignment /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
 	{
 		ASSERT(elementSize > 0);
 

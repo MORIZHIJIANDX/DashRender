@@ -402,7 +402,7 @@ namespace Dash
             drawPSO->SetShaderPass(drawPass);
             drawPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
             drawPSO->SetSamplerMask(UINT_MAX);
-            drawPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetBackBufferFormat(), EResourceFormat::Depth32_Float);
+            drawPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetColorBuffer()->GetFormat(), EResourceFormat::Depth32_Float);
             drawPSO->Finalize();
 
             bd->pPipelineState = drawPSO;

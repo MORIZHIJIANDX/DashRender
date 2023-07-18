@@ -16,7 +16,8 @@ namespace Dash
 	FGpuVertexBufferRef NormalVertexBuffer;
 	FGpuVertexBufferRef UVVertexBuffer;
 	FGpuIndexBufferRef IndexBuffer;
-	FGraphicsPSORef MeshDrawPSO;
+	FShaderPassRef MeshDrawPass;
+	FGraphicsPSORef MeshDrawPSO = FGraphicsPSO::MakeGraphicsPSO("MeshDrawPSO");;
 
 	bool show_demo_window = false;
 	bool show_another_window = true;
@@ -58,17 +59,19 @@ namespace Dash
 		MeshDrawPSO->SetShaderPass(meshDrawPass);
 		MeshDrawPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
 		MeshDrawPSO->SetSamplerMask(UINT_MAX);
-		MeshDrawPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetDisplayBuffer()->GetFormat(), EResourceFormat::Depth32_Float);
+		MeshDrawPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetColorBuffer()->GetFormat(), EResourceFormat::Depth32_Float);
 		MeshDrawPSO->Finalize();
 	}
 
 	void RenderMesh(FGraphicsCommandContext& graphicsContext)
 	{
-		FResourceMagnitude RenderTargetMagnitude = FGraphicsCore::SwapChain->GetDisplayBuffer()->GetDesc().Magnitude;
+		FResourceMagnitude RenderTargetMagnitude = FGraphicsCore::SwapChain->GetColorBuffer()->GetDesc().Magnitude;
 
 		FGpuVertexBufferRef vertexBuffers[3] = { PositionVertexBuffer ,NormalVertexBuffer, UVVertexBuffer };
 
 		graphicsContext.SetGraphicsPipelineState(MeshDrawPSO);
+
+		//graphicsContext.SetRootConstantBufferView("PerObjectBuffer", vertex_constant_buffer);
 
 		graphicsContext.SetViewportAndScissor(0, 0, RenderTargetMagnitude.Width, RenderTargetMagnitude.Height);
 
@@ -77,12 +80,15 @@ namespace Dash
 		graphicsContext.SetIndexBuffer(IndexBuffer);
 
 		graphicsContext.DrawIndexed(IndexBuffer->GetElementCount());
-		
-		//graphicsContext.SetRootConstantBufferView("constantBuffer", vertex_constant_buffer);
 	}
 
 	void ReleaseVertexBuffers()
 	{
+		if (IndexBuffer)
+		{
+			IndexBuffer->Destroy();
+		}
+
 		if (PositionVertexBuffer)
 		{
 			PositionVertexBuffer->Destroy();
@@ -143,8 +149,8 @@ namespace Dash
 
 	void IGameApp::BeginFrame(FGraphicsCommandContext& graphicsContext)
 	{
-		graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetDisplayBuffer());
-		graphicsContext.ClearColor(FGraphicsCore::SwapChain->GetDisplayBuffer());
+		graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetColorBuffer());
+		graphicsContext.ClearColor(FGraphicsCore::SwapChain->GetColorBuffer());
 
 		// Start the Dear ImGui frame
 		ImGui_ImplDX12_NewFrame_Refactoring();
