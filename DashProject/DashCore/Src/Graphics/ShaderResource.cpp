@@ -89,7 +89,7 @@ namespace Dash
 
 		mCompiledShaderBlob = compiledShaderBlob;
 		mShaderBinary.Data = mCompiledShaderBlob->GetBufferPointer();
-		mShaderBinary.Size = mCompiledShaderBlob->GetBufferSize();
+		mShaderBinary.Size = static_cast<uint32_t>(mCompiledShaderBlob->GetBufferSize());
 
 		mCreationInfo = creationInfo;
 

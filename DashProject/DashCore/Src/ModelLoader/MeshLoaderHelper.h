@@ -38,8 +38,8 @@ namespace Dash
         bool hasVertexColor = false;
         bool hasUV = false;
 
-        int32_t numVertexes = 0;
-        int32_t numTexCoord = 0;
+        uint32_t numVertexes = 0;
+        uint32_t numTexCoord = 0;
         std::vector<uint32_t> indices;
 
         std::vector<FVector3f> PositionData;
