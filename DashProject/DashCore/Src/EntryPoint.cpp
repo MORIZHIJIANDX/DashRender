@@ -71,8 +71,8 @@ namespace Dash
 
 	void TerminateApplication(IGameApp* app)
 	{
-		app->Cleanup();
 		FGraphicsCore::Shutdown();
+		app->Cleanup();
 		FLogManager::Get()->Shutdown();
 
 		std::string WindowClassName = app->GetWindowClassName();

@@ -25,7 +25,7 @@ namespace Dash
 
         virtual void OnUpdate(const FUpdateEventArgs& e) = 0;
 
-        virtual void OnRenderScene(const FRenderEventArgs& e, FGraphicsCommandContext& graphicsContext) = 0;
+        virtual void OnRenderScene(const FRenderEventArgs& e, FGraphicsCommandContext& graphicsContext);
 
         virtual void OnRenderUI(const FRenderEventArgs& e, FGraphicsCommandContext& graphicsContext);
 

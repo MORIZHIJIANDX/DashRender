@@ -54,7 +54,7 @@ namespace Dash
             if ((desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL) != 0 && EnumMaskContains(formatSupport, EFormatSupport::DepthStencilView))
             {
                 mDepthStencilView = FGraphicsCore::DescriptorAllocator->AllocateDSVDescriptor();
-                FGraphicsCore::Device->CreateShaderResourceView(mResource.Get(), nullptr, mShaderResourceView.GetDescriptorHandle());
+                FGraphicsCore::Device->CreateDepthStencilView(mResource.Get(), nullptr, mDepthStencilView.GetDescriptorHandle());
             }
 
             if ((desc.Flags & D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE) == 0 && EnumMaskContains(formatSupport, EFormatSupport::ShaderResourceView))

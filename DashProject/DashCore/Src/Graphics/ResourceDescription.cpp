@@ -26,7 +26,7 @@ namespace Dash
 		return mipMagnitude;
 	}
 
-	void FTextureDescription::ResolveResourceDimensionData(bool allowUAV, bool allowRTV)
+	void FTextureDescription::ResolveResourceDimensionData(bool allowUAV, bool allowRTV, bool allowDSV)
 	{
 		switch (Dimension)
 		{
@@ -69,6 +69,11 @@ namespace Dash
 		{
 			mDescription.Flags |= D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 		}
+
+		if (allowDSV && EnumMaskContains(formatSupport, EFormatSupport::DepthStencilView) && !IsCompressedFormat(mDescription.Format))
+		{
+			mDescription.Flags |= D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+		}
 	}
 
 	uint32_t FTextureDescription::ComputeNumMips() const
@@ -91,7 +96,7 @@ namespace Dash
 		desc.MsaaQuality = msaaQuality;
 		desc.ClearValue = optimizedClearValue;
 
-		desc.ResolveResourceDimensionData(true, true);
+		desc.ResolveResourceDimensionData(true, true, false);
 
 		return desc;
 	}
@@ -129,7 +134,7 @@ namespace Dash
 		desc.MsaaQuality = msaaQuality;
 		desc.ClearValue = optimizedClearValue;
 
-		desc.ResolveResourceDimensionData(false, true);
+		desc.ResolveResourceDimensionData(false, true, true);
 
 		return desc;
 	}
@@ -149,7 +154,7 @@ namespace Dash
 		return desc;
 	}
 
-	void FBufferDescription::ResolveResourceDimensionData(bool allowUAV, bool allowRTV)
+	void FBufferDescription::ResolveResourceDimensionData(bool allowUAV, bool allowRTV, bool allowDSV)
 	{
 		mSubresourceCount = 1;
 
@@ -179,7 +184,7 @@ namespace Dash
 		desc.MsaaQuality = 0;
 		//desc.InitialStateMask = EResourceState::CopyDestination;
 
-		desc.ResolveResourceDimensionData(true, false);
+		desc.ResolveResourceDimensionData(true, false, false);
 
 		return desc;
 	}

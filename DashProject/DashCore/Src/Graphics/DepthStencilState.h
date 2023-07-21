@@ -22,9 +22,9 @@ namespace Dash
 	class FDepthStencilState
 	{
 	public:
-		FDepthStencilState(bool depthTestEnable = false, bool stencilTestEnable = false);
+		FDepthStencilState(bool depthTestEnable, bool stencilTestEnable);
 
-		FDepthStencilState(bool depthTestEnable = true, EDepthWriteMask depthWriteMask = EDepthWriteMask::All, EDepthStencilComparisonFunc depthFunc = EDepthStencilComparisonFunc::LessEqual, 
+		FDepthStencilState(bool depthTestEnable, EDepthWriteMask depthWriteMask = EDepthWriteMask::All, EDepthStencilComparisonFunc depthFunc = EDepthStencilComparisonFunc::LessEqual, 
 			bool stencilTestEnable = false, uint8_t stencilReadMask = 0, uint8_t stencilWriteMask = 0);
 
 		void SetDepthTestEnable(bool enable);

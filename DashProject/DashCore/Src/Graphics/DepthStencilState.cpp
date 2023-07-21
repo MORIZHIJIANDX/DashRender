@@ -71,9 +71,9 @@ namespace Dash
 		switch (mask)
 		{
 		case EDepthWriteMask::Zero:
-			return D3D12_DEPTH_WRITE_MASK::D3D12_DEPTH_WRITE_MASK_ALL;
-		case EDepthWriteMask::All:
 			return D3D12_DEPTH_WRITE_MASK::D3D12_DEPTH_WRITE_MASK_ZERO;
+		case EDepthWriteMask::All:
+			return D3D12_DEPTH_WRITE_MASK::D3D12_DEPTH_WRITE_MASK_ALL;
 		default:
 			ASSERT(false);
 			return D3D12_DEPTH_WRITE_MASK::D3D12_DEPTH_WRITE_MASK_ALL;

@@ -14,7 +14,7 @@ namespace Dash
 
 	protected:
 		void QueryAllocationInfo();
-		virtual void ResolveResourceDimensionData(bool allowUAV = true, bool allowRTV = true) {};
+		virtual void ResolveResourceDimensionData(bool allowUAV = true, bool allowRTV = true, bool allowDSV = false) {};
 
 	public:
 		EResourceState InitialStateMask = EResourceState::Common;
@@ -39,7 +39,7 @@ namespace Dash
 		FResourceMagnitude ComputeMipSize(uint8_t mip) const;
 
 	protected:
-		virtual void ResolveResourceDimensionData(bool allowUAV, bool allowRTV) override;
+		virtual void ResolveResourceDimensionData(bool allowUAV, bool allowRTV, bool allowDSV) override;
 		uint32_t ComputeNumMips() const;
 	};
 
@@ -94,7 +94,7 @@ namespace Dash
 		static FBufferDescription Create(uint32_t elementCount, bool cpuAccess = false, uint32_t elementAlignment = 1, EResourceState initialStateMask = EResourceState::Common);
 
 	protected:
-		virtual void ResolveResourceDimensionData(bool allowUAV, bool allowRTV) override;
+		virtual void ResolveResourceDimensionData(bool allowUAV, bool allowRTV, bool allowDSV = false) override;
 	};
 
 	template<typename ElementType>

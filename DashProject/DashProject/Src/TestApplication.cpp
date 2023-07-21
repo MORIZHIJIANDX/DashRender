@@ -103,7 +103,9 @@ namespace Dash
 
 	void TestApplication::OnRenderScene(const FRenderEventArgs& e, FGraphicsCommandContext& graphicsContext)
 	{
-		//IGameApp::OnRenderScene(e, graphicsContext);
+		FRenderEventArgs args = e;
+		args.Camera = mCamera;
+		IGameApp::OnRenderScene(args, graphicsContext);
 	}
 
 	void TestApplication::OnWindowResize(const FResizeEventArgs& e)
@@ -133,7 +135,7 @@ namespace Dash
 	void TestApplication::OnMouseMove(FMouseMotionEventArgs& e)
 	{
 		float RotationSpeed = 0.1f;
-		if (FMouse::Get().GetButtonState(EMouseButton::Left).Pressed)
+		if (FMouse::Get().GetButtonState(EMouseButton::Right).Pressed)
 		{
 			mCamera->AddPitch(e.mRelY * RotationSpeed);
 			mCamera->AddYaw(e.mRelX * RotationSpeed);

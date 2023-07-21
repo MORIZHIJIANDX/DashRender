@@ -9,15 +9,25 @@
 
 #include "ModelLoader/StaticMeshLoader.h"
 #include "Utility/FileUtility.h"
+#include "Camera.h"
 
 namespace Dash
 {
+	struct FMeshConstantBuffer
+	{
+		FMatrix4x4 ModelViewProjectionMatrix{ FIdentity{} };
+	};
+	
+	FMeshConstantBuffer MeshConstantBuffer;
+
 	FGpuVertexBufferRef PositionVertexBuffer;
 	FGpuVertexBufferRef NormalVertexBuffer;
 	FGpuVertexBufferRef UVVertexBuffer;
 	FGpuIndexBufferRef IndexBuffer;
 	FShaderPassRef MeshDrawPass;
 	FGraphicsPSORef MeshDrawPSO = FGraphicsPSO::MakeGraphicsPSO("MeshDrawPSO");;
+
+	uint32_t VertexCount;
 
 	bool show_demo_window = false;
 	bool show_another_window = true;
@@ -35,14 +45,14 @@ namespace Dash
 
 	void CreateVertexBuffers(const FImportedStaticMeshData& meshData)
 	{
-		const uint32_t numVertexes = meshData.numVertexes;
-		if (numVertexes > 0)
+		VertexCount = meshData.numVertexes;
+		if (VertexCount > 0)
 		{
-			PositionVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshPositionVertexBuffer", numVertexes, sizeof(meshData.PositionData[0]), meshData.PositionData.data());
-			NormalVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshNormalVertexBuffer", numVertexes, sizeof(meshData.NormalData[0]), meshData.NormalData.data());
-			UVVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshUVVertexBuffer", numVertexes, sizeof(meshData.UVData[0]), meshData.UVData.data());
+			PositionVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshPositionVertexBuffer", VertexCount, sizeof(meshData.PositionData[0]), meshData.PositionData.data());
+			NormalVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshNormalVertexBuffer", VertexCount, sizeof(meshData.NormalData[0]), meshData.NormalData.data());
+			UVVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshUVVertexBuffer", VertexCount, sizeof(meshData.UVData[0]), meshData.UVData.data());
 
-			IndexBuffer = FGraphicsCore::Device->CreateIndexBuffer("MeshIndexBuffer", numVertexes, meshData.indices.data(), true);
+			IndexBuffer = FGraphicsCore::Device->CreateIndexBuffer("MeshIndexBuffer", VertexCount, meshData.indices.data(), true);
 		}
 		
 		FShaderCreationInfo psPresentInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("MeshShader.hlsl"),  "PS_Main" };
@@ -52,14 +62,14 @@ namespace Dash
 		FRasterizerState rasterizerDefault{ ERasterizerFillMode::Solid, ERasterizerCullMode::None };
 
 		FBlendState blendDisable{ false, false };
-		FDepthStencilState depthStateDisabled{ false, false };
+		FDepthStencilState depthStateDisabled{ true };
 
 		FShaderPassRef meshDrawPass = FShaderPass::MakeShaderPass("PresentPass", { vsInfo , psPresentInfo }, blendDisable, rasterizerDefault, depthStateDisabled);
 
 		MeshDrawPSO->SetShaderPass(meshDrawPass);
 		MeshDrawPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
 		MeshDrawPSO->SetSamplerMask(UINT_MAX);
-		MeshDrawPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetColorBuffer()->GetFormat(), EResourceFormat::Depth32_Float);
+		MeshDrawPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetColorBuffer()->GetFormat(), FGraphicsCore::SwapChain->GetDepthBuffer()->GetFormat());
 		MeshDrawPSO->Finalize();
 	}
 
@@ -71,7 +81,7 @@ namespace Dash
 
 		graphicsContext.SetGraphicsPipelineState(MeshDrawPSO);
 
-		//graphicsContext.SetRootConstantBufferView("PerObjectBuffer", vertex_constant_buffer);
+		graphicsContext.SetRootConstantBufferView("ConstantBuffer", MeshConstantBuffer);
 
 		graphicsContext.SetViewportAndScissor(0, 0, RenderTargetMagnitude.Width, RenderTargetMagnitude.Height);
 
@@ -79,7 +89,7 @@ namespace Dash
 
 		graphicsContext.SetIndexBuffer(IndexBuffer);
 
-		graphicsContext.DrawIndexed(IndexBuffer->GetElementCount());
+		graphicsContext.DrawIndexed(VertexCount);
 	}
 
 	void ReleaseVertexBuffers()
@@ -139,18 +149,21 @@ namespace Dash
 
 	void IGameApp::Cleanup()
 	{
-		ReleaseVertexBuffers();
-
 		// Cleanup
 		ImGui_ImplDX12_Shutdown_Refactoring();
 		ImGui_ImplWin32_Shutdown();
 		ImGui::DestroyContext();
+
+		ReleaseVertexBuffers();
 	}
 
 	void IGameApp::BeginFrame(FGraphicsCommandContext& graphicsContext)
 	{
-		graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetColorBuffer());
+		//graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetColorBuffer());
+		//graphicsContext.SetDepthStencilTarget(FGraphicsCore::SwapChain->GetDepthBuffer());
+		graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetColorBuffer(), FGraphicsCore::SwapChain->GetDepthBuffer());
 		graphicsContext.ClearColor(FGraphicsCore::SwapChain->GetColorBuffer());
+		graphicsContext.ClearDepth(FGraphicsCore::SwapChain->GetDepthBuffer());
 
 		// Start the Dear ImGui frame
 		ImGui_ImplDX12_NewFrame_Refactoring();
@@ -196,6 +209,12 @@ namespace Dash
 	void IGameApp::EndFrame(FGraphicsCommandContext& graphicsContext)
 	{
 		Present(graphicsContext);
+	}
+
+	void IGameApp::OnRenderScene(const FRenderEventArgs& e, FGraphicsCommandContext& graphicsContext)
+	{
+		MeshConstantBuffer.ModelViewProjectionMatrix = e.Camera->GetViewProjectionMatrix();
+		RenderMesh(graphicsContext);
 	}
 
 	void IGameApp::OnRenderUI(const FRenderEventArgs& e, FGraphicsCommandContext& graphicsContext)

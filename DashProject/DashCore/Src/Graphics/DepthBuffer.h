@@ -8,7 +8,7 @@ namespace Dash
 	class FDepthBuffer : public FPixelBuffer
 	{
 	public:
-		FDepthBuffer(float clearDepth = 0.0f, uint8_t clearStencil = 0)
+		FDepthBuffer(float clearDepth = 1.0f, uint8_t clearStencil = 0)
 		{
 			mDesc.ClearValue = FDepthStencilClearValue{ clearDepth, clearStencil};
 		}
