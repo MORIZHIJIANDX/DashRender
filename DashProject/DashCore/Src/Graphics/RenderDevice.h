@@ -329,6 +329,7 @@ namespace Dash
 		bool UAVLoadSupportR11G11B10Float() const { return mTypedUAVLoadSupport_R11G11B10_FLOAT; }
 		bool UAVLoadSupportR16G16B16A16Float() const { return mTypedUAVLoadSupport_R16G16B16A16_FLOAT; }
 		bool SupportsUniversalHeaps() const { return mSupportsUniversalHeaps; }
+		bool SupportsTearing() const { return mSupportsTearing; }
 		D3D_ROOT_SIGNATURE_VERSION HighestRootSignatureVersion() const { return mHighestRootSignatureVersion; }
 
 	private:
@@ -337,6 +338,7 @@ namespace Dash
 		bool mTypedUAVLoadSupport_R11G11B10_FLOAT = false;
 		bool mTypedUAVLoadSupport_R16G16B16A16_FLOAT = false;
 		bool mSupportsUniversalHeaps = false;
+		bool mSupportsTearing = false;
 		D3D_ROOT_SIGNATURE_VERSION mHighestRootSignatureVersion = D3D_ROOT_SIGNATURE_VERSION::D3D_ROOT_SIGNATURE_VERSION_1_1;
 	};
 }

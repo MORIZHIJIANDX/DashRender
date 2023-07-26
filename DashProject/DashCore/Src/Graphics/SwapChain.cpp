@@ -16,9 +16,9 @@
 #include "BlendState.h"
 #include "DepthStencilState.h"
 #include "PrimitiveTopology.h"
-
 #include "Utility/FileUtility.h"
-#include "TextureLoader/HDRTextureLoader.h"
+
+#include "Utility/Keyboard.h"
 
 namespace Dash
 {
@@ -56,6 +56,10 @@ namespace Dash
 		presentPSO->SetSamplerMask(UINT_MAX);
 		presentPSO->SetRenderTargetFormat(mSwapChainFormat, EResourceFormat::Depth32_Float);
 		presentPSO->Finalize();
+
+		KeyboardPressDelegate = FKeyboardEventDelegate::Create<FSwapChain, &FSwapChain::OnKeyPressed>(this);
+
+		FKeyboard::Get().KeyPressed += KeyboardPressDelegate;
 	}
 
 	void FSwapChain::SetVSyncEnable(bool enable)
@@ -65,8 +69,13 @@ namespace Dash
 
 	void FSwapChain::Destroy()
 	{
-		mSwapChain->SetFullscreenState(FALSE, nullptr);
+		FKeyboard::Get().KeyPressed -= KeyboardPressDelegate;
 
+		if (!FGraphicsCore::Device->SupportsTearing())
+		{
+			mSwapChain->SetFullscreenState(FALSE, nullptr);
+		}
+		
 		DestroyBuffers();
 
 		mSwapChain = nullptr;
@@ -108,9 +117,10 @@ namespace Dash
 
 		graphicsContext.Finish();
 		
-		UINT PresentInterval = mVSyncEnable ? 1 : 0;
+		UINT presentInterval = mVSyncEnable ? 1 : 0;
+		UINT presentFlags = (FGraphicsCore::Device->SupportsTearing() && !mFullScreenMode) ? DXGI_PRESENT_ALLOW_TEARING : 0;
 
-		mSwapChain->Present(PresentInterval, 0);
+		mSwapChain->Present(presentInterval, 0);
 
 		mFenceValue[mCurrentBackBufferIndex] = FGraphicsCore::CommandQueueManager->GetGraphicsQueue().Signal();
 
@@ -169,6 +179,11 @@ namespace Dash
 			&fullScreenDesc,
 			nullptr,
 			&dxgiSwapChain1));
+
+		if (FGraphicsCore::Device->SupportsTearing())
+		{
+			dxgiFactory->MakeWindowAssociation(IGameApp::GetInstance()->GetWindowHandle(), DXGI_MWA_NO_ALT_ENTER);
+		}
 
 		DX_CALL(dxgiSwapChain1.As(&mSwapChain));
 	}
@@ -231,5 +246,59 @@ namespace Dash
 	EResourceFormat FSwapChain::GetBackBufferFormat() const
 	{
 		return mSwapChainFormat;
+	}
+
+	void FSwapChain::ToggleFullscreenMode()
+	{
+		if (mFullScreenMode)
+		{
+			// Restore window's attributes and size.
+			SetWindowLong(IGameApp::GetInstance()->GetWindowHandle(), GWL_STYLE, mWindowStyle);
+
+			SetWindowPos(
+				IGameApp::GetInstance()->GetWindowHandle(),
+				HWND_NOTOPMOST,
+				mWindowRect.left,
+				mWindowRect.top,
+				mWindowRect.right - mWindowRect.left,
+				mWindowRect.bottom - mWindowRect.top,
+				SWP_FRAMECHANGED | SWP_NOACTIVATE);
+
+			ShowWindow(IGameApp::GetInstance()->GetWindowHandle(), SW_NORMAL);
+		}
+		else
+		{
+			GetWindowRect(IGameApp::GetInstance()->GetWindowHandle(), &mWindowRect);
+
+			SetWindowLong(IGameApp::GetInstance()->GetWindowHandle(), GWL_STYLE, mWindowStyle & ~(WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU | WS_THICKFRAME));
+
+			ComPtr<IDXGIOutput> pOutput;
+			DX_CALL(mSwapChain->GetContainingOutput(&pOutput));
+			DXGI_OUTPUT_DESC desc;
+			DX_CALL(pOutput->GetDesc(&desc));
+
+			RECT fullScreenWindowRect = desc.DesktopCoordinates;
+
+			SetWindowPos(
+				IGameApp::GetInstance()->GetWindowHandle(),
+				HWND_NOTOPMOST,
+				fullScreenWindowRect.left,
+				fullScreenWindowRect.top,
+				fullScreenWindowRect.right - fullScreenWindowRect.left,
+				fullScreenWindowRect.bottom - fullScreenWindowRect.top,
+				SWP_FRAMECHANGED | SWP_NOACTIVATE);
+
+			ShowWindow(IGameApp::GetInstance()->GetWindowHandle(), SW_MAXIMIZE);
+		}
+
+		mFullScreenMode = !mFullScreenMode;
+	}
+
+	void FSwapChain::OnKeyPressed(FKeyEventArgs& args)
+	{
+		if (args.Key == EKeyCode::F11)
+		{
+			ToggleFullscreenMode();
+		}
 	}
 }

@@ -390,6 +390,12 @@ namespace Dash
 				featureDataSignature.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_0;
 			}
 			mHighestRootSignatureVersion = featureDataSignature.HighestVersion;
+
+			bool allowTearing = false;
+			if(SUCCEEDED(dxgiFactory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(allowTearing))))
+			{
+				mSupportsTearing = allowTearing;
+			}
 		}
 	}
 

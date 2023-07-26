@@ -34,6 +34,9 @@ namespace Dash
 		FDepthBufferRef GetDepthBuffer();
 		FColorBufferRef GetCurrentBackBuffer();
 		EResourceFormat GetBackBufferFormat() const;
+		void ToggleFullscreenMode();
+
+		void OnKeyPressed(FKeyEventArgs& args);
 	
 	protected:
 		void Initialize();
@@ -50,6 +53,11 @@ namespace Dash
 		EResourceFormat mDepthBufferFormat;
 		EResourceFormat mSwapChainFormat;
 		bool mVSyncEnable = false;
+
+		FKeyboardEventDelegate KeyboardPressDelegate;
+		bool mFullScreenMode = false;
+		UINT mWindowStyle = WS_OVERLAPPEDWINDOW;
+		RECT mWindowRect;
 
 		FColorBufferRef mColorBuffer = nullptr;
 		FDepthBufferRef mDepthBuffer = nullptr;
