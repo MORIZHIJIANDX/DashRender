@@ -36,6 +36,12 @@ namespace Dash
 		DX_CALL(mGraphicsCommandList->Close());
 	}
 
+	void FCommandList::SetName(int32_t name)
+	{
+		mName = name;
+		SetD3D12DebugNameIndexed(mGraphicsCommandList.Get(), "CommandList", mName);
+	}
+
 	FCommandListPool::FCommandListPool(D3D12_COMMAND_LIST_TYPE type)
 		: mType(type)
 	{
@@ -155,7 +161,7 @@ namespace Dash
 	{
 		if (commandLists.empty())
 		{
-			mNextFenceValue;
+			return mNextFenceValue;
 		}
 
 		std::vector<ID3D12CommandList*> d3dCommandLists;

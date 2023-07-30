@@ -71,6 +71,7 @@ namespace Dash
 	{
 		ASSERT(context != nullptr);
 		std::lock_guard<std::mutex> lock(mAllocationMutex);
+		context->Fence = fenceValue;
 		FGraphicsCore::CommandListManager->RetiredUsedCommandList(fenceValue, context->GetCommandList());
 		mRetiredContexts[context->mType].emplace_back(std::make_pair(fenceValue, context));
 		//LOG_INFO << "Free Context : " << context << " , Fence : " << fenceValue;

@@ -260,6 +260,8 @@ namespace Dash
 
 				FGraphicsCore::Device->CopyDescriptors(1, destDescriptorHandles, destDescriptorRanges, srcNumDescriptors, srcDescriptorHandlePtr, nullptr, mDescriptorHeapType);
 
+				uint64_t completeFence = FGraphicsCore::CommandQueueManager->GetGraphicsQueue().GetCompletedFence();
+
 				setFunc(context.GetD3DCommandList(), rootParameterIndex, mCurrentGpuDescriptorHandle);
 
 				mCurrentCpuDescriptorHandle.Offset(srcNumDescriptors, mDescriptorHandleIncrementSize);
