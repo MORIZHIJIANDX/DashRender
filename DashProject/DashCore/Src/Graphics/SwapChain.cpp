@@ -120,7 +120,7 @@ namespace Dash
 		UINT presentInterval = mVSyncEnable ? 1 : 0;
 		UINT presentFlags = (FGraphicsCore::Device->SupportsTearing() && !mFullScreenMode) ? DXGI_PRESENT_ALLOW_TEARING : 0;
 
-		mSwapChain->Present(presentInterval, 0);
+		mSwapChain->Present(presentInterval, presentFlags);
 
 		mFenceValue[mCurrentBackBufferIndex] = FGraphicsCore::CommandQueueManager->GetGraphicsQueue().Signal();
 

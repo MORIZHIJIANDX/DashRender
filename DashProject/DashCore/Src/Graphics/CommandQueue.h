@@ -18,8 +18,6 @@ namespace Dash
 		void Reset(bool resetAllocator = true);
 		void Close();
 
-		void SetName(int32_t name){ mName = name; }
-
 		D3D12_COMMAND_LIST_TYPE GetType() const 
 		{
 			return mType;
@@ -27,8 +25,6 @@ namespace Dash
 
 		ID3D12GraphicsCommandList* GetCommandList() { return mGraphicsCommandList.Get(); }
 		const ID3D12GraphicsCommandList* GetCommandList() const { return mGraphicsCommandList.Get(); }
-
-		int32_t mName;
 
 	private:
 		D3D12_COMMAND_LIST_TYPE mType;
@@ -117,6 +113,8 @@ namespace Dash
 		const ID3D12CommandQueue* GetD3DCommandQueue() const { return mCommandQueue.Get(); }
 	private:
 		uint64_t mNextFenceValue;
+		uint64_t mLastCompletedFenceValue;
+		HANDLE mFenceEventHandle;
 
 		Microsoft::WRL::ComPtr<ID3D12Fence> mFence;
 		Microsoft::WRL::ComPtr<ID3D12CommandQueue> mCommandQueue;

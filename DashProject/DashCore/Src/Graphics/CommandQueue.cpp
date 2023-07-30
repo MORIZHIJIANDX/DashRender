@@ -60,8 +60,6 @@ namespace Dash
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
-		static int32_t commandListIndex = 0;
-
 		while (!mRetiredCommandLists.empty() && FGraphicsCore::CommandQueueManager->IsFenceCompleted(mRetiredCommandLists.front().first))
 		{
 			mAvailableCommandLists.push(mRetiredCommandLists.front().second);
@@ -81,7 +79,6 @@ namespace Dash
 		{
 			commandList = new FCommandList(mType);
 			mCommandListPool.emplace_back(commandList);
-			commandList->SetName(commandListIndex++);
 		}
 
 		return commandList;
@@ -102,8 +99,14 @@ namespace Dash
 
 		DX_CALL(FGraphicsCore::Device->CreateCommandQueue(&commandQueueDesc, mCommandQueue));
 
-		uint64_t initFenceValue = ((uint64_t)type) << COMMAND_TYPE_MASK;
-		DX_CALL(FGraphicsCore::Device->CreateFence(initFenceValue, D3D12_FENCE_FLAG_NONE, mFence));
+		mLastCompletedFenceValue = ((uint64_t)type) << COMMAND_TYPE_MASK;
+		mNextFenceValue = ((uint64_t)type) << COMMAND_TYPE_MASK | 1;
+
+		DX_CALL(FGraphicsCore::Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, mFence));
+		mFence->Signal(mLastCompletedFenceValue);
+
+		mFenceEventHandle = CreateEvent(nullptr, false, false, nullptr);
+		ASSERT(mFenceEventHandle != NULL);
 
 		switch (type)
 		{
@@ -126,8 +129,6 @@ namespace Dash
 				break;
 			}
 		}
-
-		mNextFenceValue = initFenceValue + 1;
 	}
 
 	void FCommandQueue::Destroy()
@@ -179,12 +180,18 @@ namespace Dash
 
 	uint64_t FCommandQueue::GetCompletedFence() const
 	{
-		return mFence->GetCompletedValue();
+		return mLastCompletedFenceValue;
 	}
 
 	bool FCommandQueue::IsFenceCompleted(uint64_t fenceValue)
 	{
-		return fenceValue <= mFence->GetCompletedValue();
+		// Avoid querying the fence value by testing against the last one seen.
+		// The max() is to protect against an unlikely race condition that could cause the last
+		// completed fence value to regress.
+		if (fenceValue > mLastCompletedFenceValue)
+			mLastCompletedFenceValue = FMath::Max(mLastCompletedFenceValue, mFence->GetCompletedValue());
+
+		return fenceValue <= mLastCompletedFenceValue;
 	}
 
 	void FCommandQueue::WaitForFence(uint64_t fenceValue)
@@ -194,15 +201,9 @@ namespace Dash
 			return;
 		}
 
-		auto event = ::CreateEvent(NULL, FALSE, FALSE, NULL);
-		if (event)
-		{
-			// Is this function thread safe?
-			DX_CALL(mFence->SetEventOnCompletion(fenceValue, event));
-			::WaitForSingleObject(event, DWORD_MAX);
-
-			::CloseHandle(event);
-		}
+		mFence->SetEventOnCompletion(fenceValue, mFenceEventHandle);
+		WaitForSingleObject(mFenceEventHandle, INFINITE);
+		mLastCompletedFenceValue = fenceValue;
 	}
 
 	void FCommandQueue::WaitForCommandQueue(const FCommandQueue& queue)

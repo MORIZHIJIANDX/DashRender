@@ -73,7 +73,6 @@ namespace Dash
 		std::lock_guard<std::mutex> lock(mAllocationMutex);
 		FGraphicsCore::CommandListManager->RetiredUsedCommandList(fenceValue, context->GetCommandList());
 		mRetiredContexts[context->mType].emplace_back(std::make_pair(fenceValue, context));
-		//LOG_INFO << "Free Context : " << context << " , Fence : " << fenceValue;
 	}
 
 	void FCommandContextManager::ResetAllContext()
@@ -86,15 +85,6 @@ namespace Dash
 			{
 				contextPtr->Reset();
 			}
-		}
-
-		for (int32_t contextType = 0; contextType < 4; ++contextType)
-		{
-			mRetiredContexts[contextType].clear();
-			for (int32_t contextIndex = 0; contextIndex < mContextPool[contextType].size(); ++contextIndex)
-			{
-				mAvailableContexts[contextType].push(mContextPool[contextType][contextIndex].get());
-			}	
 		}
 	}
 
