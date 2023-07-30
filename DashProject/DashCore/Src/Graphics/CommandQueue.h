@@ -18,7 +18,7 @@ namespace Dash
 		void Reset(bool resetAllocator = true);
 		void Close();
 
-		void SetName(int32_t name);
+		void SetName(int32_t name){ mName = name; }
 
 		D3D12_COMMAND_LIST_TYPE GetType() const 
 		{

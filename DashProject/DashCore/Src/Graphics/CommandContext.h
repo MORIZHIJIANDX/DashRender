@@ -66,8 +66,6 @@ namespace Dash
 		void PIXEndEvent();
 		void PIXSetMarker(const std::string& label);
 
-		uint64_t Fence = -1;
-
 	protected:
 		
 		static FCommandContext* Begin(const std::string& id = "", D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
