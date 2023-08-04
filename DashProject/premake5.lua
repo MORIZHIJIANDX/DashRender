@@ -36,8 +36,7 @@ project "DashCore"
 
     -- add dxc lib dir
     libdirs { "%{wks.location}/%{prj.name}/ThirdParty/dxc/lib/x64" }
-    libdirs { "%{wks.location}/%{prj.name}/ThirdParty/assimp/lib/Debug" }
-
+    
     files
     {
         "%{prj.name}/Src/**.h",
@@ -56,8 +55,7 @@ project "DashCore"
 
     links
     {
-        "dxcompiler",
-        "assimp-vc143-mtd"
+        "dxcompiler"
     }
 
     nuget { "WinPixEventRuntime:1.0.230302001" }
@@ -85,14 +83,20 @@ project "DashCore"
     filter "configurations:Debug"
         defines "DASH_DEBUG"
         symbols "On"
+        libdirs { "%{wks.location}/%{prj.name}/ThirdParty/assimp/lib/Debug" }
+        links { "assimp-vc143-mtd" }
 
     filter "configurations:Release"
         defines "DASH_RELEASE"
         optimize "On"
+        libdirs { "%{wks.location}/%{prj.name}/ThirdParty/assimp/lib/Release" }
+        links { "assimp-vc143-mt" }
 
     filter "configurations:Distribution"
         defines "DASH_DISTRIBUTION"
         optimize "On"
+        libdirs { "%{wks.location}/%{prj.name}/ThirdParty/assimp/lib/Release" }
+        links { "assimp-vc143-mt" }
 
 project "DashProject"
     location "DashProject"
@@ -112,6 +116,7 @@ project "DashProject"
     prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\ThirdParty\\dxc\\bin\\x64\\dxil.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
 
     prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\ThirdParty\\assimp\\bin\\Debug\\assimp-vc143-mtd.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
+    prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\ThirdParty\\assimp\\bin\\Release\\assimp-vc143-mt.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
 
     files
     {
