@@ -14,7 +14,7 @@ namespace Dash
 	class FGraphicsCore
 	{
 	public:
-		static void Initialize();
+		static void Initialize(uint32_t windowWidth, uint32_t windowHeight);
 		static void Shutdown();
 
 		static D3D_ROOT_SIGNATURE_VERSION GetRootSignatureVersion();

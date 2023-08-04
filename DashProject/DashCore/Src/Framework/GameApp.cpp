@@ -1,7 +1,11 @@
 #include "PCH.h"
 #include "GameApp.h"
-#include "GraphicsCore.h"
-#include "SwapChain.h"
+//#include "GraphicsCore.h"
+//#include "SwapChain.h"
+
+#include "Graphics/GraphicsCore.h"
+#include "Graphics/SwapChain.h"
+
 #include "Utility/Keyboard.h"
 #include "imgui/imgui.h"
 #include "imgui/backends/imgui_impl_win32.h"

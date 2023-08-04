@@ -2,10 +2,9 @@
 #include "SwapChain.h"
 #include "GraphicsCore.h"
 #include "DX12Helper.h"
-#include "GameApp.h"
+#include "Framework/GameApp.h"
 #include "CommandQueue.h"
 #include "CommandContext.h"
-
 #include "ShaderResource.h"
 #include "ShaderMap.h"
 #include "PipelineStateObject.h"

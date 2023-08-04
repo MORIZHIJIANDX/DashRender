@@ -10,7 +10,6 @@
 #include "RootSignature.h"
 #include "SamplerDesc.h"
 #include "SwapChain.h"
-#include "GameApp.h"
 #include "Utility/StringUtility.h"
 #include "ShaderMap.h"
 #include "RenderDevice.h"
@@ -74,7 +73,7 @@ namespace Dash
 		return pixInstallationPath / newestVersionFound / L"WinPixGpuCapturer.dll";
 	}
 
-	void FGraphicsCore::Initialize()
+	void FGraphicsCore::Initialize(uint32_t windowWidth, uint32_t windowHeight)
 	{
 		LOG_INFO << "FGraphicsCore::Initialize Begin.";
 
@@ -87,7 +86,7 @@ namespace Dash
 		CommandListManager = new FCommandListManager();
 		DescriptorAllocator = new FCpuDescriptorAllocatorManager();
 		ContextManager = new FCommandContextManager();
-		SwapChain = new FSwapChain(IGameApp::GetInstance()->GetWindowWidth(), IGameApp::GetInstance()->GetWindowHeight());
+		SwapChain = new FSwapChain(windowWidth, windowHeight);
 
 		LOG_INFO << "FGraphicsCore::Initialize End.";
 	}

@@ -61,7 +61,7 @@ namespace Dash
 		FMouse::Get().Initialize(app->GetWindowHandle());
 		FSystemTimer::Initialize();
 
-		FGraphicsCore::Initialize();
+		FGraphicsCore::Initialize(app->GetWindowWidth(), app->GetWindowHeight());
 
 		app->Startup();
 

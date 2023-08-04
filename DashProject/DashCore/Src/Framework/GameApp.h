@@ -1,6 +1,8 @@
 #pragma once
 
-#include "CommandContext.h"
+//#include "CommandContext.h"
+
+#include "Graphics/CommandContext.h"
 
 class FRenderEventArgs;
 class FUpdateEventArgs;
