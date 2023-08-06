@@ -29,7 +29,7 @@ namespace Dash
 		void Destroy();
 		void SetDisplayRate(float displayRate);
 		void OnWindowResize(uint32_t newWidth, uint32_t newHeight);
-		void Present(FGraphicsCommandContext& graphicsContext);
+		void Present();
 		FColorBufferRef GetColorBuffer();
 		FDepthBufferRef GetDepthBuffer();
 		FColorBufferRef GetCurrentBackBuffer();

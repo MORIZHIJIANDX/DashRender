@@ -703,10 +703,17 @@ namespace Dash
 			TransitionBarrier(rtvs[index], EResourceState::RenderTarget);
 		}
 
-		std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> handles = { depthBuffer->GetDepthStencilView() };
-		mD3DCommandList->OMSetRenderTargets(numRTVs, rtvHandels.data(), false, handles.data());
-		TrackResource(depthBuffer);
-		TransitionBarrier(depthBuffer, EResourceState::DepthWrite);
+		if (depthBuffer)
+		{
+			std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> handles = { depthBuffer->GetDepthStencilView() };
+			mD3DCommandList->OMSetRenderTargets(numRTVs, rtvHandels.data(), false, handles.data());
+			TrackResource(depthBuffer);
+			TransitionBarrier(depthBuffer, EResourceState::DepthWrite);
+		}
+		else
+		{
+			mD3DCommandList->OMSetRenderTargets(numRTVs, rtvHandels.data(), false, nullptr);
+		}
 	}
 
 	void FGraphicsCommandContextBase::SetViewport(const FViewport& vp)

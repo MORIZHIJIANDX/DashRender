@@ -183,6 +183,8 @@ namespace Dash
             float T = draw_data->DisplayPos.y;
             float B = draw_data->DisplayPos.y + draw_data->DisplaySize.y;
 
+            LOG_INFO << L << ", " << R  << ", " << T << ", " << B;
+
             float mvp[4][4] =
             {
                 { 2.0f / (R - L),   0.0f,           0.0f,       0.0f },
@@ -202,9 +204,10 @@ namespace Dash
         ctx.SetIndexBuffer(fr->IndexBuffer);
 
         ctx.SetGraphicsPipelineState(bd->pPipelineState);
+
         ctx.SetRootConstantBufferView("constantBuffer", vertex_constant_buffer);
 
-        ctx.SetBlendFactor(FLinearColor{0.0f, 0.0f, 0.0f, 0.0f});
+        //ctx.SetBlendFactor(FLinearColor{0.0f, 0.0f, 0.0f, 0.0f});
     }
 
     void ImGui_CopyVertexData(ImGui_VertexDataBuffer& VertexDataBuffer, const ImVector<ImDrawVert>& ImguiVertexes)
@@ -283,12 +286,10 @@ namespace Dash
             return;
         }
 
-        graphics_command_context.PIXBeginEvent("Render_IMGUI");
-
         // Setup desired DX state
         ImGui_ImplDX12_SetupRenderState_Refactoring(draw_data, graphics_command_context, fr);
 
-        graphics_command_context.SetShaderResourceView("texture0", bd->pFontTextureResource);
+        //graphics_command_context.SetShaderResourceView("texture0", bd->pFontTextureResource);
 
         // Render command lists
         // (Because we merged all buffers into a single one, we maintain our own offset into them)
@@ -331,9 +332,6 @@ namespace Dash
             global_idx_offset += cmd_list->IdxBuffer.Size;
             global_vtx_offset += cmd_list->VtxBuffer.Size;
         }
-
-        //graphics_command_context.Flush();
-        graphics_command_context.PIXEndEvent();
     }
 
     void ImGui_ImplDX12_InvalidateDeviceObjects_Refactoring()
@@ -402,7 +400,7 @@ namespace Dash
             drawPSO->SetShaderPass(drawPass);
             drawPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
             drawPSO->SetSamplerMask(UINT_MAX);
-            drawPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetColorBuffer()->GetFormat(), EResourceFormat::Depth32_Float);
+            drawPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetBackBufferFormat(), EResourceFormat::Depth32_Float);
             drawPSO->Finalize();
 
             bd->pPipelineState = drawPSO;

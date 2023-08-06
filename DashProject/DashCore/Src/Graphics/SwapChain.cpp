@@ -98,10 +98,11 @@ namespace Dash
 		}
 	}
 
-	void FSwapChain::Present(FGraphicsCommandContext& graphicsContext)
+	void FSwapChain::Present()
 	{
-		graphicsContext.PIXBeginEvent("Present");
+		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("Present");
 
+		/*
 		{
 			graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
 			graphicsContext.SetGraphicsPipelineState(presentPSO);
@@ -109,10 +110,8 @@ namespace Dash
 			graphicsContext.SetShaderResourceView("DisplayTexture", mColorBuffer);
 			graphicsContext.Draw(3);
 		}	
-		
+		*/
 		graphicsContext.TransitionBarrier(FGraphicsCore::SwapChain->GetCurrentBackBuffer(), EResourceState::Present);
-		
-		graphicsContext.PIXEndEvent();
 
 		graphicsContext.Finish();
 		

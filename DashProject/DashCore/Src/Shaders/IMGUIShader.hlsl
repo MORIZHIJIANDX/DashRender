@@ -20,7 +20,9 @@ struct PS_INPUT
 PS_INPUT VS_Main(VS_INPUT input)
 {
     PS_INPUT output;
-    output.pos = mul(float4(input.pos.xy, 0.f, 1.f), ProjectionMatrix);
+    //output.pos = mul(float4(input.pos.xy, 0.f, 1.f), ProjectionMatrix);
+    output.pos = mul(float4(0.0f, 0.0f, 0.f, 1.f), ProjectionMatrix);
+    // output.pos = float4(input.pos.xy, 0.f, 1.f);
     output.col = input.col;
     output.uv  = input.uv;
     return output;
@@ -31,6 +33,7 @@ Texture2D texture0 : register(t0);
 
 float4 PS_Main(PS_INPUT input) : SV_Target
 {
-    float4 out_col = input.col * texture0.Sample(Sampler_Static, input.uv);
+    //float4 out_col = input.col * texture0.Sample(Sampler_Static, input.uv);
+    float4 out_col = input.col;
     return out_col; 
 }

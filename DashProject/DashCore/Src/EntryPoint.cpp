@@ -91,17 +91,13 @@ namespace Dash
 
 		if (!Minimized)
 		{
-			FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("RenderFrame");
-
-			app->BeginFrame(graphicsContext);
+			app->OnBeginFrame();
 
 			app->OnUpdate(updateArgs);
 
-			app->OnRenderScene(RenderArgs, graphicsContext);
+			app->OnRender(RenderArgs);
 
-			app->OnRenderUI(RenderArgs, graphicsContext);
-
-			app->EndFrame(graphicsContext);
+			app->OnEndFrame();
 		}
 
 		++frameCount;

@@ -15,27 +15,12 @@
 #include "Utility/FileUtility.h"
 #include "Camera.h"
 
+#include "SceneRenderLayer.h"
+#include "UIRenderLayer.h"
+
+
 namespace Dash
 {
-	struct FMeshConstantBuffer
-	{
-		FMatrix4x4 ModelViewProjectionMatrix{ FIdentity{} };
-	};
-	
-	FMeshConstantBuffer MeshConstantBuffer;
-
-	FGpuVertexBufferRef PositionVertexBuffer;
-	FGpuVertexBufferRef NormalVertexBuffer;
-	FGpuVertexBufferRef UVVertexBuffer;
-	FGpuIndexBufferRef IndexBuffer;
-	FShaderPassRef MeshDrawPass;
-	FGraphicsPSORef MeshDrawPSO = FGraphicsPSO::MakeGraphicsPSO("MeshDrawPSO");;
-
-	uint32_t VertexCount;
-
-	bool show_demo_window = false;
-	bool show_another_window = true;
-
 	IGameApp* IGameApp::mAppInstance = nullptr;
 
 	IGameApp::IGameApp(UINT width, UINT height, const std::string& title, const std::string& winClassName)
@@ -47,207 +32,117 @@ namespace Dash
 	{
 	}
 
-	void CreateVertexBuffers(const FImportedStaticMeshData& meshData)
-	{
-		VertexCount = meshData.numVertexes;
-		if (VertexCount > 0)
-		{
-			PositionVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshPositionVertexBuffer", VertexCount, sizeof(meshData.PositionData[0]), meshData.PositionData.data());
-			NormalVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshNormalVertexBuffer", VertexCount, sizeof(meshData.NormalData[0]), meshData.NormalData.data());
-			UVVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshUVVertexBuffer", VertexCount, sizeof(meshData.UVData[0]), meshData.UVData.data());
-
-			IndexBuffer = FGraphicsCore::Device->CreateIndexBuffer("MeshIndexBuffer", VertexCount, meshData.indices.data(), true);
-		}
-		
-		FShaderCreationInfo psPresentInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("MeshShader.hlsl"),  "PS_Main" };
-
-		FShaderCreationInfo vsInfo{ EShaderStage::Vertex,FFileUtility::GetEngineShaderDir("MeshShader.hlsl"),  "VS_Main" };
-
-		FRasterizerState rasterizerDefault{ ERasterizerFillMode::Solid, ERasterizerCullMode::None };
-
-		FBlendState blendDisable{ false, false };
-		FDepthStencilState depthStateDisabled{ true };
-
-		FShaderPassRef meshDrawPass = FShaderPass::MakeShaderPass("PresentPass", { vsInfo , psPresentInfo }, blendDisable, rasterizerDefault, depthStateDisabled);
-
-		MeshDrawPSO->SetShaderPass(meshDrawPass);
-		MeshDrawPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
-		MeshDrawPSO->SetSamplerMask(UINT_MAX);
-		MeshDrawPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetColorBuffer()->GetFormat(), FGraphicsCore::SwapChain->GetDepthBuffer()->GetFormat());
-		MeshDrawPSO->Finalize();
-	}
-
-	void RenderMesh(FGraphicsCommandContext& graphicsContext)
-	{
-		FResourceMagnitude RenderTargetMagnitude = FGraphicsCore::SwapChain->GetColorBuffer()->GetDesc().Magnitude;
-
-		FGpuVertexBufferRef vertexBuffers[3] = { PositionVertexBuffer ,NormalVertexBuffer, UVVertexBuffer };
-
-		graphicsContext.SetGraphicsPipelineState(MeshDrawPSO);
-
-		graphicsContext.SetRootConstantBufferView("ConstantBuffer", MeshConstantBuffer);
-
-		graphicsContext.SetViewportAndScissor(0, 0, RenderTargetMagnitude.Width, RenderTargetMagnitude.Height);
-
-		graphicsContext.SetVertexBuffers(0, 3, vertexBuffers);
-
-		graphicsContext.SetIndexBuffer(IndexBuffer);
-
-		graphicsContext.DrawIndexed(VertexCount);
-	}
-
-	void ReleaseVertexBuffers()
-	{
-		if (IndexBuffer)
-		{
-			IndexBuffer->Destroy();
-		}
-
-		if (PositionVertexBuffer)
-		{
-			PositionVertexBuffer->Destroy();
-		}
-
-		if(NormalVertexBuffer)
-		{
-			NormalVertexBuffer->Destroy();
-		}
-
-		if (UVVertexBuffer)
-		{
-			UVVertexBuffer->Destroy();
-		}
-	}
-
 	void IGameApp::Startup()
 	{
-		FImportedStaticMeshData importedStaticMeshData;
-
-		std::string fbxMeshPath = std::string(ENGINE_PATH) + "/Resource/Cyborg_Weapon.fbx";
-
-		bool result = LoadStaticMeshFromFile(fbxMeshPath, importedStaticMeshData);
-
-		if (result)
-		{
-			importedStaticMeshData.hasNormal;
-
-			CreateVertexBuffers(importedStaticMeshData);
-
-			LOG_INFO << "Load mesh succeed!";
-		}
-
-		// Setup Dear ImGui context
-		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-		// Setup Dear ImGui style
-		ImGui::StyleColorsDark();
-
-		// Setup Platform/Renderer backends
-		ImGui_ImplWin32_Init(mWindowHandle);
-		ImGui_ImplDX12_Init_Refactoring(3);
+		AddRenderLayer(std::make_unique<FSceneRenderLayer>());
+		AddRenderLayer(std::make_unique<FUIRenderLayer>());
 	}
 
 	void IGameApp::Cleanup()
 	{
-		// Cleanup
-		ImGui_ImplDX12_Shutdown_Refactoring();
-		ImGui_ImplWin32_Shutdown();
-		ImGui::DestroyContext();
-
-		ReleaseVertexBuffers();
-	}
-
-	void IGameApp::BeginFrame(FGraphicsCommandContext& graphicsContext)
-	{
-		//graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetColorBuffer());
-		//graphicsContext.SetDepthStencilTarget(FGraphicsCore::SwapChain->GetDepthBuffer());
-		graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetColorBuffer(), FGraphicsCore::SwapChain->GetDepthBuffer());
-		graphicsContext.ClearColor(FGraphicsCore::SwapChain->GetColorBuffer());
-		graphicsContext.ClearDepth(FGraphicsCore::SwapChain->GetDepthBuffer());
-
-		// Start the Dear ImGui frame
-		ImGui_ImplDX12_NewFrame_Refactoring();
-		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
-
-		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-		// 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
+		for (uint32_t i = 0; i < mRenderLayers.size(); i++)
 		{
-			static float f = 0.0f;
-			static int counter = 0;
-
-			ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-			ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-			ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-			ImGui::Checkbox("Another Window", &show_another_window);
-
-			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-			ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-			if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-				counter++;
-			ImGui::SameLine();
-			ImGui::Text("counter = %d", counter);
-
-			//ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-			ImGui::End();
+			mRenderLayers[i]->Shutdown();
 		}
 
-		// 3. Show another simple window.
-		if (show_another_window)
+		mRenderLayers.clear();
+	}
+
+	bool IGameApp::AddRenderLayer(std::shared_ptr<IRenderLayer> layer)
+	{
+		if (layer == nullptr)
 		{
-			ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-			ImGui::Text("Hello from another window!");
-			if (ImGui::Button("Close Me"))
-				show_another_window = false;
-			ImGui::End();
+			return false;
+		}
+
+		for (uint32_t i = 0; i < mRenderLayers.size(); i++)
+		{
+			if (mRenderLayers[i]->GetLayerId() == layer->GetLayerId() ||
+				mRenderLayers[i]->GetLayerName() == layer->GetLayerName())
+			{
+				return false;
+			}
+		}
+
+		layer->Init();
+		mRenderLayers.push_back(layer);
+
+		std::sort(mRenderLayers.begin(), mRenderLayers.end(), [](const std::shared_ptr<IRenderLayer>& a, const std::shared_ptr<IRenderLayer>& b){
+			return a->GetLayerId() < b->GetLayerId();
+		});
+
+		return true;
+	}
+
+	bool IGameApp::RemoveRenderLayer(const std::string& layerName)
+	{
+		for (auto iter = mRenderLayers.begin(); iter < mRenderLayers.end(); ++iter)
+		{
+			if (iter->get()->GetLayerName() == layerName)
+			{
+				iter->get()->Shutdown();
+				mRenderLayers.erase(iter);
+
+				std::sort(mRenderLayers.begin(), mRenderLayers.end(), [](const std::shared_ptr<IRenderLayer>& a, const std::shared_ptr<IRenderLayer>& b) {
+					return a->GetLayerId() < b->GetLayerId();
+					});
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	void IGameApp::OnBeginFrame()
+	{
+		for (uint32_t i = 0; i < mRenderLayers.size(); i++)
+		{
+			mRenderLayers[i]->OnBeginFrame();
 		}
 	}
 
-	void IGameApp::EndFrame(FGraphicsCommandContext& graphicsContext)
+	void IGameApp::OnEndFrame()
 	{
-		Present(graphicsContext);
-	}
-
-	void IGameApp::OnRenderScene(const FRenderEventArgs& e, FGraphicsCommandContext& graphicsContext)
-	{
-		MeshConstantBuffer.ModelViewProjectionMatrix = e.Camera->GetViewProjectionMatrix();
-		RenderMesh(graphicsContext);
-	}
-
-	void IGameApp::OnRenderUI(const FRenderEventArgs& e, FGraphicsCommandContext& graphicsContext)
-	{
-		//return;
-
-		// Our state
-		bool show_demo_window = false;
-		bool show_another_window = true;
-		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
+		for (uint32_t i = 0; i < mRenderLayers.size(); i++)
 		{
-			// Rendering
-			ImGui::Render();
-
-			//FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("RenderUI");
-
-			ImGui_ImplDX12_RenderDrawData_Refactoring(ImGui::GetDrawData(), graphicsContext);
+			mRenderLayers[i]->OnEndFrame();
 		}
+
+		FGraphicsCore::SwapChain->Present();
+	}
+
+	void IGameApp::OnUpdate(const FUpdateEventArgs& e)
+	{
+		for (uint32_t i = 0; i < mRenderLayers.size(); i++)
+		{
+			mRenderLayers[i]->OnUpdate(e);
+		}
+	}
+
+	void IGameApp::OnRender(const FRenderEventArgs& e)
+	{
+		for (uint32_t i = 0; i < mRenderLayers.size(); i++)
+		{
+			mRenderLayers[i]->OnRender(e);
+		}
+	}
+
+	void IGameApp::OnWindowResize(const FResizeEventArgs& e)
+	{
+		mWindowWidth = e.Width;
+		mWindowHeight = e.Height;
+
+		for (uint32_t i = 0; i < mRenderLayers.size(); i++)
+		{
+			mRenderLayers[i]->OnWindowResize(e);
+		}
+
+		FGraphicsCore::SwapChain->OnWindowResize(mWindowWidth, mWindowHeight);
 	}
 
 	bool IGameApp::ProcessWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		return ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
-	}
-
-	void IGameApp::Present(FGraphicsCommandContext& graphicsContext)
-	{
-		FGraphicsCore::SwapChain->Present(graphicsContext);
 	}
 
 	bool IGameApp::IsDone(void)

@@ -1,11 +1,11 @@
 #pragma once
 
-//#include "CommandContext.h"
-
 #include "Graphics/CommandContext.h"
+#include "RenderLayer.h"
 
 class FRenderEventArgs;
 class FUpdateEventArgs;
+//class IRenderLayer;
 
 namespace Dash
 {
@@ -19,25 +19,23 @@ namespace Dash
 
         static IGameApp* GetInstance() { return  mAppInstance; }
 
-        virtual void Startup(void);
-        virtual void Cleanup(void);
+        virtual void Startup();
+        virtual void Cleanup();
         
-        virtual void BeginFrame(FGraphicsCommandContext& graphicsContext);
-        virtual void EndFrame(FGraphicsCommandContext& graphicsContext);
+        bool AddRenderLayer(std::shared_ptr<IRenderLayer> layer);
+        bool RemoveRenderLayer(const std::string& layerName);
 
-        virtual void OnUpdate(const FUpdateEventArgs& e) = 0;
+        virtual void OnBeginFrame();
+        virtual void OnEndFrame();
 
-        virtual void OnRenderScene(const FRenderEventArgs& e, FGraphicsCommandContext& graphicsContext);
+        virtual void OnUpdate(const FUpdateEventArgs& e);
+        virtual void OnRender(const FRenderEventArgs& e);
 
-        virtual void OnRenderUI(const FRenderEventArgs& e, FGraphicsCommandContext& graphicsContext);
-
-        virtual void OnWindowResize(const FResizeEventArgs& e) = 0;
+        virtual void OnWindowResize(const FResizeEventArgs& e);
 
         bool ProcessWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-        void Present(FGraphicsCommandContext& graphicsContext);
-
-        virtual bool IsDone(void);
+        virtual bool IsDone();
 
         HWND GetWindowHandle() const { return mWindowHandle; }
 
@@ -58,11 +56,12 @@ namespace Dash
     protected:
         static IGameApp* mAppInstance;
 
-    //private:
         HWND mWindowHandle;
         int mWindowWidth;
         int mWindowHeight;
         std::string mWindowTitle;
         std::string mWindowClassName;
+
+        std::vector<std::shared_ptr<IRenderLayer>> mRenderLayers;
 	};
 }

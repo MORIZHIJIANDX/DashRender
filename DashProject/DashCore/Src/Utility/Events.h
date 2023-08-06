@@ -1,15 +1,10 @@
 #pragma once
 
 #include "KeyCodes.h"
-#include "../DesignPatterns/MulticastDelegate.h"
+#include "DesignPatterns/MulticastDelegate.h"
 
 #include <memory>
 #include <string>
-
-namespace Dash
-{
-	class FCamera;
-}
 
 namespace Dash
 {
@@ -216,19 +211,15 @@ namespace Dash
 	public:
 		using base = FEventArgs;
 		FRenderEventArgs(double fDeltaTime, double fTotalTime,
-			uint64_t frameCounter,
-			std::shared_ptr<Dash::FCamera> camera = nullptr)
+			uint64_t frameCounter)
 			: ElapsedTime(fDeltaTime)
 			, TotalTime(fTotalTime)
 			, FrameCounter(frameCounter)
-			, Camera(camera)
 		{}
 
 		double ElapsedTime;
 		double TotalTime;
 		uint64_t FrameCounter;
-
-		std::shared_ptr<Dash::FCamera> Camera;
 	};
 
 	using FRenderEvent = TMulticastDelegate<void(FRenderEventArgs&)>;
