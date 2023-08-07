@@ -27,8 +27,6 @@ namespace Dash
 				mRetiredContexts[contextType].pop_front();
 			}
 		}
-		
-		int64_t currentCompletedFence = FGraphicsCore::CommandQueueManager->GetGraphicsQueue().GetCompletedFence();
 
 		auto& availableContext = mAvailableContexts[type];
 
@@ -163,14 +161,13 @@ namespace Dash
 
 		uint64_t fenceValue = Execute();
 
-		mLinearAllocator.RetireUsedPages(fenceValue);
-
 		if (waitForCompletion)
 		{
 			FGraphicsCore::CommandQueueManager->WaitForFence(fenceValue);
 		}
 
 		FGraphicsCore::ContextManager->FreeContext(fenceValue, this);
+		mLinearAllocator.RetireUsedPages(fenceValue);
 
 		return fenceValue;
 	}

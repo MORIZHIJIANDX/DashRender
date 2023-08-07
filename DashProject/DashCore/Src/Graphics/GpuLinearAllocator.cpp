@@ -26,7 +26,7 @@ namespace Dash
 		size_t alignedSize = FMath::AlignUp(sizeInBytes, alignment);
 		size_t alignedOffset = FMath::AlignUp(mOffset, alignment);
 
-		return alignedOffset + alignedSize <= mPageSie;
+		return (alignedOffset + alignedSize) <= mPageSie;
 	}
 
 	FGpuLinearAllocator::FAllocation FGpuLinearAllocator::FPage::Allocate(size_t sizeInBytes, size_t alignment)
@@ -71,6 +71,7 @@ namespace Dash
 		if (!mAvailablePages.empty())
 		{
 			newPage = mAvailablePages.front();
+			mAvailablePages.pop();
 		}
 		else
 		{

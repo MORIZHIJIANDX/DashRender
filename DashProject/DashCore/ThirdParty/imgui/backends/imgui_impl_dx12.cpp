@@ -183,8 +183,6 @@ namespace Dash
             float T = draw_data->DisplayPos.y;
             float B = draw_data->DisplayPos.y + draw_data->DisplaySize.y;
 
-            LOG_INFO << L << ", " << R  << ", " << T << ", " << B;
-
             float mvp[4][4] =
             {
                 { 2.0f / (R - L),   0.0f,           0.0f,       0.0f },
@@ -206,6 +204,8 @@ namespace Dash
         ctx.SetGraphicsPipelineState(bd->pPipelineState);
 
         ctx.SetRootConstantBufferView("constantBuffer", vertex_constant_buffer);
+
+        ctx.SetShaderResourceView("texture0", bd->pFontTextureResource);
 
         //ctx.SetBlendFactor(FLinearColor{0.0f, 0.0f, 0.0f, 0.0f});
     }
@@ -288,8 +288,6 @@ namespace Dash
 
         // Setup desired DX state
         ImGui_ImplDX12_SetupRenderState_Refactoring(draw_data, graphics_command_context, fr);
-
-        //graphics_command_context.SetShaderResourceView("texture0", bd->pFontTextureResource);
 
         // Render command lists
         // (Because we merged all buffers into a single one, we maintain our own offset into them)
