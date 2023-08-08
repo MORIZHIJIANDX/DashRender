@@ -58,18 +58,20 @@ namespace Dash
 
 	void FUIRenderLayer::OnUpdate(const FUpdateEventArgs& e)
 	{
+		ImGuiIO& io = ImGui::GetIO();
+
 		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
 		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
 
-		//ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-		ImGui::End();
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 
-		ImGui::Render();
+		ImGui::End();
 	}
 
 	void FUIRenderLayer::OnRender(const FRenderEventArgs& e)
 	{
+		ImGui::Render();
 
 		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("RenderUI");
 

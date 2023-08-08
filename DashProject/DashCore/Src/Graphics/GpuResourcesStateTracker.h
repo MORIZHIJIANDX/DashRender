@@ -2,6 +2,7 @@
 
 #include "d3dx12.h"
 #include "GpuResource.h"
+#include "CommandQueue.h"
 
 namespace Dash
 {
@@ -55,7 +56,7 @@ namespace Dash
 		 *
 		 * @return The number of resource barriers that were flushed to the command list.
 		 */
-		uint32_t FlushPendingResourceBarriers(ID3D12GraphicsCommandList* commandList);
+		FCommandList* FlushPendingResourceBarriers(D3D12_COMMAND_LIST_TYPE commandListType);
 
 		/**
 		 * Flush any (non-pending) resource barriers that have been pushed to the resource state

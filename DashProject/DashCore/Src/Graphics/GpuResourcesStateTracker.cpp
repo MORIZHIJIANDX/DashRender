@@ -1,5 +1,6 @@
 #include "PCH.h"
 #include "GpuResourcesStateTracker.h"
+#include "GraphicsCore.h"
 
 namespace Dash
 {
@@ -122,11 +123,10 @@ namespace Dash
 		}
 	}
 
-	uint32_t FGpuResourcesStateTracker::FlushPendingResourceBarriers(ID3D12GraphicsCommandList* commandList)
+	FCommandList* FGpuResourcesStateTracker::FlushPendingResourceBarriers(D3D12_COMMAND_LIST_TYPE commandListType)
 	{
 		ASSERT(IsLocked == true);
-		ASSERT(commandList != nullptr);
-
+		
 		std::vector<D3D12_RESOURCE_BARRIER> resourceBarriers;
 		resourceBarriers.reserve(mPendingResourceBarriers.size());
 
@@ -185,14 +185,19 @@ namespace Dash
 		}
 
 		UINT32 num = static_cast<UINT32>(resourceBarriers.size());
+		FCommandList* flushBarrierCommand = nullptr;
 		if (num > 0)
 		{
-			commandList->ResourceBarrier(num, resourceBarriers.data());
+			flushBarrierCommand = FGraphicsCore::CommandListManager->RequestCommandList(commandListType);
+
+			ASSERT(flushBarrierCommand != nullptr);
+
+			flushBarrierCommand->GetCommandList()->ResourceBarrier(num, resourceBarriers.data());
 		}
 
 		mPendingResourceBarriers.clear();
 
-		return num;
+		return flushBarrierCommand;
 	}
 
 	uint32_t FGpuResourcesStateTracker::FlushResourceBarriers(ID3D12GraphicsCommandList* commandList)

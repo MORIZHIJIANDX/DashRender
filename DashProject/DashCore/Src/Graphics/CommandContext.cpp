@@ -354,21 +354,32 @@ namespace Dash
 	{
 		FGpuResourcesStateTracker::Lock();
 
-		FCommandList* flushBarrierCommand = FGraphicsCore::CommandListManager->RequestCommandList(mType);
-
-		uint32_t flushedBarrierCount = mResourceStateTracker.FlushPendingResourceBarriers(flushBarrierCommand->GetCommandList());
+		FCommandList* flushBarrierCommand = mResourceStateTracker.FlushPendingResourceBarriers(mType);
 
 		mResourceStateTracker.CommitFinalResourceStates();
 		
-		std::vector<FCommandList*> commandListsToExecute{ flushBarrierCommand , mCommandList};
+		if (flushBarrierCommand != nullptr)
+		{
+			std::vector<FCommandList*> commandListsToExecute{ flushBarrierCommand, mCommandList };
 
-		uint64_t fenceValue = FGraphicsCore::CommandQueueManager->GetQueue(mType).ExecuteCommandLists(commandListsToExecute);
+			uint64_t fenceValue = FGraphicsCore::CommandQueueManager->GetQueue(mType).ExecuteCommandLists(commandListsToExecute);
 
-		FGraphicsCore::CommandListManager->RetiredUsedCommandList(fenceValue, flushBarrierCommand);
+			FGraphicsCore::CommandListManager->RetiredUsedCommandList(fenceValue, flushBarrierCommand);
 
-		FGpuResourcesStateTracker::Unlock();
+			FGpuResourcesStateTracker::Unlock();
 
-		return fenceValue;
+			return fenceValue;
+		}
+		else
+		{
+			std::vector<FCommandList*> commandListsToExecute{ mCommandList };
+
+			uint64_t fenceValue = FGraphicsCore::CommandQueueManager->GetQueue(mType).ExecuteCommandLists(commandListsToExecute);
+
+			FGpuResourcesStateTracker::Unlock();
+
+			return fenceValue;
+		}
 	}
 
 	void FCommandContext::InitParameterBindState()
