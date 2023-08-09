@@ -2,11 +2,13 @@
 
 namespace Dash
 {
-	class AStaticMesh
+	class CStaticMeshComponent
 	{
 	public:
-		AStaticMesh();
-		~AStaticMesh();
+		CStaticMeshComponent() {};
+		~CStaticMeshComponent() {};
+
+		bool SetMaterial();
 
 	private:
 		
