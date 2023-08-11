@@ -6,10 +6,18 @@ namespace Dash
 	class FMaterial
 	{
 	public:
-		FMaterial(const std::string& name) {};
+		FMaterial(const std::string& name, FShaderTechniqueRef shaderTechnique) 
+			: mName(name)
+			, mShaderTechnique(shaderTechnique)
+		{};
+
 		~FMaterial() {};
 
-	private:
+		bool SetTextureParameter() {};
+		bool SetConstantParameter() {};
 
+	private:
+		std::string mName;
+		FShaderTechniqueRef mShaderTechnique;
 	};
 }

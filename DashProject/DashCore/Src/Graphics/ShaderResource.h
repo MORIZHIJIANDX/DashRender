@@ -79,6 +79,13 @@ namespace Dash
 		uint32_t Size = 0;
 	};
 
+	struct FConstantBufferVariable
+	{
+		std::string VariableName;
+		UINT StartOffset;
+		UINT Size;
+	};
+
 	struct FShaderParameter
 	{
 		std::string Name;
@@ -91,6 +98,7 @@ namespace Dash
 		UINT BindCount = 0;
 		UINT RootParameterIndex = 0;
 		UINT DescriptorOffset = 0;
+		std::vector<FConstantBufferVariable> ConstantBufferVariables;
 	};
 
 	struct FShaderResource

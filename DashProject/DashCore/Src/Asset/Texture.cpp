@@ -1,5 +1,5 @@
 #include "PCH.h"
-#include "Material.h"
+#include "Texture.h"
 
 namespace Dash
 {

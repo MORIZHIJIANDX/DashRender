@@ -114,6 +114,7 @@ namespace Dash
 		LOG_INFO << " ---------------------------------------------------- ";
 
 		std::map<std::string, UINT> bufferSizeMap;
+		std::map<std::string, std::vector<FConstantBufferVariable>> bufferVariableMap;
 		for (UINT constantBufferIndex = 0; constantBufferIndex < shaderDesc.ConstantBuffers; ++constantBufferIndex)
 		{
 			ID3D12ShaderReflectionConstantBuffer* shaderReflectionConstantBuffer = reflector->GetConstantBufferByIndex(constantBufferIndex);
@@ -128,6 +129,23 @@ namespace Dash
 			LOG_INFO << "Buffer Variables : " << bufferDesc.Variables;
 			LOG_INFO << "Buffer Size : " << bufferDesc.Size;
 			LOG_INFO << "Buffer uFlags : " << bufferDesc.uFlags;
+
+			for (UINT variableIndex = 0; variableIndex < bufferDesc.Variables; variableIndex++)
+			{
+				ID3D12ShaderReflectionVariable* shaderReflectionVariable = shaderReflectionConstantBuffer->GetVariableByIndex(variableIndex);
+
+				D3D12_SHADER_VARIABLE_DESC variableDesc;
+				shaderReflectionVariable->GetDesc(&variableDesc);
+
+				FConstantBufferVariable bufferVariable;
+				bufferVariable.VariableName = variableDesc.Name;
+				bufferVariable.Size = variableDesc.Size;
+				bufferVariable.StartOffset = variableDesc.StartOffset;
+
+				bufferVariableMap[bufferDesc.Name].push_back(bufferVariable);
+
+				LOG_INFO << "Buffer Variable : " << variableDesc.Name << " , Size : " << variableDesc.Size << " , Offset : " << variableDesc.StartOffset;
+			}
 		}
 
 		LOG_INFO << " ---------------------------------------------------- ";
@@ -149,6 +167,7 @@ namespace Dash
 			if (bufferSizeMap.contains(resourceParameter.Name))
 			{
 				resourceParameter.Size = bufferSizeMap[resourceParameter.Name];
+				resourceParameter.ConstantBufferVariables = bufferVariableMap[resourceParameter.Name];
 			}
 
 			mParameters.push_back(resourceParameter);
