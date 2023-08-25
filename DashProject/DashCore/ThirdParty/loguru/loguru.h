@@ -704,7 +704,7 @@ namespace loguru
 		unsigned    _line = 0;
 		bool        _indent_stderr = false; // Did we?
 		long long   _start_time_ns = 0;
-		char        _name[LOGURU_SCOPE_TEXT_SIZE];
+		char        _name[LOGURU_SCOPE_TEXT_SIZE]{};
 	};
 
 	// Marked as 'noreturn' for the benefit of the static analyzer and optimizer.

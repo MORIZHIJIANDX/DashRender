@@ -8,7 +8,7 @@
 #include "Utility/FileUtility.h"
 #include "Utility/Keyboard.h"
 #include "Utility/Mouse.h"
-#include "ModelLoader/StaticMeshLoader.h"
+#include "MeshLoader/StaticMeshLoader.h"
 #include "GameApp.h"
 #include "imgui/imgui.h"
 

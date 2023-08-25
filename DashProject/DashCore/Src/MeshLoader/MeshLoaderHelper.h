@@ -49,6 +49,6 @@ namespace Dash
         std::vector<FVector4f> VertexColorData;
 
         std::vector<FMeshSectionData> sectionData;
-        std::vector<FMeshSectionTextureInfo> textureInfo;
+        std::vector<std::string> materialNames;
     };
 }

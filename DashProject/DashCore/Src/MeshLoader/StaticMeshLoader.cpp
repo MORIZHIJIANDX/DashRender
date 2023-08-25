@@ -135,12 +135,11 @@ namespace Dash
 
         // Extract material load data
         const auto directory = FFileUtility::GetParentPath(filePath);
-        for (auto mat_id : submeshToMaterialIndex)
-        {
-            const aiMaterial* material = scene->mMaterials[mat_id];
 
-            // Save material
-            //m_loadedModel->materials.push_back(ExtractMaterial(material, directory + "/"));
+        for (size_t matId = 0; matId < scene->mNumMaterials; matId++)
+        {
+            aiString materialName = scene->mMaterials[matId]->GetName();
+            importedMeshData.materialNames.push_back(materialName.C_Str());
         }
 
         return true;

@@ -36,7 +36,7 @@ namespace Dash
 		union
 		{
 			struct { float r, g, b, a; };
-			float Data[4];
+			float Data[4]{};
 		};
 		
 

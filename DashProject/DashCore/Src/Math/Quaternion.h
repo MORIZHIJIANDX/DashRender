@@ -42,7 +42,7 @@ namespace Dash
 		union
 		{
 			struct { Scalar X, Y, Z, W; };
-			TScalarArray<Scalar, 3> XYZ;
+			TScalarArray<Scalar, 3> XYZ{};
 		};
 	};
 

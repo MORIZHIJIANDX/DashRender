@@ -14,6 +14,7 @@
 #include "TextureLoader/TGATextureLoader.h"
 #include "TextureLoader/DDSTextureLoader.h"
 #include "Utility/FileUtility.h"
+#include "TextureLoader/TextureLoaderHelper.h"
 
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -651,16 +652,14 @@ namespace Dash
 		return bufferRef;
 	}
 
-	FTextureBufferRef FRenderDevice::CreateTextureBufferFromMemory(const std::string& name, const FTextureBufferDescription& desc, const void* InitialData)
+	FTextureBufferRef FRenderDevice::CreateTextureBufferFromMemory(const std::string& name, const FTextureBufferDescription& desc, const std::vector<const void*>& initialMipsData)
 	{
-		ASSERT(InitialData != nullptr);
-
 		std::shared_ptr<FTextureBuffer> bufferRef = std::make_shared<FMakeTextureBuffer>(name, desc);
 
 		D3D12_SUBRESOURCE_DATA resourceData;
 		resourceData.RowPitch = BytesPerPixel(desc.Format) * desc.Magnitude.Width;
 		resourceData.SlicePitch = resourceData.RowPitch * desc.Magnitude.Height;
-		resourceData.pData = InitialData;
+		resourceData.pData = initialMipsData[0];
 		
 		FCopyCommandContext::UpdateTextureBuffer(bufferRef, 0, 1, &resourceData);
 		return bufferRef;

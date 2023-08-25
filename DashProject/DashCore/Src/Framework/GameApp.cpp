@@ -1,7 +1,5 @@
 #include "PCH.h"
 #include "GameApp.h"
-//#include "GraphicsCore.h"
-//#include "SwapChain.h"
 
 #include "Graphics/GraphicsCore.h"
 #include "Graphics/SwapChain.h"
@@ -10,10 +8,6 @@
 #include "imgui/imgui.h"
 #include "imgui/backends/imgui_impl_win32.h"
 #include "imgui/backends/imgui_impl_dx12.h"
-
-#include "ModelLoader/StaticMeshLoader.h"
-#include "Utility/FileUtility.h"
-#include "Camera.h"
 
 #include "SceneRenderLayer.h"
 #include "UIRenderLayer.h"

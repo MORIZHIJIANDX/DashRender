@@ -62,7 +62,7 @@ namespace Dash
 		{
 			struct { Scalar U, V; };
 			struct { Scalar X, Y; };
-			DataType Data;
+			DataType Data{};
 		};
 	};
 

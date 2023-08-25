@@ -369,7 +369,7 @@ namespace Dash
         bd->pFontTextureResource = nullptr;
 
         FTextureBufferDescription textureDest = FTextureBufferDescription::Create2D(EResourceFormat::RGBA8_Unsigned_Norm, width, height, 1);
-        bd->pFontTextureResource = FGraphicsCore::Device->CreateTextureBufferFromMemory("TestTexture", textureDest, pixels);
+        bd->pFontTextureResource = FGraphicsCore::Device->CreateTextureBufferFromMemory("TestTexture", textureDest, {pixels});
 
         io.Fonts->SetTexID((ImTextureID)bd->pFontTextureResource->GetShaderResourceView().ptr);
     }

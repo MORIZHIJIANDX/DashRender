@@ -25,6 +25,6 @@ namespace Dash
 		double mDeltaTime = 0.0;
 		double mTotalTime = 0.0;
 
-		bool mStopped;
+		bool mStopped = false;
 	};
 }
