@@ -114,12 +114,12 @@ namespace Dash
 	public:
 		virtual ~FGpuVertexBuffer() {}
 
-		D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView(size_t offset, uint32_t size, uint32_t stride) const;
-		D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView(size_t baseVertexIndex = 0) const
+		D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView(uint32_t offset, uint32_t size, uint32_t stride) const;
+		D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView(uint32_t baseVertexIndex = 0) const
 		{
 			ASSERT(baseVertexIndex < mDesc.Count);
-			size_t offset = baseVertexIndex * mDesc.Stride;
-			return GetVertexBufferView(offset, static_cast<uint32_t>(mDesc.Size - offset), static_cast<uint32_t>(mDesc.Stride));
+			uint32_t offset = baseVertexIndex * mDesc.Stride;
+			return GetVertexBufferView(offset, static_cast<uint32_t>(mDesc.Size), static_cast<uint32_t>(mDesc.Stride));
 		}
 
 	protected:
@@ -131,11 +131,11 @@ namespace Dash
 	public:
 		virtual ~FGpuIndexBuffer() {}
 
-		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView(size_t offset, uint32_t size, bool is32Bit = false) const;
-		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView(size_t startIndex = 0) const
+		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView(uint32_t offset, uint32_t size, bool is32Bit = false) const;
+		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView(uint32_t startIndex = 0) const
 		{
 			ASSERT(startIndex < mDesc.Count);
-			size_t offset = startIndex * mDesc.Stride;
+			uint32_t offset = startIndex * mDesc.Stride;
 			return GetIndexBufferView(offset, static_cast<uint32_t>(mDesc.Size - offset), mDesc.Stride == 4);
 		}
 
