@@ -28,7 +28,7 @@ namespace Dash
         uint32_t indexStart{ 0 };
         uint32_t indexCount{ 0 };
 
-        std::string sectionName;
+        std::string materialSlotName;
     };
 
     struct FImportedStaticMeshData

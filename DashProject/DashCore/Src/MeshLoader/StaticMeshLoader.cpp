@@ -57,7 +57,6 @@ namespace Dash
 
                 // Track submesh
                 FMeshSectionData sectionData{};
-                sectionData.sectionName = mesh->mName.C_Str();
                 sectionData.vertexStart = (uint32_t)importedMeshData.PositionData.size();
                 sectionData.vertexCount = mesh->mNumVertices;
                 sectionData.indexStart = (uint32_t)indices.size();
@@ -140,6 +139,11 @@ namespace Dash
         {
             aiString materialName = scene->mMaterials[matId]->GetName();
             importedMeshData.materialNames.push_back(materialName.C_Str());
+        }
+
+        for (size_t sectionId = 0; sectionId < meshSections.size(); sectionId++)
+        {
+            meshSections[sectionId].materialSlotName = importedMeshData.materialNames[submeshToMaterialIndex[sectionId]];
         }
 
         return true;
