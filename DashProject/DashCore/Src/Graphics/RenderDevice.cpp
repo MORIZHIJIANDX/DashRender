@@ -9,12 +9,9 @@
 #include "TextureBuffer.h"
 #include "GpuBuffer.h"
 #include "CommandContext.h"
-#include "TextureLoader/HDRTextureLoader.h"
-#include "TextureLoader/WICTextureLoader.h"
-#include "TextureLoader/TGATextureLoader.h"
-#include "TextureLoader/DDSTextureLoader.h"
+#include "SubResourceData.h"
 #include "Utility/FileUtility.h"
-#include "TextureLoader/TextureLoaderHelper.h"
+#include "TextureLoader/TextureLoaderManager.h"
 
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -656,12 +653,21 @@ namespace Dash
 	{
 		std::shared_ptr<FTextureBuffer> bufferRef = std::make_shared<FMakeTextureBuffer>(name, desc);
 
-		D3D12_SUBRESOURCE_DATA resourceData;
-		resourceData.RowPitch = BytesPerPixel(desc.Format) * desc.Magnitude.Width;
-		resourceData.SlicePitch = resourceData.RowPitch * desc.Magnitude.Height;
-		resourceData.pData = initialMipsData[0];
+		ASSERT(desc.MipCount == initialMipsData.size());
+
+		std::vector<FSubResourceData> subResources;
+
+		for (size_t i = 0; i < desc.MipCount; i++)
+		{
+			size_t rowPitch = 0;
+			size_t slicePitch = 0;
+
+			desc.GetPitch(rowPitch, slicePitch, i);
+
+			subResources.emplace_back(initialMipsData[i], rowPitch, slicePitch);
+		}
 		
-		FCopyCommandContext::UpdateTextureBuffer(bufferRef, 0, 1, &resourceData);
+		FCopyCommandContext::UpdateTextureBuffer(bufferRef, 0, static_cast<uint32_t>(subResources.size()), subResources.data());
 		return bufferRef;
 	}
 
@@ -671,34 +677,18 @@ namespace Dash
 		{
 			std::string fileExtension = FFileUtility::GetFileExtension(fileName);
 
-			FTextureBufferDescription desc;
-			D3D12_SUBRESOURCE_DATA resourceData;
-			std::vector<uint8_t> decodeData;
-
 			bool loadSucceed = false;
 
-			if (fileExtension == "png")
-			{
-				loadSucceed = LoadWICTextureFromFile(fileName, EWIC_LOAD_FLAGS::WIC_FLAGS_NONE, desc, resourceData, decodeData);
-			}
-			else if (fileExtension == "tga")
-			{
-				loadSucceed = LoadTGATextureFromFile(fileName, ETGA_LOAD_FLAGS::TGA_FLAGS_NONE, desc, resourceData, decodeData);
-			}
-			else if (fileExtension == "hdr")
-			{
-				loadSucceed =  LoadHDRTextureFromFile(fileName, desc, resourceData, decodeData);
-			}
-			else if (fileExtension == "dds")
-			{
-				loadSucceed = LoadDDSTextureFromFile(fileName, EDDS_LOAD_FLAGS::DDS_FLAGS_NONE, desc, resourceData, decodeData);
-			}
+			const FImportedTextureData& textureData = FTextureLoaderManager::Get().LoadTexture(fileName);
 
 			if (loadSucceed)
 			{
-				std::shared_ptr<FTextureBuffer> bufferRef = std::make_shared<FMakeTextureBuffer>(name, desc);
+				std::shared_ptr<FTextureBuffer> bufferRef = std::make_shared<FMakeTextureBuffer>(name, textureData.TextureDescription);
 
-				FCopyCommandContext::UpdateTextureBuffer(bufferRef, 0, 1, &resourceData);
+				FCopyCommandContext::UpdateTextureBuffer(bufferRef, 0, static_cast<uint32_t>(textureData.SubResource.size()), textureData.SubResource.data());
+
+				FTextureLoaderManager::Get().UnloadTexture(fileName);
+
 				return bufferRef;
 			}
 		}

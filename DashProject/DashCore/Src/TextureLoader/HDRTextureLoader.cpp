@@ -8,7 +8,7 @@ using namespace DirectX;
 
 namespace Dash
 {
-	bool LoadHDRTextureFromFile(const std::string& fileName, FTextureBufferDescription& textureDescription, D3D12_SUBRESOURCE_DATA& subResource, std::vector<uint8_t>& decodedData)
+	bool LoadHDRTextureFromFile(const std::string& fileName, FTextureBufferDescription& textureDescription, std::vector<FSubResourceData>& subResource, std::vector<uint8_t>& decodedData)
 	{
 		std::wstring wFileName = FStringUtility::UTF8ToWideString(fileName);
 

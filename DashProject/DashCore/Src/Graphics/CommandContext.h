@@ -18,6 +18,7 @@ namespace Dash
 	class FCommandContext;
 	class FGraphicsCommandContext;
 	class FComputeCommandContext;
+	class FSubResourceData;
 
 	class FCommandContextManager
 	{
@@ -121,7 +122,7 @@ namespace Dash
 		void FlushResourceBarriers();
 
 		static void InitializeBuffer(FGpuBufferRef dest, const void* bufferData, size_t numBytes, size_t offset = 0);
-		static void UpdateTextureBuffer(FTextureBufferRef dest, uint32_t firstSubresource, uint32_t numSubresources, D3D12_SUBRESOURCE_DATA* subresourceData);
+		static void UpdateTextureBuffer(FTextureBufferRef dest, uint32_t firstSubresource, uint32_t numSubresources, const FSubResourceData* subresourceData);
 
 		// Flush existing commands to the GPU but keep the context alive
 		uint64_t Flush(bool waitForCompletion = false);

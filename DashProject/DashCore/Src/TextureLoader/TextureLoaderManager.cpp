@@ -85,26 +85,37 @@ namespace Dash
 
 	void FTextureLoaderManager::CreateDefaultTextures()
 	{
+		ConstructPureColorTexture("ErrorTexture", FColor::Magenta);
+		ConstructPureColorTexture("Black", FColor::Black);
+	}
+
+	void FTextureLoaderManager::ConstructPureColorTexture(const std::string_view& textureName, const FColor& color, int32_t width, int32_t height)
+	{
 		FImportedTextureData importedTextureData;
-		importedTextureData.SourceTexturePath = "ErrorTexture";
-		importedTextureData.TextureDescription = FTextureBufferDescription::Create2D(EResourceFormat::RGBA8_Unsigned_Norm, 32, 32);
+		importedTextureData.SourceTexturePath = textureName;
+		importedTextureData.TextureDescription = FTextureBufferDescription::Create2D(EResourceFormat::RGBA8_Unsigned_Norm, width, height);
 		importedTextureData.DecodedData.resize(importedTextureData.TextureDescription.ResourceSizeInBytes());
-		
+
 		FColor* DataPtr = (FColor*)importedTextureData.DecodedData.data();
 
 		for (uint32_t y = 0; y < importedTextureData.TextureDescription.Magnitude.Height; y++)
 		{
 			for (uint32_t x = 0; x < importedTextureData.TextureDescription.Magnitude.Width; x++)
 			{
-				*DataPtr = FColor::Magenta;
+				*DataPtr = color;
 			}
 		}
 
-		importedTextureData.SubResource.pData = importedTextureData.DecodedData.data();
-		importedTextureData.SubResource.RowPitch = importedTextureData.TextureDescription.Magnitude.Width * BytesPerPixel(EResourceFormat::RGBA8_Unsigned_Norm);
-		importedTextureData.SubResource.SlicePitch = importedTextureData.SubResource.RowPitch * importedTextureData.TextureDescription.Magnitude.Height;
+		void* dataPtr = importedTextureData.DecodedData.data();
+		size_t rowPitch = 0;
+		size_t slicePitch = 0;
+
+		importedTextureData.TextureDescription.GetPitch(rowPitch, slicePitch);
+
+		importedTextureData.SubResource.emplace_back(dataPtr, rowPitch, slicePitch);
+
 		importedTextureData.AddRef();
-		
+
 		mImportTextures.emplace(importedTextureData.SourceTexturePath, importedTextureData);
 	}
 }

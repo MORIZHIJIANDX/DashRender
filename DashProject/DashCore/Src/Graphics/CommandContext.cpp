@@ -2,7 +2,7 @@
 #include "CommandContext.h"
 #include "GraphicsCore.h"
 #include "RootSignature.h"
-
+#include "SubResourceData.h"
 #include <pix3.h>
 
 namespace Dash
@@ -221,7 +221,7 @@ namespace Dash
 		context.Finish(true);
 	}
 
-	void FCopyCommandContextBase::UpdateTextureBuffer(FTextureBufferRef dest, uint32_t firstSubresource, uint32_t numSubresources, D3D12_SUBRESOURCE_DATA* subresourceData)
+	void FCopyCommandContextBase::UpdateTextureBuffer(FTextureBufferRef dest, uint32_t firstSubresource, uint32_t numSubresources, const FSubResourceData* subresourceData)
 	{
 		ASSERT(subresourceData != nullptr);
 
@@ -230,9 +230,15 @@ namespace Dash
 		UINT64 requiredSize = GetRequiredIntermediateSize(dest->GetResource(), firstSubresource, numSubresources);
 		FGpuLinearAllocator::FAllocation alloc = context.mLinearAllocator.Allocate(requiredSize);
 
+		std::vector<D3D12_SUBRESOURCE_DATA> d3dSubResources;
+		for (size_t i = 0; i < numSubresources; i++)
+		{
+			d3dSubResources.emplace_back(subresourceData[i].D3DSubResource());
+		}
+
 		// Resource must be in the copy-destination state.
 		context.TransitionBarrier(dest, EResourceState::CopyDestination, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
-		UpdateSubresources(context.GetD3DCommandList(), dest->GetResource(), alloc.Resource.GetResource(), alloc.Offset, firstSubresource, numSubresources, subresourceData);
+		UpdateSubresources(context.GetD3DCommandList(), dest->GetResource(), alloc.Resource.GetResource(), alloc.Offset, firstSubresource, numSubresources, d3dSubResources.data());
 		context.Finish(true);
 	}
 
@@ -477,6 +483,11 @@ namespace Dash
 		mD3DCommandList->ClearUnorderedAccessViewFloat(handle, target->GetUnorderedAccessView(), target->GetResource(), target->GetClearColor().Data, 1, &clearRect);
 
 		TrackResource(target);
+	}
+
+	void FComputeCommandContextBase::Dispatch(uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)
+	{
+		mD3DCommandList->Dispatch(groupCountX, groupCountY, groupCountZ);
 	}
 
 	void FComputeCommandContextBase::SetRootConstantBufferView(UINT rootIndex, size_t sizeInBytes, const void* constants)

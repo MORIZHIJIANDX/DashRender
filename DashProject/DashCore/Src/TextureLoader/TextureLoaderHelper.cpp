@@ -1,19 +1,24 @@
 #include "PCH.h"
 #include "TextureLoaderHelper.h"
 
-namespace DirectX
+using namespace DirectX;
+
+namespace Dash
 {
-	void InitTextureData(const TexMetadata& metadata, ScratchImage& image, Dash::FTextureBufferDescription& textureDescription, D3D12_SUBRESOURCE_DATA& subResource, std::vector<uint8_t>& decodedData)
+	void InitTextureData(const TexMetadata& metadata, ScratchImage& scratchImage, Dash::FTextureBufferDescription& textureDescription, std::vector<FSubResourceData>& subResources, std::vector<uint8_t>& decodedData)
 	{
 		Dash::EResourceFormat format = Dash::ResourceFormatFromD3DFormat(metadata.format);
 
 		textureDescription = Dash::FTextureBufferDescription::Create2D(format, static_cast<uint32_t>(metadata.width), static_cast<uint32_t>(metadata.height), static_cast<uint32_t>(metadata.mipLevels));
 
-		decodedData.resize(image.GetPixelsSize());
-		memcpy_s(decodedData.data(), image.GetPixelsSize(), image.GetPixels(), image.GetPixelsSize());
+		decodedData.resize(scratchImage.GetPixelsSize());
+		memcpy_s(decodedData.data(), scratchImage.GetPixelsSize(), scratchImage.GetPixels(), scratchImage.GetPixelsSize());
 
-		subResource.pData = decodedData.data();
-		subResource.RowPitch = image.GetImages()->rowPitch;
-		subResource.SlicePitch = image.GetImages()->slicePitch;
+		for (size_t i = 0; i < metadata.mipLevels; i++)
+		{
+			const Image* image = scratchImage.GetImage(i, 0, 0);
+			
+			subResources.emplace_back(image->pixels, image->rowPitch, image->slicePitch);
+		}
 	}
 }

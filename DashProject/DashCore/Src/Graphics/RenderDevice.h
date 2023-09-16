@@ -307,6 +307,11 @@ namespace Dash
 		{
 			return CreateVertexBuffer(name, numElements, sizeof(VertexType), initData);
 		}
+		template<typename VertexType>
+		FGpuVertexBufferRef CreateVertexBuffer(const std::string& name, const std::vector<VertexType>& data)
+		{
+			return CreateVertexBuffer(name, data.size(), sizeof(VertexType), data.data());
+		}
 
 		FGpuIndexBufferRef CreateIndexBuffer(const std::string& name, uint32_t numElements, const void* initData, bool is32Bit = false);
 

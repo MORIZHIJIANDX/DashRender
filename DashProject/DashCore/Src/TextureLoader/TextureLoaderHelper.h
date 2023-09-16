@@ -1,14 +1,6 @@
 #include "DirectXTex/DirectXTex.h"
 #include "Graphics/ResourceDescription.h"
-
-namespace DirectX
-{
-	void InitTextureData(const TexMetadata& metadata,
-        ScratchImage& image,
-        Dash::FTextureBufferDescription& textureDescription,
-        D3D12_SUBRESOURCE_DATA& subResource,
-        std::vector<uint8_t>& decodedData);
-}
+#include "Graphics/SubResourceData.h"
 
 namespace Dash
 {
@@ -18,7 +10,7 @@ namespace Dash
 
 		std::string SourceTexturePath;
 		FTextureBufferDescription TextureDescription;
-		D3D12_SUBRESOURCE_DATA SubResource;
+		std::vector<FSubResourceData> SubResource;
 		std::vector<uint8_t> DecodedData;
 
 	private:
@@ -37,4 +29,10 @@ namespace Dash
 
 		int32_t RefCount = 0;
 	};
+
+	void InitTextureData(const DirectX::TexMetadata& metadata,
+		DirectX::ScratchImage& scratchImage,
+		FTextureBufferDescription& textureDescription,
+		std::vector<FSubResourceData>& subResources,
+		std::vector<uint8_t>& decodedData);
 }

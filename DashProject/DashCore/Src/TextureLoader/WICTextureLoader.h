@@ -1,7 +1,6 @@
 #pragma once
 
-#include <string>
-#include <vector>
+#include "Graphics/SubResourceData.h"
 #include "Graphics/ResourceDescription.h"
 
 namespace Dash
@@ -56,6 +55,6 @@ namespace Dash
         const std::string& fileName,
         EWIC_LOAD_FLAGS loadFlags,
         FTextureBufferDescription& textureDescription,
-        D3D12_SUBRESOURCE_DATA& subResource,
+        std::vector<FSubResourceData>& subResource,
         std::vector<uint8_t>& decodedData);
 }

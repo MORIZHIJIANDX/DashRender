@@ -32,7 +32,7 @@ namespace Dash
 		return loadFlag;
 	}
 
-	bool LoadWICTextureFromFile(const std::string& fileName, EWIC_LOAD_FLAGS loadFlags, FTextureBufferDescription& textureDescription, D3D12_SUBRESOURCE_DATA& subResource, std::vector<uint8_t>& decodedData)
+	bool LoadWICTextureFromFile(const std::string& fileName, EWIC_LOAD_FLAGS loadFlags, FTextureBufferDescription& textureDescription, std::vector<FSubResourceData>& subResource, std::vector<uint8_t>& decodedData)
 	{
 		std::wstring wFileName = FStringUtility::UTF8ToWideString(fileName);
 
