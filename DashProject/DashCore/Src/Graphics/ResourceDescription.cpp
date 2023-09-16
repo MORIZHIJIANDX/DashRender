@@ -2,9 +2,16 @@
 #include "ResourceDescription.h"
 #include "GraphicsCore.h"
 #include "RenderDevice.h"
+#include "DirectXTex/DirectXTex.h"
+#include "DX12Helper.h"
 
 namespace Dash
 {
+	void FResourceDescription::GetPitch(size_t& rowPitch, size_t slicePitch, size_t mipIndex) const
+	{
+		DX_CALL(DirectX::ComputePitch(mDescription.Format, mDescription.Width >> mipIndex, mDescription.Height >> mipIndex, rowPitch, slicePitch));
+	}
+
 	void FResourceDescription::QueryAllocationInfo()
 	{
 		if (mDescription.Width == 0)

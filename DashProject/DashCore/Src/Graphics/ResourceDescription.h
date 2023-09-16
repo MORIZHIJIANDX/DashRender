@@ -11,6 +11,7 @@ namespace Dash
 		uint32_t SubresourceCount() const { return mSubresourceCount; }
 		uint32_t ResourceAlignment() const { return mResourceAlignment; }
 		uint32_t ResourceSizeInBytes() const { return mResourceSizeInBytes; }
+		void GetPitch(size_t& rowPitch, size_t slicePitch, size_t mipIndex = 0) const;
 
 	protected:
 		void QueryAllocationInfo();
@@ -37,7 +38,7 @@ namespace Dash
 		uint32_t MsaaQuality = 1;
 
 		FResourceMagnitude ComputeMipSize(uint8_t mip) const;
-
+		
 	protected:
 		virtual void ResolveResourceDimensionData(bool allowUAV, bool allowRTV, bool allowDSV) override;
 		uint32_t ComputeNumMips() const;
