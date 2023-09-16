@@ -85,6 +85,9 @@ namespace Dash
 		TAABB<float, 3> TransformBoundingBox(const TAABB<float, 3>& b) const noexcept;
 		TScalarRay<float> TransformRay(const TScalarRay<float>& r) const noexcept;
 
+	public:
+		static const FTransform Identity;
+
 	private:
 		void UpdateMatrix() const;
 
@@ -94,14 +97,11 @@ namespace Dash
 		TScalarQuaternion<float> mRotation;
 		TScalarArray<float, 3> mPosition;
 
-		mutable TScalarMatrix<float, 4, 4> mMat;
-		mutable TScalarMatrix<float, 4, 4> mInverseMat;
+		mutable TScalarMatrix<float, 4, 4> mMatrix;
+		mutable TScalarMatrix<float, 4, 4> mInverseMatrix;
 
 		mutable bool mDirty;
 	};
-
-
-
 
 
 
@@ -172,8 +172,8 @@ namespace Dash
 		, mRotation()
 		, mPosition()
 		, mDirty(true)
-		, mMat()
-		, mInverseMat()
+		, mMatrix()
+		, mInverseMatrix()
 	{
 	}
 
@@ -182,8 +182,8 @@ namespace Dash
 		, mRotation(FIdentity{})
 		, mPosition(FIdentity{})
 		, mDirty(false)
-		, mMat(FIdentity{})
-		, mInverseMat(FIdentity{})
+		, mMatrix(FIdentity{})
+		, mInverseMatrix(FIdentity{})
 	{
 	}
 
@@ -208,27 +208,27 @@ namespace Dash
 	}
 
 	FORCEINLINE FTransform::FTransform(const TScalarMatrix<float, 4, 4>& mat) noexcept
-		: mMat(mat)
-		, mInverseMat(FMath::Inverse(mat))
+		: mMatrix(mat)
+		, mInverseMatrix(FMath::Inverse(mat))
 		, mDirty(false)
 	{
-		FMath::DecomposeAffineMatrix4x4(mScale, mRotation, mPosition, mMat);
+		FMath::DecomposeAffineMatrix4x4(mScale, mRotation, mPosition, mMatrix);
 	}
 
 	FORCEINLINE FTransform::FTransform(const TScalarMatrix<float, 4, 4>& mat, const TScalarMatrix<float, 4, 4>& inverseMat) noexcept
-		: mMat(mat)
-		, mInverseMat(inverseMat)
+		: mMatrix(mat)
+		, mInverseMatrix(inverseMat)
 		, mDirty(false)
 	{
-		FMath::DecomposeAffineMatrix4x4(mScale, mRotation, mPosition, mMat);
+		FMath::DecomposeAffineMatrix4x4(mScale, mRotation, mPosition, mMatrix);
 	}
 
 	FORCEINLINE FTransform::FTransform(const FTransform& t) noexcept
 		: mScale(t.mScale)
 		, mRotation(t.mRotation)
 		, mPosition(t.mPosition)
-		, mMat(t.mMat)
-		, mInverseMat(t.mInverseMat)
+		, mMatrix(t.mMatrix)
+		, mInverseMatrix(t.mInverseMatrix)
 		, mDirty(false)
 	{
 	}
@@ -238,8 +238,8 @@ namespace Dash
 		mScale = t.mScale;
 		mRotation = t.mRotation;
 		mPosition = t.mPosition;
-		mMat = t.mMat;
-		mInverseMat = t.mInverseMat;
+		mMatrix = t.mMatrix;
+		mInverseMatrix = t.mInverseMatrix;
 		mDirty = false;
 
 		return *this;
@@ -247,11 +247,11 @@ namespace Dash
 
 	FORCEINLINE FTransform& FTransform::operator*=(const FTransform& t) noexcept
 	{
-		mMat *= t.mMat;
-		mInverseMat = FMath::Inverse(mMat);
+		mMatrix *= t.mMatrix;
+		mInverseMatrix = FMath::Inverse(mMatrix);
 		mDirty = false;
 
-		FMath::DecomposeAffineMatrix4x4(mScale, mRotation, mPosition, mMat);
+		FMath::DecomposeAffineMatrix4x4(mScale, mRotation, mPosition, mMatrix);
 
 		return *this;
 	}
@@ -259,19 +259,19 @@ namespace Dash
 	FORCEINLINE FTransform FTransform::operator*(const FTransform& t) noexcept
 	{
 		return FTransform{
-			mMat * t.mMat,
-			t.mInverseMat * mInverseMat
+			mMatrix * t.mMatrix,
+			t.mInverseMatrix * mInverseMatrix
 		};
 	}
 
 	FORCEINLINE FTransform::operator const TScalarMatrix<float, 4, 4>& () const noexcept
 	{
-		return mMat;
+		return mMatrix;
 	}
 
 	FORCEINLINE FTransform::operator TScalarMatrix<float, 4, 4>& () noexcept
 	{
-		return mMat;
+		return mMatrix;
 	}
 
 	FORCEINLINE TScalarArray<float, 3> FTransform::GetScale() const noexcept
@@ -343,58 +343,58 @@ namespace Dash
 		TScalarArray<float, 3> right = FMath::Normalize(FMath::Cross(up, look));
 		TScalarArray<float, 3> newUp = FMath::Cross(look, right);
 
-		mMat.SetRow(0, right);
-		mMat.SetRow(1, newUp);
-		mMat.SetRow(2, look);
-		mMat.SetRow(3, eye);
+		mMatrix.SetRow(0, right);
+		mMatrix.SetRow(1, newUp);
+		mMatrix.SetRow(2, look);
+		mMatrix.SetRow(3, eye);
 
-		mInverseMat = FMath::Inverse(mMat);
+		mInverseMatrix = FMath::Inverse(mMatrix);
 
-		FMath::DecomposeAffineMatrix4x4(mScale, mRotation, mPosition, mMat);
+		FMath::DecomposeAffineMatrix4x4(mScale, mRotation, mPosition, mMatrix);
 
 		mDirty = false;
 	}
 
 	FORCEINLINE TScalarArray<float, 3> FTransform::GetForwardAxis() const noexcept
 	{
-		return mMat[2].XYZ;
+		return mMatrix[2].XYZ;
 	}
 
 	FORCEINLINE TScalarArray<float, 3> FTransform::GetUnitForwardAxis() const noexcept
 	{
-		return FMath::Normalize(mMat[2].XYZ);
+		return FMath::Normalize(mMatrix[2].XYZ);
 	}
 
 	FORCEINLINE TScalarArray<float, 3> FTransform::GetRightAxis() const noexcept
 	{
-		return mMat[0].XYZ;
+		return mMatrix[0].XYZ;
 	}
 
 	FORCEINLINE TScalarArray<float, 3> FTransform::GetUnitRightAxis() const noexcept
 	{
-		return FMath::Normalize(mMat[0].XYZ);
+		return FMath::Normalize(mMatrix[0].XYZ);
 	}
 
 	FORCEINLINE TScalarArray<float, 3> FTransform::GetUpAxis() const noexcept
 	{
-		return mMat[1].XYZ;
+		return mMatrix[1].XYZ;
 	}
 
 	FORCEINLINE TScalarArray<float, 3> FTransform::GetUnitUpAxis() const noexcept
 	{
-		return FMath::Normalize(mMat[1].XYZ);
+		return FMath::Normalize(mMatrix[1].XYZ);
 	}
 
 	FORCEINLINE TScalarMatrix<float, 4, 4> FTransform::GetMatrix() const noexcept
 	{
 		UpdateMatrix();
-		return mMat;
+		return mMatrix;
 	}
 
 	FORCEINLINE TScalarMatrix<float, 4, 4> FTransform::GetInverseMatrix() const noexcept
 	{
 		UpdateMatrix();
-		return mInverseMat;
+		return mInverseMatrix;
 	}
 
 	FORCEINLINE void FTransform::Scale(const TScalarArray<float, 3>& r) noexcept
@@ -481,9 +481,9 @@ namespace Dash
 	FORCEINLINE TScalarArray<float, 3> FTransform::TransformVector(const TScalarArray<float, 3>& v) const noexcept
 	{
 		return TScalarArray<float, 3>{
-			FMath::Dot(v, FMath::Column(mMat, 0).XYZ),
-			FMath::Dot(v, FMath::Column(mMat, 1).XYZ),
-			FMath::Dot(v, FMath::Column(mMat, 2).XYZ)
+			FMath::Dot(v, FMath::Column(mMatrix, 0).XYZ),
+			FMath::Dot(v, FMath::Column(mMatrix, 1).XYZ),
+			FMath::Dot(v, FMath::Column(mMatrix, 2).XYZ)
 		};
 	}
 
@@ -492,12 +492,12 @@ namespace Dash
 		TScalarArray<float, 4> hp{ p, float{1} };
 
 		TScalarArray<float, 3> result{
-			FMath::Dot(hp, FMath::Column(mMat, 0)),
-			FMath::Dot(hp, FMath::Column(mMat, 1)),
-			FMath::Dot(hp, FMath::Column(mMat, 2))
+			FMath::Dot(hp, FMath::Column(mMatrix, 0)),
+			FMath::Dot(hp, FMath::Column(mMatrix, 1)),
+			FMath::Dot(hp, FMath::Column(mMatrix, 2))
 		};
 
-		float w = FMath::Dot(hp, FMath::Column(mMat, 3));
+		float w = FMath::Dot(hp, FMath::Column(mMatrix, 3));
 
 		ASSERT(!FMath::IsZero(w));
 
@@ -510,25 +510,25 @@ namespace Dash
 	FORCEINLINE TScalarArray<float, 3> FTransform::TransformNormal(const TScalarArray<float, 3>& n) const noexcept
 	{
 		return TScalarArray<float, 3>{
-			FMath::Dot(n, FMath::Row(mInverseMat, 0).XYZ),
-			FMath::Dot(n, FMath::Row(mInverseMat, 1).XYZ),
-			FMath::Dot(n, FMath::Row(mInverseMat, 2).XYZ)
+			FMath::Dot(n, FMath::Row(mInverseMatrix, 0).XYZ),
+			FMath::Dot(n, FMath::Row(mInverseMatrix, 1).XYZ),
+			FMath::Dot(n, FMath::Row(mInverseMatrix, 2).XYZ)
 		};
 	}
 
 	FORCEINLINE TScalarArray<float, 4> FTransform::TransformVector(const TScalarArray<float, 4>& v) const noexcept
 	{
 		return TScalarArray<float, 4>{
-			FMath::Dot(v.XYZ, FMath::Column(mMat, 0).XYZ),
-			FMath::Dot(v.XYZ, FMath::Column(mMat, 1).XYZ),
-			FMath::Dot(v.XYZ, FMath::Column(mMat, 2).XYZ),
+			FMath::Dot(v.XYZ, FMath::Column(mMatrix, 0).XYZ),
+			FMath::Dot(v.XYZ, FMath::Column(mMatrix, 1).XYZ),
+			FMath::Dot(v.XYZ, FMath::Column(mMatrix, 2).XYZ),
 			float{}
 		};
 	}
 
 	FORCEINLINE TScalarArray<float, 4> FTransform::TransformPoint(const TScalarArray<float, 4>& p) const noexcept
 	{
-		TScalarArray<float, 4> hp = FMath::Mul(p, mMat);
+		TScalarArray<float, 4> hp = FMath::Mul(p, mMatrix);
 
 		ASSERT(!FMath::IsZero(hp.W));
 
@@ -541,9 +541,9 @@ namespace Dash
 	FORCEINLINE TScalarArray<float, 4> FTransform::TransformNormal(const TScalarArray<float, 4>& n) const noexcept
 	{
 		return TScalarArray<float, 4>{
-			FMath::Dot(n.XYZ, FMath::Row(mInverseMat, 0).XYZ),
-			FMath::Dot(n.XYZ, FMath::Row(mInverseMat, 1).XYZ),
-			FMath::Dot(n.XYZ, FMath::Row(mInverseMat, 2).XYZ),
+			FMath::Dot(n.XYZ, FMath::Row(mInverseMatrix, 0).XYZ),
+			FMath::Dot(n.XYZ, FMath::Row(mInverseMatrix, 1).XYZ),
+			FMath::Dot(n.XYZ, FMath::Row(mInverseMatrix, 2).XYZ),
 			float{}
 		};
 	}
@@ -571,8 +571,8 @@ namespace Dash
 	{
 		if (mDirty)
 		{
-			mMat = FMath::ScaleMatrix4x4<float>(mScale) * FMath::RotateMatrix4x4<float>(mRotation) * FMath::TranslateMatrix4x4<float>(mPosition);
-			mInverseMat = FMath::Inverse(mMat);
+			mMatrix = FMath::ScaleMatrix4x4<float>(mScale) * FMath::RotateMatrix4x4<float>(mRotation) * FMath::TranslateMatrix4x4<float>(mPosition);
+			mInverseMatrix = FMath::Inverse(mMatrix);
 			mDirty = false;
 		}
 	}
