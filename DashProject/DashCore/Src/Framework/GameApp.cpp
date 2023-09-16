@@ -9,9 +9,8 @@
 #include "imgui/backends/imgui_impl_win32.h"
 #include "imgui/backends/imgui_impl_dx12.h"
 
-#include "SceneRenderLayer.h"
-#include "UIRenderLayer.h"
-
+#include "Framework/RenderLayer/SceneRenderLayer.h"
+#include "Framework/RenderLayer/UIRenderLayer.h"
 
 namespace Dash
 {

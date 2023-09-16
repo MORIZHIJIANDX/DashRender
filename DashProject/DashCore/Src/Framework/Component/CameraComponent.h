@@ -1,23 +1,26 @@
 #pragma once
 
-//#include "Viewport.h"
-
 #include "Graphics/Viewport.h"
+#include "Component.h"
 
 namespace Dash
 {
-	class FCamera
+	enum class ECameraType
+	{
+		Orthographic,
+		Perspective,
+		FirstPerson,
+	};
+
+	class TCameraComponent : public TComponent
 	{
 	public:
-		FCamera(Scalar nearZ, Scalar farZ, const FViewport& vp = FViewport{});
-		virtual ~FCamera();
+		TCameraComponent(const std::string& name, TActor* owner, Scalar nearZ = 1.0f, Scalar farZ = 1000.0f, const FViewport& vp = FViewport{});
+		virtual ~TCameraComponent();
 
 		FMatrix4x4 GetViewMatrix() const;
 		FMatrix4x4 GetProjectionMatrix() const;
 		FMatrix4x4 GetViewProjectionMatrix() const;
-
-		FVector3f GetPosition() const;
-		FQuaternion GetRotation() const;
 
 		FVector3f GetForward() const;
 		FVector3f GetRight() const;
@@ -33,10 +36,6 @@ namespace Dash
 
 		void SetWorldMatrix(const FMatrix4x4& mat);
 		void SetProjectionMatrix(const FMatrix4x4& mat);
-
-		void SetPosition(const FVector3f& p);
-		void SetRotation(const FQuaternion& q);
-		void SetRotation(Scalar pitch, Scalar yaw, Scalar roll);
 
 		void SetFarClip(Scalar farZ);
 		void SetNearClip(Scalar nearZ);
@@ -60,19 +59,17 @@ namespace Dash
 		// z axis
 		void AddRoll(Scalar angle);
 
-		virtual void Zoom(Scalar factor = Scalar{1.0f}) = 0;
+		virtual void Zoom(Scalar factor = Scalar{ 1.0f }) = 0;
 		void ZoomIn() { Zoom(Scalar{ 0.9f }); }
 		void ZoomOut() { Zoom(Scalar{ 1.1f }); }
 
 	protected:
 
-		void MakeWorldMatrixDirty() const { mWorldMatrixDirty = true; }
 		void MakeProjectionMatrixDirty() const { mProjectionMatrixDirty = true; }
 
-		void UpdateViewProjectionMatrix() const 
-		{ 
-			mViewProjectionMatrix = mTransform.GetInverseMatrix() * mProjectionMatrix; 
-			mWorldMatrixDirty = false;
+		void UpdateViewProjectionMatrix() const
+		{
+			mViewProjectionMatrix = mComponentToWorld.GetInverseMatrix() * mProjectionMatrix;
 		}
 
 		void UpdateProjectionMatrix() const
@@ -86,24 +83,21 @@ namespace Dash
 		mutable FMatrix4x4 mProjectionMatrix;
 		mutable FMatrix4x4 mViewProjectionMatrix;
 
-		FTransform mTransform;
-
 		Scalar mNear;
 		Scalar mFar;
 
 		FViewport mViewPort;
 
-		mutable bool mWorldMatrixDirty;
 		mutable bool mProjectionMatrixDirty;
 	};
 
 
-	class FOrthographicCamera : public FCamera
+	class TOrthographicCameraComponent : public TCameraComponent
 	{
 	public:
-		FOrthographicCamera();
-		FOrthographicCamera(Scalar minX, Scalar minY, Scalar maxX, Scalar maxY, Scalar nearZ, Scalar farZ, const FViewport& vp = FViewport{});
-		virtual ~FOrthographicCamera();
+		TOrthographicCameraComponent(const std::string& name, TActor* owner);
+		TOrthographicCameraComponent(const std::string& name, TActor* owner, Scalar minX, Scalar minY, Scalar maxX, Scalar maxY, Scalar nearZ, Scalar farZ, const FViewport& vp = FViewport{});
+		virtual ~TOrthographicCameraComponent();
 
 		Scalar GetMinX() const { return mXMin; }
 		Scalar GetMinY() const { return mYMin; }
@@ -132,12 +126,12 @@ namespace Dash
 		Scalar mYMax;
 	};
 
-	class FPerspectiveCamera : public FCamera
+	class TPerspectiveCameraComponent : public TCameraComponent
 	{
 	public:
-		FPerspectiveCamera();
-		FPerspectiveCamera(Scalar aspect, Scalar fov, Scalar nearZ, Scalar farZ, const FViewport& vp = FViewport{});
-		virtual ~FPerspectiveCamera();
+		TPerspectiveCameraComponent(const std::string& name, TActor* owner);
+		TPerspectiveCameraComponent(const std::string& name, TActor* owner, Scalar aspect, Scalar fov, Scalar nearZ, Scalar farZ, const FViewport& vp = FViewport{});
+		virtual ~TPerspectiveCameraComponent();
 
 		Scalar GetFieldOfView() const { return mFov; }
 		Scalar GetAspectRatio() const { return mAspect; }
@@ -159,11 +153,11 @@ namespace Dash
 		Scalar mAspect;
 	};
 
-	class FirstPersonCamera : public FPerspectiveCamera
+	class TFirstPersonCameraComponent : public TPerspectiveCameraComponent
 	{
 	public:
-		FirstPersonCamera(Scalar aspect = 16.0f / 9.0f, Scalar fov = TScalarTraits<Scalar>::Pi() * Scalar {0.25}, Scalar nearZ = 0.1f, Scalar farZ = 100.0f, const FViewport& vp = FViewport{});
-		
+		TFirstPersonCameraComponent(const std::string& name, TActor* owner, Scalar aspect = 16.0f / 9.0f, Scalar fov = TScalarTraits<Scalar>::Pi() * Scalar { 0.25 }, Scalar nearZ = 0.1f, Scalar farZ = 100.0f, const FViewport& vp = FViewport{});
+
 		float XAxisRotation() const { return mXRot; }
 		float YAxisRotation() const { return mYRot; }
 

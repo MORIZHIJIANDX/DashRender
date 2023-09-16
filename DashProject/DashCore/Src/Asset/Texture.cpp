@@ -16,4 +16,15 @@ namespace Dash
     {
         FTextureLoaderManager::Get().UnloadTexture(mTexturePath);
     }
+
+    FTextureRef FTexture::MakeTexture(const std::string& texturePath)
+    {
+        if (!mTextureResourceMap.contains(texturePath) && !mTextureResourceMap[texturePath].lock())
+        {
+            FTextureRef newTexture = std::make_shared<FTexture>(texturePath);
+            mTextureResourceMap.emplace(texturePath, newTexture);
+        }
+
+        return mTextureResourceMap[texturePath].lock();
+    }
 }

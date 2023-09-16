@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RenderLayer.h"
-#include "Framework/Camera.h"
+#include "Framework/Actor/CameraActor.h"
 
 namespace Dash
 {
@@ -29,7 +29,8 @@ namespace Dash
 		void UpdateCamera(Scalar translate);
 
 	private:
-		std::shared_ptr<FPerspectiveCamera> mCamera;
+		std::shared_ptr<TCameraActor> mCameraActor;
+		TPerspectiveCameraComponent* mPerspectiveCamera;
 
 		FMouseWheelEventDelegate OnMouseWheelDownDelegate;
 		FMouseWheelEventDelegate OnMouseWheelUpDelegate;

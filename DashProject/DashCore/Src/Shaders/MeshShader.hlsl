@@ -28,7 +28,7 @@ PS_INPUT VS_Main(VS_INPUT input)
 
 float4 PS_Main(PS_INPUT input) : SV_Target
 {
-    //float4 out_col = float4(input.uv, 0.0f, 0.0f);
-    float4 out_col = float4(input.normal, 0.0f);
+    float4 out_col = float4(input.uv, 0.0f, 0.0f);
+    //float4 out_col = float4(input.normal, 0.0f);
     return out_col;
 }

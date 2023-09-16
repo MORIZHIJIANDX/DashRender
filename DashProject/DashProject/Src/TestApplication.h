@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Framework/GameApp.h"
-#include "Framework/Camera.h"
 
 namespace Dash
 {

@@ -9,7 +9,7 @@
 #include "Utility/Keyboard.h"
 #include "Utility/Mouse.h"
 #include "MeshLoader/StaticMeshLoader.h"
-#include "GameApp.h"
+#include "Framework/GameApp.h"
 #include "imgui/imgui.h"
 
 namespace Dash
@@ -35,9 +35,22 @@ namespace Dash
 		VertexCount = meshData.numVertexes;
 		if (VertexCount > 0)
 		{
+			std::vector<FVector2f> extendTexcoord;
+			extendTexcoord.resize(VertexCount * 2);
+			for (uint32_t i = 0; i < VertexCount; i++)
+			{
+				//extendTexcoord[i*2] = meshData.UVData[i];
+				//extendTexcoord[i*2+1] = FVector2f{1.0f, 1.0f};
+
+				extendTexcoord[i * 2] = FVector2f{ 1.0f, 1.0f };
+				extendTexcoord[i * 2 + 1] = meshData.UVData[i];
+			}
+
 			PositionVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshPositionVertexBuffer", VertexCount, sizeof(meshData.PositionData[0]), meshData.PositionData.data());
 			NormalVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshNormalVertexBuffer", VertexCount, sizeof(meshData.NormalData[0]), meshData.NormalData.data());
-			UVVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshUVVertexBuffer", VertexCount, sizeof(meshData.UVData[0]), meshData.UVData.data());
+			//UVVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshUVVertexBuffer", VertexCount, sizeof(meshData.UVData[0]), meshData.UVData.data());
+
+			UVVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshUVVertexBuffer", VertexCount, sizeof(FVector2f) * 2, extendTexcoord.data());
 
 			IndexBuffer = FGraphicsCore::Device->CreateIndexBuffer("MeshIndexBuffer", VertexCount, meshData.indices.data(), true);
 		}
@@ -108,9 +121,10 @@ namespace Dash
 		float fov = 45.0f;
 		float aspect = IGameApp::GetInstance()->GetWindowWidth() / (float)IGameApp::GetInstance()->GetWindowHeight();
 
-		mCamera = std::make_shared<FPerspectiveCamera>();
-		mCamera->SetCameraParams(aspect, fov, 0.1f, 100.0f);
-		mCamera->SetPosition(FVector3f{ 0.0f, 0.0f, -2.0f });
+		mCameraActor = std::make_shared<TCameraActor>("PerspectiveCameraActor", ECameraType::Perspective);
+		mPerspectiveCamera = dynamic_cast<TPerspectiveCameraComponent*>(mCameraActor->GetCameraComponent());
+		mPerspectiveCamera->SetCameraParams(aspect, fov, 0.1f, 100.0f);
+		mPerspectiveCamera->SetWorldPosition(FVector3f{ 0.0f, 0.0f, -2.0f });
 
 		OnMouseWheelDownDelegate = FMouseWheelEventDelegate::Create<FSceneRenderLayer, &FSceneRenderLayer::OnMouseWheelDown>(this);
 		OnMouseWheelUpDelegate = FMouseWheelEventDelegate::Create<FSceneRenderLayer, &FSceneRenderLayer::OnMouseWheelUp>(this);
@@ -169,7 +183,7 @@ namespace Dash
 
 		UpdateCamera(translate);
 		
-		MeshConstantBuffer.ModelViewProjectionMatrix = mCamera->GetViewProjectionMatrix();
+		MeshConstantBuffer.ModelViewProjectionMatrix = mPerspectiveCamera->GetViewProjectionMatrix();
 	}
 
 	void FSceneRenderLayer::OnRender(const FRenderEventArgs& e)
@@ -189,17 +203,17 @@ namespace Dash
 	{
 		float aspect = e.Width / (float)e.Height;
 		float fov = 45.0f;
-		mCamera->SetCameraParams(aspect, fov, 0.1f, 100.0f);
+		mPerspectiveCamera->SetCameraParams(aspect, fov, 0.1f, 100.0f);
 	}
 
 	void FSceneRenderLayer::OnMouseWheelDown(FMouseWheelEventArgs& e)
 	{
-		mCamera->TranslateForward(0.001f * e.WheelDelta);
+		mPerspectiveCamera->TranslateForward(0.001f * e.WheelDelta);
 	}
 
 	void FSceneRenderLayer::OnMouseWheelUp(FMouseWheelEventArgs& e)
 	{
-		mCamera->TranslateForward(0.001f * e.WheelDelta);
+		mPerspectiveCamera->TranslateForward(0.001f * e.WheelDelta);
 	}
 
 	void FSceneRenderLayer::OnMouseMove(FMouseMotionEventArgs& e)
@@ -207,8 +221,8 @@ namespace Dash
 		float RotationSpeed = 0.1f;
 		if (FMouse::Get().GetButtonState(EMouseButton::Right).Pressed)
 		{
-			mCamera->AddPitch(e.mRelY * RotationSpeed);
-			mCamera->AddYaw(e.mRelX * RotationSpeed);
+			mPerspectiveCamera->AddPitch(e.mRelY * RotationSpeed);
+			mPerspectiveCamera->AddYaw(e.mRelX * RotationSpeed);
 		}
 	}
 
@@ -216,22 +230,22 @@ namespace Dash
 	{
 		if (FKeyboard::Get().IsKeyPressed(EKeyCode::A))
 		{
-			mCamera->TranslateLeft(translate);
+			mPerspectiveCamera->TranslateLeft(translate);
 		}
 
 		if (FKeyboard::Get().IsKeyPressed(EKeyCode::D))
 		{
-			mCamera->TranslateRight(translate);
+			mPerspectiveCamera->TranslateRight(translate);
 		}
 
 		if (FKeyboard::Get().IsKeyPressed(EKeyCode::W))
 		{
-			mCamera->TranslateForward(translate);
+			mPerspectiveCamera->TranslateForward(translate);
 		}
 
 		if (FKeyboard::Get().IsKeyPressed(EKeyCode::S))
 		{
-			mCamera->TranslateBack(translate);
+			mPerspectiveCamera->TranslateBack(translate);
 		}
 	}
 }
