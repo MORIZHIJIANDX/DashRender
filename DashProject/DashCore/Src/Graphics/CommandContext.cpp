@@ -806,7 +806,7 @@ namespace Dash
 		SetVertexBuffers(slot, 1, &vertexBuffer);
 	}
 
-	void FGraphicsCommandContextBase::SetVertexBuffers(UINT startSlot, UINT count, FGpuVertexBufferRef* vertexBuffer)
+	void FGraphicsCommandContextBase::SetVertexBuffers(UINT startSlot, UINT count, const FGpuVertexBufferRef* vertexBuffer)
 	{
 		std::vector<D3D12_VERTEX_BUFFER_VIEW> vetexBufferViews;
 		for (UINT index = 0; index < count; ++index)

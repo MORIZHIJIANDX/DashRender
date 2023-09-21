@@ -131,8 +131,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>dxcompiler.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>ThirdParty\dxc\lib\x64;ThirdParty\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxcompiler.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>ThirdParty\dxc\lib\x64;ThirdParty\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PreBuildEvent>
       <Command>powershell -ExecutionPolicy Bypass -File $(SolutionDir)/Vendor/GetDXC/GetDXC.ps1 $(SolutionDir)/$(ProjectName)/ThirdParty/dxc</Command>
@@ -166,15 +166,17 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>dxcompiler.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>ThirdParty\dxc\lib\x64;ThirdParty\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxcompiler.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>ThirdParty\dxc\lib\x64;ThirdParty\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PreBuildEvent>
       <Command>powershell -ExecutionPolicy Bypass -File $(SolutionDir)/Vendor/GetDXC/GetDXC.ps1 $(SolutionDir)/$(ProjectName)/ThirdParty/dxc</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Asset\Material.h" />
     <ClInclude Include="Src\Asset\StaticMesh.h" />
+    <ClInclude Include="Src\Asset\Texture.h" />
     <ClInclude Include="Src\Consolid\Consolid.h" />
     <ClInclude Include="Src\Consolid\DashWinAPI.h" />
     <ClInclude Include="Src\DesignPatterns\Delegate.h" />
@@ -182,8 +184,17 @@
     <ClInclude Include="Src\DesignPatterns\MulticastDelegate.h" />
     <ClInclude Include="Src\DesignPatterns\Singleton.h" />
     <ClInclude Include="Src\EntryPoint.h" />
+    <ClInclude Include="Src\Framework\Actor\Actor.h" />
+    <ClInclude Include="Src\Framework\Actor\CameraActor.h" />
+    <ClInclude Include="Src\Framework\Actor\StaticMeshActor.h" />
+    <ClInclude Include="Src\Framework\Component\CameraComponent.h" />
+    <ClInclude Include="Src\Framework\Component\Component.h" />
+    <ClInclude Include="Src\Framework\Component\StaticMeshComponent.h" />
+    <ClInclude Include="Src\Framework\GameApp.h" />
+    <ClInclude Include="Src\Framework\RenderLayer\RenderLayer.h" />
+    <ClInclude Include="Src\Framework\RenderLayer\SceneRenderLayer.h" />
+    <ClInclude Include="Src\Framework\RenderLayer\UIRenderLayer.h" />
     <ClInclude Include="Src\Graphics\BlendState.h" />
-    <ClInclude Include="Src\Graphics\Camera.h" />
     <ClInclude Include="Src\Graphics\ColorBuffer.h" />
     <ClInclude Include="Src\Graphics\CommandContext.h" />
     <ClInclude Include="Src\Graphics\CommandQueue.h" />
@@ -194,7 +205,6 @@
     <ClInclude Include="Src\Graphics\DepthBuffer.h" />
     <ClInclude Include="Src\Graphics\DepthStencilState.h" />
     <ClInclude Include="Src\Graphics\DynamicDescriptorHeap.h" />
-    <ClInclude Include="Src\Graphics\GameApp.h" />
     <ClInclude Include="Src\Graphics\GpuBuffer.h" />
     <ClInclude Include="Src\Graphics\GpuLinearAllocator.h" />
     <ClInclude Include="Src\Graphics\GpuResource.h" />
@@ -218,6 +228,7 @@
     <ClInclude Include="Src\Graphics\ShaderPass.h" />
     <ClInclude Include="Src\Graphics\ShaderResource.h" />
     <ClInclude Include="Src\Graphics\ShaderTechnique.h" />
+    <ClInclude Include="Src\Graphics\SubResourceData.h" />
     <ClInclude Include="Src\Graphics\SwapChain.h" />
     <ClInclude Include="Src\Graphics\TextureBuffer.h" />
     <ClInclude Include="Src\Graphics\Viewport.h" />
@@ -246,13 +257,15 @@
     <ClInclude Include="Src\Math\Vector3.h" />
     <ClInclude Include="Src\Math\Vector4.h" />
     <ClInclude Include="Src\Math\Vector4_SSE.h" />
-    <ClInclude Include="Src\ModelLoader\MeshLoaderHelper.h" />
-    <ClInclude Include="Src\ModelLoader\StaticMeshLoader.h" />
+    <ClInclude Include="Src\MeshLoader\MeshLoaderHelper.h" />
+    <ClInclude Include="Src\MeshLoader\MeshLoaderManager.h" />
+    <ClInclude Include="Src\MeshLoader\StaticMeshLoader.h" />
     <ClInclude Include="Src\PCH\PCH.h" />
     <ClInclude Include="Src\TextureLoader\DDSTextureLoader.h" />
     <ClInclude Include="Src\TextureLoader\HDRTextureLoader.h" />
     <ClInclude Include="Src\TextureLoader\TGATextureLoader.h" />
     <ClInclude Include="Src\TextureLoader\TextureLoaderHelper.h" />
+    <ClInclude Include="Src\TextureLoader\TextureLoaderManager.h" />
     <ClInclude Include="Src\TextureLoader\WICTextureLoader.h" />
     <ClInclude Include="Src\Utility\Assert.h" />
     <ClInclude Include="Src\Utility\BitwiseEnum.h" />
@@ -366,10 +379,21 @@
     <ClInclude Include="ThirdParty\loguru\loguru.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Asset\Material.cpp" />
     <ClCompile Include="Src\Asset\StaticMesh.cpp" />
+    <ClCompile Include="Src\Asset\Texture.cpp" />
     <ClCompile Include="Src\EntryPoint.cpp" />
+    <ClCompile Include="Src\Framework\Actor\Actor.cpp" />
+    <ClCompile Include="Src\Framework\Actor\CameraActor.cpp" />
+    <ClCompile Include="Src\Framework\Actor\StaticMeshActor.cpp" />
+    <ClCompile Include="Src\Framework\Component\CameraComponent.cpp" />
+    <ClCompile Include="Src\Framework\Component\Component.cpp" />
+    <ClCompile Include="Src\Framework\Component\StaticMeshComponent.cpp" />
+    <ClCompile Include="Src\Framework\GameApp.cpp" />
+    <ClCompile Include="Src\Framework\RenderLayer\RenderLayer.cpp" />
+    <ClCompile Include="Src\Framework\RenderLayer\SceneRenderLayer.cpp" />
+    <ClCompile Include="Src\Framework\RenderLayer\UIRenderLayer.cpp" />
     <ClCompile Include="Src\Graphics\BlendState.cpp" />
-    <ClCompile Include="Src\Graphics\Camera.cpp" />
     <ClCompile Include="Src\Graphics\ColorBuffer.cpp" />
     <ClCompile Include="Src\Graphics\CommandContext.cpp" />
     <ClCompile Include="Src\Graphics\CommandQueue.cpp" />
@@ -380,7 +404,6 @@
     <ClCompile Include="Src\Graphics\DepthBuffer.cpp" />
     <ClCompile Include="Src\Graphics\DepthStencilState.cpp" />
     <ClCompile Include="Src\Graphics\DynamicDescriptorHeap.cpp" />
-    <ClCompile Include="Src\Graphics\GameApp.cpp" />
     <ClCompile Include="Src\Graphics\GpuBuffer.cpp" />
     <ClCompile Include="Src\Graphics\GpuLinearAllocator.cpp" />
     <ClCompile Include="Src\Graphics\GpuResource.cpp" />
@@ -403,11 +426,14 @@
     <ClCompile Include="Src\Graphics\ShaderPass.cpp" />
     <ClCompile Include="Src\Graphics\ShaderResource.cpp" />
     <ClCompile Include="Src\Graphics\ShaderTechnique.cpp" />
+    <ClCompile Include="Src\Graphics\SubResourceData.cpp" />
     <ClCompile Include="Src\Graphics\SwapChain.cpp" />
     <ClCompile Include="Src\Graphics\TextureBuffer.cpp" />
     <ClCompile Include="Src\Math\Color.cpp" />
-    <ClCompile Include="Src\ModelLoader\MeshLoaderHelper.cpp" />
-    <ClCompile Include="Src\ModelLoader\StaticMeshLoader.cpp" />
+    <ClCompile Include="Src\Math\MathType.cpp" />
+    <ClCompile Include="Src\MeshLoader\MeshLoaderHelper.cpp" />
+    <ClCompile Include="Src\MeshLoader\MeshLoaderManager.cpp" />
+    <ClCompile Include="Src\MeshLoader\StaticMeshLoader.cpp" />
     <ClCompile Include="Src\PCH\PCH.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -415,6 +441,7 @@
     <ClCompile Include="Src\TextureLoader\HDRTextureLoader.cpp" />
     <ClCompile Include="Src\TextureLoader\TGATextureLoader.cpp" />
     <ClCompile Include="Src\TextureLoader\TextureLoaderHelper.cpp" />
+    <ClCompile Include="Src\TextureLoader\TextureLoaderManager.cpp" />
     <ClCompile Include="Src\TextureLoader\WICTextureLoader.cpp" />
     <ClCompile Include="Src\Utility\Assert.cpp" />
     <ClCompile Include="Src\Utility\FileUtility.cpp" />

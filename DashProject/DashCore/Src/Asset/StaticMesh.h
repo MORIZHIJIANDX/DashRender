@@ -23,15 +23,22 @@ namespace Dash
 
 		const FGpuVertexBufferRef& GetPositionBuffer() const { return mPostionBuffer; }
 		const FGpuVertexBufferRef& GetNormalBuffer() const { return mNormalBuffer; }
+		const FGpuVertexBufferRef& GetTangentBuffer() const { return mTangentBuffer; }
 		const FGpuVertexBufferRef& GetVertexColorBuffer() const { return mVertexColorBuffer; }
-		const FGpuVertexBufferRef& GetTexcoordBuffer() const { return mTexcoordBuffer; }
+		const FGpuVertexBufferRef& GetTexCoordBuffer() const { return mTexCoordBuffer; }
+
+		const FGpuIndexBufferRef& GetIndexBuffer() const { return mIndexBuffer; }
+
+		const std::vector<FMeshSectionData>& GetMeshSections() const { return mMeshSectionData; }
 
 	private:
 		FGpuVertexBufferRef mPostionBuffer;
 		FGpuVertexBufferRef mNormalBuffer;
 		FGpuVertexBufferRef mTangentBuffer;
 		FGpuVertexBufferRef mVertexColorBuffer;
-		FGpuVertexBufferRef mTexcoordBuffer;
+		FGpuVertexBufferRef mTexCoordBuffer;
+
+		FGpuIndexBufferRef mIndexBuffer;
 
 		std::map<std::string, FMaterialRef> mDefaultMaterials;
 		std::vector<FMeshSectionData> mMeshSectionData;

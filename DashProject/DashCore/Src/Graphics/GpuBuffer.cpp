@@ -51,6 +51,7 @@ namespace Dash
 
 		CreateViews();
 
+		SetName(name);
 		SetD3D12DebugName(mResource.Get(), name.c_str());
 	}
 

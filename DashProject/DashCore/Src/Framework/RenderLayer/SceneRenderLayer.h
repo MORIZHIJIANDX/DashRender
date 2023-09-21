@@ -2,6 +2,7 @@
 
 #include "RenderLayer.h"
 #include "Framework/Actor/CameraActor.h"
+#include "Framework/Actor/StaticMeshActor.h"
 
 namespace Dash
 {
@@ -30,6 +31,7 @@ namespace Dash
 
 	private:
 		std::shared_ptr<TCameraActor> mCameraActor;
+		std::shared_ptr<TStaticMeshActor> mStaticMeshActor;
 		TPerspectiveCameraComponent* mPerspectiveCamera;
 
 		FMouseWheelEventDelegate OnMouseWheelDownDelegate;

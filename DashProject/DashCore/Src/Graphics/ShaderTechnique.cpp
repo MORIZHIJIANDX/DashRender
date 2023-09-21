@@ -19,9 +19,9 @@ namespace Dash
         return shaderPassRef;
     }
 
-    int32_t FShaderTechnique::GetNumPasses() const
+    uint32_t FShaderTechnique::GetNumPasses() const
     {
-        return static_cast<int32_t>(mShaderPasses.size());
+        return static_cast<uint32_t>(mShaderPasses.size());
     }
 
     const FShaderPassRef& FShaderTechnique::GetShaderPass(uint32_t index) const

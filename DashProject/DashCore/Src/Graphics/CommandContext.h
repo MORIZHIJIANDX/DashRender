@@ -210,7 +210,7 @@ namespace Dash
 
 		void SetIndexBuffer(FGpuIndexBufferRef indexBuffer);
 		void SetVertexBuffer(UINT slot, FGpuVertexBufferRef vertexBuffer);
-		void SetVertexBuffers(UINT startSlot, UINT count, FGpuVertexBufferRef* vertexBuffer);
+		void SetVertexBuffers(UINT startSlot, UINT count, const FGpuVertexBufferRef* vertexBuffer);
 
 		void SetDynamicIndexBuffer(size_t indexCount, const uint16_t* data);
 		void SetDynamicVertexBuffer(UINT slot, size_t vertexCount, size_t vertexStride, const void* data);

@@ -1,9 +1,14 @@
 #include "PCH.h"
 #include "Material.h"
+#include "Utility/StringUtility.h"
 
 namespace Dash
 {
+	std::map<std::string, std::weak_ptr<FMaterial>> FMaterial::mMaterialResourceMap;
+
 	FMaterial::FMaterial(const std::string& name, FShaderTechniqueRef shaderTechnique)
+		: mName(name)
+		, mShaderTechnique(shaderTechnique)
 	{
 		const std::vector<FShaderPassRef>& shaderPass = shaderTechnique->GetPasses();
 		for (auto& pass : shaderPass)
@@ -15,7 +20,12 @@ namespace Dash
 			const std::vector<FShaderParameter>& cbvParameters = pass->GetCBVParameters();
 			for (auto& parameter : cbvParameters)
 			{
-				PassParameter.ConstantBufferMap[parameter.Name].resize(parameter.Size);
+				if (FStringUtility::Contains(parameter.Name, "FrameConstantBuffer"))
+				{
+					continue;
+				}
+
+				PassParameter.ConstantBufferMap[parameter.Name] = std::make_shared<std::vector<uint8_t>>(parameter.Size);
 
 				for (size_t variableIndex = 0; variableIndex < parameter.ConstantBufferVariables.size(); variableIndex++)
 				{
@@ -66,13 +76,19 @@ namespace Dash
 
 	FMaterialRef FMaterial::MakeMaterial(const std::string& name, FShaderTechniqueRef shaderTechnique)
 	{
-		if (!mMaterialResourceMap.contains(name) && !mMaterialResourceMap[name].lock())
+		FMaterialRef material = nullptr;
+
+		if (!mMaterialResourceMap.contains(name) || !mMaterialResourceMap[name].lock())
 		{
-			FMaterialRef newTexture = std::make_shared<FMaterial>(name, shaderTechnique);
-			mMaterialResourceMap.emplace(name, newTexture);
+			material = std::make_shared<FMaterial>(name, shaderTechnique);
+			mMaterialResourceMap[name] = material;
+		}
+		else
+		{
+			material = mMaterialResourceMap[name].lock();
 		}
 
-		return mMaterialResourceMap[name].lock();
+		return material;
 	}
 
 	bool FMaterial::SetTextureParameter(const std::string& parameterName, const FTextureRef& texture)
@@ -99,7 +115,7 @@ namespace Dash
 			mScalarParameterMap[parameterName].Parameter = parameter;
 			for (auto& variableInfo : mScalarParameterMap[parameterName].ConstantBufferVariableMap)
 			{	
-				Scalar* variable = reinterpret_cast<Scalar*>(mShaderPassParametersMap[variableInfo.first].ConstantBufferMap[variableInfo.second.BufferName].data() + variableInfo.second.StartOffset);
+				Scalar* variable = reinterpret_cast<Scalar*>(mShaderPassParametersMap[variableInfo.first].ConstantBufferMap[variableInfo.second.BufferName]->data() + variableInfo.second.StartOffset);
 				*variable = parameter;
 			}
 
@@ -116,7 +132,7 @@ namespace Dash
 			mVector2ParameterMap[parameterName].Parameter = parameter;
 			for (auto& variableInfo : mVector2ParameterMap[parameterName].ConstantBufferVariableMap)
 			{
-				FVector2f* variable = reinterpret_cast<FVector2f*>(mShaderPassParametersMap[variableInfo.first].ConstantBufferMap[variableInfo.second.BufferName].data() + variableInfo.second.StartOffset);
+				FVector2f* variable = reinterpret_cast<FVector2f*>(mShaderPassParametersMap[variableInfo.first].ConstantBufferMap[variableInfo.second.BufferName]->data() + variableInfo.second.StartOffset);
 				*variable = parameter;
 			}
 
@@ -133,7 +149,7 @@ namespace Dash
 			mVector3ParameterMap[parameterName].Parameter = parameter;
 			for (auto& variableInfo : mVector3ParameterMap[parameterName].ConstantBufferVariableMap)
 			{
-				FVector3f* variable = reinterpret_cast<FVector3f*>(mShaderPassParametersMap[variableInfo.first].ConstantBufferMap[variableInfo.second.BufferName].data() + variableInfo.second.StartOffset);
+				FVector3f* variable = reinterpret_cast<FVector3f*>(mShaderPassParametersMap[variableInfo.first].ConstantBufferMap[variableInfo.second.BufferName]->data() + variableInfo.second.StartOffset);
 				*variable = parameter;
 			}
 
@@ -150,7 +166,7 @@ namespace Dash
 			mVector4ParameterMap[parameterName].Parameter = parameter;
 			for (auto& variableInfo : mVector4ParameterMap[parameterName].ConstantBufferVariableMap)
 			{
-				FVector4f* variable = reinterpret_cast<FVector4f*>(mShaderPassParametersMap[variableInfo.first].ConstantBufferMap[variableInfo.second.BufferName].data() + variableInfo.second.StartOffset);
+				FVector4f* variable = reinterpret_cast<FVector4f*>(mShaderPassParametersMap[variableInfo.first].ConstantBufferMap[variableInfo.second.BufferName]->data() + variableInfo.second.StartOffset);
 				*variable = parameter;
 			}
 
@@ -191,7 +207,7 @@ namespace Dash
 		{
 			for (auto& buffer : parameter.second.ConstantBufferMap)
 			{
-				std::memset(buffer.second.data(), 0, buffer.second.size());
+				std::memset(buffer.second->data(), 0, sizeof(buffer.second->size()));
 			}
 		}
 	}

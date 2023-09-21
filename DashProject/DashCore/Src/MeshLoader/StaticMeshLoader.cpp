@@ -12,7 +12,7 @@ namespace Dash
     bool LoadStaticMeshFromFile(const std::string filePath, FImportedStaticMeshData& importedMeshData)
     {
         Assimp::Importer import;
-        const aiScene* scene = import.ReadFile(filePath, aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_GenNormals);
+        const aiScene* scene = import.ReadFile(filePath, aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_GenUVCoords);
 
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
         {

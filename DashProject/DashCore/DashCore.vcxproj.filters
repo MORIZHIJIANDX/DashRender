@@ -13,14 +13,26 @@
     <Filter Include="Src\DesignPatterns">
       <UniqueIdentifier>{27868C29-136A-4D7F-7CCA-47D268CD3701}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Framework">
+      <UniqueIdentifier>{CA93C785-3654-43BC-FF8E-8C396B0E8898}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Framework\Actor">
+      <UniqueIdentifier>{52B7D05F-BE18-AE6D-4786-F41FB3E6E42C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Framework\Component">
+      <UniqueIdentifier>{AC30B4A0-1868-FC37-2172-605B8D282331}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Framework\RenderLayer">
+      <UniqueIdentifier>{D655B1AD-4218-E537-8BC8-73C4F7C9BD15}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Src\Graphics">
       <UniqueIdentifier>{EDA9DC45-D90C-6CEA-8292-A4A06ED4376D}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Math">
       <UniqueIdentifier>{0678E746-F244-4252-1B5E-30FA078A77E0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\ModelLoader">
-      <UniqueIdentifier>{240F4C61-909A-B925-99AB-3C1A05B61526}</UniqueIdentifier>
+    <Filter Include="Src\MeshLoader">
+      <UniqueIdentifier>{006B8651-EC38-7A57-D5CC-EA7DC13956BC}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\PCH">
       <UniqueIdentifier>{9704E809-03E4-66A5-0CFC-F17B785ACD06}</UniqueIdentifier>
@@ -78,7 +90,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Asset\Material.h">
+      <Filter>Src\Asset</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Asset\StaticMesh.h">
+      <Filter>Src\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Asset\Texture.h">
       <Filter>Src\Asset</Filter>
     </ClInclude>
     <ClInclude Include="Src\Consolid\Consolid.h">
@@ -102,10 +120,28 @@
     <ClInclude Include="Src\EntryPoint.h">
       <Filter>Src</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\BlendState.h">
-      <Filter>Src\Graphics</Filter>
+    <ClInclude Include="Src\Framework\Actor\Actor.h">
+      <Filter>Src\Framework\Actor</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\Camera.h">
+    <ClInclude Include="Src\Framework\Component\CameraComponent.h">
+      <Filter>Src\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Framework\Component\Component.h">
+      <Filter>Src\Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Framework\GameApp.h">
+      <Filter>Src\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Framework\RenderLayer\RenderLayer.h">
+      <Filter>Src\Framework\RenderLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Framework\RenderLayer\SceneRenderLayer.h">
+      <Filter>Src\Framework\RenderLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Framework\RenderLayer\UIRenderLayer.h">
+      <Filter>Src\Framework\RenderLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\BlendState.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\ColorBuffer.h">
@@ -136,9 +172,6 @@
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\DynamicDescriptorHeap.h">
-      <Filter>Src\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Graphics\GameApp.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\GpuBuffer.h">
@@ -208,6 +241,9 @@
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\ShaderTechnique.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\SubResourceData.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\SwapChain.h">
@@ -294,11 +330,14 @@
     <ClInclude Include="Src\Math\Vector4_SSE.h">
       <Filter>Src\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Src\ModelLoader\MeshLoaderHelper.h">
-      <Filter>Src\ModelLoader</Filter>
+    <ClInclude Include="Src\MeshLoader\MeshLoaderHelper.h">
+      <Filter>Src\MeshLoader</Filter>
     </ClInclude>
-    <ClInclude Include="Src\ModelLoader\StaticMeshLoader.h">
-      <Filter>Src\ModelLoader</Filter>
+    <ClInclude Include="Src\MeshLoader\MeshLoaderManager.h">
+      <Filter>Src\MeshLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\MeshLoader\StaticMeshLoader.h">
+      <Filter>Src\MeshLoader</Filter>
     </ClInclude>
     <ClInclude Include="Src\PCH\PCH.h">
       <Filter>Src\PCH</Filter>
@@ -313,6 +352,9 @@
       <Filter>Src\TextureLoader</Filter>
     </ClInclude>
     <ClInclude Include="Src\TextureLoader\TextureLoaderHelper.h">
+      <Filter>Src\TextureLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\TextureLoader\TextureLoaderManager.h">
       <Filter>Src\TextureLoader</Filter>
     </ClInclude>
     <ClInclude Include="Src\TextureLoader\WICTextureLoader.h">
@@ -648,18 +690,45 @@
     <ClInclude Include="ThirdParty\loguru\loguru.h">
       <Filter>ThirdParty\loguru</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Framework\Actor\CameraActor.h" />
+    <ClInclude Include="Src\Framework\Component\StaticMeshComponent.h" />
+    <ClInclude Include="Src\Framework\Actor\StaticMeshActor.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Asset\Material.cpp">
+      <Filter>Src\Asset</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Asset\StaticMesh.cpp">
+      <Filter>Src\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Asset\Texture.cpp">
       <Filter>Src\Asset</Filter>
     </ClCompile>
     <ClCompile Include="Src\EntryPoint.cpp">
       <Filter>Src</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Graphics\BlendState.cpp">
-      <Filter>Src\Graphics</Filter>
+    <ClCompile Include="Src\Framework\Actor\Actor.cpp">
+      <Filter>Src\Framework\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Graphics\Camera.cpp">
+    <ClCompile Include="Src\Framework\Component\CameraComponent.cpp">
+      <Filter>Src\Framework\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Framework\Component\Component.cpp">
+      <Filter>Src\Framework\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Framework\GameApp.cpp">
+      <Filter>Src\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Framework\RenderLayer\RenderLayer.cpp">
+      <Filter>Src\Framework\RenderLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Framework\RenderLayer\SceneRenderLayer.cpp">
+      <Filter>Src\Framework\RenderLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Framework\RenderLayer\UIRenderLayer.cpp">
+      <Filter>Src\Framework\RenderLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\BlendState.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\ColorBuffer.cpp">
@@ -690,9 +759,6 @@
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\DynamicDescriptorHeap.cpp">
-      <Filter>Src\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Graphics\GameApp.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\GpuBuffer.cpp">
@@ -761,6 +827,9 @@
     <ClCompile Include="Src\Graphics\ShaderTechnique.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Graphics\SubResourceData.cpp">
+      <Filter>Src\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Graphics\SwapChain.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
@@ -770,11 +839,14 @@
     <ClCompile Include="Src\Math\Color.cpp">
       <Filter>Src\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Src\ModelLoader\MeshLoaderHelper.cpp">
-      <Filter>Src\ModelLoader</Filter>
+    <ClCompile Include="Src\MeshLoader\MeshLoaderHelper.cpp">
+      <Filter>Src\MeshLoader</Filter>
     </ClCompile>
-    <ClCompile Include="Src\ModelLoader\StaticMeshLoader.cpp">
-      <Filter>Src\ModelLoader</Filter>
+    <ClCompile Include="Src\MeshLoader\MeshLoaderManager.cpp">
+      <Filter>Src\MeshLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\MeshLoader\StaticMeshLoader.cpp">
+      <Filter>Src\MeshLoader</Filter>
     </ClCompile>
     <ClCompile Include="Src\PCH\PCH.cpp">
       <Filter>Src\PCH</Filter>
@@ -789,6 +861,9 @@
       <Filter>Src\TextureLoader</Filter>
     </ClCompile>
     <ClCompile Include="Src\TextureLoader\TextureLoaderHelper.cpp">
+      <Filter>Src\TextureLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\TextureLoader\TextureLoaderManager.cpp">
       <Filter>Src\TextureLoader</Filter>
     </ClCompile>
     <ClCompile Include="Src\TextureLoader\WICTextureLoader.cpp">
@@ -893,6 +968,10 @@
     <ClCompile Include="ThirdParty\loguru\loguru.cpp">
       <Filter>ThirdParty\loguru</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Framework\Actor\CameraActor.cpp" />
+    <ClCompile Include="Src\Math\MathType.cpp" />
+    <ClCompile Include="Src\Framework\Component\StaticMeshComponent.cpp" />
+    <ClCompile Include="Src\Framework\Actor\StaticMeshActor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\IMGUIShader.hlsl">

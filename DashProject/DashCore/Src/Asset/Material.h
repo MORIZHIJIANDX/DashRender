@@ -12,7 +12,7 @@ namespace Dash
 	public:
 		struct FShaderPassParameter
 		{
-			std::map<std::string, std::vector<uint8_t>> ConstantBufferMap;
+			std::map<std::string, std::shared_ptr<std::vector<uint8_t>>> ConstantBufferMap;
 			std::map<std::string, FTextureRef> TextureBufferMap;
 			FShaderPassRef ShaderPass;
 		};
@@ -30,6 +30,8 @@ namespace Dash
 		bool SetVector4Parameter(const std::string& parameterName, const FVector4f& parameter);
 	
 		const std::map<std::string, FShaderPassParameter>& GetShaderPassParameters() const { return mShaderPassParametersMap; }
+
+		FShaderTechniqueRef GetShaderTechnique() const { return mShaderTechnique; }
 
 	private:
 

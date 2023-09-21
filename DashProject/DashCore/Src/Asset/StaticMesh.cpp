@@ -5,6 +5,8 @@
 
 namespace Dash
 {
+	std::map<std::string, std::weak_ptr<FStaticMesh>> FStaticMesh::mStaticMeshResourceMap;
+
 	FStaticMesh::FStaticMesh(const std::string& meshPath)
 	{
 		const FImportedMeshData& importedMeshData = FMeshLoaderManager::Get().LoadMesh(meshPath);
@@ -28,13 +30,15 @@ namespace Dash
 
 		if (importedMeshData.hasUV)
 		{
-			mTexcoordBuffer = FGraphicsCore::Device->CreateVertexBuffer(meshPath + "TexcoordBuffer", importedMeshData.numVertexes, sizeof(FVector2f) * importedMeshData.numTexCoord, importedMeshData.VertexColorData.data());
+			mTexCoordBuffer = FGraphicsCore::Device->CreateVertexBuffer(meshPath + "TexcoordBuffer", importedMeshData.numVertexes, sizeof(FVector2f) * importedMeshData.numTexCoord, importedMeshData.VertexColorData.data());
 		}
 
 		for (size_t i = 0; i < importedMeshData.materialNames.size(); i++)
 		{
 			mDefaultMaterials[importedMeshData.materialNames[i]] = nullptr;
 		}
+
+		mIndexBuffer = FGraphicsCore::Device->CreateIndexBuffer(meshPath + "IndexBuffer", importedMeshData.numVertexes, importedMeshData.indices.data(), true);
 
 		mMeshSectionData = importedMeshData.sectionData;
 	}
@@ -46,13 +50,19 @@ namespace Dash
 
 	FStaticMeshRef FStaticMesh::MakeStaticMesh(const std::string& meshPath)
 	{
-		if (!mStaticMeshResourceMap.contains(meshPath) && !mStaticMeshResourceMap[meshPath].lock())
+		FStaticMeshRef staticMesh = nullptr;
+
+		if (!mStaticMeshResourceMap.contains(meshPath) || !mStaticMeshResourceMap[meshPath].lock())
 		{
-			FStaticMeshRef newStaticMesh = std::make_shared<FStaticMesh>(meshPath);
-			mStaticMeshResourceMap.emplace(meshPath, newStaticMesh);
+			staticMesh = std::make_shared<FStaticMesh>(meshPath);
+			mStaticMeshResourceMap[meshPath] = staticMesh;
+		}
+		else
+		{
+			staticMesh = mStaticMeshResourceMap[meshPath].lock();
 		}
 
-		return mStaticMeshResourceMap[meshPath].lock();
+		return staticMesh;
 	}
 
 	void FStaticMesh::SetMaterial(const std::string& materialSlotName, FMaterialRef material)

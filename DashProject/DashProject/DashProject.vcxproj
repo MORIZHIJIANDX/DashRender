@@ -96,7 +96,8 @@
     <PreBuildEvent>
       <Command>xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\dxc\bin\x64\dxcompiler.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\dxc\bin\x64\dxil.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\
-xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Debug\assimp-vc143-mtd.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\</Command>
+xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Debug\assimp-vc143-mtd.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\
+xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Release\assimp-vc143-mt.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -124,7 +125,8 @@ xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Debug\assimp-vc143-mtd
     <PreBuildEvent>
       <Command>xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\dxc\bin\x64\dxcompiler.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\dxc\bin\x64\dxil.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\
-xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Debug\assimp-vc143-mtd.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\</Command>
+xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Debug\assimp-vc143-mtd.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\
+xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Release\assimp-vc143-mt.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Distribution|x64'">
@@ -152,7 +154,8 @@ xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Debug\assimp-vc143-mtd
     <PreBuildEvent>
       <Command>xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\dxc\bin\x64\dxcompiler.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\dxc\bin\x64\dxil.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\
-xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Debug\assimp-vc143-mtd.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\</Command>
+xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Debug\assimp-vc143-mtd.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\
+xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Release\assimp-vc143-mt.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

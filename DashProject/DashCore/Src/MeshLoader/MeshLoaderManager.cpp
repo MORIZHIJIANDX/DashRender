@@ -29,8 +29,6 @@ namespace Dash
 
 			if (FFileUtility::IsPathExistent(meshPath))
 			{
-				std::string fileExtension = FStringUtility::ToLower(FFileUtility::GetFileExtension(meshPath));
-
 				FImportedMeshData importedMeshData;
 				importedMeshData.SourceMeshPath = meshPath;
 

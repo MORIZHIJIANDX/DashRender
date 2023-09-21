@@ -12,6 +12,9 @@
 #include "Framework/GameApp.h"
 #include "imgui/imgui.h"
 
+#include "Asset/StaticMesh.h"
+#include "Framework/Component/StaticMeshComponent.h"
+
 namespace Dash
 {
 	struct FMeshConstantBuffer
@@ -21,6 +24,7 @@ namespace Dash
 
 	FMeshConstantBuffer MeshConstantBuffer;
 
+	/*
 	FGpuVertexBufferRef PositionVertexBuffer;
 	FGpuVertexBufferRef NormalVertexBuffer;
 	FGpuVertexBufferRef UVVertexBuffer;
@@ -29,6 +33,7 @@ namespace Dash
 	FGraphicsPSORef MeshDrawPSO = FGraphicsPSO::MakeGraphicsPSO("MeshDrawPSO");;
 
 	uint32_t VertexCount;
+	
 
 	void CreateVertexBuffers(const FImportedStaticMeshData& meshData)
 	{
@@ -92,50 +97,7 @@ namespace Dash
 		graphicsContext.DrawIndexed(VertexCount);
 	}
 
-	FSceneRenderLayer::FSceneRenderLayer()
-		: IRenderLayer("SceneRenderLayer", 100)
-	{
-	}
-
-	FSceneRenderLayer::~FSceneRenderLayer()
-	{
-	}
-
-	void FSceneRenderLayer::Init()
-	{
-		FImportedStaticMeshData importedStaticMeshData;
-
-		std::string fbxMeshPath = std::string(ENGINE_PATH) + "/Resource/Cyborg_Weapon.fbx";
-
-		bool result = LoadStaticMeshFromFile(fbxMeshPath, importedStaticMeshData);
-
-		if (result)
-		{
-			importedStaticMeshData.hasNormal;
-
-			CreateVertexBuffers(importedStaticMeshData);
-
-			LOG_INFO << "Load mesh succeed!";
-		}
-
-		float fov = 45.0f;
-		float aspect = IGameApp::GetInstance()->GetWindowWidth() / (float)IGameApp::GetInstance()->GetWindowHeight();
-
-		mCameraActor = std::make_shared<TCameraActor>("PerspectiveCameraActor", ECameraType::Perspective);
-		mPerspectiveCamera = dynamic_cast<TPerspectiveCameraComponent*>(mCameraActor->GetCameraComponent());
-		mPerspectiveCamera->SetCameraParams(aspect, fov, 0.1f, 100.0f);
-		mPerspectiveCamera->SetWorldPosition(FVector3f{ 0.0f, 0.0f, -2.0f });
-
-		OnMouseWheelDownDelegate = FMouseWheelEventDelegate::Create<FSceneRenderLayer, &FSceneRenderLayer::OnMouseWheelDown>(this);
-		OnMouseWheelUpDelegate = FMouseWheelEventDelegate::Create<FSceneRenderLayer, &FSceneRenderLayer::OnMouseWheelUp>(this);
-		OnMouseMoveDelegate = FMouseMotionEventDelegate::Create<FSceneRenderLayer, &FSceneRenderLayer::OnMouseMove>(this);
-
-		FMouse::Get().MouseWheelDown += OnMouseWheelDownDelegate;
-		FMouse::Get().MouseWheelUp += OnMouseWheelUpDelegate;
-		FMouse::Get().MouseMoved += OnMouseMoveDelegate;
-	}
-
-	void FSceneRenderLayer::Shutdown()
+	void DestroyMesh()
 	{
 		if (IndexBuffer)
 		{
@@ -156,7 +118,75 @@ namespace Dash
 		{
 			UVVertexBuffer->Destroy();
 		}
+	}
 
+	*/
+
+	FSceneRenderLayer::FSceneRenderLayer()
+		: IRenderLayer("SceneRenderLayer", 100)
+		, mCameraActor(nullptr)
+		, mPerspectiveCamera(nullptr)
+	{
+	}
+
+	FSceneRenderLayer::~FSceneRenderLayer()
+	{
+	}
+
+	void FSceneRenderLayer::Init()
+	{
+		FImportedStaticMeshData importedStaticMeshData;
+
+		std::string fbxMeshPath = std::string(ENGINE_PATH) + "/Resource/Cyborg_Weapon.fbx";
+
+		/*
+		bool result = LoadStaticMeshFromFile(fbxMeshPath, importedStaticMeshData);
+
+		if (result)
+		{
+			importedStaticMeshData.hasNormal;
+
+			CreateVertexBuffers(importedStaticMeshData);
+
+			LOG_INFO << "Load mesh succeed!";
+		}
+		*/
+
+		float fov = 45.0f;
+		float aspect = IGameApp::GetInstance()->GetWindowWidth() / (float)IGameApp::GetInstance()->GetWindowHeight();
+
+		mCameraActor = std::make_shared<TCameraActor>("PerspectiveCameraActor", ECameraType::Perspective);
+		mPerspectiveCamera = dynamic_cast<TPerspectiveCameraComponent*>(mCameraActor->GetCameraComponent());
+		mPerspectiveCamera->SetCameraParams(aspect, fov, 0.1f, 100.0f);
+		mPerspectiveCamera->SetWorldPosition(FVector3f{ 0.0f, 0.0f, -2.0f });
+
+		FStaticMeshRef staticMesh = FStaticMesh::MakeStaticMesh(fbxMeshPath);
+
+		FShaderTechniqueRef shaderTech = FShaderTechnique::MakeShaderTechnique("default");
+		shaderTech->AddShaderPass("opaque",{ 
+		{ EShaderStage::Vertex,FFileUtility::GetEngineShaderDir("MeshShader.hlsl"),  "VS_Main" } , 
+		{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("MeshShader.hlsl"),  "PS_Main" } 
+		},
+		FBlendState{ false, false },
+		FRasterizerState{ ERasterizerFillMode::Solid, ERasterizerCullMode::None },
+		FDepthStencilState{true});
+
+		FMaterialRef material = FMaterial::MakeMaterial("material", shaderTech);
+		staticMesh->SetMaterial("Cyborg_Weapon_mat", material);
+		mStaticMeshActor = std::make_shared<TStaticMeshActor>("StaticMesh");
+		mStaticMeshActor->GetStaticMeshComponent()->SetStaticMesh(staticMesh);
+
+		OnMouseWheelDownDelegate = FMouseWheelEventDelegate::Create<FSceneRenderLayer, &FSceneRenderLayer::OnMouseWheelDown>(this);
+		OnMouseWheelUpDelegate = FMouseWheelEventDelegate::Create<FSceneRenderLayer, &FSceneRenderLayer::OnMouseWheelUp>(this);
+		OnMouseMoveDelegate = FMouseMotionEventDelegate::Create<FSceneRenderLayer, &FSceneRenderLayer::OnMouseMove>(this);
+
+		FMouse::Get().MouseWheelDown += OnMouseWheelDownDelegate;
+		FMouse::Get().MouseWheelUp += OnMouseWheelUpDelegate;
+		FMouse::Get().MouseMoved += OnMouseMoveDelegate;
+	}
+
+	void FSceneRenderLayer::Shutdown()
+	{
 		FMouse::Get().MouseWheelDown -= OnMouseWheelDownDelegate;
 		FMouse::Get().MouseWheelUp -= OnMouseWheelUpDelegate;
 		FMouse::Get().MouseMoved -= OnMouseMoveDelegate;
@@ -194,7 +224,33 @@ namespace Dash
 		graphicsContext.ClearColor(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
 		graphicsContext.ClearDepth(FGraphicsCore::SwapChain->GetDepthBuffer());
 
-		RenderMesh(graphicsContext);
+		//RenderMesh(graphicsContext);
+
+		{
+			TStaticMeshComponent* staticMeshComponent = mStaticMeshActor->GetStaticMeshComponent();
+			if (staticMeshComponent)
+			{
+				const std::vector<FMeshDrawCommand>& meshDrawCommands = staticMeshComponent->GetMeshDrawCommands();
+				for (auto& drawCommand : meshDrawCommands)
+				{
+					FResourceMagnitude renderTargetMagnitude = FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetDesc().Magnitude;
+
+					// FGpuVertexBufferRef vertexBuffers[3] = { PositionVertexBuffer ,NormalVertexBuffer, UVVertexBuffer };
+
+					graphicsContext.SetGraphicsPipelineState(drawCommand.PSO);
+
+					graphicsContext.SetRootConstantBufferView("FrameConstantBuffer", MeshConstantBuffer);
+
+					graphicsContext.SetViewportAndScissor(0, 0, renderTargetMagnitude.Width, renderTargetMagnitude.Height);
+
+					graphicsContext.SetVertexBuffers(0, 3, drawCommand.VertexBuffers.data());
+
+					graphicsContext.SetIndexBuffer(drawCommand.IndexBuffer);
+
+					graphicsContext.DrawIndexed(drawCommand.vertexCount);
+				}
+			}
+		}
 
 		graphicsContext.Finish();
 	}

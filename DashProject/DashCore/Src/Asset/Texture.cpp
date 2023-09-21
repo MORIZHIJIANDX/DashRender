@@ -4,6 +4,8 @@
 
 namespace Dash
 {
+    std::map<std::string, std::weak_ptr<FTexture>> FTexture::mTextureResourceMap;
+
     FTexture::FTexture(const std::string& texturePath)
         : mTexturePath(texturePath)
         , mTextureData(FTextureLoaderManager::Get().LoadTexture(texturePath))
@@ -19,12 +21,18 @@ namespace Dash
 
     FTextureRef FTexture::MakeTexture(const std::string& texturePath)
     {
-        if (!mTextureResourceMap.contains(texturePath) && !mTextureResourceMap[texturePath].lock())
+        FTextureRef texture = nullptr;
+
+        if (!mTextureResourceMap.contains(texturePath) || !mTextureResourceMap[texturePath].lock())
         {
-            FTextureRef newTexture = std::make_shared<FTexture>(texturePath);
-            mTextureResourceMap.emplace(texturePath, newTexture);
+            texture = std::make_shared<FTexture>(texturePath);
+            mTextureResourceMap[texturePath] = texture;
+        }
+        else
+        {
+            texture = mTextureResourceMap[texturePath].lock();
         }
 
-        return mTextureResourceMap[texturePath].lock();
+        return texture;
     }
 }
