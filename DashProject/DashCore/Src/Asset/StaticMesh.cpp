@@ -5,8 +5,6 @@
 
 namespace Dash
 {
-	std::map<std::string, std::weak_ptr<FStaticMesh>> FStaticMesh::mStaticMeshResourceMap;
-
 	FStaticMesh::FStaticMesh(const std::string& meshPath)
 	{
 		const FImportedMeshData& importedMeshData = FMeshLoaderManager::Get().LoadMesh(meshPath);
@@ -46,23 +44,6 @@ namespace Dash
 	FStaticMesh::~FStaticMesh()
 	{
 		
-	}
-
-	FStaticMeshRef FStaticMesh::MakeStaticMesh(const std::string& meshPath)
-	{
-		FStaticMeshRef staticMesh = nullptr;
-
-		if (!mStaticMeshResourceMap.contains(meshPath) || !mStaticMeshResourceMap[meshPath].lock())
-		{
-			staticMesh = std::make_shared<FStaticMesh>(meshPath);
-			mStaticMeshResourceMap[meshPath] = staticMesh;
-		}
-		else
-		{
-			staticMesh = mStaticMeshResourceMap[meshPath].lock();
-		}
-
-		return staticMesh;
 	}
 
 	void FStaticMesh::SetMaterial(const std::string& materialSlotName, FMaterialRef material)

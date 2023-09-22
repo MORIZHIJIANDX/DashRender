@@ -5,16 +5,11 @@
 
 namespace Dash
 {
-	class FTexture;
-	using FTextureRef = std::shared_ptr<FTexture>;
-
 	class FTexture
 	{
 	public:
 		FTexture(const std::string& texturePath);
 		~FTexture();
-
-		static FTextureRef MakeTexture(const std::string& texturePath);
 
 		const FImportedTextureData& GetTextureImportedData() const { return mTextureData; }
 		FTextureBufferRef GetTextureBufferRef() const { return mTextureBufferRef; }
@@ -26,7 +21,5 @@ namespace Dash
 		std::string mTexturePath;
 		const FImportedTextureData& mTextureData;
 		FTextureBufferRef mTextureBufferRef;
-
-		static std::map<std::string, std::weak_ptr<FTexture>> mTextureResourceMap;
 	};
 }

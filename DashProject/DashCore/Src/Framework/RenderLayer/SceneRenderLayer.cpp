@@ -14,6 +14,7 @@
 
 #include "Asset/StaticMesh.h"
 #include "Framework/Component/StaticMeshComponent.h"
+#include "Asset/AssetManager.h"
 
 namespace Dash
 {
@@ -49,7 +50,7 @@ namespace Dash
 		mPerspectiveCamera->SetCameraParams(aspect, fov, 0.1f, 100.0f);
 		mPerspectiveCamera->SetWorldPosition(FVector3f{ 0.0f, 0.0f, -2.0f });
 
-		FStaticMeshRef staticMesh = FStaticMesh::MakeStaticMesh(fbxMeshPath);
+		FStaticMeshRef staticMesh = FAssetManager::Get().MakeStaticMesh(fbxMeshPath);
 
 		FShaderTechniqueRef shaderTech = FShaderTechnique::MakeShaderTechnique("default");
 		shaderTech->AddShaderPass("opaque",{ 
@@ -60,7 +61,7 @@ namespace Dash
 		FRasterizerState{ ERasterizerFillMode::Solid, ERasterizerCullMode::None },
 		FDepthStencilState{true});
 
-		FMaterialRef material = FMaterial::MakeMaterial("material", shaderTech);
+		FMaterialRef material = FAssetManager::Get().MakeMaterial("material", shaderTech);
 		staticMesh->SetMaterial("Cyborg_Weapon_mat", material);
 		mStaticMeshActor = std::make_shared<TStaticMeshActor>("StaticMesh");
 		mStaticMeshActor->GetStaticMeshComponent()->SetStaticMesh(staticMesh);

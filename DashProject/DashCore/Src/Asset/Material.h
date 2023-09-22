@@ -1,12 +1,10 @@
 #pragma once
 #include "Graphics/ShaderTechnique.h"
 #include "Texture.h"
+#include "AssetDefines.h"
 
 namespace Dash
 {
-	class FMaterial;
-	using FMaterialRef = std::shared_ptr<FMaterial>;
-
 	class FMaterial
 	{
 	public:
@@ -20,8 +18,6 @@ namespace Dash
 	public:
 		FMaterial(const std::string& name, FShaderTechniqueRef shaderTechnique);
 		~FMaterial();
-
-		static FMaterialRef MakeMaterial(const std::string& name, FShaderTechniqueRef shaderTechnique);
 
 		bool SetTextureParameter(const std::string& parameterName, const FTextureRef& texture);
 		bool SetFloatParameter(const std::string& parameterName, Scalar parameter);
@@ -68,7 +64,5 @@ namespace Dash
 		std::map<std::string, FTextureParameterInfo> mTextureParameterMap;
 
 		std::map<std::string, FShaderPassParameter> mShaderPassParametersMap;
-
-		static std::map<std::string, std::weak_ptr<FMaterial>> mMaterialResourceMap;
 	};
 }

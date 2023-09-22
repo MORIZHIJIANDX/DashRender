@@ -6,16 +6,11 @@
 
 namespace Dash
 {
-	class FStaticMesh;
-	using FStaticMeshRef = std::shared_ptr<FStaticMesh>;
-
 	class FStaticMesh
 	{
 	public:
 		FStaticMesh(const std::string& meshPath);
 		~FStaticMesh();
-
-		static FStaticMeshRef MakeStaticMesh(const std::string& texturePath);
 
 		void SetMaterial(const std::string& materialSlotName, FMaterialRef material);
 		FMaterialRef GetMaterial(const std::string& materialSlotName) const;
@@ -42,7 +37,5 @@ namespace Dash
 
 		std::map<std::string, FMaterialRef> mDefaultMaterials;
 		std::vector<FMeshSectionData> mMeshSectionData;
-
-		static std::map<std::string, std::weak_ptr<FStaticMesh>> mStaticMeshResourceMap;
 	}; 
 }

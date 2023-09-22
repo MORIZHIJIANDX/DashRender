@@ -1,11 +1,10 @@
 #include "PCH.h"
 #include "Material.h"
 #include "Utility/StringUtility.h"
+#include "AssetManager.h"
 
 namespace Dash
 {
-	std::map<std::string, std::weak_ptr<FMaterial>> FMaterial::mMaterialResourceMap;
-
 	FMaterial::FMaterial(const std::string& name, FShaderTechniqueRef shaderTechnique)
 		: mName(name)
 		, mShaderTechnique(shaderTechnique)
@@ -54,7 +53,7 @@ namespace Dash
 					}
 					else
 					{
-						ASSERT_FAIL("Invalid Constant Variable!");
+						ASSERT_FAIL("Invalid Constant Variable Type!");
 					}
 				}
 			}
@@ -72,23 +71,6 @@ namespace Dash
 
 	FMaterial::~FMaterial()
 	{
-	}
-
-	FMaterialRef FMaterial::MakeMaterial(const std::string& name, FShaderTechniqueRef shaderTechnique)
-	{
-		FMaterialRef material = nullptr;
-
-		if (!mMaterialResourceMap.contains(name) || !mMaterialResourceMap[name].lock())
-		{
-			material = std::make_shared<FMaterial>(name, shaderTechnique);
-			mMaterialResourceMap[name] = material;
-		}
-		else
-		{
-			material = mMaterialResourceMap[name].lock();
-		}
-
-		return material;
 	}
 
 	bool FMaterial::SetTextureParameter(const std::string& parameterName, const FTextureRef& texture)
@@ -200,7 +182,7 @@ namespace Dash
 
 		for (auto& parameter : mTextureParameterMap)
 		{
-			parameter.second.Parameter = FTexture::MakeTexture("Black");
+			parameter.second.Parameter = FAssetManager::Get().MakeTexture("Black"); 
 		}
 
 		for (auto& parameter : mShaderPassParametersMap)

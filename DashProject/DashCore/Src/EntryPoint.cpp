@@ -6,6 +6,7 @@
 #include "Utility/SystemTimer.h"
 #include "Graphics/GraphicsCore.h"
 #include "Graphics/CommandContext.h"
+#include "Asset/AssetManager.h"
 
 namespace Dash
 {
@@ -59,9 +60,10 @@ namespace Dash
 		FLogManager::Get()->Init();
 
 		FMouse::Get().Initialize(app->GetWindowHandle());
-		//FSystemTimer::Initialize();
 
 		FGraphicsCore::Initialize(app->GetWindowWidth(), app->GetWindowHeight());
+
+		FAssetManager::Get().Init();
 
 		app->Startup();
 
@@ -74,6 +76,7 @@ namespace Dash
 		FGraphicsCore::Shutdown();
 		app->Cleanup();
 		FLogManager::Get()->Shutdown();
+		FAssetManager::Get().Shutdown();
 
 		std::string WindowClassName = app->GetWindowClassName();
 		::UnregisterClassA(WindowClassName.c_str(),

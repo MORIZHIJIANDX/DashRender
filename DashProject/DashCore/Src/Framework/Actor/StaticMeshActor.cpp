@@ -1,6 +1,7 @@
 #include "PCH.h"
 #include "StaticMeshActor.h"
 #include "Framework/Component/StaticMeshComponent.h"
+#include "Asset/AssetManager.h"
 
 namespace Dash
 {
@@ -12,7 +13,7 @@ namespace Dash
 
 		if (!meshPath.empty())
 		{
-			mStaticMeshComponent->SetStaticMesh(FStaticMesh::MakeStaticMesh(meshPath));
+			mStaticMeshComponent->SetStaticMesh(FAssetManager::Get().MakeStaticMesh(meshPath));
 		}
 	}
 
