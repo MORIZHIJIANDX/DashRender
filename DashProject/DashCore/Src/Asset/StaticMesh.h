@@ -18,7 +18,7 @@ namespace Dash
 		static FStaticMeshRef MakeStaticMesh(const std::string& texturePath);
 
 		void SetMaterial(const std::string& materialSlotName, FMaterialRef material);
-		const FMaterialRef& GetMaterial(const std::string& materialSlotName) const;
+		FMaterialRef GetMaterial(const std::string& materialSlotName) const;
 		const std::map<std::string, FMaterialRef>& GetMaterials() const { return mDefaultMaterials; } 
 
 		const FGpuVertexBufferRef& GetPositionBuffer() const { return mPostionBuffer; }

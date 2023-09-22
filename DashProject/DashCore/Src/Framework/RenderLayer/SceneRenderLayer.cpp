@@ -24,104 +24,6 @@ namespace Dash
 
 	FMeshConstantBuffer MeshConstantBuffer;
 
-	/*
-	FGpuVertexBufferRef PositionVertexBuffer;
-	FGpuVertexBufferRef NormalVertexBuffer;
-	FGpuVertexBufferRef UVVertexBuffer;
-	FGpuIndexBufferRef IndexBuffer;
-	FShaderPassRef MeshDrawPass;
-	FGraphicsPSORef MeshDrawPSO = FGraphicsPSO::MakeGraphicsPSO("MeshDrawPSO");;
-
-	uint32_t VertexCount;
-	
-
-	void CreateVertexBuffers(const FImportedStaticMeshData& meshData)
-	{
-		VertexCount = meshData.numVertexes;
-		if (VertexCount > 0)
-		{
-			std::vector<FVector2f> extendTexcoord;
-			extendTexcoord.resize(VertexCount * 2);
-			for (uint32_t i = 0; i < VertexCount; i++)
-			{
-				//extendTexcoord[i*2] = meshData.UVData[i];
-				//extendTexcoord[i*2+1] = FVector2f{1.0f, 1.0f};
-
-				extendTexcoord[i * 2] = FVector2f{ 1.0f, 1.0f };
-				extendTexcoord[i * 2 + 1] = meshData.UVData[i];
-			}
-
-			PositionVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshPositionVertexBuffer", VertexCount, sizeof(meshData.PositionData[0]), meshData.PositionData.data());
-			NormalVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshNormalVertexBuffer", VertexCount, sizeof(meshData.NormalData[0]), meshData.NormalData.data());
-			//UVVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshUVVertexBuffer", VertexCount, sizeof(meshData.UVData[0]), meshData.UVData.data());
-
-			UVVertexBuffer = FGraphicsCore::Device->CreateVertexBuffer("MeshUVVertexBuffer", VertexCount, sizeof(FVector2f) * 2, extendTexcoord.data());
-
-			IndexBuffer = FGraphicsCore::Device->CreateIndexBuffer("MeshIndexBuffer", VertexCount, meshData.indices.data(), true);
-		}
-
-		FShaderCreationInfo psPresentInfo{ EShaderStage::Pixel, FFileUtility::GetEngineShaderDir("MeshShader.hlsl"),  "PS_Main" };
-
-		FShaderCreationInfo vsInfo{ EShaderStage::Vertex,FFileUtility::GetEngineShaderDir("MeshShader.hlsl"),  "VS_Main" };
-
-		FRasterizerState rasterizerDefault{ ERasterizerFillMode::Solid, ERasterizerCullMode::None };
-
-		FBlendState blendDisable{ false, false };
-		FDepthStencilState depthStateDisabled{ true };
-
-		FShaderPassRef meshDrawPass = FShaderPass::MakeShaderPass("PresentPass", { vsInfo , psPresentInfo }, blendDisable, rasterizerDefault, depthStateDisabled);
-
-		MeshDrawPSO->SetShaderPass(meshDrawPass);
-		MeshDrawPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
-		MeshDrawPSO->SetSamplerMask(UINT_MAX);
-		MeshDrawPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetBackBufferFormat(), FGraphicsCore::SwapChain->GetDepthBuffer()->GetFormat());
-		MeshDrawPSO->Finalize();
-	}
-
-	void RenderMesh(FGraphicsCommandContext& graphicsContext)
-	{
-		FResourceMagnitude renderTargetMagnitude = FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetDesc().Magnitude;
-
-		FGpuVertexBufferRef vertexBuffers[3] = { PositionVertexBuffer ,NormalVertexBuffer, UVVertexBuffer };
-
-		graphicsContext.SetGraphicsPipelineState(MeshDrawPSO);
-
-		graphicsContext.SetRootConstantBufferView("ConstantBuffer", MeshConstantBuffer);
-
-		graphicsContext.SetViewportAndScissor(0, 0, renderTargetMagnitude.Width, renderTargetMagnitude.Height);
-
-		graphicsContext.SetVertexBuffers(0, 3, vertexBuffers);
-
-		graphicsContext.SetIndexBuffer(IndexBuffer);
-
-		graphicsContext.DrawIndexed(VertexCount);
-	}
-
-	void DestroyMesh()
-	{
-		if (IndexBuffer)
-		{
-			IndexBuffer->Destroy();
-		}
-
-		if (PositionVertexBuffer)
-		{
-			PositionVertexBuffer->Destroy();
-		}
-
-		if (NormalVertexBuffer)
-		{
-			NormalVertexBuffer->Destroy();
-		}
-
-		if (UVVertexBuffer)
-		{
-			UVVertexBuffer->Destroy();
-		}
-	}
-
-	*/
-
 	FSceneRenderLayer::FSceneRenderLayer()
 		: IRenderLayer("SceneRenderLayer", 100)
 		, mCameraActor(nullptr)
@@ -138,19 +40,6 @@ namespace Dash
 		FImportedStaticMeshData importedStaticMeshData;
 
 		std::string fbxMeshPath = std::string(ENGINE_PATH) + "/Resource/Cyborg_Weapon.fbx";
-
-		/*
-		bool result = LoadStaticMeshFromFile(fbxMeshPath, importedStaticMeshData);
-
-		if (result)
-		{
-			importedStaticMeshData.hasNormal;
-
-			CreateVertexBuffers(importedStaticMeshData);
-
-			LOG_INFO << "Load mesh succeed!";
-		}
-		*/
 
 		float fov = 45.0f;
 		float aspect = IGameApp::GetInstance()->GetWindowWidth() / (float)IGameApp::GetInstance()->GetWindowHeight();
@@ -175,6 +64,8 @@ namespace Dash
 		staticMesh->SetMaterial("Cyborg_Weapon_mat", material);
 		mStaticMeshActor = std::make_shared<TStaticMeshActor>("StaticMesh");
 		mStaticMeshActor->GetStaticMeshComponent()->SetStaticMesh(staticMesh);
+
+		material->SetVector4Parameter("Color", FVector4f{1.0f, 0.f, 0.0f, 0.0f});
 
 		OnMouseWheelDownDelegate = FMouseWheelEventDelegate::Create<FSceneRenderLayer, &FSceneRenderLayer::OnMouseWheelDown>(this);
 		OnMouseWheelUpDelegate = FMouseWheelEventDelegate::Create<FSceneRenderLayer, &FSceneRenderLayer::OnMouseWheelUp>(this);
@@ -214,6 +105,13 @@ namespace Dash
 		UpdateCamera(translate);
 		
 		MeshConstantBuffer.ModelViewProjectionMatrix = mPerspectiveCamera->GetViewProjectionMatrix();
+
+		TStaticMeshComponent* staticMeshComponent = mStaticMeshActor->GetStaticMeshComponent();
+		if (staticMeshComponent)
+		{
+			Scalar timeSin = FMath::Abs(FMath::Sin(e.TotalTime));
+			staticMeshComponent->GetMaterial("Cyborg_Weapon_mat")->SetVector4Parameter("Color", FVector4f{ timeSin, timeSin, timeSin, 1.0f });
+		}
 	}
 
 	void FSceneRenderLayer::OnRender(const FRenderEventArgs& e)
@@ -224,8 +122,6 @@ namespace Dash
 		graphicsContext.ClearColor(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
 		graphicsContext.ClearDepth(FGraphicsCore::SwapChain->GetDepthBuffer());
 
-		//RenderMesh(graphicsContext);
-
 		{
 			TStaticMeshComponent* staticMeshComponent = mStaticMeshActor->GetStaticMeshComponent();
 			if (staticMeshComponent)
@@ -235,11 +131,19 @@ namespace Dash
 				{
 					FResourceMagnitude renderTargetMagnitude = FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetDesc().Magnitude;
 
-					// FGpuVertexBufferRef vertexBuffers[3] = { PositionVertexBuffer ,NormalVertexBuffer, UVVertexBuffer };
-
 					graphicsContext.SetGraphicsPipelineState(drawCommand.PSO);
 
 					graphicsContext.SetRootConstantBufferView("FrameConstantBuffer", MeshConstantBuffer);
+
+					for (auto& cbvParameter : drawCommand.ConstantBufferMap)
+					{
+						graphicsContext.SetRootConstantBufferView(cbvParameter.first, cbvParameter.second.get()->size(), cbvParameter.second.get()->data());
+					}
+
+					for (auto& srvParameter : drawCommand.TextureBufferMap)
+					{
+						graphicsContext.SetShaderResourceView(srvParameter.first, srvParameter.second->GetTextureBuffer());
+					}
 
 					graphicsContext.SetViewportAndScissor(0, 0, renderTargetMagnitude.Width, renderTargetMagnitude.Height);
 

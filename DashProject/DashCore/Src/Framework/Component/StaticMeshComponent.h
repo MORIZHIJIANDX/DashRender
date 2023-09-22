@@ -31,6 +31,9 @@ namespace Dash
 		void SetStaticMesh(FStaticMeshRef staticMesh);
 		FStaticMeshRef GetStaticMesh() const;
 
+		void SetMaterial(const std::string& materialSlotName, FMaterialRef material);
+		FMaterialRef GetMaterial(const std::string& name) const;	
+
 		const std::vector<FMeshDrawCommand>& GetMeshDrawCommands() const { return mCachedMeshDrawCommands; }
 
 	private:
@@ -41,6 +44,7 @@ namespace Dash
 	private:
 		
 		FStaticMeshRef mStaticMesh;
+		std::map<std::string, FMaterialRef> mOverrideMaterials;
 		std::vector<FMeshDrawCommand> mCachedMeshDrawCommands;
 	};
 }

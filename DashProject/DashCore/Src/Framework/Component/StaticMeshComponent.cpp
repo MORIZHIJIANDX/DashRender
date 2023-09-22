@@ -34,6 +34,28 @@ namespace Dash
 		return mStaticMesh;
 	}
 
+	void TStaticMeshComponent::SetMaterial(const std::string& materialSlotName, FMaterialRef material)
+	{
+		if (mStaticMesh->GetMaterials().contains(materialSlotName))
+		{
+			mOverrideMaterials[materialSlotName] = material;
+		}
+	}
+
+	FMaterialRef TStaticMeshComponent::GetMaterial(const std::string& name) const
+	{
+		if (mOverrideMaterials.contains(name))
+		{
+			return mOverrideMaterials.find(name)->second;
+		}
+		else if (mStaticMesh->GetMaterials().contains(name))
+		{
+			return mStaticMesh->GetMaterials().find(name)->second;
+		}
+
+		return nullptr;
+	}
+
 	EPerVertexSemantic TStaticMeshComponent::GetVertexSemanticType(const std::string& semanticName)
 	{
 		if (FStringUtility::Contains(semanticName, "POSITION"))

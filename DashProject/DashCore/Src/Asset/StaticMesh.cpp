@@ -73,7 +73,7 @@ namespace Dash
 		}
 	}
 
-	const FMaterialRef& FStaticMesh::GetMaterial(const std::string& materialSlotName) const
+	FMaterialRef FStaticMesh::GetMaterial(const std::string& materialSlotName) const
 	{
 		const auto& iter = mDefaultMaterials.find(materialSlotName);
 
