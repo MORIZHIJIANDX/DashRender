@@ -40,7 +40,7 @@ namespace Dash
 	{
 		FImportedStaticMeshData importedStaticMeshData;
 
-		std::string fbxMeshPath = std::string(ENGINE_PATH) + "/Resource/Cyborg_Weapon.fbx";
+		std::string fbxMeshPath = std::string(ENGINE_PATH) + "/Resource/M4A1_1P_Main.FBX";
 
 		float fov = 45.0f;
 		float aspect = IGameApp::GetInstance()->GetWindowWidth() / (float)IGameApp::GetInstance()->GetWindowHeight();
@@ -48,7 +48,7 @@ namespace Dash
 		mCameraActor = std::make_shared<TCameraActor>("PerspectiveCameraActor", ECameraType::Perspective);
 		mPerspectiveCamera = dynamic_cast<TPerspectiveCameraComponent*>(mCameraActor->GetCameraComponent());
 		mPerspectiveCamera->SetCameraParams(aspect, fov, 0.1f, 100.0f);
-		mPerspectiveCamera->SetWorldPosition(FVector3f{ 0.0f, 0.0f, -2.0f });
+		mPerspectiveCamera->SetWorldPosition(FVector3f{ 0.0f, 0.0f, -5.0f });
 
 		FStaticMeshRef staticMesh = FAssetManager::Get().MakeStaticMesh(fbxMeshPath);
 
@@ -62,11 +62,17 @@ namespace Dash
 		FDepthStencilState{true});
 
 		FMaterialRef material = FAssetManager::Get().MakeMaterial("material", shaderTech);
-		staticMesh->SetMaterial("Cyborg_Weapon_mat", material);
+		staticMesh->SetMaterial("MI_M4A1", material);
 		mStaticMeshActor = std::make_shared<TStaticMeshActor>("StaticMesh");
 		mStaticMeshActor->GetStaticMeshComponent()->SetStaticMesh(staticMesh);
+		mStaticMeshActor->SetActorWorldScale(FVector3f{0.01f, 0.01f, 0.01f});
+		mStaticMeshActor->SetActorWorldPosition(FVector3f{ 0.0f, 0.0f, 0.0f });
+		mStaticMeshActor->SetActorWorldRotation(FQuaternion{ FVector3f{ 1.0f, 0.0f, 0.0f }, 90.0f });
+
+		FTextureRef baseColorTexture = FAssetManager::Get().MakeTexture(std::string(ENGINE_PATH) + "/Resource/T_M4A1_D.TGA");
 
 		material->SetVector4Parameter("Color", FVector4f{1.0f, 0.f, 0.0f, 0.0f});
+		material->SetTextureParameter("BaseColorTexture", baseColorTexture);
 
 		OnMouseWheelDownDelegate = FMouseWheelEventDelegate::Create<FSceneRenderLayer, &FSceneRenderLayer::OnMouseWheelDown>(this);
 		OnMouseWheelUpDelegate = FMouseWheelEventDelegate::Create<FSceneRenderLayer, &FSceneRenderLayer::OnMouseWheelUp>(this);
@@ -105,13 +111,13 @@ namespace Dash
 
 		UpdateCamera(translate);
 		
-		MeshConstantBuffer.ModelViewProjectionMatrix = mPerspectiveCamera->GetViewProjectionMatrix();
+		//MeshConstantBuffer.ModelViewProjectionMatrix = mStaticMeshActor->GetActorWorldTransform().GetMatrix() * mPerspectiveCamera->GetViewProjectionMatrix();
 
 		TStaticMeshComponent* staticMeshComponent = mStaticMeshActor->GetStaticMeshComponent();
 		if (staticMeshComponent)
 		{
 			Scalar timeSin = FMath::Abs(FMath::Sin(e.TotalTime));
-			staticMeshComponent->GetMaterial("Cyborg_Weapon_mat")->SetVector4Parameter("Color", FVector4f{ timeSin, timeSin, timeSin, 1.0f });
+			staticMeshComponent->GetMaterial("MI_M4A1")->SetVector4Parameter("Color", FVector4f{ timeSin, timeSin, timeSin, 1.0f });
 		}
 	}
 
@@ -134,14 +140,15 @@ namespace Dash
 
 					graphicsContext.SetGraphicsPipelineState(drawCommand.PSO);
 
-					graphicsContext.SetRootConstantBufferView("FrameConstantBuffer", MeshConstantBuffer);
+					graphicsContext.SetRootConstantBufferView("FrameConstantBuffer", mPerspectiveCamera->GetViewProjectionMatrix());
+					graphicsContext.SetRootConstantBufferView("ObjectConstantBuffer", mStaticMeshActor->GetActorWorldTransform().GetMatrix());
 
-					for (auto& cbvParameter : drawCommand.ConstantBufferMap)
+					for (auto& cbvParameter : *drawCommand.ConstantBufferMapPtr)
 					{
-						graphicsContext.SetRootConstantBufferView(cbvParameter.first, cbvParameter.second.get()->size(), cbvParameter.second.get()->data());
+						graphicsContext.SetRootConstantBufferView(cbvParameter.first, cbvParameter.second.size(), cbvParameter.second.data());
 					}
 
-					for (auto& srvParameter : drawCommand.TextureBufferMap)
+					for (auto& srvParameter : *drawCommand.TextureBufferMapPtr)
 					{
 						graphicsContext.SetShaderResourceView(srvParameter.first, srvParameter.second->GetTextureBuffer());
 					}

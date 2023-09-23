@@ -8,7 +8,7 @@ namespace Dash
         : mTexturePath(texturePath)
         , mTextureData(FTextureLoaderManager::Get().LoadTexture(texturePath))
     {
-        FGraphicsCore::Device->CreateTextureBufferFromMemory(mTextureData.SourceTexturePath, mTextureData.TextureDescription
+        mTextureBufferRef = FGraphicsCore::Device->CreateTextureBufferFromMemory(mTextureData.SourceTexturePath, mTextureData.TextureDescription
             , { mTextureData.DecodedData.data() });
     }
 

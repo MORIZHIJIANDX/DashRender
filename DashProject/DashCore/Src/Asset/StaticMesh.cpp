@@ -28,7 +28,7 @@ namespace Dash
 
 		if (importedMeshData.hasUV)
 		{
-			mTexCoordBuffer = FGraphicsCore::Device->CreateVertexBuffer(meshPath + "TexcoordBuffer", importedMeshData.numVertexes, sizeof(FVector2f) * importedMeshData.numTexCoord, importedMeshData.VertexColorData.data());
+			mTexCoordBuffer = FGraphicsCore::Device->CreateVertexBuffer(meshPath + "TexcoordBuffer", importedMeshData.numVertexes, sizeof(FVector2f) * importedMeshData.numTexCoord, importedMeshData.UVData.data());
 		}
 
 		for (size_t i = 0; i < importedMeshData.materialNames.size(); i++)

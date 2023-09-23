@@ -8,6 +8,9 @@
 #include "Graphics/CommandContext.h"
 #include "Asset/AssetManager.h"
 
+#include "MeshLoader/MeshLoaderManager.h"
+#include "TextureLoader/TextureLoaderManager.h"
+
 namespace Dash
 {
 	bool AppPaused = false;
@@ -63,6 +66,9 @@ namespace Dash
 
 		FGraphicsCore::Initialize(app->GetWindowWidth(), app->GetWindowHeight());
 
+		FTextureLoaderManager::Get().Init();
+		FMeshLoaderManager::Get().Init();
+
 		FAssetManager::Get().Init();
 
 		app->Startup();
@@ -77,6 +83,9 @@ namespace Dash
 		app->Cleanup();
 		FLogManager::Get()->Shutdown();
 		FAssetManager::Get().Shutdown();
+
+		FMeshLoaderManager::Get().Shutdown();
+		FTextureLoaderManager::Get().Shutdown();
 
 		std::string WindowClassName = app->GetWindowClassName();
 		::UnregisterClassA(WindowClassName.c_str(),

@@ -1,14 +1,17 @@
 cbuffer FrameConstantBuffer : register(b0)
 {
-    float4x4 ModelViewProjectionMatrix;
+    float4x4 ViewProjectionMatrix;
 };
 
+cbuffer ObjectConstantBuffer : register(b1)
+{
+    float4x4 ModelMatrix;
+};
 
-cbuffer MaterialConstantBuffer : register(b1)
+cbuffer MaterialConstantBuffer : register(b2)
 {
     float4 Color;
 };
-
 
 struct VS_INPUT
 {
@@ -27,15 +30,21 @@ struct PS_INPUT
 PS_INPUT VS_Main(VS_INPUT input)
 {
     PS_INPUT output;
-    output.pos = mul(float4(input.pos, 1.f), ModelViewProjectionMatrix);
+    float4x4 MVPMatrix = mul(ModelMatrix, ViewProjectionMatrix);
+    output.pos = mul(float4(input.pos, 1.f), MVPMatrix);
     output.normal = input.normal;
     output.uv = input.uv;
     return output;
 }
 
+SamplerState Sampler_Static : register(s3);
+Texture2D BaseColorTexture : register(t0);
+
 float4 PS_Main(PS_INPUT input) : SV_Target
 {
     //float4 out_col = float4(input.uv, 0.0f, 0.0f);
-    float4 out_col = float4(input.normal * Color.rgb, 0.0f);
+    //float4 out_col = float4(input.normal * Color.rgb, 0.0f);
+    
+    float4 out_col = BaseColorTexture.Sample(Sampler_Static, input.uv) * Color;
     return out_col;
 }

@@ -119,9 +119,9 @@ namespace Dash
             importedMeshData.hasUV = importedMeshData.UVData.size() > 0;
             importedMeshData.hasVertexColor = importedMeshData.VertexColorData.size() > 0;
 
-            ASSERT(importedMeshData.PositionData.size() == importedMeshData.UVData.size());
-            ASSERT(importedMeshData.UVData.size() == importedMeshData.NormalData.size());
-            ASSERT(importedMeshData.NormalData.size() == importedMeshData.TangentData.size());
+            ASSERT(importedMeshData.PositionData.size() == (importedMeshData.UVData.size() / importedMeshData.numTexCoord));
+            ASSERT(importedMeshData.PositionData.size() == importedMeshData.NormalData.size());
+            ASSERT(importedMeshData.PositionData.size() == importedMeshData.TangentData.size());
 
             if (importedMeshData.hasVertexColor)
             {

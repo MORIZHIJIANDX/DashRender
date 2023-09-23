@@ -11,8 +11,8 @@ namespace Dash
 		std::vector<FGpuVertexBufferRef> VertexBuffers;
 		FGpuIndexBufferRef IndexBuffer;
 
-		std::map<std::string, std::shared_ptr<std::vector<uint8_t>>> ConstantBufferMap;
-		std::map<std::string, FTextureRef> TextureBufferMap;
+		const std::map<std::string, std::vector<uint8_t>>* ConstantBufferMapPtr;
+		const std::map<std::string, FTextureRef>* TextureBufferMapPtr;
 
 		FGraphicsPSORef PSO;
 

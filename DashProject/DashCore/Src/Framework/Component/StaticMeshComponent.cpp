@@ -156,8 +156,8 @@ namespace Dash
 				meshDrawCommand.IndexBuffer = mStaticMesh->GetIndexBuffer();
 
 				auto iter = shaderPassParameters.find(shaderPass->GetPassName());
-				meshDrawCommand.ConstantBufferMap = iter->second.ConstantBufferMap;
-				meshDrawCommand.TextureBufferMap = iter->second.TextureBufferMap;
+				meshDrawCommand.ConstantBufferMapPtr = &iter->second.ConstantBufferMap;
+				meshDrawCommand.TextureBufferMapPtr = &iter->second.TextureBufferMap;
 
 				meshDrawCommand.PSO = FGraphicsPSO::MakeGraphicsPSO(mName);
 				meshDrawCommand.PSO->SetShaderPass(shaderPass);

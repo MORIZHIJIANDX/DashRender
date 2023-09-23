@@ -87,11 +87,11 @@ namespace Dash
         data.numTexCoord = 1;
         data.numVertexes = numVertex;
        
-        data.PositionData.reserve(numVertex);
-        data.NormalData.reserve(numVertex);
-        data.TangentData.reserve(numVertex);
-        data.VertexColorData.reserve(numVertex);
-        data.UVData.reserve(numVertex);
+        data.PositionData.resize(numVertex);
+        data.NormalData.resize(numVertex);
+        data.TangentData.resize(numVertex);
+        data.VertexColorData.resize(numVertex);
+        data.UVData.resize(numVertex);
 
         // ”“√Ê(+X√Ê)
         data.PositionData[0] = FVector3f(halfWidth, -halfHeight, -halfDepth);
