@@ -16,6 +16,7 @@
 #include "DepthStencilState.h"
 #include "PrimitiveTopology.h"
 #include "Utility/FileUtility.h"
+#include "CpuDescriptorAllocator.h"
 
 #include "Utility/Keyboard.h"
 
@@ -125,6 +126,8 @@ namespace Dash
 		mCurrentBackBufferIndex = mSwapChain->GetCurrentBackBufferIndex();
 		uint64_t nextBufferFenceValue = mFenceValue[mCurrentBackBufferIndex];
 		FGraphicsCore::CommandQueueManager->GetGraphicsQueue().WaitForFence(nextBufferFenceValue);	
+
+		FGraphicsCore::DescriptorAllocator->ReleaseStaleDescriptors();
 	}
 
 	FColorBufferRef FSwapChain::GetColorBuffer()
