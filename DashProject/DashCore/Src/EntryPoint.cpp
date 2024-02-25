@@ -313,7 +313,6 @@ namespace Dash
 			bool alt = (GetAsyncKeyState(VK_MENU) & 0x8000) != 0;
 
 			EKeyCode key = (EKeyCode)wParam;
-			unsigned int scanCode = (lParam & 0x00FF0000) >> 16;
 			FKeyEventArgs keyEventArgs(key, c, EKeyState::Pressed, control, shift, alt, repeat);
 			FKeyboard::Get().OnKeyPressed(keyEventArgs);
 			break;
@@ -429,7 +428,7 @@ namespace Dash
 			int y = ((int)(short)HIWORD(lParam));
 
 			// Convert the screen coordinates to client coordinates.
-			POINT clientToScreenPoint;
+			POINT clientToScreenPoint{0, 0};
 			clientToScreenPoint.x = x;
 			clientToScreenPoint.y = y;
 			::ScreenToClient(hWnd, &clientToScreenPoint);

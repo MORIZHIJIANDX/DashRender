@@ -302,28 +302,24 @@ namespace Dash
 	template<typename Scalar>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, 2>::Iterator TScalarArray<Scalar, 2>::Begin() noexcept
 	{
-		using Iterator = typename TScalarArray<Scalar, 2>::Iterator;
 		return Data.begin();
 	}
 
 	template<typename Scalar>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, 2>::ConstIterator TScalarArray<Scalar, 2>::Begin() const noexcept
 	{
-		using ConstIterator = typename TScalarArray<Scalar, 2>::ConstIterator;
 		return Data.begin();
 	}
 
 	template<typename Scalar>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, 2>::Iterator TScalarArray<Scalar, 2>::End() noexcept
 	{
-		using Iterator = typename TScalarArray<Scalar, 2>::Iterator;
 		return Data.end();
 	}
 
 	template<typename Scalar>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, 2>::ConstIterator TScalarArray<Scalar, 2>::End() const noexcept
 	{
-		using ConstIterator = typename TScalarArray<Scalar, 2>::ConstIterator;
 		return Data.end();
 	}
 

@@ -156,7 +156,7 @@ namespace Dash
 	{
 		if (commandLists.empty())
 		{
-			mNextFenceValue;
+			return mNextFenceValue;
 		}
 
 		std::vector<ID3D12CommandList*> d3dCommandLists;

@@ -82,7 +82,6 @@ namespace Dash
 		
 		for (auto& pair : mShaders)
 		{
-			EShaderStage stage = pair.first;
 			FShaderResourceRef shaderRef = pair.second;
 
 			const std::vector<FShaderParameter>& shaderParameters = shaderRef->GetShaderParameters();

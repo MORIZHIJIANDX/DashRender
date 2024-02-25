@@ -345,28 +345,24 @@ namespace Dash
 	template<typename Scalar>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, 4>::Iterator TScalarArray<Scalar, 4>::Begin() noexcept
 	{
-		using Iterator = typename TScalarArray<Scalar, 4>::Iterator;
 		return Data.begin();
 	}
 
 	template<typename Scalar>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, 4>::ConstIterator TScalarArray<Scalar, 4>::Begin() const noexcept
 	{
-		using ConstIterator = typename TScalarArray<Scalar, 4>::ConstIterator;
 		return Data.begin();
 	}
 
 	template<typename Scalar>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, 4>::Iterator TScalarArray<Scalar, 4>::End() noexcept
 	{
-		using Iterator = typename TScalarArray<Scalar, 4>::Iterator;
 		return Data.end();
 	}
 
 	template<typename Scalar>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, 4>::ConstIterator TScalarArray<Scalar, 4>::End() const noexcept
 	{
-		using ConstIterator = typename TScalarArray<Scalar, 4>::ConstIterator;
 		return Data.end();
 	}
 
@@ -387,8 +383,6 @@ namespace Dash
 		template<typename Scalar1, typename Scalar2>
 		FORCEINLINE typename TPromote<Scalar1, Scalar2>::RT Dot(const TScalarArray<Scalar1, 4>& a, const TScalarArray<Scalar2, 4>& b) noexcept
 		{
-			using RT = typename TPromote<Scalar1, Scalar2>::RT;
-
 			return a.X * b.X + a.Y * b.Y + a.Z * b.Z + a.W * b.W;
 		}
 

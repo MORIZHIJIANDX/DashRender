@@ -434,8 +434,8 @@ namespace loguru
 #ifdef _WIN32
 		int bytes_needed = _vscprintf(format, vlist);
 		CHECK_F(bytes_needed >= 0, "Bad string format: '%s'", format);
-		char* buff = (char*)malloc(bytes_needed+1);
-		vsnprintf(buff, bytes_needed+1, format, vlist);
+		char* buff = (char*)malloc(static_cast<size_t>(bytes_needed+1));
+		vsnprintf(buff, static_cast<size_t>(bytes_needed+1), format, vlist);
 		return Text(buff);
 #else
 		char* buff = nullptr;
@@ -447,7 +447,7 @@ namespace loguru
 
 	Text textprintf(const char* format, ...)
 	{
-		va_list vlist;
+		va_list vlist{};
 		va_start(vlist, format);
 		auto result = vtextprintf(format, vlist);
 		va_end(vlist);
@@ -1573,7 +1573,7 @@ namespace loguru
 #else
 	void log(Verbosity verbosity, const char* file, unsigned line, const char* format, ...)
 	{
-		va_list vlist;
+		va_list vlist{};
 		va_start(vlist, format);
 		vlog(verbosity, file, line, format, vlist);
 		va_end(vlist);
@@ -1587,7 +1587,7 @@ namespace loguru
 
 	void raw_log(Verbosity verbosity, const char* file, unsigned line, const char* format, ...)
 	{
-		va_list vlist;
+		va_list vlist{};
 		va_start(vlist, format);
 		auto buff = vtextprintf(format, vlist);
 		auto message = Message{verbosity, file, line, "", "", "", buff.c_str()};
@@ -1618,7 +1618,7 @@ namespace loguru
 	LogScopeRAII::LogScopeRAII(Verbosity verbosity, const char* file, unsigned line, const char* format, ...) :
 		_verbosity(verbosity), _file(file), _line(line)
 	{
-		va_list vlist;
+		va_list vlist{};
 		va_start(vlist, format);
 		this->Init(format, vlist);
 		va_end(vlist);
@@ -1687,7 +1687,7 @@ namespace loguru
 #else
 	void log_and_abort(int stack_trace_skip, const char* expr, const char* file, unsigned line, const char* format, ...)
 	{
-		va_list vlist;
+		va_list vlist{};
 		va_start(vlist, format);
 		auto buff = vtextprintf(format, vlist);
 		log_to_everywhere(stack_trace_skip + 1, Verbosity_FATAL, file, line, expr, buff.c_str());
@@ -1728,7 +1728,7 @@ namespace loguru
 
 	std::string strprintf(const char* format, ...)
 	{
-		va_list vlist;
+		va_list vlist{};
 		va_start(vlist, format);
 		auto result = vstrprintf(format, vlist);
 		va_end(vlist);
@@ -2090,7 +2090,7 @@ namespace loguru
 
 
 #if defined(__GNUC__) || defined(__clang__)
-#pragma GCC diagnostic pop
+//#pragma GCC diagnostic pop
 #elif defined(_MSC_VER)
 //#pragma warning(pop)
 #endif

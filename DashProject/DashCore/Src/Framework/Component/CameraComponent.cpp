@@ -5,11 +5,11 @@ namespace Dash
 {
 	TCameraComponent::TCameraComponent(const std::string& name, TActor* owner, Scalar nearZ, Scalar farZ, const FViewport& vp)
 		: TComponent(name, owner)
+		, mProjectionMatrix(FIdentity{})
+		, mViewProjectionMatrix(FIdentity{})
 		, mNear(nearZ)
 		, mFar(farZ)
 		, mViewPort(vp)
-		, mProjectionMatrix(FIdentity{})
-		, mViewProjectionMatrix(FIdentity{})
 		, mProjectionMatrixDirty(true)
 	{
 	}
@@ -295,16 +295,16 @@ namespace Dash
 
 	TPerspectiveCameraComponent::TPerspectiveCameraComponent(const std::string& name, TActor* owner)
 		: TCameraComponent(name, owner, 1.0f, 100.0f, FViewport{})
-		, mAspect(16.0f / 9.0f)
 		, mFov(TScalarTraits<Scalar>::Pi()* Scalar { 0.25 })
+		, mAspect(16.0f / 9.0f)
 	{
 		UpdateProjectionMatrix();
 	}
 
 	TPerspectiveCameraComponent::TPerspectiveCameraComponent(const std::string& name, TActor* owner, Scalar aspect, Scalar fov, Scalar nearZ, Scalar farZ, const FViewport& vp)
 		: TCameraComponent(name, owner, nearZ, farZ, vp)
-		, mAspect(aspect)
 		, mFov(fov)
+		, mAspect(aspect)
 	{
 		UpdateProjectionMatrix();
 	}

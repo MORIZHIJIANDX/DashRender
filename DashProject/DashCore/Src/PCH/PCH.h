@@ -34,7 +34,7 @@
 
 #include "Math/MathType.h"
 
-
+/*
 static void SetThreadName(std::thread& thread, const char* threadName)
 {
 	THREADNAME_INFO info;
@@ -51,4 +51,4 @@ static void SetThreadName(std::thread& thread, const char* threadName)
 	{
 	}
 }
-
+*/

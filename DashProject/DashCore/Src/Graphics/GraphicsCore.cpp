@@ -20,11 +20,7 @@
 using namespace Microsoft::WRL;
 
 namespace Dash
-{ 
-	static const uint32_t VendorID_Nvidia = 0x10DE;
-	static const uint32_t VendorID_AMD = 0x1002;
-	static const uint32_t VendorID_Intel = 0x8086;
-
+{
 	FRenderDevice* FGraphicsCore::Device = nullptr;
 	FCommandQueueManager* FGraphicsCore::CommandQueueManager = nullptr;
 	FCommandListManager* FGraphicsCore::CommandListManager = nullptr;

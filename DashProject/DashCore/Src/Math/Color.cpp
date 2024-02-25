@@ -236,7 +236,7 @@ namespace Dash
 	}
 
 	FColor::FColor(const TScalarArray<uint8_t, 4>& InColor)
-		: a(InColor.W), r(InColor.X), g(InColor.Y), b(InColor.Z)
+		: r(InColor.X), g(InColor.Y), b(InColor.Z), a(InColor.W)
 	{
 	}
 
@@ -398,9 +398,9 @@ namespace Dash
 		float y = 2.0f * v / (2.0f * u - 8.0f * v + 4.0f);
 		float z = 1.0f - x - y;
 
-		float Y = 1.0f;
-		float X = Y / y * x;
-		float Z = Y / y * z;
+		//float Y = 1.0f;
+		//float X = Y / y * x;
+		//float Z = Y / y * z;
 
 		// XYZ to RGB with BT.709 primaries
 		float r = 3.2404542f * x + -1.5371385f * y + -0.4985314f * z;

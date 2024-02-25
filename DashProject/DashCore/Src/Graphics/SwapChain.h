@@ -17,9 +17,9 @@ namespace Dash
 		FSwapChain(uint32_t displayWdith, uint32_t displayHeight, EResourceFormat colorBufferFormat =
 			EResourceFormat::RGBA16_Float, EResourceFormat depthBufferFormat = EResourceFormat::Depth32_Float, EResourceFormat swapChainFormat = EResourceFormat::RGB10A2_Unorm)
 			: mDisplayWdith(displayWdith)
+			, mDisplayHeight(displayHeight)
 			, mColorBufferFormat(colorBufferFormat)
 			, mDepthBufferFormat(depthBufferFormat)
-			, mDisplayHeight(displayHeight)
 			, mSwapChainFormat(swapChainFormat)
 		{
 			Initialize();

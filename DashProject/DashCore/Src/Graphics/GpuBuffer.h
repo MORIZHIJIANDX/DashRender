@@ -73,7 +73,7 @@ namespace Dash
 	public:
 		virtual ~FStructuredBuffer() {}
 
-		virtual void Destroy()
+		virtual void Destroy() override
 		{
 			mCounterBuffer.Destroy();
 			FGpuBuffer::Destroy();

@@ -249,7 +249,7 @@ namespace Dash {
 		template<typename Scalar>
 		FORCEINLINE constexpr Scalar Sign(Scalar x) noexcept
 		{
-			return IsPositive(x) ? Scalar{ 1 } : £¨IsZero(x) ? Scalar{} : Scalar{ -1 };
+			return IsPositive(x) ? Scalar{ 1 } : (IsZero(x) ? Scalar{} : Scalar{ -1 });
 		}
 
 		template<typename Scalar>
@@ -505,7 +505,7 @@ namespace Dash {
 		{
 			STATIC_ASSERT(sizeof(To) == sizeof(From));
 
-			union { To to; From from; } pun;
+			union { To to; From from; } pun{};
 			pun.from = from;
 			return pun.to;
 		}

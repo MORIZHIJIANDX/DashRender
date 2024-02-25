@@ -409,7 +409,7 @@ namespace Dash
 		}
 		constexpr FORCEINLINE FColor(uint8_t InR, uint8_t InG, uint8_t InB, uint8_t InA = 255)
 			// put these into the body for proper ordering with INTEL vs non-INTEL_BYTE_ORDER
-			: a(InA), r(InR), g(InG), b(InB)
+			: r(InR), g(InG), b(InB), a(InA)
 		{}
 
 		FORCEINLINE explicit FColor(const TScalarArray<uint8_t, 4>& InColor);

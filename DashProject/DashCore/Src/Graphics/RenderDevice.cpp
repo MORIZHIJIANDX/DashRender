@@ -236,7 +236,7 @@ namespace Dash
 			if (SUCCEEDED(D3D12CreateDevice(dxgiAdapter.Get(), D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(&mDevice))))
 			{
 				LOG_INFO << "Create Device With Adapter : " << FStringUtility::WideStringToUTF8(desc.Description);
-				LOG_INFO << "Adapter Memory " << desc.DedicatedVideoMemory / (1024 * 1024) << " MB";
+				LOG_INFO << "Adapter Memory " << desc.DedicatedVideoMemory / static_cast<size_t>(1024 * 1024) << " MB";
 
 				std::string vendorType = "Adapter Type : ";
 				switch (desc.VendorId)
@@ -275,7 +275,8 @@ namespace Dash
 			LSTATUS result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\AppModelUnlock", 0, KEY_READ, &hKey);
 			if (result == ERROR_SUCCESS)
 			{
-				DWORD keyValue, keySize = sizeof(DWORD);
+				DWORD keyValue = 0;
+				DWORD keySize = sizeof(DWORD);
 				result = RegQueryValueEx(hKey, "AllowDevelopmentWithoutDevLicense", 0, NULL, (byte*)&keyValue, &keySize);
 				if (result == ERROR_SUCCESS && keyValue == 1)
 					developerModeEnabled = true;
@@ -380,7 +381,7 @@ namespace Dash
 				}
 			}
 
-			D3D12_FEATURE_DATA_ROOT_SIGNATURE featureDataSignature;
+			D3D12_FEATURE_DATA_ROOT_SIGNATURE featureDataSignature{};
 			featureDataSignature.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;
 			if (FAILED(mDevice->CheckFeatureSupport(D3D12_FEATURE_ROOT_SIGNATURE, &featureDataSignature,
 				sizeof(D3D12_FEATURE_DATA_ROOT_SIGNATURE))))

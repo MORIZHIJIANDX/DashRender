@@ -344,28 +344,24 @@ namespace Dash
 	template<typename Scalar>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, 3>::Iterator TScalarArray<Scalar, 3>::Begin() noexcept
 	{
-		using Iterator = typename TScalarArray<Scalar, 3>::Iterator;
 		return Data.begin();
 	}
 
 	template<typename Scalar>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, 3>::ConstIterator TScalarArray<Scalar, 3>::Begin() const noexcept
 	{
-		using ConstIterator = typename TScalarArray<Scalar, 3>::ConstIterator;
 		return Data.begin();
 	}
 
 	template<typename Scalar>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, 3>::Iterator TScalarArray<Scalar, 3>::End() noexcept
 	{
-		using Iterator = typename TScalarArray<Scalar, 3>::Iterator;
 		return Data.end();
 	}
 
 	template<typename Scalar>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, 3>::ConstIterator TScalarArray<Scalar, 3>::End() const noexcept
 	{
-		using ConstIterator = typename TScalarArray<Scalar, 3>::ConstIterator;
 		return Data.end();
 	}
 
@@ -385,8 +381,6 @@ namespace Dash
 		template<typename Scalar1, typename Scalar2>
 		FORCEINLINE typename TPromote<Scalar1, Scalar2>::RT Dot(const TScalarArray<Scalar1, 3>& a, const TScalarArray<Scalar2, 3>& b) noexcept
 		{
-			using RT = typename TPromote<Scalar1, Scalar2>::RT;
-
 			return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
 		}
 
@@ -457,7 +451,7 @@ namespace Dash
 			int c0 = IsLessnn(a.X, a.Y);
 			int c1 = IsLessnn(a.X, a.Z);
 			int c2 = IsLessnn(a.Y, a.Z);
-			return (c0 & ~c2) | ((c1 & c2) << 1);
+			return static_cast<size_t>((c0 & ~c2) | ((c1 & c2) << 1));
 		}
 
 		template<typename Scalar>
@@ -466,7 +460,7 @@ namespace Dash
 			int c0 = IsLessnn(a.Y, a.X);
 			int c1 = IsLessnn(a.Z, a.X);
 			int c2 = IsLessnn(a.Z, a.Y);
-			return (c0 & ~c2) | ((c1 & c2) << 1);
+			return static_cast<size_t>((c0 & ~c2) | ((c1 & c2) << 1));
 		}
 
 		template<typename Scalar>

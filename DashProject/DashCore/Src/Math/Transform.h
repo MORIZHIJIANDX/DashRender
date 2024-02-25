@@ -171,9 +171,9 @@ namespace Dash
 		: mScale()
 		, mRotation()
 		, mPosition()
-		, mDirty(true)
 		, mMatrix()
 		, mInverseMatrix()
+		, mDirty(true)
 	{
 	}
 
@@ -181,9 +181,9 @@ namespace Dash
 		: mScale(FIdentity{})
 		, mRotation(FIdentity{})
 		, mPosition(FIdentity{})
-		, mDirty(false)
 		, mMatrix(FIdentity{})
 		, mInverseMatrix(FIdentity{})
+		, mDirty(false)
 	{
 	}
 

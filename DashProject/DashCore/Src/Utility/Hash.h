@@ -6,7 +6,7 @@ namespace Dash
 	// and AMD Bulldozer (Oct. 2011) processors.  I could put a runtime
 	// check for this, but I'm just going to assume people playing with
 	// DirectX 12 on Windows 10 have fairly recent machines.
-	#ifdef _M_X64
+	#ifdef _M_X64 && !__clang__
 	#define ENABLE_SSE_CRC32 1
 	#else
 	#define ENABLE_SSE_CRC32 0

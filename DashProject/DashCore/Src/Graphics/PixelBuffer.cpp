@@ -16,8 +16,6 @@ namespace Dash
 
 		mResource.Attach(resource);
 
-		D3D12_RESOURCE_DESC desc = resource->GetDesc();
-
 		SetName(name);
 
 		FGpuResourcesStateTracker::AddGlobalResourceState(this->GetResource(), D3DResourceState(currentState));	

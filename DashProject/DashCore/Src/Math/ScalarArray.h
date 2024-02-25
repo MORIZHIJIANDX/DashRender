@@ -418,28 +418,24 @@ namespace Dash
 	template<typename Scalar, std::size_t N>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, N>::Iterator TScalarArray<Scalar, N>::Begin() noexcept
 	{
-		using Iterator = typename TScalarArray<Scalar, N>::Iterator;
 		return Data.begin();
 	}
 
 	template<typename Scalar, std::size_t N>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, N>::ConstIterator TScalarArray<Scalar, N>::Begin() const noexcept
 	{
-		using ConstIterator = typename TScalarArray<Scalar, N>::ConstIterator;
 		return Data.begin();
 	}
 
 	template<typename Scalar, std::size_t N>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, N>::Iterator TScalarArray<Scalar, N>::End() noexcept
 	{
-		using Iterator = typename TScalarArray<Scalar, N>::Iterator;
 		return Data.end();
 	}
 
 	template<typename Scalar, std::size_t N>
 	FORCEINLINE constexpr typename TScalarArray<Scalar, N>::ConstIterator TScalarArray<Scalar, N>::End() const noexcept
 	{
-		using ConstIterator = typename TScalarArray<Scalar, N>::ConstIterator;
 		return Data.end();
 	}
 

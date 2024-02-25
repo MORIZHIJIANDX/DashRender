@@ -116,7 +116,7 @@ namespace Dash
 		TStaticMeshComponent* staticMeshComponent = mStaticMeshActor->GetStaticMeshComponent();
 		if (staticMeshComponent)
 		{
-			Scalar timeSin = FMath::Abs(FMath::Sin(e.TotalTime));
+			Scalar timeSin = static_cast<Scalar>(FMath::Abs(FMath::Sin(e.TotalTime)));
 			staticMeshComponent->GetMaterial("MI_M4A1")->SetVector4Parameter("Color", FVector4f{ timeSin, timeSin, timeSin, 1.0f });
 		}
 	}

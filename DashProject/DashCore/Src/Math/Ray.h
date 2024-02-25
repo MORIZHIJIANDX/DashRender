@@ -18,9 +18,9 @@ namespace Dash
 		TScalarArray<Scalar, 3> operator()(Scalar t) const noexcept;
 
 		TScalarArray<Scalar, 3> Origin;
-		Scalar TMax;
-		TScalarArray<Scalar, 3> Direction;
 		Scalar TMin;
+		TScalarArray<Scalar, 3> Direction;
+		Scalar TMax;
 	};
 
 
@@ -44,8 +44,8 @@ namespace Dash
 	template<typename Scalar>
 	FORCEINLINE TScalarRay<Scalar>::TScalarRay(const TScalarArray<Scalar, 3>& origin, const TScalarArray<Scalar, 3>& dir, Scalar tmin, Scalar tmax) noexcept
 		: Origin(origin)
-		, Direction(dir)
 		, TMin(tmin)
+		, Direction(dir)
 		, TMax(tmax)
 	{
 	}
