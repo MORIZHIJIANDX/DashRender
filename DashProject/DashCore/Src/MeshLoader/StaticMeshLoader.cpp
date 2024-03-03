@@ -22,11 +22,11 @@ namespace Dash
 
         // Track material per submesh
         std::vector<uint32_t> submeshToMaterialIndex;
-        std::vector<FMeshSectionData>& meshSections = importedMeshData.sectionData;
+        std::vector<FMeshSectionData>& meshSections = importedMeshData.SectionData;
 
         // Load mesh
         {
-            std::vector<uint32_t>& indices = importedMeshData.indices;
+            std::vector<uint32_t>& indices = importedMeshData.Indices;
 
             // Reserve space
             {
@@ -40,8 +40,8 @@ namespace Dash
                                
                 ASSERT(totalVertexs != 0);
 
-                importedMeshData.numVertexes = totalVertexs;
-                importedMeshData.numTexCoord = maxTexCoord;
+                importedMeshData.NumVertexes = totalVertexs;
+                importedMeshData.NumTexCoord = maxTexCoord;
 
                 importedMeshData.PositionData.reserve(totalVertexs);     
                 importedMeshData.NormalData.reserve(totalVertexs);
@@ -57,17 +57,17 @@ namespace Dash
 
                 // Track submesh
                 FMeshSectionData sectionData{};
-                sectionData.vertexStart = (uint32_t)importedMeshData.PositionData.size();
-                sectionData.vertexCount = mesh->mNumVertices;
-                sectionData.indexStart = (uint32_t)indices.size();
-                sectionData.indexCount = 0;
+                sectionData.VertexStart = (uint32_t)importedMeshData.PositionData.size();
+                sectionData.VertexCount = mesh->mNumVertices;
+                sectionData.IndexStart = (uint32_t)indices.size();
+                sectionData.IndexCount = 0;
                 // Count indices
                 for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex)
                 {
                     const aiFace& face = mesh->mFaces[faceIndex];
                     for (uint32_t index_idx = 0; index_idx < face.mNumIndices; ++index_idx)
                         indices.push_back(face.mIndices[index_idx]);
-                    sectionData.indexCount += face.mNumIndices;
+                    sectionData.IndexCount += face.mNumIndices;
                 }
 
                 // Grab per vertex data
@@ -75,7 +75,7 @@ namespace Dash
                 {
                     importedMeshData.PositionData.push_back(FVector3f{ mesh->mVertices[vertexIndex].x, mesh->mVertices[vertexIndex].y, mesh->mVertices[vertexIndex].z });
 
-                    for (uint32_t uvIndex = 0; uvIndex < importedMeshData.numTexCoord; uvIndex++)
+                    for (uint32_t uvIndex = 0; uvIndex < importedMeshData.NumTexCoord; uvIndex++)
                     {
                         if (mesh->HasTextureCoords(uvIndex))
                         {
@@ -114,16 +114,16 @@ namespace Dash
                 meshSections.push_back(sectionData);
             }
 
-            importedMeshData.hasNormal = importedMeshData.NormalData.size() > 0;
-            importedMeshData.hasTangent = importedMeshData.TangentData.size() > 0;
-            importedMeshData.hasUV = importedMeshData.UVData.size() > 0;
-            importedMeshData.hasVertexColor = importedMeshData.VertexColorData.size() > 0;
+            importedMeshData.HasNormal = importedMeshData.NormalData.size() > 0;
+            importedMeshData.HasTangent = importedMeshData.TangentData.size() > 0;
+            importedMeshData.HasUV = importedMeshData.UVData.size() > 0;
+            importedMeshData.HasVertexColor = importedMeshData.VertexColorData.size() > 0;
 
-            ASSERT(importedMeshData.PositionData.size() == (importedMeshData.UVData.size() / importedMeshData.numTexCoord));
+            ASSERT(importedMeshData.PositionData.size() == (importedMeshData.UVData.size() / importedMeshData.NumTexCoord));
             ASSERT(importedMeshData.PositionData.size() == importedMeshData.NormalData.size());
             ASSERT(importedMeshData.PositionData.size() == importedMeshData.TangentData.size());
 
-            if (importedMeshData.hasVertexColor)
+            if (importedMeshData.HasVertexColor)
             {
                 ASSERT(importedMeshData.TangentData.size() == importedMeshData.VertexColorData.size());
             }
@@ -138,12 +138,12 @@ namespace Dash
         for (size_t matId = 0; matId < scene->mNumMaterials; matId++)
         {
             aiString materialName = scene->mMaterials[matId]->GetName();
-            importedMeshData.materialNames.push_back(materialName.C_Str());
+            importedMeshData.MaterialNames.push_back(materialName.C_Str());
         }
 
         for (size_t sectionId = 0; sectionId < meshSections.size(); sectionId++)
         {
-            meshSections[sectionId].materialSlotName = importedMeshData.materialNames[submeshToMaterialIndex[sectionId]];
+            meshSections[sectionId].MaterialSlotName = importedMeshData.MaterialNames[submeshToMaterialIndex[sectionId]];
         }
 
         return true;

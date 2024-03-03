@@ -117,7 +117,7 @@ namespace Dash
 		if (staticMeshComponent)
 		{
 			Scalar timeSin = static_cast<Scalar>(FMath::Abs(FMath::Sin(e.TotalTime)));
-			staticMeshComponent->GetMaterial("MI_M4A1")->SetVector4Parameter("Color", FVector4f{ timeSin, timeSin, timeSin, 1.0f });
+			staticMeshComponent->GetMaterial("MI_M4A1")->SetVector4Parameter("Color", FVector4f{ 1.0f, 1.0f, 1.0f, 1.0f });
 		}
 	}
 
@@ -155,11 +155,11 @@ namespace Dash
 
 					graphicsContext.SetViewportAndScissor(0, 0, renderTargetMagnitude.Width, renderTargetMagnitude.Height);
 
-					graphicsContext.SetVertexBuffers(0, 3, drawCommand.VertexBuffers.data());
+					graphicsContext.SetVertexBuffers(0, static_cast<UINT>(drawCommand.VertexBuffers.size()), drawCommand.VertexBuffers.data());
 
 					graphicsContext.SetIndexBuffer(drawCommand.IndexBuffer);
 
-					graphicsContext.DrawIndexed(drawCommand.vertexCount);
+					graphicsContext.DrawIndexed(drawCommand.IndexCount, drawCommand.IndexStart, drawCommand.VertexStart);
 				}
 			}
 		}

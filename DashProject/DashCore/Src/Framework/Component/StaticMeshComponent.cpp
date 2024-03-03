@@ -98,7 +98,7 @@ namespace Dash
 		for (uint32_t sectionIndex = 0; sectionIndex < meshSectionData.size(); sectionIndex++)
 		{
 			const FMeshSectionData& sectionData = meshSectionData[sectionIndex];
-			FMaterialRef material = mStaticMesh->GetMaterial(sectionData.materialSlotName);
+			FMaterialRef material = mStaticMesh->GetMaterial(sectionData.MaterialSlotName);
 
 			if (material == nullptr)
 			{
@@ -166,10 +166,10 @@ namespace Dash
 				meshDrawCommand.PSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetBackBufferFormat(), FGraphicsCore::SwapChain->GetDepthBuffer()->GetFormat());
 				meshDrawCommand.PSO->Finalize();
 
-				meshDrawCommand.vertexStart = sectionData.vertexStart;
-				meshDrawCommand.vertexCount = sectionData.vertexCount;
-				meshDrawCommand.indexStart = sectionData.indexStart;
-				meshDrawCommand.indexCount = sectionData.indexCount;
+				meshDrawCommand.VertexStart = sectionData.VertexStart;
+				meshDrawCommand.VertexCount = sectionData.VertexCount;
+				meshDrawCommand.IndexStart = sectionData.IndexStart;
+				meshDrawCommand.IndexCount = sectionData.IndexCount;
 
 				mCachedMeshDrawCommands.emplace_back(meshDrawCommand);
 			}

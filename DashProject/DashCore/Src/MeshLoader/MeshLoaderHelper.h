@@ -18,29 +18,29 @@ namespace Dash
     };
 
     struct FMeshSectionTextureInfo {
-        std::vector<std::string> texturePaths;
+        std::vector<std::string> TexturePaths;
     };
 
     struct FMeshSectionData
     {
-        uint32_t vertexStart{ 0 };
-        uint32_t vertexCount{ 0 };
-        uint32_t indexStart{ 0 };
-        uint32_t indexCount{ 0 };
+        uint32_t VertexStart{ 0 };
+        uint32_t VertexCount{ 0 };
+        uint32_t IndexStart{ 0 };
+        uint32_t IndexCount{ 0 };
 
-        std::string materialSlotName;
+        std::string MaterialSlotName;
     };
 
     struct FImportedStaticMeshData
     {
-        bool hasNormal = false;
-        bool hasTangent = false;
-        bool hasVertexColor = false;
-        bool hasUV = false;
+        bool HasNormal = false;
+        bool HasTangent = false;
+        bool HasVertexColor = false;
+        bool HasUV = false;
 
-        uint32_t numVertexes = 0;
-        uint32_t numTexCoord = 0;
-        std::vector<uint32_t> indices;
+        uint32_t NumVertexes = 0;
+        uint32_t NumTexCoord = 0;
+        std::vector<uint32_t> Indices;
 
         std::vector<FVector3f> PositionData;
         std::vector<FVector3f> NormalData;
@@ -48,7 +48,7 @@ namespace Dash
         std::vector<FVector2f> UVData;
         std::vector<FVector4f> VertexColorData;
 
-        std::vector<FMeshSectionData> sectionData;
-        std::vector<std::string> materialNames;
+        std::vector<FMeshSectionData> SectionData;
+        std::vector<std::string> MaterialNames;
     };
 }

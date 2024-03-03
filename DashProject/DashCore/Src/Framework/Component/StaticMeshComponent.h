@@ -16,10 +16,10 @@ namespace Dash
 
 		FGraphicsPSORef PSO;
 
-		uint32_t vertexStart{ 0 };
-		uint32_t vertexCount{ 0 };
-		uint32_t indexStart{ 0 };
-		uint32_t indexCount{ 0 };
+		uint32_t VertexStart{ 0 };
+		uint32_t VertexCount{ 0 };
+		uint32_t IndexStart{ 0 };
+		uint32_t IndexCount{ 0 };
 	};
 
 	class TStaticMeshComponent : public TComponent

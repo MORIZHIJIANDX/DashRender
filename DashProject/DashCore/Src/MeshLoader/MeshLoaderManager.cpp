@@ -80,12 +80,12 @@ namespace Dash
         const int numVertex = 24;
 
         FImportedMeshData data;
-        data.hasNormal = true;
-        data.hasTangent = true;
-        data.hasUV = true;
-        data.hasVertexColor = true;
-        data.numTexCoord = 1;
-        data.numVertexes = numVertex;
+        data.HasNormal = true;
+        data.HasTangent = true;
+        data.HasUV = true;
+        data.HasVertexColor = true;
+        data.NumTexCoord = 1;
+        data.NumVertexes = numVertex;
        
         data.PositionData.resize(numVertex);
         data.NormalData.resize(numVertex);
@@ -160,7 +160,7 @@ namespace Dash
             data.UVData[i * 4 + 3] = FVector2f(1.0f, 1.0f);
         }
 
-        data.indices = {
+        data.Indices = {
             0, 1, 2, 2, 3, 0,        // 右面(+X面)
             4, 5, 6, 6, 7, 4,        // 左面(-X面)
             8, 9, 10, 10, 11, 8,    // 顶面(+Y面)

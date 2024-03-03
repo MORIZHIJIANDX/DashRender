@@ -11,34 +11,34 @@ namespace Dash
 
 		mPostionBuffer = FGraphicsCore::Device->CreateVertexBuffer<FVector3f>(meshPath + "PositionBuffer", importedMeshData.PositionData);
 
-		if (importedMeshData.hasNormal)
+		if (importedMeshData.HasNormal)
 		{
 			mNormalBuffer = FGraphicsCore::Device->CreateVertexBuffer<FVector3f>(meshPath + "NormalBuffer", importedMeshData.NormalData);
 		}
 
-		if (importedMeshData.hasTangent)
+		if (importedMeshData.HasTangent)
 		{
 			mTangentBuffer = FGraphicsCore::Device->CreateVertexBuffer<FVector3f>(meshPath + "TangentBuffer", importedMeshData.TangentData);
 		}
 
-		if (importedMeshData.hasVertexColor)
+		if (importedMeshData.HasVertexColor)
 		{
 			mVertexColorBuffer = FGraphicsCore::Device->CreateVertexBuffer<FVector4f>(meshPath + "VertexColorBuffer", importedMeshData.VertexColorData);
 		}
 
-		if (importedMeshData.hasUV)
+		if (importedMeshData.HasUV)
 		{
-			mTexCoordBuffer = FGraphicsCore::Device->CreateVertexBuffer(meshPath + "TexcoordBuffer", importedMeshData.numVertexes, sizeof(FVector2f) * importedMeshData.numTexCoord, importedMeshData.UVData.data());
+			mTexCoordBuffer = FGraphicsCore::Device->CreateVertexBuffer(meshPath + "TexcoordBuffer", importedMeshData.NumVertexes, sizeof(FVector2f) * importedMeshData.NumTexCoord, importedMeshData.UVData.data());
 		}
 
-		for (size_t i = 0; i < importedMeshData.materialNames.size(); i++)
+		for (size_t i = 0; i < importedMeshData.MaterialNames.size(); i++)
 		{
-			mDefaultMaterials[importedMeshData.materialNames[i]] = nullptr;
+			mDefaultMaterials[importedMeshData.MaterialNames[i]] = nullptr;
 		}
 
-		mIndexBuffer = FGraphicsCore::Device->CreateIndexBuffer(meshPath + "IndexBuffer", importedMeshData.numVertexes, importedMeshData.indices.data(), true);
+		mIndexBuffer = FGraphicsCore::Device->CreateIndexBuffer(meshPath + "IndexBuffer", importedMeshData.NumVertexes, importedMeshData.Indices.data(), true);
 
-		mMeshSectionData = importedMeshData.sectionData;
+		mMeshSectionData = importedMeshData.SectionData;
 	}
 
 	FStaticMesh::~FStaticMesh()
