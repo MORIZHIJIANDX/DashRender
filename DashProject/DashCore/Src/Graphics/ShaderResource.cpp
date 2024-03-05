@@ -191,6 +191,9 @@ namespace Dash
 			uint32_t currentInputSlot = 0;
 			std::string prevSemanticName{};
 			uint32_t prevSemanticIndex = 0;
+
+			int32_t systemValueStart = INDEX_NONE;
+			int32_t noSystemValueEnd = INDEX_NONE;
 			
 			for (UINT parameterIndex = 0; parameterIndex < shaderDesc.InputParameters; ++parameterIndex)
 			{
@@ -202,6 +205,20 @@ namespace Dash
 
 				std::string currentSemanticName{inputSignatureParameterDesc.SemanticName};
 				bool isIstanceSemantic = FStringUtility::Contains(currentSemanticName, "Instance");
+				bool isSystemValue = FStringUtility::StartsWith(currentSemanticName, "SV_");
+
+				if (isSystemValue)
+				{
+					if (systemValueStart == INDEX_NONE)
+					{
+						systemValueStart = parameterIndex;
+					}
+					continue;
+				}
+				else
+				{
+					noSystemValueEnd = parameterIndex;
+				}
 				
 				if (FStringUtility::Contains(currentSemanticName, "Half"))
 				{
@@ -454,6 +471,11 @@ namespace Dash
 				prevSemanticIndex = inputSignatureParameterDesc.SemanticIndex;
 
 				LOG_INFO << " ================================== ";
+			}
+
+			if ((systemValueStart != INDEX_NONE) && (noSystemValueEnd != INDEX_NONE) && (systemValueStart < noSystemValueEnd))
+			{
+				ASSERT_MSG(false, "System values should be placed after all non-system values.");
 			}
 		}
 	}
