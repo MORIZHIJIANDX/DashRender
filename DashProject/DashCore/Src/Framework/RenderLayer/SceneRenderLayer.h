@@ -34,6 +34,8 @@ namespace Dash
 		std::shared_ptr<TStaticMeshActor> mStaticMeshActor;
 		TPerspectiveCameraComponent* mPerspectiveCamera;
 
+		FStructuredBufferRef mInstanceBuffer;
+
 		FMouseWheelEventDelegate OnMouseWheelDownDelegate;
 		FMouseWheelEventDelegate OnMouseWheelUpDelegate;
 		FMouseMotionEventDelegate OnMouseMoveDelegate;

@@ -23,6 +23,12 @@ namespace Dash
 		FMatrix4x4 ModelViewProjectionMatrix{ FIdentity{} };
 	};
 
+	struct FInstanceDataType
+	{
+		FVector4f Color;
+		FMatrix4x4 ModelMatrix{ FIdentity{} };
+	};
+
 	FMeshConstantBuffer MeshConstantBuffer;
 
 	FSceneRenderLayer::FSceneRenderLayer()
@@ -73,6 +79,20 @@ namespace Dash
 
 		material->SetVector4Parameter("Color", FVector4f{1.0f, 0.f, 0.0f, 0.0f});
 		material->SetTextureParameter("BaseColorTexture", baseColorTexture);
+
+		FTransform Instance1Transform{ FIdentity{} };
+		Instance1Transform.SetScale(FVector3f{ 0.01f, 0.01f, 0.01f });
+		Instance1Transform.SetPosition(FVector3f{ 0.0f, 0.0f, 0.0f });
+
+		FTransform Instance2Transform { FIdentity{} };
+		Instance2Transform.SetScale(FVector3f{ 0.01f, 0.01f, 0.01f });
+		Instance2Transform.SetPosition(FVector3f{1.0f, 1.0f, 1.0f});
+
+		std::vector<FInstanceDataType> InstanceData;
+		InstanceData.emplace_back(FVector4f{ 1.0f, 0.0f, 0.0f, 1.0f }, Instance1Transform.GetMatrix());
+		InstanceData.emplace_back(FVector4f{ 0.0f, 1.0f, 0.0f, 1.0f }, Instance2Transform.GetMatrix());
+
+		mInstanceBuffer = FGraphicsCore::Device->CreateStructuredBuffer<FInstanceDataType>("InstanceBuffer", 2, InstanceData.data());
 
 		OnMouseWheelDownDelegate = FMouseWheelEventDelegate::Create<FSceneRenderLayer, &FSceneRenderLayer::OnMouseWheelDown>(this);
 		OnMouseWheelUpDelegate = FMouseWheelEventDelegate::Create<FSceneRenderLayer, &FSceneRenderLayer::OnMouseWheelUp>(this);
@@ -130,18 +150,20 @@ namespace Dash
 		graphicsContext.ClearDepth(FGraphicsCore::SwapChain->GetDepthBuffer());
 
 		{
+			FResourceMagnitude renderTargetMagnitude = FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetDesc().Magnitude;
+
+			graphicsContext.SetViewportAndScissor(0, 0, renderTargetMagnitude.Width, renderTargetMagnitude.Height);
+
 			TStaticMeshComponent* staticMeshComponent = mStaticMeshActor->GetStaticMeshComponent();
 			if (staticMeshComponent)
 			{
 				const std::vector<FMeshDrawCommand>& meshDrawCommands = staticMeshComponent->GetMeshDrawCommands();
 				for (auto& drawCommand : meshDrawCommands)
 				{
-					FResourceMagnitude renderTargetMagnitude = FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetDesc().Magnitude;
-
 					graphicsContext.SetGraphicsPipelineState(drawCommand.PSO);
 
 					graphicsContext.SetRootConstantBufferView("FrameConstantBuffer", mPerspectiveCamera->GetViewProjectionMatrix());
-					graphicsContext.SetRootConstantBufferView("ObjectConstantBuffer", mStaticMeshActor->GetActorWorldTransform().GetMatrix());
+					 //graphicsContext.SetRootConstantBufferView("ObjectConstantBuffer", mStaticMeshActor->GetActorWorldTransform().GetMatrix());
 
 					for (auto& cbvParameter : *drawCommand.ConstantBufferMapPtr)
 					{
@@ -153,13 +175,14 @@ namespace Dash
 						graphicsContext.SetShaderResourceView(srvParameter.first, srvParameter.second->GetTextureBuffer());
 					}
 
-					graphicsContext.SetViewportAndScissor(0, 0, renderTargetMagnitude.Width, renderTargetMagnitude.Height);
+					graphicsContext.SetShaderResourceView("InstanceData", mInstanceBuffer);
 
 					graphicsContext.SetVertexBuffers(0, static_cast<UINT>(drawCommand.VertexBuffers.size()), drawCommand.VertexBuffers.data());
 
 					graphicsContext.SetIndexBuffer(drawCommand.IndexBuffer);
 
-					graphicsContext.DrawIndexed(drawCommand.IndexCount, drawCommand.IndexStart, drawCommand.VertexStart);
+					//graphicsContext.DrawIndexed(drawCommand.IndexCount, drawCommand.IndexStart, drawCommand.VertexStart);
+					graphicsContext.DrawIndexedInstanced(drawCommand.IndexCount, 2, drawCommand.IndexStart, drawCommand.VertexStart, 0);
 				}
 			}
 		}
