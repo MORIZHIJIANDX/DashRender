@@ -152,6 +152,7 @@ namespace Dash
 		// Set descriptor table parameters
 		void SetShaderResourceView(const std::string& srvrName, FColorBufferRef buffer, EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0, UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 		void SetShaderResourceView(const std::string& srvrName, FTextureBufferRef buffer, EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0, UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+		void SetShaderResourceView(const std::string& srvrName, FStructuredBufferRef buffer, EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0, UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 
 		void ClearUAV(FGpuBufferRef target);
 		void ClearUAV(FColorBufferRef target);

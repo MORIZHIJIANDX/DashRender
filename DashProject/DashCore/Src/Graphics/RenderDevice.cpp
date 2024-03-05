@@ -151,6 +151,17 @@ namespace Dash
 		virtual ~FMakeConstantBuffer() {}
 	};
 
+	class FMakeStructuredBuffer : public FStructuredBuffer
+	{
+	public:
+		FMakeStructuredBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize)
+		{
+			Create(name, numElements, elementSize);
+		}
+
+		virtual ~FMakeStructuredBuffer() {}
+	};
+
 	FRenderDevice::FRenderDevice()
 	{
 		if(mDevice == nullptr)
@@ -700,14 +711,20 @@ namespace Dash
 	FGpuVertexBufferRef FRenderDevice::CreateVertexBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData)
 	{
 		std::shared_ptr<FMakeVertexBuffer> bufferRef = std::make_shared<FMakeVertexBuffer>(name, numElements, elementSize);
-		FCopyCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
+		if (initData != nullptr)
+		{
+			FCopyCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
+		}
 		return bufferRef;
 	}
 
 	FGpuIndexBufferRef FRenderDevice::CreateIndexBuffer(const std::string& name, uint32_t numElements, const void* initData, bool is32Bit)
 	{
 		std::shared_ptr<FMakeIndexBuffer> bufferRef = std::make_shared<FMakeIndexBuffer>(name, numElements, is32Bit);
-		FCopyCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
+		if (initData != nullptr)
+		{
+			FCopyCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
+		}
 		return bufferRef;
 	}
 
@@ -726,7 +743,20 @@ namespace Dash
 	FGpuConstantBufferRef FRenderDevice::CreateConstantBuffer(const std::string& name, uint32_t dataSize, const void* initData)
 	{
 		std::shared_ptr<FMakeConstantBuffer> bufferRef = std::make_shared<FMakeConstantBuffer>(name, dataSize);
-		FCopyCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
+		if (initData != nullptr)
+		{
+			FCopyCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
+		}
+		return bufferRef;
+	}
+
+	FStructuredBufferRef FRenderDevice::CreateStructuredBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData)
+	{
+		std::shared_ptr<FStructuredBuffer> bufferRef = std::make_shared<FMakeStructuredBuffer>(name, numElements, elementSize);
+		if (initData != nullptr)
+		{
+			FCopyCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
+		}
 		return bufferRef;
 	}
 

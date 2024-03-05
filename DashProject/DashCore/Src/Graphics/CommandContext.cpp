@@ -564,6 +564,28 @@ namespace Dash
 		}
 	}
 
+	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, FStructuredBufferRef buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
+	{
+		ASSERT_MSG(mPSORef != nullptr, "Pipeline State Is Not Set.");
+
+		FShaderPassRef shaderPass = mPSORef->GetShaderPass();
+
+		if (shaderPass)
+		{
+			int32_t shaderParameterIndex = shaderPass->FindSRVParameterByName(srvrName);
+			if (shaderParameterIndex != INDEX_NONE)
+			{
+				const std::vector<FShaderParameter>& parameters = shaderPass->GetSRVParameters();
+				SetShaderResourceView(parameters[shaderParameterIndex].RootParameterIndex, parameters[shaderParameterIndex].DescriptorOffset, buffer, buffer->GetShaderResourceView(), stateAfter, firstSubResource, numSubResources);
+				mShaderResourceViewBindState[shaderParameterIndex] = true;
+			}
+			else
+			{
+				LOG_WARNING << "Can't Find Shader Resource Parameter : " << srvrName;
+			}
+		}
+	}
+
 	void FComputeCommandContextBase::SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FDepthBufferRef buffer, EResourceState stateAfter /*= EResourceState::AnyShaderAccess*/, UINT firstSubResource /*= 0*/, UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
 	{
 		if (numSubResources < D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES)

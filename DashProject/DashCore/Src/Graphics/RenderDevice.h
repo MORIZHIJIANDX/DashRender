@@ -22,6 +22,9 @@ namespace Dash
 	class FGpuConstantBuffer;
 	using FGpuConstantBufferRef = std::shared_ptr<FGpuConstantBuffer>;
 
+	class FStructuredBuffer;
+	using FStructuredBufferRef = std::shared_ptr<FStructuredBuffer>;
+
 	class FGpuVertexBuffer;
 	using FGpuVertexBufferRef = std::shared_ptr<FGpuVertexBuffer>;
 
@@ -328,7 +331,14 @@ namespace Dash
 		template<typename ConstantBufferType>
 		FGpuConstantBufferRef CreateConstantBuffer(const std::string& name, const ConstantBufferType* initData)
 		{
-			CreateConstantBuffer(name, sizeof(ConstantBufferType), initData);
+			return CreateConstantBuffer(name, sizeof(ConstantBufferType), initData);
+		}
+
+		FStructuredBufferRef CreateStructuredBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData);
+		template<typename StructuredBufferType>
+		FStructuredBufferRef CreateStructuredBuffer(const std::string& name, uint32_t numElements, const StructuredBufferType* initData)
+		{
+			return CreateStructuredBuffer(name, numElements, sizeof(StructuredBufferType), initData);
 		}
 
 		bool UAVLoadSupportR11G11B10Float() const { return mTypedUAVLoadSupport_R11G11B10_FLOAT; }
