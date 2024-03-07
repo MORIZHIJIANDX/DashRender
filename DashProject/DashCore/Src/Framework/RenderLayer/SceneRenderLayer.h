@@ -35,6 +35,8 @@ namespace Dash
 		TPerspectiveCameraComponent* mPerspectiveCamera;
 
 		FStructuredBufferRef mInstanceBuffer;
+		FGpuVertexBufferRef mMatrixInstanceBuffer;
+		FGpuVertexBufferRef mColorInstanceBuffer;
 
 		FMouseWheelEventDelegate OnMouseWheelDownDelegate;
 		FMouseWheelEventDelegate OnMouseWheelUpDelegate;

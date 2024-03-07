@@ -26,6 +26,8 @@ struct VS_INPUT
     float3 pos : POSITION;
     float3 normal : NORMAL;
     float2 uv : TEXCOORD0;
+    uint matrixId : COLOR_InstanceID;
+    uint colorId : SV_InstanceID;
 };
             
 struct PS_INPUT
@@ -36,15 +38,15 @@ struct PS_INPUT
     float4 instanceColor : COLOR0;
 };
             
-PS_INPUT VS_Main(VS_INPUT input, uint instanceID : SV_InstanceID)
+PS_INPUT VS_Main(VS_INPUT input)
 {
     PS_INPUT output;
     //float4x4 MVPMatrix = mul(ModelMatrix, ViewProjectionMatrix);
-    float4x4 MVPMatrix = mul(InstanceData[instanceID].InstanceModelMatrix, ViewProjectionMatrix);
+    float4x4 MVPMatrix = mul(InstanceData[input.colorId].InstanceModelMatrix, ViewProjectionMatrix);
     output.pos = mul(float4(input.pos, 1.f), MVPMatrix);
     output.normal = input.normal;
     output.uv = input.uv;
-    output.instanceColor = InstanceData[instanceID].InstanceColor;
+    output.instanceColor = InstanceData[input.matrixId].InstanceColor;
     return output;
 }
 
