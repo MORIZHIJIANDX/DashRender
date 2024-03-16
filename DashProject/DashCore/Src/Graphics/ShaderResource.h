@@ -117,6 +117,7 @@ namespace Dash
 	protected:
 		void Init(Microsoft::WRL::ComPtr<IDxcBlob> compiledShaderBlob, Microsoft::WRL::ComPtr<ID3D12ShaderReflection> reflector, const FShaderCreationInfo& creationInfo);
 		void ReflectShaderParameter(Microsoft::WRL::ComPtr<ID3D12ShaderReflection> reflector);
+		bool IsSystemGeneratedValues(const std::string& semantic) const;
 
 		FShaderCreationInfo mCreationInfo;
 		Microsoft::WRL::ComPtr<IDxcBlob> mCompiledShaderBlob;

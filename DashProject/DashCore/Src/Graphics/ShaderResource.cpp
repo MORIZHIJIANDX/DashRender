@@ -205,15 +205,15 @@ namespace Dash
 
 				std::string currentSemanticName{inputSignatureParameterDesc.SemanticName};
 				bool isIstanceSemantic = FStringUtility::Contains(FStringUtility::ToLower(currentSemanticName), "instance");
-				bool isSystemValue = FStringUtility::StartsWith(currentSemanticName, "SV_");
+				bool isSystemGeneratedValue = IsSystemGeneratedValues(currentSemanticName);
 
-				if (isSystemValue)
+				if (isSystemGeneratedValue)
 				{
 					if (systemValueStart == INDEX_NONE)
 					{
 						systemValueStart = parameterIndex;
 					}
-					//continue;
+					continue;
 				}
 				else
 				{
@@ -475,8 +475,21 @@ namespace Dash
 
 			if ((systemValueStart != INDEX_NONE) && (noSystemValueEnd != INDEX_NONE) && (systemValueStart < noSystemValueEnd))
 			{
-				//ASSERT_MSG(false, "System values should be placed after all non-system values.");
+				ASSERT_MSG(false, "System values should be placed after all non-system values.");
 			}
 		}
+	}
+
+	bool FShaderResource::IsSystemGeneratedValues(const std::string& semantic) const
+	{	
+		std::string lowerSemantic = FStringUtility::ToLower(semantic);
+		if (lowerSemantic == "sv_instanceid" || 
+			lowerSemantic == "sv_vertexid" ||
+			lowerSemantic == "sv_primitiveid")
+		{
+			return true;
+		}
+
+		return false;
 	}
 }

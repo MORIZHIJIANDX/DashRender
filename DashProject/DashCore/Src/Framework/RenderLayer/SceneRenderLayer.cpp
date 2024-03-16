@@ -97,12 +97,12 @@ namespace Dash
 		std::vector<uint32_t> MatrixInstanceIDBuffer;
 		MatrixInstanceIDBuffer.emplace_back(0);
 		MatrixInstanceIDBuffer.emplace_back(1);
-		mMatrixInstanceBuffer = FGraphicsCore::Device->CreateVertexBuffer<uint32_t>("MatrixInstanceIDBuffer", MatrixInstanceIDBuffer.size(), MatrixInstanceIDBuffer.data());
+		mMatrixInstanceBuffer = FGraphicsCore::Device->CreateVertexBuffer<uint32_t>("MatrixInstanceIDBuffer", (uint32_t)MatrixInstanceIDBuffer.size(), MatrixInstanceIDBuffer.data());
 
 		std::vector<uint32_t> ColorInstanceIDBuffer;
 		ColorInstanceIDBuffer.emplace_back(1);
 		ColorInstanceIDBuffer.emplace_back(0);
-		mColorInstanceBuffer = FGraphicsCore::Device->CreateVertexBuffer<uint32_t>("ColorInstanceIDBuffer", ColorInstanceIDBuffer.size(), ColorInstanceIDBuffer.data());
+		mColorInstanceBuffer = FGraphicsCore::Device->CreateVertexBuffer<uint32_t>("ColorInstanceIDBuffer", (uint32_t)ColorInstanceIDBuffer.size(), ColorInstanceIDBuffer.data());
 
 		OnMouseWheelDownDelegate = FMouseWheelEventDelegate::Create<FSceneRenderLayer, &FSceneRenderLayer::OnMouseWheelDown>(this);
 		OnMouseWheelUpDelegate = FMouseWheelEventDelegate::Create<FSceneRenderLayer, &FSceneRenderLayer::OnMouseWheelUp>(this);
@@ -189,7 +189,7 @@ namespace Dash
 
 					std::vector<FGpuVertexBufferRef> RealVertexBuffer = drawCommand.VertexBuffers;
 					RealVertexBuffer.push_back(mMatrixInstanceBuffer);
-					RealVertexBuffer.push_back(mColorInstanceBuffer);
+					//RealVertexBuffer.push_back(mColorInstanceBuffer);
 
 					//graphicsContext.SetVertexBuffers(0, static_cast<UINT>(drawCommand.VertexBuffers.size()), drawCommand.VertexBuffers.data());
 
