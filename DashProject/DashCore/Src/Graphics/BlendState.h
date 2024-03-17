@@ -1,6 +1,6 @@
 #pragma once
 
-#include <d3d12.h>
+#include "d3dx12.h"
 #include "Utility/BitwiseEnum.h"
 #include "RenderTarget.h"
 
@@ -55,7 +55,7 @@ namespace Dash
 		void SetBlendingEnabled(bool enabled, ERenderTarget rt = ERenderTarget::RT0);
 		void SetIndependentBlendEnable(bool enabled);
 
-		const D3D12_BLEND_DESC& D3DBlendState() const { return mDesc; }
+		const CD3DX12_BLEND_DESC& D3DBlendState() const { return mDesc; }
 
 	private:
 		D3D12_BLEND GetD3DBlend(EBlendValue state) const;
@@ -64,6 +64,6 @@ namespace Dash
 		D3D12_COLOR_WRITE_ENABLE GetD3DColorWriteMask(ERenderTargetWriteMask mask) const;
 		 
 	private:
-		D3D12_BLEND_DESC mDesc{};
+		CD3DX12_BLEND_DESC mDesc{};
 	};
 }

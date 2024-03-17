@@ -61,7 +61,7 @@ namespace Dash
 		FCommandContext& operator=(const FCommandContext&) = delete;
 
 		FCommandList* GetCommandList() { return mCommandList; }
-		ID3D12GraphicsCommandList* GetD3DCommandList() { return mD3DCommandList; }
+		ID3D12GraphicsCommandList1* GetD3DCommandList() { return mD3DCommandList; }
 
 		void PIXBeginEvent(const std::string& label);
 		void PIXEndEvent();
@@ -84,7 +84,7 @@ namespace Dash
 		D3D12_COMMAND_LIST_TYPE mType;
 
 		FCommandList* mCommandList = nullptr;
-		ID3D12GraphicsCommandList* mD3DCommandList = nullptr;
+		ID3D12GraphicsCommandList1* mD3DCommandList = nullptr;
 
 		FGpuResourcesStateTracker mResourceStateTracker;
 
@@ -215,6 +215,8 @@ namespace Dash
 
 		void SetDynamicIndexBuffer(size_t indexCount, const uint16_t* data);
 		void SetDynamicVertexBuffer(UINT slot, size_t vertexCount, size_t vertexStride, const void* data);
+
+		void SetDepthBounds(float min, float max);
 
 	protected:
 

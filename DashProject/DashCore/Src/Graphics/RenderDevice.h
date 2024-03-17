@@ -86,7 +86,7 @@ namespace Dash
 			D3D12_COMMAND_LIST_TYPE type,
 			ID3D12CommandAllocator* pCommandAllocator,
 			ID3D12PipelineState* pInitialState,
-			Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& pCommandList
+			Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList1>& pCommandList
 		);
 
 		// Creates a command queue.
@@ -147,6 +147,12 @@ namespace Dash
 		// Creates a graphics pipeline state object.
 		HRESULT CreateGraphicsPipelineState(
 			const D3D12_GRAPHICS_PIPELINE_STATE_DESC* pDesc,
+			Microsoft::WRL::ComPtr<ID3D12PipelineState>& ppPipelineState
+		);
+
+		// Creates a pipeline state object.
+		HRESULT CreatePipelineState(
+			const D3D12_PIPELINE_STATE_STREAM_DESC* pDesc,
 			Microsoft::WRL::ComPtr<ID3D12PipelineState>& ppPipelineState
 		);
 

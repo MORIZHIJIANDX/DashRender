@@ -464,7 +464,7 @@ namespace Dash
 		return mDevice->CreateCommandAllocator(type, IID_PPV_ARGS(&pCommandAllocator));
 	}
 
-	HRESULT FRenderDevice::CreateCommandList(UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, ID3D12CommandAllocator* pCommandAllocator, ID3D12PipelineState* pInitialState, Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& pCommandList)
+	HRESULT FRenderDevice::CreateCommandList(UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, ID3D12CommandAllocator* pCommandAllocator, ID3D12PipelineState* pInitialState, Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList1>& pCommandList)
 	{
 		return mDevice->CreateCommandList(nodeMask, type, pCommandAllocator, pInitialState, IID_PPV_ARGS(&pCommandList));
 	}
@@ -512,6 +512,11 @@ namespace Dash
 	HRESULT FRenderDevice::CreateGraphicsPipelineState(const D3D12_GRAPHICS_PIPELINE_STATE_DESC* pDesc, Microsoft::WRL::ComPtr<ID3D12PipelineState>& ppPipelineState)
 	{
 		return mDevice->CreateGraphicsPipelineState(pDesc, IID_PPV_ARGS(&ppPipelineState));
+	}
+
+	HRESULT FRenderDevice::CreatePipelineState(const D3D12_PIPELINE_STATE_STREAM_DESC* pDesc, Microsoft::WRL::ComPtr<ID3D12PipelineState>& ppPipelineState)
+	{
+		return mDevice->CreatePipelineState(pDesc, IID_PPV_ARGS(&ppPipelineState));
 	}
 
 	HRESULT FRenderDevice::CreateHeap(const D3D12_HEAP_DESC* pDesc, Microsoft::WRL::ComPtr<ID3D12Heap>& ppvHeap)

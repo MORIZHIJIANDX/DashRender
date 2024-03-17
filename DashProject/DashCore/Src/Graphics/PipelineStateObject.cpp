@@ -15,7 +15,12 @@ namespace Dash
 
 	FPipelineStateObject::FPipelineStateObject(const std::string& name)
 		: mName(name)
-	{}
+		, mPipelineStateStream()
+	{
+		mPipelineStateStream.NodeMask = 0;
+		mPipelineStateStream.SampleMask = 0xFFFFFFFFu;
+		mPipelineStateStream.SampleDesc = DXGI_SAMPLE_DESC{ 1, 0 };
+	}
 
 	void FPipelineStateObject::DestroyAll()
 	{
@@ -25,30 +30,21 @@ namespace Dash
 
 	void FPipelineStateObject::ApplyShaderPass()
 	{
-		if (mShaderPass)
+		const std::map<EShaderStage, FShaderResourceRef>& shaders = mShaderPass->GetShaders();
+		for (auto& pair : shaders)
 		{
-
-			const std::map<EShaderStage, FShaderResourceRef>& shaders = mShaderPass->GetShaders();
-			for (auto& pair : shaders)
+			if (pair.second != nullptr)
 			{
-				if (pair.second != nullptr)
-				{
-					SetShader(pair.second);
-				}
+				SetShader(pair.second);
 			}
 		}
 	}
 
 	FGraphicsPSO::FGraphicsPSO(const std::string& name)
 		: FPipelineStateObject(name)
-		, mPSODesc{}
-	{
-		ZeroMemory(&mPSODesc, sizeof(mPSODesc));
-		mPSODesc.NodeMask = 0;
-		mPSODesc.SampleMask = 0xFFFFFFFFu;
-		mPSODesc.SampleDesc.Count = 1;
-		mPSODesc.InputLayout.NumElements = 0;
-	}
+		, mInputLayout()
+		, mPrimitiveTopology(EPrimitiveTopology::TriangleList)
+	{}
 
 	FGraphicsPSORef FGraphicsPSO::MakeGraphicsPSO(const std::string& name)
 	{
@@ -57,28 +53,28 @@ namespace Dash
 
 	void FGraphicsPSO::SetBlendState(const FBlendState& blendDesc)
 	{
-		mPSODesc.BlendState = blendDesc.D3DBlendState();
+		mPipelineStateStream.BlendState = blendDesc.D3DBlendState();
 	}
 
 	void FGraphicsPSO::SetSamplerMask(UINT samperMask)
 	{
-		mPSODesc.SampleMask = samperMask;
+		mPipelineStateStream.SampleMask = samperMask;
 	}
 
 	void FGraphicsPSO::SetRasterizerState(const FRasterizerState& rasterDesc)
 	{
-		mPSODesc.RasterizerState = rasterDesc.D3DRasterizerState();
+		mPipelineStateStream.RasterizerState = rasterDesc.D3DRasterizerState();
 	}
 
 	void FGraphicsPSO::SetDepthStencilState(const FDepthStencilState& depthStencilDesc)
 	{
-		mPSODesc.DepthStencilState = depthStencilDesc.D3DDepthStencilState();
+		mPipelineStateStream.DepthStencilState = depthStencilDesc.D3DDepthStencilState();
 	}
 
 	void FGraphicsPSO::SetPrimitiveTopologyType(EPrimitiveTopology primitiveTopology)
 	{	
 		mPrimitiveTopology = primitiveTopology;
-		mPSODesc.PrimitiveTopologyType = D3DPrimitiveTopologyType(primitiveTopology);
+		mPipelineStateStream.PrimitiveTopologyType = D3DPrimitiveTopologyType(primitiveTopology);
 	}
 
 	void FGraphicsPSO::SetDepthTargetFormat(EResourceFormat depthTargetFormat, UINT msaaCount /*= 1*/, UINT msaaQuality /*= 0*/)
@@ -94,31 +90,35 @@ namespace Dash
 	void FGraphicsPSO::SetRenderTargetFormats(UINT numRTVs, const EResourceFormat* renderTargetFormats, EResourceFormat depthTargetFormat, UINT msaaCount /*= 1*/, UINT msaaQuality /*= 0*/)
 	{
 		ASSERT_MSG(numRTVs == 0 || renderTargetFormats != nullptr, "Null format array conflicts with non-zero length");
+
+		D3D12_RT_FORMAT_ARRAY RTFormatArray = {};
+		RTFormatArray.NumRenderTargets = numRTVs;
+
 		for (UINT i = 0; i < numRTVs; ++i)
 		{
 			DXGI_FORMAT format = D3DFormat(renderTargetFormats[i]);
 			ASSERT(format != DXGI_FORMAT_UNKNOWN);
-			mPSODesc.RTVFormats[i] = format;
+			RTFormatArray.RTFormats[i] = format;
 		}
-		for (UINT i = numRTVs; i < mPSODesc.NumRenderTargets; ++i)
+		for (UINT i = numRTVs; i < (sizeof(RTFormatArray.RTFormats) / sizeof(RTFormatArray.RTFormats[0])); ++i)
 		{
-			mPSODesc.RTVFormats[i] = DXGI_FORMAT_UNKNOWN;
+			RTFormatArray.RTFormats[i] = DXGI_FORMAT_UNKNOWN;
 		}
-		mPSODesc.NumRenderTargets = numRTVs;
-		mPSODesc.DSVFormat = D3DFormat(depthTargetFormat);
-		mPSODesc.SampleDesc.Count = msaaCount;
-		mPSODesc.SampleDesc.Quality = msaaQuality;
+
+		mPipelineStateStream.RTVFormats = RTFormatArray;
+		mPipelineStateStream.DSVFormat = D3DFormat(depthTargetFormat);
+		mPipelineStateStream.SampleDesc = DXGI_SAMPLE_DESC{ msaaCount, msaaQuality };
 	}
 
 	void FGraphicsPSO::SetInputLayout(const FInputAssemblerLayout& layout)
 	{
 		mInputLayout = layout;
-		mPSODesc.InputLayout = mInputLayout.D3DLayout();
+		mPipelineStateStream.InputLayout = mInputLayout.D3DLayout();
 	}
 
 	void FGraphicsPSO::SetPrimitiveRestart(D3D12_INDEX_BUFFER_STRIP_CUT_VALUE indexBufferProps)
 	{
-		mPSODesc.IBStripCutValue = indexBufferProps;
+		mPipelineStateStream.IBStripCutValue = indexBufferProps;
 	}
 
 	void FGraphicsPSO::SetShader(FShaderResourceRef shader)
@@ -157,10 +157,9 @@ namespace Dash
 			return;
 		}
 
-		ApplyShaderPass();
-
 		if (mShaderPass)
 		{
+			ApplyShaderPass();
 			SetBlendState(mShaderPass->GetBlendState());
 			SetRasterizerState(mShaderPass->GetRasterizerState());
 			SetDepthStencilState(mShaderPass->GetDepthStencilState());
@@ -170,10 +169,11 @@ namespace Dash
 		ASSERT(mShaderPass != nullptr);
 		ASSERT(mShaderPass->GetRootSignature()->IsFinalized());
 
-		mPSODesc.pRootSignature = mShaderPass->GetRootSignature()->GetSignature();
+		mPipelineStateStream.pRootSignature = mShaderPass->GetRootSignature()->GetSignature();
 
-		size_t hashCode = HashState(&mPSODesc);
-		hashCode = HashState(mPSODesc.InputLayout.pInputElementDescs, mPSODesc.InputLayout.NumElements, hashCode);
+		size_t hashCode = HashState(&mPipelineStateStream);
+		const D3D12_INPUT_LAYOUT_DESC& InputLayoutDesc = mPipelineStateStream.InputLayout;
+		hashCode = HashState(InputLayoutDesc.pInputElementDescs, InputLayoutDesc.NumElements, hashCode);
 
 		static std::mutex posMutex;
 		ComPtr<ID3D12PipelineState>* psoRef = nullptr;
@@ -195,8 +195,12 @@ namespace Dash
 
 		if (firstTimeCompile == true)
 		{
+			D3D12_PIPELINE_STATE_STREAM_DESC pipelineStateStreamDesc = {
+				sizeof(mPipelineStateStream), &mPipelineStateStream
+			};
+
 			ComPtr<ID3D12PipelineState> newPSO;
-			DX_CALL(FGraphicsCore::Device->CreateGraphicsPipelineState(&mPSODesc, newPSO));
+			DX_CALL(FGraphicsCore::Device->CreatePipelineState(&pipelineStateStreamDesc, newPSO));
 			SetD3D12DebugName(newPSO.Get(), mName.c_str());
 			GraphicsPipelineStateHashMap[hashCode] = newPSO;
 			mPSO = newPSO.Get();
@@ -216,11 +220,7 @@ namespace Dash
 
 	FComputePSO::FComputePSO(const std::string& name)
 		: FPipelineStateObject(name)
-		, mPSODesc{}
-	{
-		ZeroMemory(&mPSODesc, sizeof(mPSODesc));
-		mPSODesc.NodeMask = 0;
-	}
+	{}
 
 	FComputePSORef FComputePSO::MakeComputePSO(const std::string& name)
 	{
@@ -229,7 +229,8 @@ namespace Dash
 
 	void FComputePSO::SetShader(FShaderResourceRef shader)
 	{
-		ASSERT(shader && shader->GetShaderStage() == EShaderStage::Compute);
+		ASSERT(shader != nullptr);
+		ASSERT(shader->GetShaderStage() == EShaderStage::Compute);
 
 		const void* shaderData = shader->GetCompiledShader().Data;
 		uint32_t shaderSize = shader->GetCompiledShader().Size;
@@ -244,14 +245,17 @@ namespace Dash
 			return;
 		}
 
-		ApplyShaderPass();
+		if (mShaderPass)
+		{
+			ApplyShaderPass();
+		}
 
 		ASSERT(mShaderPass != nullptr);
 		ASSERT(mShaderPass->GetRootSignature()->IsFinalized());
 
-		mPSODesc.pRootSignature = mShaderPass->GetRootSignature()->GetSignature();
+		mPipelineStateStream.pRootSignature = mShaderPass->GetRootSignature()->GetSignature();
 
-		size_t hashCode = HashState(&mPSODesc);
+		size_t hashCode = HashState(&mPipelineStateStream);
 
 		static std::mutex posMutex;
 		ComPtr<ID3D12PipelineState>* psoRef = nullptr;
@@ -273,8 +277,12 @@ namespace Dash
 
 		if (firstTimeCompile == true)
 		{
+			D3D12_PIPELINE_STATE_STREAM_DESC pipelineStateStreamDesc = {
+				sizeof(mPipelineStateStream), &mPipelineStateStream
+			};
+
 			ComPtr<ID3D12PipelineState> newPSO;
-			DX_CALL(FGraphicsCore::Device->CreateComputePipelineState(&mPSODesc, newPSO));
+			DX_CALL(FGraphicsCore::Device->CreatePipelineState(&pipelineStateStreamDesc, newPSO));
 			SetD3D12DebugName(newPSO.Get(), mName.c_str());
 			ComputePipelineStateHashMap[hashCode] = newPSO;
 		}

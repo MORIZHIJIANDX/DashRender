@@ -52,6 +52,8 @@ namespace Dash
 
 		bool mIsFinalized = false;
 
+		CD3DX12_PIPELINE_STATE_STREAM2 mPipelineStateStream;
+
 		ID3D12PipelineState* mPSO = nullptr;
 		FShaderPassRef mShaderPass = nullptr;
 	};
@@ -74,17 +76,17 @@ namespace Dash
 		void SetInputLayout(const FInputAssemblerLayout& layout);
 		void SetPrimitiveRestart(D3D12_INDEX_BUFFER_STRIP_CUT_VALUE indexBufferProps);
 
-		void SetVertexShader(const void* binaryCode, size_t size) { mPSODesc.VS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
-		void SetPixelShader(const void* binaryCode, size_t size) { mPSODesc.PS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
-		void SetGeometryShader(const void* binaryCode, size_t size) { mPSODesc.GS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
-		void SetHullShader(const void* binaryCode, size_t size) { mPSODesc.HS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
-		void SetDomainShader(const void* binaryCode, size_t size) { mPSODesc.DS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }	
+		void SetVertexShader(const void* binaryCode, size_t size) { mPipelineStateStream.VS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
+		void SetPixelShader(const void* binaryCode, size_t size) { mPipelineStateStream.PS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
+		void SetGeometryShader(const void* binaryCode, size_t size) { mPipelineStateStream.GS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
+		void SetHullShader(const void* binaryCode, size_t size) { mPipelineStateStream.HS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
+		void SetDomainShader(const void* binaryCode, size_t size) { mPipelineStateStream.DS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
 
-		void SetVertexShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPSODesc.VS = shaderByteCode; }
-		void SetPixelShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPSODesc.PS = shaderByteCode; }
-		void SetGeometryShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPSODesc.GS = shaderByteCode; }
-		void SetHullShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPSODesc.HS = shaderByteCode; }
-		void SetDomainShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPSODesc.DS = shaderByteCode; }
+		void SetVertexShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPipelineStateStream.VS = shaderByteCode; }
+		void SetPixelShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPipelineStateStream.PS = shaderByteCode; }
+		void SetGeometryShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPipelineStateStream.GS = shaderByteCode; }
+		void SetHullShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPipelineStateStream.HS = shaderByteCode; }
+		void SetDomainShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPipelineStateStream.DS = shaderByteCode; }
 
 		virtual void SetShader(FShaderResourceRef shader) override;
 
@@ -93,7 +95,6 @@ namespace Dash
 		EPrimitiveTopology GetPrimitiveTopology() const { return mPrimitiveTopology; }
 
 	private:
-		D3D12_GRAPHICS_PIPELINE_STATE_DESC mPSODesc{};
 		FInputAssemblerLayout mInputLayout;
 		EPrimitiveTopology mPrimitiveTopology;
 	};
@@ -105,14 +106,11 @@ namespace Dash
 
 		static FComputePSORef MakeComputePSO(const std::string& name);
 
-		void SetComputeShader(const void* binaryCode, size_t size) { mPSODesc.CS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
-		void SetComputeShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPSODesc.CS = shaderByteCode; }
+		void SetComputeShader(const void* binaryCode, size_t size) { mPipelineStateStream.CS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
+		void SetComputeShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPipelineStateStream.CS = shaderByteCode; }
 
 		virtual void SetShader(FShaderResourceRef shader) override;
 
 		virtual void Finalize() override;
-
-	private:
-		D3D12_COMPUTE_PIPELINE_STATE_DESC mPSODesc{};
 	};
 }

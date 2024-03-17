@@ -868,6 +868,11 @@ namespace Dash
 		mD3DCommandList->IASetVertexBuffers(slot, 1, &view);
 	}
 
+	void FGraphicsCommandContextBase::SetDepthBounds(float min, float max)
+	{
+		mD3DCommandList->OMSetDepthBounds(min, max);
+	}
+
 	FCopyCommandContext& FCopyCommandContext::Begin(const std::string& id /*= L""*/)
 	{
 		FCopyCommandContext* newContext = reinterpret_cast<FCopyCommandContext*>(FCommandContext::Begin(id, D3D12_COMMAND_LIST_TYPE_COPY));

@@ -44,6 +44,11 @@ namespace Dash
 		mDesc.StencilEnable = enable;
 	}
 
+	void FDepthStencilState::SetDepthBoundsTestEnable(bool enable)
+	{
+		mDesc.DepthBoundsTestEnable = enable;
+	}
+
 	void FDepthStencilState::SetStencilMask(uint8_t stencilReadMask, uint8_t stencilWriteMask)
 	{
 		mDesc.StencilReadMask = stencilReadMask;

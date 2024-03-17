@@ -1,6 +1,6 @@
 #pragma once
 
-#include <d3d12.h>
+#include "d3dx12.h"
 
 namespace Dash
 {
@@ -29,13 +29,13 @@ namespace Dash
 		void SetForcedSampleCount(UINT count);
 		void SetConservativeRasterEnable(bool enable);
 
-		const D3D12_RASTERIZER_DESC& D3DRasterizerState() const { return mDesc; };
+		const CD3DX12_RASTERIZER_DESC& D3DRasterizerState() const { return mDesc; };
 
 	private:
 		D3D12_FILL_MODE GetD3DFillMode(ERasterizerFillMode fillMode);
 		D3D12_CULL_MODE GetD3DCullMode(ERasterizerCullMode cullMode);
 
 	private:
-		D3D12_RASTERIZER_DESC mDesc{};
+		CD3DX12_RASTERIZER_DESC mDesc{};
 	};
 }

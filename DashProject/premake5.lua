@@ -58,7 +58,7 @@ project "DashCore"
         "dxcompiler"
     }
 
-    nuget { "WinPixEventRuntime:1.0.230302001" }
+    nuget { "WinPixEventRuntime:1.0.231030001" }
 
     filter { "system:windows" }
         prebuildcommands { "powershell -ExecutionPolicy Bypass -File %{wks.location}/Vendor/GetDXC/GetDXC.ps1 %{wks.location}/%{prj.name}/ThirdParty/dxc" }
@@ -135,7 +135,7 @@ project "DashProject"
         "DashCore"
     }
 
-    nuget { "WinPixEventRuntime:1.0.230302001" }
+    nuget { "WinPixEventRuntime:1.0.231030001" }
 
     filter "system:windows"
         systemversion "latest"
