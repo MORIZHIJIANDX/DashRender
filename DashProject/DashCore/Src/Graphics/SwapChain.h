@@ -36,6 +36,8 @@ namespace Dash
 		EResourceFormat GetBackBufferFormat() const;
 		void ToggleFullscreenMode();
 
+		UINT GetCurrentBackBufferIndex() const;
+
 		void OnKeyPressed(FKeyEventArgs& args);
 	
 	protected:

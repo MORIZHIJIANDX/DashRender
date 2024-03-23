@@ -51,6 +51,8 @@ namespace Dash
 		{
 		}
 
+	protected:
+
 		Microsoft::WRL::ComPtr<ID3D12Resource> mResource = nullptr;
 		D3D12_GPU_VIRTUAL_ADDRESS mGpuVirtualAddress = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
 

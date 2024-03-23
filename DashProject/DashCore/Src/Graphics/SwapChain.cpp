@@ -295,6 +295,11 @@ namespace Dash
 		mFullScreenMode = !mFullScreenMode;
 	}
 
+	UINT FSwapChain::GetCurrentBackBufferIndex() const
+	{
+		return mCurrentBackBufferIndex;
+	}
+
 	void FSwapChain::OnKeyPressed(FKeyEventArgs& args)
 	{
 		if (args.Key == EKeyCode::F11)

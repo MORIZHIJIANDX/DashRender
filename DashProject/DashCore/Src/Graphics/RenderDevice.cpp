@@ -8,6 +8,7 @@
 #include "DepthBuffer.h"
 #include "TextureBuffer.h"
 #include "GpuBuffer.h"
+#include "ReadbackBuffer.h"
 #include "CommandContext.h"
 #include "SubResourceData.h"
 #include "Utility/FileUtility.h"
@@ -160,6 +161,17 @@ namespace Dash
 		}
 
 		virtual ~FMakeStructuredBuffer() {}
+	};
+
+	class FMakeReadbackBuffer : public FReadbackBuffer
+	{
+	public:
+		FMakeReadbackBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize)
+		{
+			CreateReadbackBuffer(name, numElements, elementSize);
+		}
+
+		virtual ~FMakeReadbackBuffer() {}
 	};
 
 	FRenderDevice::FRenderDevice()
@@ -762,6 +774,12 @@ namespace Dash
 		{
 			FCopyCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
 		}
+		return bufferRef;
+	}
+
+	FReadbackBufferRef FRenderDevice::CreateReadbackBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize)
+	{
+		std::shared_ptr<FReadbackBuffer> bufferRef = std::make_shared<FMakeReadbackBuffer>(name, numElements, elementSize);
 		return bufferRef;
 	}
 

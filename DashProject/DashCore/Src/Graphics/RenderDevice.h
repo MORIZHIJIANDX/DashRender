@@ -37,6 +37,8 @@ namespace Dash
 	class FGpuDynamicIndexBuffer;
 	using FGpuDynamicIndexBufferRef = std::shared_ptr<FGpuDynamicIndexBuffer>;
 
+	class FReadbackBuffer;
+	using FReadbackBufferRef = std::shared_ptr<FReadbackBuffer>;
 
 	class FRenderDevice
 	{
@@ -346,6 +348,8 @@ namespace Dash
 		{
 			return CreateStructuredBuffer(name, numElements, sizeof(StructuredBufferType), initData);
 		}
+
+		FReadbackBufferRef CreateReadbackBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize);
 
 		bool UAVLoadSupportR11G11B10Float() const { return mTypedUAVLoadSupport_R11G11B10_FLOAT; }
 		bool UAVLoadSupportR16G16B16A16Float() const { return mTypedUAVLoadSupport_R16G16B16A16_FLOAT; }
