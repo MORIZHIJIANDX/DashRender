@@ -10,6 +10,7 @@ namespace Dash
 	class FCommandContextManager;
 	class FSwapChain;
 	class FRenderDevice;
+	class FGPUProfiler;
 
 	class FGraphicsCore
 	{
@@ -25,6 +26,7 @@ namespace Dash
 		static FCpuDescriptorAllocatorManager* DescriptorAllocator;
 		static FCommandContextManager* ContextManager;
 		static FSwapChain* SwapChain;
+		static FGPUProfiler* Profiler;
 
 		static constexpr int BackBufferCount = 3;
 

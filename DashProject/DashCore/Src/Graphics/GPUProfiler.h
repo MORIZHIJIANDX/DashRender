@@ -36,4 +36,17 @@ namespace Dash
 
 		int32_t mProfileCounter = 0;
 	};
+
+	class FGPUProfilerScope
+	{
+	public:
+		FGPUProfilerScope(FCopyCommandContextBase& contex, const std::string& name);
+		~FGPUProfilerScope();
+
+	private:
+		FCopyCommandContextBase& mContex;
+		std::string mName;
+	};
+
+#define DashGPUProfileScope(contex, name) FGPUProfilerScope DASH_CONCAT(scope, __COUNTER__)(contex, name)
 }

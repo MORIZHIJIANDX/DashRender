@@ -21,10 +21,12 @@ namespace Dash
 
 	FGPUProfiler::FGPUProfiler()
 	{
+		Init();
 	}
 
 	FGPUProfiler::~FGPUProfiler()
 	{
+		Destroy();
 	}
 
 	void FGPUProfiler::Init()
@@ -40,6 +42,7 @@ namespace Dash
 	void FGPUProfiler::Destroy()
 	{
 		mQueryHeap.reset();
+		mReadbackBuffer = nullptr;
 	}
 
 	void FGPUProfiler::NewFrame()
@@ -119,5 +122,17 @@ namespace Dash
 		}
 
 		return results;
+	}
+
+	FGPUProfilerScope::FGPUProfilerScope(FCopyCommandContextBase& contex, const std::string& name)
+		: mContex(contex)
+		, mName(name)
+	{
+		FGraphicsCore::Profiler->StartProfile(mContex, mName);
+	}
+
+	FGPUProfilerScope::~FGPUProfilerScope()
+	{
+		FGraphicsCore::Profiler->EndProfile(mContex, mName);
 	}
 }

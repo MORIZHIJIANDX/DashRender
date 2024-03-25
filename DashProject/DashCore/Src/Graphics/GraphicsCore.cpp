@@ -12,6 +12,7 @@
 #include "SwapChain.h"
 #include "Utility/StringUtility.h"
 #include "ShaderMap.h"
+#include "GPUProfiler.h"
 #include "RenderDevice.h"
 #include <shlobj.h>
 
@@ -27,6 +28,7 @@ namespace Dash
 	FCpuDescriptorAllocatorManager* FGraphicsCore::DescriptorAllocator = nullptr;
 	FCommandContextManager* FGraphicsCore::ContextManager = nullptr;
 	FSwapChain* FGraphicsCore::SwapChain = nullptr;
+	FGPUProfiler* FGraphicsCore::Profiler = nullptr;
 
 	bool FGraphicsCore::mTypedUAVLoadSupport_R11G11B10_FLOAT = false;
 	bool FGraphicsCore::mTypedUAVLoadSupport_R16G16B16A16_FLOAT = false;
@@ -83,6 +85,7 @@ namespace Dash
 		DescriptorAllocator = new FCpuDescriptorAllocatorManager();
 		ContextManager = new FCommandContextManager();
 		SwapChain = new FSwapChain(windowWidth, windowHeight);
+		Profiler = new FGPUProfiler();
 
 		LOG_INFO << "FGraphicsCore::Initialize End.";
 	}
@@ -143,6 +146,11 @@ namespace Dash
 		FSamplerDesc::DestroyAll();
 
 		FShaderMap::Destroy();
+
+		if (Profiler)
+		{
+			Profiler->Destroy();
+		}
 
 		if (Device)
 		{

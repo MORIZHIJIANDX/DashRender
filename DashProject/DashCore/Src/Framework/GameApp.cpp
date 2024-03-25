@@ -12,6 +12,8 @@
 #include "Framework/RenderLayer/SceneRenderLayer.h"
 #include "Framework/RenderLayer/UIRenderLayer.h"
 
+#include "Graphics/GPUProfiler.h"
+
 namespace Dash
 {
 	IGameApp* IGameApp::mAppInstance = nullptr;
@@ -106,6 +108,8 @@ namespace Dash
 
 	void IGameApp::OnUpdate(const FUpdateEventArgs& e)
 	{
+		FGraphicsCore::Profiler->NewFrame();
+
 		for (uint32_t i = 0; i < mRenderLayers.size(); i++)
 		{
 			mRenderLayers[i]->OnUpdate(e);

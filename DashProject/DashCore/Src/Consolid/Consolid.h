@@ -33,6 +33,9 @@
 #   define UNUSED(arg) 
 #endif
 
+#define _DASH_CONCAT_IMPL x##y
+#define DASH_CONCAT(x, y) _DASH_CONCAT_IMPL( x, y )
+
 template<typename T>
 void WriteData(const T& src, void* dest, std::size_t offset = 0)
 {

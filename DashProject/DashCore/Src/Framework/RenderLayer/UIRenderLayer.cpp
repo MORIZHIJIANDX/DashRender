@@ -7,8 +7,13 @@
 #include "imgui/backends/imgui_impl_dx12.h"
 #include "Framework/GameApp.h"
 
+#include "Graphics/GPUProfiler.h"
+
 namespace Dash
 {
+	std::vector<FGPUProfiler::FProfileResult> ProfileResults;
+
+
 	FUIRenderLayer::FUIRenderLayer()
 		: IRenderLayer("UIRenderLayer", 65535)
 	{
@@ -66,6 +71,11 @@ namespace Dash
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 
+		for (size_t i = 0; i < ProfileResults.size(); i++)
+		{
+			ImGui::Text("%s Render Time %f", ProfileResults[i].Name.c_str(), ProfileResults[i].TimeInMs);
+		}
+
 		ImGui::End();
 	}
 
@@ -80,6 +90,8 @@ namespace Dash
 		ImGui_ImplDX12_RenderDrawData_Refactoring(ImGui::GetDrawData(), graphicsContext);
 
 		graphicsContext.Finish();
+
+		ProfileResults = FGraphicsCore::Profiler->GetQueryResults();
 	}
 
 	void FUIRenderLayer::OnWindowResize(const FResizeEventArgs& e)

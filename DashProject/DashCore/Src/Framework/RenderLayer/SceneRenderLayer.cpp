@@ -16,6 +16,8 @@
 #include "Framework/Component/StaticMeshComponent.h"
 #include "Asset/AssetManager.h"
 
+#include "Graphics/GPUProfiler.h"
+
 namespace Dash
 {
 	struct FMeshConstantBuffer
@@ -160,6 +162,8 @@ namespace Dash
 		graphicsContext.ClearDepth(FGraphicsCore::SwapChain->GetDepthBuffer());
 
 		{
+			FGPUProfilerScope testProfile(graphicsContext, "RenderScene");
+
 			FResourceMagnitude renderTargetMagnitude = FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetDesc().Magnitude;
 
 			graphicsContext.SetViewportAndScissor(0, 0, renderTargetMagnitude.Width, renderTargetMagnitude.Height);
