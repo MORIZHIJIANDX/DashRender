@@ -530,7 +530,7 @@ namespace Dash
 			{
 				const std::vector<FShaderParameter>& parameters = shaderPass->GetCBVParameters();
 				ASSERT(sizeInBytes == parameters[shaderParameterIndex].Size);
-				SetRootConstantBufferView(parameters[shaderParameterIndex].BindPoint, sizeInBytes, constants);
+				SetRootConstantBufferView(parameters[shaderParameterIndex].RootParameterIndex, sizeInBytes, constants);
 				mConstantBufferBindState[shaderParameterIndex] = true;
 			}
 			else

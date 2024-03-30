@@ -59,6 +59,6 @@ float4 PS_Main(PS_INPUT input) : SV_Target
     //float4 out_col = float4(input.normal * Color.rgb, 0.0f);
     
     //float4 out_col = BaseColorTexture.Sample(Sampler_Static, input.uv) * Color;
-    float4 out_col = BaseColorTexture.Sample(Sampler_Static, input.uv) * input.instanceColor;
+    float4 out_col = BaseColorTexture.Sample(Sampler_Static, input.uv) * input.instanceColor * Color;
     return out_col;
 }
