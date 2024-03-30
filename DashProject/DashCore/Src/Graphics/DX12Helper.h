@@ -1,6 +1,5 @@
 #pragma once
 
-#include "d3dx12.h"
 #include <dxgi.h>
 #include <strsafe.h>
 #include "Utility/StringUtility.h"

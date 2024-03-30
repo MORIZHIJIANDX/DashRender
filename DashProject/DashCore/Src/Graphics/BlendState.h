@@ -1,6 +1,5 @@
 #pragma once
 
-#include "d3dx12.h"
 #include "Utility/BitwiseEnum.h"
 #include "RenderTarget.h"
 

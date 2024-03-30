@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../Math/MathType.h"
-#include "d3dx12.h"
+#include "Math/MathType.h"
 
 namespace Dash
 {

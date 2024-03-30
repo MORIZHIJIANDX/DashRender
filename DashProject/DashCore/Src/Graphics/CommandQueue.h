@@ -1,8 +1,6 @@
 #pragma once
 
 #include "d3dx12.h"
-#include <wrl.h>
-#include <vector>
 #include <queue>
 
 namespace Dash

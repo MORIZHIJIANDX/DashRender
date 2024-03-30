@@ -1,6 +1,5 @@
 #include "PCH.h"
 #include "LogManager.h"
-#include <shellapi.h>
 
 namespace Dash
 {

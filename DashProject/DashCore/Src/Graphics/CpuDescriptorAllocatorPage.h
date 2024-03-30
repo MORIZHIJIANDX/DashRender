@@ -1,6 +1,5 @@
 #pragma once
 
-#include "d3dx12.h"
 #include "CpuDescriptorAllocation.h"
 
 namespace Dash

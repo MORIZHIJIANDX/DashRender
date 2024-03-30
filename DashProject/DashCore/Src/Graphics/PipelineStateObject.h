@@ -1,6 +1,5 @@
 #pragma once
 
-#include "d3dx12.h"
 #include "InputAssemblerLayout.h"
 #include "ShaderPass.h"
 #include "RasterizerState.h"

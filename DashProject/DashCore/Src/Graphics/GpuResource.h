@@ -1,5 +1,5 @@
 #pragma once
-#include <wrl.h>
+
 #include "DX12Helper.h"
 #include "ResourceFormat.h"
 #include "ResourceDescription.h"

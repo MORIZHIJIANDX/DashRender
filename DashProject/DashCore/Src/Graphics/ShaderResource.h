@@ -3,7 +3,6 @@
 #include "Utility/BitwiseEnum.h"
 #include <wtypes.h>
 #include <Unknwn.h>
-#include <wrl.h>
 #include "InputAssemblerLayout.h"
 #include "dxc/inc/dxcapi.h"
 #include "dxc/inc/d3d12shader.h"

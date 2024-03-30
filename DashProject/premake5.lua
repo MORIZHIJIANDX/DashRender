@@ -59,6 +59,7 @@ project "DashCore"
     }
 
     nuget { "WinPixEventRuntime:1.0.231030001" }
+    nuget { "Microsoft.Direct3D.D3D12:1.613.1" }
 
     filter { "system:windows" }
         prebuildcommands { "powershell -ExecutionPolicy Bypass -File %{wks.location}/Vendor/GetDXC/GetDXC.ps1 %{wks.location}/%{prj.name}/ThirdParty/dxc" }
@@ -136,6 +137,7 @@ project "DashProject"
     }
 
     nuget { "WinPixEventRuntime:1.0.231030001" }
+    nuget { "Microsoft.Direct3D.D3D12:1.613.1" }
 
     filter "system:windows"
         systemversion "latest"

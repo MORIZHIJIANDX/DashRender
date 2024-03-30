@@ -2,8 +2,6 @@
 #include "GraphicsCore.h"
 #include "CommandQueue.h"
 #include "CpuDescriptorAllocator.h"
-#include <wrl.h>
-#include <dxgi1_6.h>
 #include <dxgidebug.h>
 #include "DX12Helper.h"
 #include "CommandContext.h"

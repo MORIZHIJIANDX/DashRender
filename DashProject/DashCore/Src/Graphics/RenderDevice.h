@@ -1,6 +1,5 @@
 #pragma once
 
-#include "d3dx12.h"
 #include "ResourceState.h"
 #include "ResourceFormat.h"
 #include "ResourceDescription.h"
