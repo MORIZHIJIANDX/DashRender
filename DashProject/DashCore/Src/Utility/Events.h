@@ -164,12 +164,12 @@ namespace Dash
 	using FMouseWheelEventDelegate = TDelegate<void(FMouseWheelEventArgs&)>;
 
 
-	struct FResizeEventArgs : public FEventArgs
+	struct FWindowResizeEventArgs : public FEventArgs
 	{
 	public:
 		using base = FEventArgs;
 
-		FResizeEventArgs(int width, int height, bool minimize)
+		FWindowResizeEventArgs(int width, int height, bool minimize)
 			: Width(width)
 			, Height(height)
 			, Minimized(minimize)
@@ -183,9 +183,27 @@ namespace Dash
 		bool Minimized;
 	};
 
-	using FResizeEvent = TMulticastDelegate<void(FResizeEventArgs&)>;
-	using FResizeEventDelegate = TDelegate<void(FResizeEventArgs&)>;
+	using FWindowResizeEvent = TMulticastDelegate<void(FWindowResizeEventArgs&)>;
+	using FWindowResizeEventDelegate = TDelegate<void(FWindowResizeEventArgs&)>;
 
+	struct FWindowMoveEventArgs : public FEventArgs
+	{
+	public:
+		using base = FEventArgs;
+
+		FWindowMoveEventArgs(int x, int y)
+			: XPos(x)
+			, YPos(y)
+		{}
+
+		// The new width of the window
+		int XPos;
+		// The new height of the window.
+		int YPos;
+	};
+
+	using FWindowMoveEvent = TMulticastDelegate<void(FWindowMoveEventArgs&)>;
+	using FWindowMoveEventDelegate = TDelegate<void(FWindowMoveEventArgs&)>;
 
 	struct FUpdateEventArgs : public FEventArgs
 	{

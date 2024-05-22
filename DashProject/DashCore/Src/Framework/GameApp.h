@@ -31,7 +31,8 @@ namespace Dash
         virtual void OnUpdate(const FUpdateEventArgs& e);
         virtual void OnRender(const FRenderEventArgs& e);
 
-        virtual void OnWindowResize(const FResizeEventArgs& e);
+        virtual void OnWindowResize(const FWindowResizeEventArgs& e);
+        virtual void OnWindowMoved(const FWindowMoveEventArgs& e);
 
         bool ProcessWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -45,6 +46,8 @@ namespace Dash
         int GetWindowWidth() const { return mWindowWidth; }
         int GetWindowHeight() const { return mWindowHeight; }
         
+        void SetWindowBounds(int left, int top, int right, int bottom);
+
         void SetWindowTitle(const std::string& title);
         std::string GetWindowTitle() const { return mWindowTitle; }
 

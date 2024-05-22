@@ -13,7 +13,6 @@ namespace Dash
 {
 	std::vector<FGPUProfiler::FProfileResult> ProfileResults;
 
-
 	FUIRenderLayer::FUIRenderLayer()
 		: IRenderLayer("UIRenderLayer", 65535)
 	{
@@ -94,7 +93,7 @@ namespace Dash
 		ProfileResults = FGraphicsCore::Profiler->GetQueryResults();
 	}
 
-	void FUIRenderLayer::OnWindowResize(const FResizeEventArgs& e)
+	void FUIRenderLayer::OnWindowResize(const FWindowResizeEventArgs& e)
 	{
 	}
 }

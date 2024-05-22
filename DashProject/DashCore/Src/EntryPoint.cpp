@@ -200,19 +200,18 @@ namespace Dash
 		}
 		case WM_SIZE:
 		{
-			if (app == nullptr)
-			{
-				return 0;
-			}
-
 			// Save the new client area dimensions.
 			int ClientWidth = LOWORD(lParam);
 			int ClientHeight = HIWORD(lParam);
 
 			LOG_INFO << "Window Event, Wdith : " << ClientWidth << ", Height : " << ClientHeight;
 
-			//if (app)
+			if(app)
 			{
+				RECT windowRect = {};
+				GetWindowRect(hWnd, &windowRect);
+				app->SetWindowBounds(windowRect.left, windowRect.top, windowRect.right, windowRect.bottom);
+
 				app->SetWindowWidth(ClientWidth);
 				app->SetWindowHeight(ClientHeight);
 
@@ -227,7 +226,7 @@ namespace Dash
 					AppPaused = false;
 					Minimized = false;
 					Maximized = true;
-					app->OnWindowResize(FResizeEventArgs{ app->GetWindowWidth(), app->GetWindowHeight(), Minimized });
+					app->OnWindowResize(FWindowResizeEventArgs{ app->GetWindowWidth(), app->GetWindowHeight(), Minimized });
 				}
 				else if (wParam == SIZE_RESTORED)
 				{
@@ -237,7 +236,7 @@ namespace Dash
 					{
 						AppPaused = false;
 						Minimized = false;
-						app->OnWindowResize(FResizeEventArgs{ app->GetWindowWidth(), app->GetWindowHeight(), Minimized });
+						app->OnWindowResize(FWindowResizeEventArgs{ app->GetWindowWidth(), app->GetWindowHeight(), Minimized });
 					}
 
 					// Restoring from maximized state?
@@ -245,7 +244,7 @@ namespace Dash
 					{
 						AppPaused = false;
 						Maximized = false;
-						app->OnWindowResize(FResizeEventArgs{ app->GetWindowWidth(), app->GetWindowHeight(), Minimized });
+						app->OnWindowResize(FWindowResizeEventArgs{ app->GetWindowWidth(), app->GetWindowHeight(), Minimized });
 					}
 					else if (Resizing)
 					{
@@ -260,12 +259,26 @@ namespace Dash
 					}
 					else // API call such as SetWindowPos or mSwapChain->SetFullscreenState.
 					{
-						app->OnWindowResize(FResizeEventArgs{ app->GetWindowWidth(), app->GetWindowHeight(), Minimized });
+						app->OnWindowResize(FWindowResizeEventArgs{ app->GetWindowWidth(), app->GetWindowHeight(), Minimized });
 					}
 				}
 			}
 			//break;
 
+			return 0;
+		}
+		case WM_MOVE:
+		{
+			if (app)
+			{
+				RECT windowRect = {};
+				GetWindowRect(hWnd, &windowRect);
+				app->SetWindowBounds(windowRect.left, windowRect.top, windowRect.right, windowRect.bottom);
+
+				int xPos = (int)(short)LOWORD(lParam);
+				int yPos = (int)(short)HIWORD(lParam);
+				app->OnWindowMoved(FWindowMoveEventArgs{ xPos, yPos });
+			}
 			return 0;
 		}
 		// WM_EXITSIZEMOVE is sent when the user grabs the resize bars.
@@ -284,7 +297,7 @@ namespace Dash
 			AppPaused = false;
 			Resizing = false;
 			//mTimer.Start();
-			app->OnWindowResize(FResizeEventArgs{ app->GetWindowWidth(), app->GetWindowHeight(), Minimized });
+			app->OnWindowResize(FWindowResizeEventArgs{ app->GetWindowWidth(), app->GetWindowHeight(), Minimized });
 			//break;
 			return 0;
 		}

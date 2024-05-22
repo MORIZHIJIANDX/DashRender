@@ -163,7 +163,7 @@ namespace Dash
 				meshDrawCommand.PSO->SetShaderPass(shaderPass);
 				meshDrawCommand.PSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
 				meshDrawCommand.PSO->SetSamplerMask(UINT_MAX);
-				meshDrawCommand.PSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetBackBufferFormat(), FGraphicsCore::SwapChain->GetDepthBuffer()->GetFormat());
+				meshDrawCommand.PSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetColorBufferFormat(), FGraphicsCore::SwapChain->GetDepthBufferFormat());
 				meshDrawCommand.PSO->Finalize();
 
 				meshDrawCommand.VertexStart = sectionData.VertexStart;

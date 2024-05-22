@@ -20,7 +20,7 @@ namespace Dash
 		virtual void OnUpdate(const FUpdateEventArgs& e) override;
 		virtual void OnRender(const FRenderEventArgs& e) override;
 
-		virtual void OnWindowResize(const FResizeEventArgs& e) override;
+		virtual void OnWindowResize(const FWindowResizeEventArgs& e) override;
 
 		void OnMouseWheelDown(FMouseWheelEventArgs& e);
 		void OnMouseWheelUp(FMouseWheelEventArgs& e);

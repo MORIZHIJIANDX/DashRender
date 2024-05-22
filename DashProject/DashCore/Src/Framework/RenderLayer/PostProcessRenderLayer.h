@@ -4,12 +4,12 @@
 
 namespace Dash
 {
-	class FUIRenderLayer : public IRenderLayer
+	class FPostProcessRenderLayer : public IRenderLayer
 	{
 	public:
-		FUIRenderLayer();
-		virtual ~FUIRenderLayer();
-		
+		FPostProcessRenderLayer();
+		virtual ~FPostProcessRenderLayer();
+
 		virtual void Init() override;
 		virtual void Shutdown() override;
 

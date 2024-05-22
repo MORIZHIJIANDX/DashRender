@@ -41,7 +41,7 @@ namespace Dash
 		R32_Signed, RG32_Signed, RGB32_Signed, RGBA32_Signed,
 		R32_Unsigned, RG32_Unsigned, RGB32_Unsigned, RGBA32_Unsigned,
 
-		RGB10A2_Unorm, R11G11B10_Float,
+		RGB10A2_Unsigned_Norm, R11G11B10_Float,
 
 		// Compressed Color Formats
 		BC1_Unsigned_Norm, BC2_Unsigned_Norm, BC3_Unsigned_Norm, BC4_Unsigned_Norm,

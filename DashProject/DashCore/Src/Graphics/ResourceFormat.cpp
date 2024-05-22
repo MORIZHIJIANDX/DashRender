@@ -397,8 +397,8 @@ namespace Dash
 		case EResourceFormat::RGB32_Unsigned:    return DXGI_FORMAT_R32G32B32_UINT;
 		case EResourceFormat::RGBA32_Unsigned:   return DXGI_FORMAT_R32G32B32A32_UINT;
 
-		case EResourceFormat::RGB10A2_Unorm:     return DXGI_FORMAT_R10G10B10A2_UNORM;
-		case EResourceFormat::R11G11B10_Float:   return DXGI_FORMAT_R11G11B10_FLOAT;
+		case EResourceFormat::RGB10A2_Unsigned_Norm:    return DXGI_FORMAT_R10G10B10A2_UNORM;
+		case EResourceFormat::R11G11B10_Float:			return DXGI_FORMAT_R11G11B10_FLOAT;
 
 		case EResourceFormat::BC1_Unsigned_Norm: return DXGI_FORMAT_BC1_UNORM;
 		case EResourceFormat::BC2_Unsigned_Norm: return DXGI_FORMAT_BC2_UNORM;
@@ -637,7 +637,7 @@ namespace Dash
 		case EResourceFormat::RGB32_Unsigned:    
 		case EResourceFormat::RGBA32_Unsigned:   
 
-		case EResourceFormat::RGB10A2_Unorm:    
+		case EResourceFormat::RGB10A2_Unsigned_Norm:    
 		case EResourceFormat::R11G11B10_Float:   
 
 		case EResourceFormat::BC1_Unsigned_Norm: 
@@ -891,7 +891,7 @@ namespace Dash
 		case DXGI_FORMAT_D24_UNORM_S8_UINT:			return EResourceFormat::Depth24_Float_Stencil8_Unsigned;
 		case DXGI_FORMAT_D32_FLOAT:					return EResourceFormat::Depth32_Float;
 
-		case DXGI_FORMAT_R10G10B10A2_UNORM:			return EResourceFormat::RGB10A2_Unorm;
+		case DXGI_FORMAT_R10G10B10A2_UNORM:			return EResourceFormat::RGB10A2_Unsigned_Norm;
 		case DXGI_FORMAT_R11G11B10_FLOAT:			return EResourceFormat::R11G11B10_Float;
 
 			// Compressed formats

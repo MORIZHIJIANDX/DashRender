@@ -11,6 +11,7 @@
 
 #include "Framework/RenderLayer/SceneRenderLayer.h"
 #include "Framework/RenderLayer/UIRenderLayer.h"
+#include "Framework/RenderLayer/PostProcessRenderLayer.h"
 
 #include "Graphics/GPUProfiler.h"
 
@@ -30,6 +31,7 @@ namespace Dash
 	void IGameApp::Startup()
 	{
 		AddRenderLayer(std::make_unique<FSceneRenderLayer>());
+		AddRenderLayer(std::make_unique<FPostProcessRenderLayer>());
 		AddRenderLayer(std::make_unique<FUIRenderLayer>());
 	}
 
@@ -124,7 +126,7 @@ namespace Dash
 		}
 	}
 
-	void IGameApp::OnWindowResize(const FResizeEventArgs& e)
+	void IGameApp::OnWindowResize(const FWindowResizeEventArgs& e)
 	{
 		mWindowWidth = e.Width;
 		mWindowHeight = e.Height;
@@ -137,6 +139,11 @@ namespace Dash
 		FGraphicsCore::SwapChain->OnWindowResize(mWindowWidth, mWindowHeight);
 	}
 
+	void IGameApp::OnWindowMoved(const FWindowMoveEventArgs& e)
+	{
+		FGraphicsCore::SwapChain->OnWindowMoved(e.XPos, e.YPos);
+	}
+
 	bool IGameApp::ProcessWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		return ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
@@ -145,6 +152,11 @@ namespace Dash
 	bool IGameApp::IsDone(void)
 	{
 		return FKeyboard::Get().IsKeyPressed(EKeyCode::Escape);
+	}
+
+	void IGameApp::SetWindowBounds(int left, int top, int right, int bottom)
+	{
+		FGraphicsCore::SwapChain->SetWindowBounds(left, top, right, bottom);
 	}
 
 	void IGameApp::SetWindowTitle(const std::string& title)

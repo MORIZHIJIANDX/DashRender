@@ -34,7 +34,7 @@ namespace Dash
 	FMeshConstantBuffer MeshConstantBuffer;
 
 	FSceneRenderLayer::FSceneRenderLayer()
-		: IRenderLayer("SceneRenderLayer", 100)
+		: IRenderLayer("SceneRenderLayer", 10)
 		, mCameraActor(nullptr)
 		, mPerspectiveCamera(nullptr)
 	{
@@ -157,14 +157,14 @@ namespace Dash
 	{
 		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("RenderScene");
 
-		graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetCurrentBackBuffer(), FGraphicsCore::SwapChain->GetDepthBuffer());
-		graphicsContext.ClearColor(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
+		graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetColorBuffer(), FGraphicsCore::SwapChain->GetDepthBuffer());
+		graphicsContext.ClearColor(FGraphicsCore::SwapChain->GetColorBuffer());
 		graphicsContext.ClearDepth(FGraphicsCore::SwapChain->GetDepthBuffer());
 
 		{
-			FGPUProfilerScope testProfile(graphicsContext, "RenderScene");
+			FGPUProfilerScope profiler(graphicsContext, "RenderScene");
 
-			FResourceMagnitude renderTargetMagnitude = FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetDesc().Magnitude;
+			FResourceMagnitude renderTargetMagnitude = FGraphicsCore::SwapChain->GetColorBuffer()->GetDesc().Magnitude;
 
 			graphicsContext.SetViewportAndScissor(0, 0, renderTargetMagnitude.Width, renderTargetMagnitude.Height);
 
@@ -210,7 +210,7 @@ namespace Dash
 		graphicsContext.Finish();
 	}
 
-	void FSceneRenderLayer::OnWindowResize(const FResizeEventArgs& e)
+	void FSceneRenderLayer::OnWindowResize(const FWindowResizeEventArgs& e)
 	{
 		float aspect = e.Width / (float)e.Height;
 		float fov = 45.0f;

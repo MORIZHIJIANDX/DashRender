@@ -23,7 +23,7 @@ namespace Dash
 		virtual void OnUpdate(const FUpdateEventArgs& e) = 0;
 		virtual void OnRender(const FRenderEventArgs& e) = 0;
 
-		virtual void OnWindowResize(const FResizeEventArgs& e) = 0;
+		virtual void OnWindowResize(const FWindowResizeEventArgs& e) = 0;
 
 	protected:
 		
