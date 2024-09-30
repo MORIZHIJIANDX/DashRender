@@ -66,7 +66,7 @@ namespace Dash
 
 		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
-		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+		//ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 
@@ -74,6 +74,13 @@ namespace Dash
 		{
 			ImGui::Text("%s Render Time %f", ProfileResults[i].Name.c_str(), ProfileResults[i].TimeInMs);
 		}
+
+		FD3D12VideoMemoryInfo VideoMemoryInfo = FGraphicsCore::Device->QueryVideoMemoryInfo();
+		ImGui::Text("Local Memory Budget\t: %llu MB", VideoMemoryInfo.LocalMemoryBudget);
+		ImGui::Text("Local Memory Usage \t: %llu MB", VideoMemoryInfo.LocalMemoryUsage);
+
+		ImGui::Text("Shared Memory Budget\t: %llu MB", VideoMemoryInfo.NonLocalMemoryBudget);
+		ImGui::Text("Shared Memory Usage \t: %llu MB", VideoMemoryInfo.NonLocalMemoryUsage);
 
 		ImGui::End();
 	}
