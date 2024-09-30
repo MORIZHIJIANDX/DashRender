@@ -124,11 +124,13 @@ namespace Dash
 
 			bufferSizeMap.emplace(bufferDesc.Name, bufferDesc.Size);
 
+			/*
 			LOG_INFO << "Buffer Name : " << std::string(bufferDesc.Name);
 			LOG_INFO << "Buffer Type : " << bufferDesc.Type;
 			LOG_INFO << "Buffer Variables : " << bufferDesc.Variables;
 			LOG_INFO << "Buffer Size : " << bufferDesc.Size;
 			LOG_INFO << "Buffer uFlags : " << bufferDesc.uFlags;
+			*/
 
 			for (UINT variableIndex = 0; variableIndex < bufferDesc.Variables; variableIndex++)
 			{
@@ -144,7 +146,7 @@ namespace Dash
 
 				bufferVariableMap[bufferDesc.Name].push_back(bufferVariable);
 
-				LOG_INFO << "Buffer Variable : " << variableDesc.Name << " , Size : " << variableDesc.Size << " , Offset : " << variableDesc.StartOffset;
+				// LOG_INFO << "Buffer Variable : " << variableDesc.Name << " , Size : " << variableDesc.Size << " , Offset : " << variableDesc.StartOffset;
 			}
 		}
 
@@ -172,6 +174,7 @@ namespace Dash
 
 			mParameters.push_back(resourceParameter);
 
+			/*
 			LOG_INFO << "Resource Name : " << std::string(resourceDesc.Name);
 			LOG_INFO << "Resource Type : " << resourceDesc.Type;
 			LOG_INFO << "Resource BindPoint : " << resourceDesc.BindPoint;
@@ -184,6 +187,7 @@ namespace Dash
 			LOG_INFO << "Resource uID : " << resourceDesc.uID;
 
 			LOG_INFO << " ================================== ";
+			*/
 		}
 
 		if (EnumMaskEquals(mCreationInfo.Stage, EShaderStage::Vertex))
@@ -440,6 +444,7 @@ namespace Dash
 					}
 				}
 
+				/*
 				LOG_INFO << "Input Parameter Name : " << std::string(inputSignatureParameterDesc.SemanticName);
 				LOG_INFO << "Input Parameter Index : " << inputSignatureParameterDesc.SemanticIndex;
 				LOG_INFO << "Input Parameter Mask : " << int(inputSignatureParameterDesc.Mask);
@@ -449,6 +454,7 @@ namespace Dash
 				LOG_INFO << "Input Parameter MinPrecision : " << inputSignatureParameterDesc.MinPrecision;
 				LOG_INFO << "Input Parameter Stream : " << inputSignatureParameterDesc.Stream;
 				LOG_INFO << "Input Parameter ReadWriteMask : " << int(inputSignatureParameterDesc.ReadWriteMask);
+				*/
 
 				if (!prevSemanticName.empty())
 				{

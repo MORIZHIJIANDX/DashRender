@@ -28,6 +28,7 @@ namespace Dash
 		const std::string& GetPassName() const { return mPassName; }
 		FRootSignatureRef GetRootSignature() const { return mRootSignatureRef; }
 		const std::map<EShaderStage, FShaderResourceRef>& GetShaders() const { return mShaders; }
+		size_t GetShadersHash() const { return ShadersHash; }
 
 		int32_t FindCBVParameterByName(const std::string& parameterName) const;
 		int32_t FindSRVParameterByName(const std::string& parameterName) const;
@@ -80,5 +81,6 @@ namespace Dash
 		EShaderPassType mPassType;
 		FRootSignatureRef mRootSignatureRef;
 		std::string mPassName;
+		size_t ShadersHash;
 	};
 }

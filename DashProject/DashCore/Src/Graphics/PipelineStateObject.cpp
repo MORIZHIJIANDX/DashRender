@@ -171,12 +171,12 @@ namespace Dash
 
 		mPipelineStateStream.pRootSignature = mShaderPass->GetRootSignature()->GetSignature();
 
-		size_t hashCode = HashState(&mPipelineStateStream);
+		size_t hashCode = HashState(&mPipelineStateStream, 1, mShaderPass->GetShadersHash());
 		const D3D12_INPUT_LAYOUT_DESC& InputLayoutDesc = mPipelineStateStream.InputLayout;
 		hashCode = HashState(InputLayoutDesc.pInputElementDescs, InputLayoutDesc.NumElements, hashCode);
 
 		static std::mutex posMutex;
-		ComPtr<ID3D12PipelineState>* psoRef = nullptr;
+		ID3D12PipelineState** psoRef = nullptr;
 		bool firstTimeCompile = false;
 		{
 			std::lock_guard<std::mutex> lock(posMutex);
@@ -184,12 +184,12 @@ namespace Dash
 			auto iter = GraphicsPipelineStateHashMap.find(hashCode);
 			if (iter == GraphicsPipelineStateHashMap.end())
 			{
-				psoRef = &GraphicsPipelineStateHashMap[hashCode];
+				psoRef = GraphicsPipelineStateHashMap[hashCode].GetAddressOf();
 				firstTimeCompile = true;
 			}
 			else
 			{
-				psoRef = &iter->second;
+				psoRef = iter->second.GetAddressOf();
 			}
 		}
 
@@ -204,6 +204,11 @@ namespace Dash
 			SetD3D12DebugName(newPSO.Get(), mName.c_str());
 			GraphicsPipelineStateHashMap[hashCode] = newPSO;
 			mPSO = newPSO.Get();
+
+			ComPtr<ID3DBlob> psoBlob;
+			newPSO->GetCachedBlob(&psoBlob);
+
+			LOG_INFO << "Compile PSO : " << mName << " Size : " << psoBlob->GetBufferSize();
 		}
 		else
 		{
@@ -212,7 +217,7 @@ namespace Dash
 				std::this_thread::yield();
 			}
 
-			mPSO = psoRef->Get();
+			mPSO = *psoRef;
 		}
 
 		mIsFinalized = true;

@@ -80,6 +80,7 @@ namespace Dash
 
 		std::map<FParameterKey, FShaderParameter> parameterMap;
 		
+		std::vector<FShaderResourceRef> SortedShaders;
 		for (auto& pair : mShaders)
 		{
 			FShaderResourceRef shaderRef = pair.second;
@@ -102,7 +103,20 @@ namespace Dash
 					parameterMap[key] = shaderParameter;
 				}
 			}
+
+			SortedShaders.push_back(shaderRef);
 		}
+
+		std::sort(SortedShaders.begin(), SortedShaders.end(), [](const FShaderResourceRef& a, const FShaderResourceRef& b){
+			return a->GetShaderHash() < b->GetShaderHash();
+		});
+
+		std::string HashedShaderFileName;
+		for (size_t Index = 0; Index < SortedShaders.size(); Index++)
+		{
+			HashedShaderFileName += SortedShaders[Index]->GetHashedFileName();
+		}
+		ShadersHash = std::hash<std::string>{}(HashedShaderFileName);
 
 		LOG_INFO << "Num Pass Parameters : " << parameterMap.size();
 

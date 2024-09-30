@@ -108,6 +108,7 @@ namespace Dash
 		FCompiledBinary GetCompiledShader() const { return mShaderBinary; }
 		std::string GetShaderFileName() const { return mCreationInfo.FileName; }
 		std::string GetShaderEntryPoint() const { return mCreationInfo.EntryPoint; }
+		std::string GetHashedFileName() const { return mCreationInfo.GetHashedFileName(); }
 		EShaderStage GetShaderStage() const { return mCreationInfo.Stage; }
 		size_t GetShaderHash() const { return mCreationInfo.GetShaderHash(); }
 		const std::vector<FShaderParameter>& GetShaderParameters() const { return mParameters; }
