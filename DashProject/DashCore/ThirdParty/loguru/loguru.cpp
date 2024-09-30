@@ -333,7 +333,7 @@ namespace loguru
 
 	void vs_log(void* user_data, const Message& message)
 	{
-		char buffer[1024];
+		char buffer[4096];
 		sprintf_s(buffer, "%s%s%s%s\n",
 			message.preamble, message.indentation, message.prefix, message.message);
 		OutputDebugStringA(buffer);
