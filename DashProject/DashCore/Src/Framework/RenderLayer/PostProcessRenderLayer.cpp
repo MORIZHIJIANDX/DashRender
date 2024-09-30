@@ -30,7 +30,7 @@ namespace Dash
 		FBlendState blendDisable{ false, false };
 		FDepthStencilState depthStateDisabled{ false, false };
 
-		PostProcessPass = FShaderPass::MakeShaderPass("PostProcessPass", { vsInfo , psInfo }, blendDisable, rasterizerDefault, depthStateDisabled);
+		PostProcessPass = FShaderPass::MakeGraphicShaderPass("PostProcessPass", { vsInfo , psInfo }, blendDisable, rasterizerDefault, depthStateDisabled);
 
 		PostProcessPSO->SetShaderPass(PostProcessPass);
 		PostProcessPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);

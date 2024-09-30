@@ -390,7 +390,7 @@ namespace Dash
             FBlendState blendDisable{ true, false };
             FDepthStencilState depthStateDisabled{ false, false };
 
-            FShaderPassRef drawPass = FShaderPass::MakeShaderPass("IMGUI_DrawPass", { vsInfo , psInfo }, blendDisable, rasterizerCullOff, depthStateDisabled);
+            FShaderPassRef drawPass = FShaderPass::MakeGraphicShaderPass("IMGUI_DrawPass", { vsInfo , psInfo }, blendDisable, rasterizerCullOff, depthStateDisabled);
 
             FGraphicsPSORef drawPSO = FGraphicsPSO::MakeGraphicsPSO("IMGUI_PSO");
 

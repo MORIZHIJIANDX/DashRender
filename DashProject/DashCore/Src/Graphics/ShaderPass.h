@@ -21,7 +21,7 @@ namespace Dash
 	class FShaderPass
 	{
 	public:
-		static FShaderPassRef MakeShaderPass(const std::string& passName, const std::vector<FShaderCreationInfo>& creationInfos,
+		static FShaderPassRef MakeGraphicShaderPass(const std::string& passName, const std::vector<FShaderCreationInfo>& creationInfos,
 			const FBlendState& blendState, const FRasterizerState& rasterizerState, const FDepthStencilState& depthStencilState);
 
 		EShaderPassType GetPassType() const { return mPassType; }
