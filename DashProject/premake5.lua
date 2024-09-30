@@ -24,7 +24,7 @@ project "DashCore"
 	language "C++"
 	cppdialect "C++20"
     cdialect "C17"
-	staticruntime "on"
+    staticruntime "On"
 
     targetdir ("Bin/"..outputdir.."/%{prj.name}")
     objdir ("Bin-Intermediate/"..outputdir.."/%{prj.name}")
@@ -86,6 +86,11 @@ project "DashCore"
         symbols "On"
         libdirs { "%{wks.location}/%{prj.name}/ThirdParty/assimp/lib/Debug" }
         links { "assimp-vc143-mtd" }
+        debugformat "c7"
+        flags("NoIncrementalLink")
+        flags("NoRuntimeChecks")
+        sanitize { "Address" }
+        debugenvs { "PATH=$(VC_ExecutablePath_x64);" }
 
     filter "configurations:Release"
         defines "DASH_RELEASE"
@@ -105,7 +110,7 @@ project "DashProject"
     language "C++"
     cppdialect "C++20"
     cdialect "C17"
-    staticruntime "on"
+    staticruntime "On"
 
     targetdir ("Bin/"..outputdir.."/%{prj.name}")
     objdir ("Bin-Intermediate/"..outputdir.."/%{prj.name}")
@@ -148,6 +153,11 @@ project "DashProject"
     filter "configurations:Debug"
         defines "DASH_DEBUG"
         symbols "On"
+        debugformat "c7"
+        flags("NoIncrementalLink")
+        flags("NoRuntimeChecks")
+        sanitize { "Address" }
+        debugenvs { "PATH=$(VC_ExecutablePath_x64);" }
 
     filter "configurations:Release"
         defines "DASH_RELEASE"
