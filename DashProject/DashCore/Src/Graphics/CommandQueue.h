@@ -21,13 +21,13 @@ namespace Dash
 			return mType;
 		}
 
-		ID3D12GraphicsCommandList1* GetCommandList() { return mGraphicsCommandList.Get(); }
-		const ID3D12GraphicsCommandList1* GetCommandList() const { return mGraphicsCommandList.Get(); }
+		ID3D12GraphicsCommandList4* GetCommandList() { return mGraphicsCommandList.Get(); }
+		const ID3D12GraphicsCommandList4* GetCommandList() const { return mGraphicsCommandList.Get(); }
 
 	private:
 		D3D12_COMMAND_LIST_TYPE mType;
 
-		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList1> mGraphicsCommandList;
+		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList4> mGraphicsCommandList;
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> mCommandAllocator;
 
 	};

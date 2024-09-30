@@ -3,6 +3,8 @@
 #include "ResourceState.h"
 #include "ResourceFormat.h"
 #include "ResourceDescription.h"
+#include "DX12Helper.h"
+#include "dxgi1_4.h"
 
 namespace Dash
 {
@@ -87,7 +89,7 @@ namespace Dash
 			D3D12_COMMAND_LIST_TYPE type,
 			ID3D12CommandAllocator* pCommandAllocator,
 			ID3D12PipelineState* pInitialState,
-			Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList1>& pCommandList
+			Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList4>& pCommandList
 		);
 
 		// Creates a command queue.
@@ -354,15 +356,20 @@ namespace Dash
 		bool UAVLoadSupportR16G16B16A16Float() const { return mTypedUAVLoadSupport_R16G16B16A16_FLOAT; }
 		bool SupportsUniversalHeaps() const { return mSupportsUniversalHeaps; }
 		bool SupportsTearing() const { return mSupportsTearing; }
+		bool SupportRayTracing() const { return mSupportRaytracing; }
 		D3D_ROOT_SIGNATURE_VERSION HighestRootSignatureVersion() const { return mHighestRootSignatureVersion; }
+
+		FD3D12VideoMemoryInfo QueryVideoMemoryInfo();
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D12Device5> mDevice = nullptr;
+		Microsoft::WRL::ComPtr<IDXGIAdapter3> mAdapter = nullptr;
 
 		bool mTypedUAVLoadSupport_R11G11B10_FLOAT = false;
 		bool mTypedUAVLoadSupport_R16G16B16A16_FLOAT = false;
 		bool mSupportsUniversalHeaps = false;
 		bool mSupportsTearing = false;
+		bool mSupportRaytracing = false;
 		D3D_ROOT_SIGNATURE_VERSION mHighestRootSignatureVersion = D3D_ROOT_SIGNATURE_VERSION::D3D_ROOT_SIGNATURE_VERSION_1_1;
 	};
 }

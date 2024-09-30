@@ -6,6 +6,16 @@
 
 namespace Dash
 {
+    struct FD3D12VideoMemoryInfo
+    {
+        uint64_t LocalMemoryUsage;
+        uint64_t LocalMemoryBudget;
+
+        uint64_t NonLocalMemoryUsage;
+        uint64_t NonLocalMemoryBudget;
+    };
+    
+
 #define D3D12_GPU_VIRTUAL_ADDRESS_NULL      ((D3D12_GPU_VIRTUAL_ADDRESS)0)
 #define D3D12_GPU_VIRTUAL_ADDRESS_UNKNOWN   ((D3D12_GPU_VIRTUAL_ADDRESS)-1)
 

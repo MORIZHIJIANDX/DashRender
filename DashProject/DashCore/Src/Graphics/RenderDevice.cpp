@@ -240,13 +240,12 @@ namespace Dash
 		DX_CALL(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&dxgiFactory)));
 
 		//Enumerate adapter and create device
-		ComPtr<IDXGIAdapter1> dxgiAdapter;
 		for (UINT adapterIndex = 0;
-			DXGI_ERROR_NOT_FOUND != dxgiFactory->EnumAdapterByGpuPreference(adapterIndex, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&dxgiAdapter));
+			DXGI_ERROR_NOT_FOUND != dxgiFactory->EnumAdapterByGpuPreference(adapterIndex, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&mAdapter));
 			++adapterIndex)
 		{
 			DXGI_ADAPTER_DESC1 desc;
-			dxgiAdapter->GetDesc1(&desc);
+			mAdapter->GetDesc1(&desc);
 
 			// Skip the basic render driver adapter.
 			if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
@@ -254,7 +253,7 @@ namespace Dash
 				continue;
 			}
 
-			if (SUCCEEDED(D3D12CreateDevice(dxgiAdapter.Get(), D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(&mDevice))))
+			if (SUCCEEDED(D3D12CreateDevice(mAdapter.Get(), D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(&mDevice))))
 			{
 				LOG_INFO << "Create Device With Adapter : " << FStringUtility::WideStringToUTF8(desc.Description);
 				LOG_INFO << "Adapter Memory " << desc.DedicatedVideoMemory / static_cast<size_t>(1024 * 1024) << " MB";
@@ -402,6 +401,15 @@ namespace Dash
 				}
 			}
 
+			D3D12_FEATURE_DATA_D3D12_OPTIONS5 featureDataOptions5 = {};
+			if (SUCCEEDED(mDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &featureDataOptions5, sizeof(featureDataOptions5))))
+			{
+				if (featureDataOptions5.RaytracingTier != D3D12_RAYTRACING_TIER_NOT_SUPPORTED)
+				{
+					mSupportRaytracing = true;
+				}
+			}
+
 			D3D12_FEATURE_DATA_ROOT_SIGNATURE featureDataSignature{};
 			featureDataSignature.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;
 			if (FAILED(mDevice->CheckFeatureSupport(D3D12_FEATURE_ROOT_SIGNATURE, &featureDataSignature,
@@ -474,7 +482,7 @@ namespace Dash
 		return mDevice->CreateCommandAllocator(type, IID_PPV_ARGS(&pCommandAllocator));
 	}
 
-	HRESULT FRenderDevice::CreateCommandList(UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, ID3D12CommandAllocator* pCommandAllocator, ID3D12PipelineState* pInitialState, Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList1>& pCommandList)
+	HRESULT FRenderDevice::CreateCommandList(UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, ID3D12CommandAllocator* pCommandAllocator, ID3D12PipelineState* pInitialState, Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList4>& pCommandList)
 	{
 		return mDevice->CreateCommandList(nodeMask, type, pCommandAllocator, pInitialState, IID_PPV_ARGS(&pCommandList));
 	}
@@ -779,6 +787,25 @@ namespace Dash
 	{
 		std::shared_ptr<FReadbackBuffer> bufferRef = std::make_shared<FMakeReadbackBuffer>(name, numElements, elementSize);
 		return bufferRef;
+	}
+
+	FD3D12VideoMemoryInfo FRenderDevice::QueryVideoMemoryInfo()
+	{
+		FD3D12VideoMemoryInfo VideoMemoryInfo;
+
+		DXGI_QUERY_VIDEO_MEMORY_INFO LocalVideoMemoryInfo;
+		mAdapter->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP_LOCAL, &LocalVideoMemoryInfo);
+
+		VideoMemoryInfo.LocalMemoryBudget = LocalVideoMemoryInfo.Budget;
+		VideoMemoryInfo.LocalMemoryUsage = LocalVideoMemoryInfo.CurrentUsage;
+
+		DXGI_QUERY_VIDEO_MEMORY_INFO NoLocalVideoMemoryInfo;
+		mAdapter->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP_NON_LOCAL, &NoLocalVideoMemoryInfo);
+
+		VideoMemoryInfo.NonLocalMemoryBudget = NoLocalVideoMemoryInfo.Budget;
+		VideoMemoryInfo.NonLocalMemoryUsage = NoLocalVideoMemoryInfo.CurrentUsage;
+
+		return VideoMemoryInfo;
 	}
 
 }

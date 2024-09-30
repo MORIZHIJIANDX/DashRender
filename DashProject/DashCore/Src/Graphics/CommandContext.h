@@ -62,7 +62,7 @@ namespace Dash
 		FCommandContext& operator=(const FCommandContext&) = delete;
 
 		FCommandList* GetCommandList() { return mCommandList; }
-		ID3D12GraphicsCommandList1* GetD3DCommandList() { return mD3DCommandList; }
+		ID3D12GraphicsCommandList4* GetD3DCommandList() { return mD3DCommandList; }
 
 		void PIXBeginEvent(const std::string& label);
 		void PIXEndEvent();
@@ -85,7 +85,7 @@ namespace Dash
 		D3D12_COMMAND_LIST_TYPE mType;
 
 		FCommandList* mCommandList = nullptr;
-		ID3D12GraphicsCommandList1* mD3DCommandList = nullptr;
+		ID3D12GraphicsCommandList4* mD3DCommandList = nullptr;
 
 		FGpuResourcesStateTracker mResourceStateTracker;
 
