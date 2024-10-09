@@ -76,11 +76,11 @@ namespace Dash
 		}
 
 		FD3D12VideoMemoryInfo VideoMemoryInfo = FGraphicsCore::Device->QueryVideoMemoryInfo();
-		ImGui::Text("Local Memory Budget\t: %llu MB", VideoMemoryInfo.LocalMemoryBudget);
-		ImGui::Text("Local Memory Usage \t: %llu MB", VideoMemoryInfo.LocalMemoryUsage);
+		ImGui::Text("Local Memory Budget\t: %llu MB", VideoMemoryInfo.LocalMemoryBudget / static_cast<uint64_t>(1024 * 1024));
+		ImGui::Text("Local Memory Usage \t: %llu MB", VideoMemoryInfo.LocalMemoryUsage / static_cast<uint64_t>(1024 * 1024));
 
-		ImGui::Text("Shared Memory Budget\t: %llu MB", VideoMemoryInfo.NonLocalMemoryBudget);
-		ImGui::Text("Shared Memory Usage \t: %llu MB", VideoMemoryInfo.NonLocalMemoryUsage);
+		ImGui::Text("Shared Memory Budget\t: %llu MB", VideoMemoryInfo.NonLocalMemoryBudget / static_cast<uint64_t>(1024 * 1024));
+		ImGui::Text("Shared Memory Usage \t: %llu MB", VideoMemoryInfo.NonLocalMemoryUsage / static_cast<uint64_t>(1024 * 1024));
 
 		ImGui::End();
 	}
