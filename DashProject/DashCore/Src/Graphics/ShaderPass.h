@@ -24,6 +24,8 @@ namespace Dash
 		static FShaderPassRef MakeGraphicShaderPass(const std::string& passName, const std::vector<FShaderCreationInfo>& creationInfos,
 			const FBlendState& blendState, const FRasterizerState& rasterizerState, const FDepthStencilState& depthStencilState);
 
+		static FShaderPassRef MakeComputeShaderPass(const std::string& passName, const FShaderCreationInfo& creationInfo);
+
 		EShaderPassType GetPassType() const { return mPassType; }
 		const std::string& GetPassName() const { return mPassName; }
 		FRootSignatureRef GetRootSignature() const { return mRootSignatureRef; }

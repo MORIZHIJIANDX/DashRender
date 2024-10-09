@@ -20,6 +20,17 @@ namespace Dash
 		return newPass;
 	}
 
+	FShaderPassRef Dash::FShaderPass::MakeComputeShaderPass(const std::string& passName, const FShaderCreationInfo& creationInfo)
+	{
+		FShaderPassRef newPass = std::make_shared<FShaderPass>();
+		newPass->SetPassName(passName);
+		newPass->SetShaders({ creationInfo });
+
+		newPass->Finalize();
+
+		return newPass;
+	}
+
 	const FInputAssemblerLayout& FShaderPass::GetInputLayout() const
 	{
 		ASSERT(mShaders.contains(EShaderStage::Vertex));
