@@ -266,7 +266,7 @@ namespace Dash
 			auto iter = ComputePipelineStateHashMap.find(hashCode);
 			if (iter == ComputePipelineStateHashMap.end())
 			{
-				psoRef = GraphicsPipelineStateHashMap[hashCode].GetAddressOf();
+				psoRef = ComputePipelineStateHashMap[hashCode].GetAddressOf();
 				firstTimeCompile = true;
 			}
 			else
@@ -285,6 +285,7 @@ namespace Dash
 			DX_CALL(FGraphicsCore::Device->CreatePipelineState(&pipelineStateStreamDesc, newPSO));
 			SetD3D12DebugName(newPSO.Get(), mName.c_str());
 			ComputePipelineStateHashMap[hashCode] = newPSO;
+			mPSO = newPSO.Get();
 		}
 		else
 		{
