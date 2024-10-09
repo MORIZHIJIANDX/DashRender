@@ -31,7 +31,7 @@ void VS_Main(
 float4 PS_Main(float4 position : SV_Position, float2 uv : TexCoord0) : SV_Target0
 {
     float4 Color = ColorBuffer.Sample(Sampler_Static, uv);
-    Color.rgb = CalcLuminance(Color.rgb);
+    //Color.rgb = CalcLuminance(Color.rgb);
     Color.rgb = LinearToSRGB(Color.rgb);
 
     return Color;

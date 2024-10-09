@@ -19,5 +19,7 @@ namespace Dash
 		virtual void OnRender(const FRenderEventArgs& e) override;
 
 		virtual void OnWindowResize(const FWindowResizeEventArgs& e) override;
+
+		FColorBufferRef mTempRT = nullptr;
 	};
 }

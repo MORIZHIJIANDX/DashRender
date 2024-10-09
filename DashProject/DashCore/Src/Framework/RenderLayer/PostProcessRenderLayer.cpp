@@ -10,6 +10,9 @@ namespace Dash
 	FGraphicsPSORef PostProcessPSO = FGraphicsPSO::MakeGraphicsPSO("PostProcessPSO");
 	FShaderPassRef PostProcessPass = nullptr;
 
+	FComputePSORef ComputeGrayscalePSO = FComputePSO::MakeComputePSO("ComputeGrayscalePSO");
+	FShaderPassRef ComputeGrayscalePass = nullptr;
+
 	FPostProcessRenderLayer::FPostProcessRenderLayer()
 		: IRenderLayer("PostProcessRenderLayer", 200)
 	{
@@ -17,6 +20,11 @@ namespace Dash
 
 	FPostProcessRenderLayer::~FPostProcessRenderLayer()
 	{
+		if (mTempRT)
+		{
+			mTempRT->Destroy();
+			mTempRT = nullptr;
+		}
 	}
 
 	void FPostProcessRenderLayer::Init()
@@ -37,6 +45,18 @@ namespace Dash
 		PostProcessPSO->SetSamplerMask(UINT_MAX);
 		PostProcessPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetBackBufferFormat(), FGraphicsCore::SwapChain->GetDepthBufferFormat());
 		PostProcessPSO->Finalize();
+
+		{
+			FShaderCreationInfo csInfo{ EShaderStage::Compute, FFileUtility::GetEngineShaderDir("ComputeGrayscaleShader.hlsl"),  "CS_Main" };
+			ComputeGrayscalePass = FShaderPass::MakeComputeShaderPass("ComputeGrayscalePass", csInfo);
+
+			ComputeGrayscalePSO->SetShaderPass(ComputeGrayscalePass);
+			ComputeGrayscalePSO->Finalize();
+
+			mTempRT = FGraphicsCore::Device->CreateColorBuffer("Temp Buffer", FColorBufferDescription::Create2D(FGraphicsCore::SwapChain->GetColorBufferFormat(),
+				FGraphicsCore::SwapChain->GetDisplayWidth(), FGraphicsCore::SwapChain->GetDisplayHeight(), FLinearColor::Black,
+				1, EResourceState::UnorderedAccess));
+		}
 	}
 
 	void FPostProcessRenderLayer::Shutdown()
@@ -57,22 +77,53 @@ namespace Dash
 
 	void FPostProcessRenderLayer::OnRender(const FRenderEventArgs& e)
 	{
-		FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("PostProcess");
-
+		if (mTempRT)
 		{
-			FGPUProfilerScope profiler(graphicsContext, "PostProcess");
+			FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("GrayscalePostProcess");
 
-			graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
-			graphicsContext.SetGraphicsPipelineState(PostProcessPSO);
-			graphicsContext.SetViewportAndScissor(0, 0, FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetWidth(), FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetHeight());
-			graphicsContext.SetShaderResourceView("ColorBuffer", FGraphicsCore::SwapChain->GetColorBuffer());
-			graphicsContext.Draw(3);
+			{
+				FGPUProfilerScope profiler(graphicsContext, "GrayscalePostProcess");
+
+				graphicsContext.SetComputePipelineState(ComputeGrayscalePSO);
+				graphicsContext.SetUnorderAccessView("OutputTexture", mTempRT);
+				graphicsContext.SetShaderResourceView("InputTexture", FGraphicsCore::SwapChain->GetColorBuffer());
+
+				UINT numGroupsX = (UINT)ceilf(mTempRT->GetWidth() / 16.0f);
+				UINT numGroupsY = (UINT)ceilf(mTempRT->GetHeight() / 16.0f);
+				graphicsContext.Dispatch(numGroupsX, numGroupsY, 1);
+			}
+
+			graphicsContext.Finish();
 		}
+		
+		{
+			FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("BlitPostProcess");
 
-		graphicsContext.Finish();
+			{
+				FGPUProfilerScope profiler(graphicsContext, "BlitPostProcess");
+
+				graphicsContext.SetRenderTarget(FGraphicsCore::SwapChain->GetCurrentBackBuffer());
+				graphicsContext.SetGraphicsPipelineState(PostProcessPSO);
+				graphicsContext.SetViewportAndScissor(0, 0, FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetWidth(), FGraphicsCore::SwapChain->GetCurrentBackBuffer()->GetHeight());
+				//graphicsContext.SetShaderResourceView("ColorBuffer", FGraphicsCore::SwapChain->GetColorBuffer());
+				graphicsContext.SetShaderResourceView("ColorBuffer", mTempRT);
+				graphicsContext.Draw(3);
+			}
+
+			graphicsContext.Finish();
+		}
 	}
 
 	void FPostProcessRenderLayer::OnWindowResize(const FWindowResizeEventArgs& e)
 	{
+		if (mTempRT)
+		{
+			mTempRT->Destroy();
+			mTempRT = nullptr;
+		}
+
+		mTempRT = FGraphicsCore::Device->CreateColorBuffer("Temp Buffer", FColorBufferDescription::Create2D(FGraphicsCore::SwapChain->GetColorBufferFormat(),
+			FGraphicsCore::SwapChain->GetDisplayWidth(), FGraphicsCore::SwapChain->GetDisplayHeight(), FLinearColor::Black,
+			1, EResourceState::UnorderedAccess));
 	}
 }
