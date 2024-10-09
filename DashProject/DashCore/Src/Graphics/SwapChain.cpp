@@ -461,6 +461,16 @@ namespace Dash
 		return mDepthBufferFormat;
 	}
 
+	uint32_t FSwapChain::GetDisplayWidth() const
+	{
+		return mDisplayWdith;
+	}
+
+	uint32_t FSwapChain::GetDisplayHeight() const
+	{
+		return mDisplayHeight;
+	}
+
 	void FSwapChain::ToggleFullscreenMode()
 	{
 		if (mFullScreenMode)

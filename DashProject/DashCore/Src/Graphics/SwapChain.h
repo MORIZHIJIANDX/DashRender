@@ -45,6 +45,9 @@ namespace Dash
 		EResourceFormat GetColorBufferFormat() const;
 		EResourceFormat GetDepthBufferFormat() const;
 
+		uint32_t GetDisplayWidth() const;
+		uint32_t GetDisplayHeight() const;
+
 		void Present();
 		void ToggleFullscreenMode();
 
