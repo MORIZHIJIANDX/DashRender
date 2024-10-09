@@ -507,6 +507,12 @@ namespace Dash
 
 	void FComputeCommandContextBase::Dispatch(uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)
 	{
+		CheckUnboundShaderParameters();
+
+		FlushResourceBarriers();
+		mDynamicViewDescriptor.CommitStagedDescriptorsForDispatch(*this);
+		mDynamicSamplerDescriptor.CommitStagedDescriptorsForDispatch(*this);
+
 		mD3DCommandList->Dispatch(groupCountX, groupCountY, groupCountZ);
 	}
 
@@ -602,6 +608,26 @@ namespace Dash
 			else
 			{
 				LOG_WARNING << "Can't Find Shader Resource Parameter : " << srvrName;
+			}
+		}
+	}
+
+	void FComputeCommandContextBase::SetUnorderAccessView(const std::string& uavName, FColorBufferRef buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
+	{
+		FShaderPassRef shaderPass = mPSORef->GetShaderPass();
+
+		if (shaderPass)
+		{
+			int32_t shaderParameterIndex = shaderPass->FindUAVParameterByName(uavName);
+			if (shaderParameterIndex != INDEX_NONE)
+			{
+				const std::vector<FShaderParameter>& parameters = shaderPass->GetUAVParameters();
+				SetUnorderAccessView(parameters[shaderParameterIndex].RootParameterIndex, parameters[shaderParameterIndex].DescriptorOffset, buffer, stateAfter, firstSubResource, numSubResources);
+				mUnorderAccessViewBindState[shaderParameterIndex] = true;
+			}
+			else
+			{
+				LOG_WARNING << "Can't Find Unorder Access Parameter : " << uavName;
 			}
 		}
 	}
