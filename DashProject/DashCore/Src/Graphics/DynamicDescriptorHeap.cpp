@@ -22,6 +22,11 @@ namespace Dash
 
 		mDescriptorHandleCache = std::make_unique<D3D12_CPU_DESCRIPTOR_HANDLE[]>(mNumDescriptorsPerHeap);
 
+		for (uint32_t index = 0; index < mNumDescriptorsPerHeap; index++)
+		{
+			mDescriptorHandleCache[index] = D3D12_CPU_DESCRIPTOR_HANDLE{ SIZE_T(-1) };
+		}
+
 		for (uint32_t index = 0; index < MaxDescriptorTables; ++index)
 		{
 			mInlineCBV[index] = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
@@ -43,6 +48,7 @@ namespace Dash
 			"Number of descriptors exceeds the number of descriptors in the root signature descriptor table.");
 
 		D3D12_CPU_DESCRIPTOR_HANDLE* descriptorHandlePtr = mRootSignatureDescriptorTableCache[rootParameterIndex].BaseDescriptor + offset;
+
 		for (UINT index = 0; index < numDescriptors; ++index)
 		{
 			descriptorHandlePtr[index] = CD3DX12_CPU_DESCRIPTOR_HANDLE(srcDescriptors, index, mDescriptorHandleIncrementSize);
@@ -257,6 +263,8 @@ namespace Dash
 
 				UINT destDescriptorRanges[] = { srcNumDescriptors };
 				D3D12_CPU_DESCRIPTOR_HANDLE destDescriptorHandles[] = { mCurrentCpuDescriptorHandle };
+
+				ASSERT_MSG(srcDescriptorHandlePtr[0].ptr != SIZE_T(-1), "Src descriptor has not been staged.");
 
 				FGraphicsCore::Device->CopyDescriptors(1, destDescriptorHandles, destDescriptorRanges, srcNumDescriptors, srcDescriptorHandlePtr, nullptr, mDescriptorHeapType);
 
