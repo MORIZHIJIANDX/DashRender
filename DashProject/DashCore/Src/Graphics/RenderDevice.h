@@ -302,7 +302,7 @@ namespace Dash
 		);
 
 		FColorBufferRef CreateColorBuffer(const std::string& name, ID3D12Resource* resource, EResourceState initStates = EResourceState::Common);
-		FColorBufferRef CreateColorBuffer(const std::string& name, const FColorBufferDescription& desc, const FLinearColor& clearColor = FLinearColor{});
+		FColorBufferRef CreateColorBuffer(const std::string& name, const FColorBufferDescription& desc);
 		FColorBufferRef CreateColorBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format);
 		FColorBufferRef CreateColorBufferArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format);
 

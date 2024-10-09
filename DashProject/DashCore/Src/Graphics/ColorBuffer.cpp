@@ -36,7 +36,7 @@ namespace Dash
         CreateViews();
     }
 
-    void FColorBuffer::Create(const std::string& name, const FColorBufferDescription& desc, const FLinearColor& clearColor)
+    void FColorBuffer::Create(const std::string& name, const FColorBufferDescription& desc)
     {
         mDesc = desc;
 

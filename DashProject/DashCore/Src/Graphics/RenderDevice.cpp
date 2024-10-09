@@ -32,10 +32,10 @@ namespace Dash
 			Create(name, resource, initStates);
 		}
 
-		FMakeColorBuffer(const std::string& name, const FColorBufferDescription& desc, const FLinearColor& clearColor = FLinearColor{})
-			: FColorBuffer(clearColor)
+		FMakeColorBuffer(const std::string& name, const FColorBufferDescription& desc)
+			: FColorBuffer(desc.ClearValue)
 		{
-			Create(name, desc, clearColor);
+			Create(name, desc);
 		}
 
 		FMakeColorBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format)
@@ -648,9 +648,9 @@ namespace Dash
 		return bufferRef;
 	}
 
-	FColorBufferRef FRenderDevice::CreateColorBuffer(const std::string& name, const FColorBufferDescription& desc, const FLinearColor& clearColor /*= FLinearColor{}*/)
+	FColorBufferRef FRenderDevice::CreateColorBuffer(const std::string& name, const FColorBufferDescription& desc)
 	{
-		std::shared_ptr<FMakeColorBuffer> bufferRef = std::make_shared<FMakeColorBuffer>(name, desc, clearColor);
+		std::shared_ptr<FMakeColorBuffer> bufferRef = std::make_shared<FMakeColorBuffer>(name, desc);
 		return bufferRef;
 	}
 
