@@ -127,7 +127,7 @@ namespace Dash
 	{
 		ASSERT(IsLocked == true);
 		
-		std::vector<D3D12_RESOURCE_BARRIER> resourceBarriers;
+		ResourceBarriers resourceBarriers;
 		resourceBarriers.reserve(mPendingResourceBarriers.size());
 
 		for (auto& resourceBarrier : mPendingResourceBarriers)
@@ -188,11 +188,30 @@ namespace Dash
 		FCommandList* flushBarrierCommand = nullptr;
 		if (num > 0)
 		{
-			flushBarrierCommand = FGraphicsCore::CommandListManager->RequestCommandList(commandListType);
+			D3D12_COMMAND_LIST_TYPE flushBarriersCommandListType = FlushBarriersQueueType(commandListType, resourceBarriers);
 
-			ASSERT(flushBarrierCommand != nullptr);
+			if (commandListType != flushBarriersCommandListType)
+			{
+				FCommandList* flushBarrierCommandAux = FGraphicsCore::CommandListManager->RequestCommandList(flushBarriersCommandListType);
 
-			flushBarrierCommand->GetCommandList()->ResourceBarrier(num, resourceBarriers.data());
+				ASSERT(flushBarrierCommandAux != nullptr);
+
+				flushBarrierCommandAux->GetCommandList()->ResourceBarrier(num, resourceBarriers.data());
+
+				uint64_t fenceValue = FGraphicsCore::CommandQueueManager->GetQueue(flushBarriersCommandListType).ExecuteCommandList(flushBarrierCommandAux);
+
+				FGraphicsCore::CommandListManager->RetiredUsedCommandList(fenceValue, flushBarrierCommandAux);
+
+				FGraphicsCore::CommandQueueManager->GetQueue(commandListType).WaitForCommandQueue(FGraphicsCore::CommandQueueManager->GetQueue(flushBarriersCommandListType));
+			}
+			else
+			{
+				flushBarrierCommand = FGraphicsCore::CommandListManager->RequestCommandList(commandListType);
+
+				ASSERT(flushBarrierCommand != nullptr);
+
+				flushBarrierCommand->GetCommandList()->ResourceBarrier(num, resourceBarriers.data());
+			}
 		}
 
 		mPendingResourceBarriers.clear();
@@ -200,14 +219,32 @@ namespace Dash
 		return flushBarrierCommand;
 	}
 
-	uint32_t FGpuResourcesStateTracker::FlushResourceBarriers(ID3D12GraphicsCommandList* commandList)
+	uint32_t FGpuResourcesStateTracker::FlushResourceBarriers(FCommandList* commandList)
 	{
 		ASSERT(commandList != nullptr);
 
-		UINT32 num = static_cast<UINT32>(mResourceBarriers.size());
+		uint32_t num = static_cast<uint32_t>(mResourceBarriers.size());
 		if (num > 0)
 		{
-			commandList->ResourceBarrier(num, mResourceBarriers.data());
+			D3D12_COMMAND_LIST_TYPE flushBarriersCommandListType = FlushBarriersQueueType(commandList->GetType(), mResourceBarriers);
+
+			if (commandList->GetType() != flushBarriersCommandListType)
+			{
+				FCommandList* flushBarrierCommand = FGraphicsCore::CommandListManager->RequestCommandList(flushBarriersCommandListType);
+
+				flushBarrierCommand->GetCommandList()->ResourceBarrier(num, mResourceBarriers.data());
+
+				uint64_t fenceValue = FGraphicsCore::CommandQueueManager->GetQueue(flushBarriersCommandListType).ExecuteCommandList(flushBarrierCommand);
+
+				FGraphicsCore::CommandListManager->RetiredUsedCommandList(fenceValue, flushBarrierCommand);
+
+				FGraphicsCore::CommandQueueManager->GetQueue(commandList->GetType()).WaitForCommandQueue(FGraphicsCore::CommandQueueManager->GetQueue(flushBarriersCommandListType));
+			}
+			else
+			{
+				commandList->GetCommandList()->ResourceBarrier(num, mResourceBarriers.data());
+			}
+            
 			mResourceBarriers.clear();
 		}
 
@@ -283,4 +320,32 @@ namespace Dash
 		}
 	}
 
+	bool FGpuResourcesStateTracker::IsDirectQueueExclusiveState(D3D12_RESOURCE_STATES state)
+	{
+		return state & (D3D12_RESOURCE_STATE_RENDER_TARGET | D3D12_RESOURCE_STATE_DEPTH_WRITE | D3D12_RESOURCE_STATE_DEPTH_READ | D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+	}
+
+	D3D12_COMMAND_LIST_TYPE FGpuResourcesStateTracker::FlushBarriersQueueType(D3D12_COMMAND_LIST_TYPE commandListType, const ResourceBarriers& barriers)
+	{
+		if (commandListType != D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT)
+		{
+			bool anyBarrierNeedFlusOnDirectQueue = false;
+
+			for (uint32_t index = 0; index < barriers.size(); index++)
+			{
+				if (barriers[index].Type == D3D12_RESOURCE_BARRIER_TYPE::D3D12_RESOURCE_BARRIER_TYPE_TRANSITION)
+				{
+					anyBarrierNeedFlusOnDirectQueue |= IsDirectQueueExclusiveState(barriers[index].Transition.StateBefore);
+					anyBarrierNeedFlusOnDirectQueue |= IsDirectQueueExclusiveState(barriers[index].Transition.StateAfter);
+
+					if (anyBarrierNeedFlusOnDirectQueue)
+					{
+						return D3D12_COMMAND_LIST_TYPE::D3D12_COMMAND_LIST_TYPE_DIRECT;
+					}
+				}
+			}
+		}
+
+		return commandListType;
+	}
 }

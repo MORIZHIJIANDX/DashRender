@@ -224,7 +224,7 @@ namespace Dash
 
 	void FCopyCommandContextBase::FlushResourceBarriers()
 	{
-		mResourceStateTracker.FlushResourceBarriers(mD3DCommandList);
+		mResourceStateTracker.FlushResourceBarriers(mCommandList);
 	}
 
 	void FCopyCommandContextBase::InitializeBuffer(FGpuBufferRef dest, const void* bufferData, size_t numBytes, size_t offset /*= 0*/)

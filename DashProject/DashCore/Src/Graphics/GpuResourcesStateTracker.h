@@ -5,6 +5,8 @@
 
 namespace Dash
 {
+	class FCommandList;
+
 	class FGpuResourcesStateTracker
 	{
 	public:
@@ -27,7 +29,7 @@ namespace Dash
 		 * which indicates that all subresources should be transitioned to the same state.
 		 */
 		void TransitionResource(ID3D12Resource* resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
-		void TransitionResource(std::shared_ptr<FGpuResource> resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+		void TransitionResource(FGpuResourceRef resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 
 		/**
 		 * Push a UAV resource barrier for the given resource.
@@ -61,7 +63,7 @@ namespace Dash
 		 * Flush any (non-pending) resource barriers that have been pushed to the resource state
 		 * tracker.
 		 */
-		uint32_t FlushResourceBarriers(ID3D12GraphicsCommandList* commandList);
+		uint32_t FlushResourceBarriers(FCommandList* commandList);
 
 		/**
 		 * Commit final resource states to the global resource state map.
@@ -102,9 +104,14 @@ namespace Dash
 		static void RemoveGlobalResourceState(ID3D12Resource* resource);
 		static void RemoveGlobalResourceState(FGpuResourceRef resource);
 
-	private:
+	protected:
 		// An array (vector) of resource barriers.
 		using ResourceBarriers = std::vector<D3D12_RESOURCE_BARRIER>;
+
+		static bool IsDirectQueueExclusiveState(D3D12_RESOURCE_STATES state);
+		static D3D12_COMMAND_LIST_TYPE FlushBarriersQueueType(D3D12_COMMAND_LIST_TYPE commandListType, const ResourceBarriers& barriers);
+
+	private:
 
 		// Pending resource transitions are committed before a command list
 		// is executed on the command queue. This guarantees that resources will

@@ -79,7 +79,7 @@ namespace Dash
 	{
 		if (mTempRT)
 		{
-			FGraphicsCommandContext& graphicsContext = FGraphicsCommandContext::Begin("GrayscalePostProcess");
+			FComputeCommandContext& graphicsContext = FComputeCommandContext::Begin("GrayscalePostProcess");
 
 			{
 				FGPUProfilerScope profiler(graphicsContext, "GrayscalePostProcess");
@@ -94,6 +94,8 @@ namespace Dash
 			}
 
 			graphicsContext.Finish();
+
+			FGraphicsCore::CommandQueueManager->GetGraphicsQueue().WaitForCommandQueue(FGraphicsCore::CommandQueueManager->GetComputeQueue());
 		}
 		
 		{
