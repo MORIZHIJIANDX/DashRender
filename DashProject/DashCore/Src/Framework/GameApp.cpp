@@ -131,12 +131,12 @@ namespace Dash
 		mWindowWidth = e.Width;
 		mWindowHeight = e.Height;
 
+		FGraphicsCore::SwapChain->OnWindowResize(mWindowWidth, mWindowHeight);
+
 		for (uint32_t i = 0; i < mRenderLayers.size(); i++)
 		{
 			mRenderLayers[i]->OnWindowResize(e);
 		}
-
-		FGraphicsCore::SwapChain->OnWindowResize(mWindowWidth, mWindowHeight);
 	}
 
 	void IGameApp::OnWindowMoved(const FWindowMoveEventArgs& e)
