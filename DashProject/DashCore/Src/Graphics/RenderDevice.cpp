@@ -410,6 +410,12 @@ namespace Dash
 				}
 			}
 
+			D3D12_FEATURE_DATA_GPU_VIRTUAL_ADDRESS_SUPPORT featureDataVirtualAddress = {};
+			if (SUCCEEDED(mDevice->CheckFeatureSupport(D3D12_FEATURE_GPU_VIRTUAL_ADDRESS_SUPPORT, &featureDataVirtualAddress, sizeof(featureDataVirtualAddress))))
+			{
+				LOG_INFO << "MaxGPUVirtualAddress" << featureDataVirtualAddress.MaxGPUVirtualAddressBitsPerProcess;
+			}
+
 			D3D12_FEATURE_DATA_ROOT_SIGNATURE featureDataSignature{};
 			featureDataSignature.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;
 			if (FAILED(mDevice->CheckFeatureSupport(D3D12_FEATURE_ROOT_SIGNATURE, &featureDataSignature,
