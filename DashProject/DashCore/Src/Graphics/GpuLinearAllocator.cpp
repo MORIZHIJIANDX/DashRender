@@ -12,12 +12,11 @@ namespace Dash
 	FGpuLinearAllocator::FPageManager FGpuLinearAllocator::AllocatorPageManger[2];
 	 
 	FGpuLinearAllocator::FPage::FPage(Microsoft::WRL::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES defaultState, size_t pageSize)
-		: mPageSie(pageSize)
+		: FGpuResource(resource)
+		, mPageSie(pageSize)
 		, mOffset(0)
 	{
-		mResource = resource;
 		FGpuResourcesStateTracker::AddGlobalResourceState(resource.Get(), defaultState);
-		mGpuAddress = mResource->GetGPUVirtualAddress();
 		mResource->Map(0, nullptr, &mCpuAddress);
 	}
 
@@ -36,7 +35,7 @@ namespace Dash
 
 		FGpuLinearAllocator::FAllocation allocation{*this, mOffset, alignedSize};
 		allocation.CpuAddress = static_cast<uint8_t*>(mCpuAddress) + mOffset;
-		allocation.GpuAddress = mGpuAddress + mOffset;
+		allocation.GpuAddress = GetGpuVirtualAddress() + mOffset;
 
 		mOffset += alignedSize;
 

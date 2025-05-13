@@ -63,7 +63,6 @@ namespace Dash
 
 		private:
 			void* mCpuAddress = nullptr;
-			D3D12_GPU_VIRTUAL_ADDRESS mGpuAddress = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
 
 			size_t mPageSie = 0;
 			size_t mOffset = 0;

@@ -13,6 +13,11 @@ namespace Dash
 
 		++mVersionID;
 	}
+
+	D3D12_GPU_VIRTUAL_ADDRESS Dash::FGpuResource::GetGpuVirtualAddress()
+	{
+		return mGpuVirtualAddress;
+	}
 }
 
 

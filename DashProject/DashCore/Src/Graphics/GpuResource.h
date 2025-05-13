@@ -29,7 +29,7 @@ namespace Dash
 
 		ID3D12Resource** GetAddressOf() { return mResource.GetAddressOf(); }
 
-		//D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress() { return mGpuVirtualAddress; };
+		D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress();
 
 		uint32_t GetVersionID() const { return mVersionID; }
 
@@ -49,6 +49,10 @@ namespace Dash
 		FGpuResource(Microsoft::WRL::ComPtr<ID3D12Resource> resource)
 			: mResource(resource)
 		{
+			if (mResource)
+			{
+				mGpuVirtualAddress = mResource->GetGPUVirtualAddress();
+			}
 		}
 
 	protected:
