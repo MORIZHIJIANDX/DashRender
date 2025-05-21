@@ -4,7 +4,7 @@
 
 namespace Dash
 {
-	void FInputAssemblerLayout::AddPerVertexLayoutElement(const std::string& semanticName, uint32_t semanticIndex, EResourceFormat format, uint32_t inputSlot, uint32_t alignedOffset)
+	void FInputAssemblerLayout::AddPerVertexLayoutElement(const std::string& semanticName, uint32 semanticIndex, EResourceFormat format, uint32 inputSlot, uint32 alignedOffset)
 	{
 		D3D12_INPUT_ELEMENT_DESC desc{};
 		desc.Format = D3DFormat(format);
@@ -24,7 +24,7 @@ namespace Dash
 		BuildPerVertexSemantics(semanticName, inputSlot);
 	}
 
-	void FInputAssemblerLayout::AddPerInstanceLayoutElement(const std::string& semanticName, uint32_t semanticIndex, EResourceFormat format, uint32_t inputSlot, uint32_t alignedOffset, uint32_t stepRate)
+	void FInputAssemblerLayout::AddPerInstanceLayoutElement(const std::string& semanticName, uint32 semanticIndex, EResourceFormat format, uint32 inputSlot, uint32 alignedOffset, uint32 stepRate)
 	{
 		D3D12_INPUT_ELEMENT_DESC desc{};
 		desc.Format = D3DFormat(format);
@@ -52,7 +52,7 @@ namespace Dash
 	}
 
 	
-	void FInputAssemblerLayout::BuildPerVertexSemantics(const std::string& semanticName, uint32_t inputSlot)
+	void FInputAssemblerLayout::BuildPerVertexSemantics(const std::string& semanticName, uint32 inputSlot)
 	{
 		bool containsSemantic = false;
 
@@ -74,7 +74,7 @@ namespace Dash
 			mPerVertexSemantics.emplace_back(inputSlot, semanticName);
 		}
 
-		std::sort(mPerVertexSemantics.begin(), mPerVertexSemantics.end(), [](const std::pair<uint32_t, std::string>& a, std::pair<uint32_t, std::string> b) {
+		std::sort(mPerVertexSemantics.begin(), mPerVertexSemantics.end(), [](const std::pair<uint32, std::string>& a, std::pair<uint32, std::string> b) {
 			return a.first < b.first;
 			});
 	}

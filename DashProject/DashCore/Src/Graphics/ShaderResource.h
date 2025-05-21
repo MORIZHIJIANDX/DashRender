@@ -13,7 +13,7 @@ namespace Dash
 	#define REFLECTION_BLOB_FILE_EXTENSION ".refect"
 	#define PDB_BLOB_FILE_EXTENSION ".pdb"
 
-	enum class EShaderStage : uint16_t
+	enum class EShaderStage : uint16
 	{
 		Vertex = 1 << 1,
 		Hull = 1 << 2,
@@ -75,7 +75,7 @@ namespace Dash
 	struct FCompiledBinary
 	{
 		void* Data = nullptr;
-		uint32_t Size = 0;
+		uint32 Size = 0;
 	};
 
 	struct FConstantBufferVariable

@@ -46,7 +46,7 @@ namespace Dash
 		}
 
 		FCommandList* RequestCommandList();
-		void RetiredUsedCommandList(uint64_t fenceID, FCommandList* commandList);
+		void RetiredUsedCommandList(uint64 fenceID, FCommandList* commandList);
 
 	private:
 		D3D12_COMMAND_LIST_TYPE mType;
@@ -54,7 +54,7 @@ namespace Dash
 		std::mutex mMutex;
 
 		std::vector<std::unique_ptr<FCommandList>> mCommandListPool;
-		std::queue<std::pair<uint64_t, FCommandList*>> mRetiredCommandLists;
+		std::queue<std::pair<uint64, FCommandList*>> mRetiredCommandLists;
 		std::queue<FCommandList*> mAvailableCommandLists;
 	};
 
@@ -79,7 +79,7 @@ namespace Dash
 		FCommandListPool& GetCommandListPool(D3D12_COMMAND_LIST_TYPE type);
 
 		FCommandList* RequestCommandList(D3D12_COMMAND_LIST_TYPE type);
-		void RetiredUsedCommandList(uint64_t fenceID, FCommandList* commandList);
+		void RetiredUsedCommandList(uint64 fenceID, FCommandList* commandList);
 
 	private:
 		FCommandListPool mGraphicsCommandListPool;
@@ -95,14 +95,14 @@ namespace Dash
 
 		void Destroy();
 
-		uint64_t ExecuteCommandList(FCommandList* commandList);
-		uint64_t ExecuteCommandLists(std::vector<FCommandList*> commandLists);
-		uint64_t Signal();
+		uint64 ExecuteCommandList(FCommandList* commandList);
+		uint64 ExecuteCommandLists(std::vector<FCommandList*> commandLists);
+		uint64 Signal();
 
-		uint64_t GetCompletedFence() const;
-		bool IsFenceCompleted(uint64_t fenceValue);
+		uint64 GetCompletedFence() const;
+		bool IsFenceCompleted(uint64 fenceValue);
 
-		void WaitForFence(uint64_t fenceValue);
+		void WaitForFence(uint64 fenceValue);
 		void WaitForCommandQueue(const FCommandQueue& queue);
 
 		void Flush();
@@ -110,8 +110,8 @@ namespace Dash
 		ID3D12CommandQueue* GetD3DCommandQueue() { return mCommandQueue.Get(); }
 		const ID3D12CommandQueue* GetD3DCommandQueue() const { return mCommandQueue.Get(); }
 	private:
-		uint64_t mNextFenceValue;
-		uint64_t mLastCompletedFenceValue;
+		uint64 mNextFenceValue;
+		uint64 mLastCompletedFenceValue;
 		HANDLE mFenceEventHandle;
 
 		Microsoft::WRL::ComPtr<ID3D12Fence> mFence;
@@ -138,8 +138,8 @@ namespace Dash
 
 		FCommandQueue& GetQueue(D3D12_COMMAND_LIST_TYPE type);
 
-		bool IsFenceCompleted(uint64_t fenceValue);
-		void WaitForFence(uint64_t fenceValue);
+		bool IsFenceCompleted(uint64 fenceValue);
+		void WaitForFence(uint64 fenceValue);
 
 		void Flush();
 	private:

@@ -6,7 +6,7 @@
 
 namespace Dash
 {
-	FCpuDescriptorAllocatorPage::FCpuDescriptorAllocatorPage(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors)
+	FCpuDescriptorAllocatorPage::FCpuDescriptorAllocatorPage(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32 numDescriptors)
 	: mDescriptorHeapType(type)
 	, mNumFreeHandels(numDescriptors)
 	, mNumDescriptorsInHeap(numDescriptors)
@@ -38,17 +38,17 @@ namespace Dash
 		return mDescriptorHeapType;
 	}
 
-	bool FCpuDescriptorAllocatorPage::HasSpace(uint32_t numDescriptors) const
+	bool FCpuDescriptorAllocatorPage::HasSpace(uint32 numDescriptors) const
 	{
 		return mFreeListBySize.lower_bound(numDescriptors) != mFreeListBySize.end();
 	}
 
-	uint32_t FCpuDescriptorAllocatorPage::NumFreeHandles() const
+	uint32 FCpuDescriptorAllocatorPage::NumFreeHandles() const
 	{
 		return mNumFreeHandels;
 	}
 
-	FCpuDescriptorAllocation FCpuDescriptorAllocatorPage::Allocate(uint32_t numDescriptors)
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorPage::Allocate(uint32 numDescriptors)
 	{
 		std::lock_guard<std::mutex> lock(mAllocationMutex);
 
@@ -108,12 +108,12 @@ namespace Dash
 		}
 	}
 
-	uint32_t FCpuDescriptorAllocatorPage::ComputeOffset(D3D12_CPU_DESCRIPTOR_HANDLE descriptor) const
+	uint32 FCpuDescriptorAllocatorPage::ComputeOffset(D3D12_CPU_DESCRIPTOR_HANDLE descriptor) const
 	{
 		return static_cast<OffsetType>(descriptor.ptr - mBaseDescriptor.ptr)/mDescriptorHandelIncrementSize;
 	}
 
-	void FCpuDescriptorAllocatorPage::AddNewBlock(uint32_t offset, uint32_t numDescriptors)
+	void FCpuDescriptorAllocatorPage::AddNewBlock(uint32 offset, uint32 numDescriptors)
 	{
 		auto offsetIter = mFreeListByOffset.emplace(offset, numDescriptors);
 		auto sizeIter = mFreeListBySize.emplace(numDescriptors, offsetIter.first);
@@ -121,7 +121,7 @@ namespace Dash
 		offsetIter.first->second.FreeListBySizeIter = sizeIter;
 	}
 
-	void FCpuDescriptorAllocatorPage::FreeBlock(uint32_t offset, uint32_t numDescriptors)
+	void FCpuDescriptorAllocatorPage::FreeBlock(uint32 offset, uint32 numDescriptors)
 	{
 		auto nextBlockIter = mFreeListByOffset.upper_bound(offset);
 		

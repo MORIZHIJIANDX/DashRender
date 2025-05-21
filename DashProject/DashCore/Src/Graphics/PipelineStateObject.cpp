@@ -126,7 +126,7 @@ namespace Dash
 		ASSERT(shader && shader->GetShaderStage() != EShaderStage::Compute);
 
 		const void* shaderData = shader->GetCompiledShader().Data;
-		uint32_t shaderSize = shader->GetCompiledShader().Size;
+		uint32 shaderSize = shader->GetCompiledShader().Size;
 
 		switch (shader->GetShaderStage())
 		{
@@ -233,7 +233,7 @@ namespace Dash
 		ASSERT(shader->GetShaderStage() == EShaderStage::Compute);
 
 		const void* shaderData = shader->GetCompiledShader().Data;
-		uint32_t shaderSize = shader->GetCompiledShader().Size;
+		uint32 shaderSize = shader->GetCompiledShader().Size;
 
 		SetComputeShader(shaderData, shaderSize);
 	}

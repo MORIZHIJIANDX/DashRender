@@ -3,7 +3,7 @@
 
 namespace Dash
 {
-	IRenderLayer::IRenderLayer(const std::string& layerName, uint16_t layerId)
+	IRenderLayer::IRenderLayer(const std::string& layerName, uint16 layerId)
 		: mLayerName (layerName)
 		, mLayerId (layerId)
 	{
@@ -20,7 +20,7 @@ namespace Dash
 		return mLayerName;
 	}
 
-	uint16_t IRenderLayer::GetLayerId() const
+	uint16 IRenderLayer::GetLayerId() const
 	{
 		return mLayerId;
 	}

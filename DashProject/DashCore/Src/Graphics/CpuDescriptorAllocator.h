@@ -9,25 +9,25 @@ namespace Dash
 	class FCpuDescriptorAllocator
 	{
 	public:
-		FCpuDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t defaultHeapSize = 256);
+		FCpuDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32 defaultHeapSize = 256);
 		~FCpuDescriptorAllocator();
 
-		FCpuDescriptorAllocation Allocate(uint32_t numDescriptors = 1);
+		FCpuDescriptorAllocation Allocate(uint32 numDescriptors = 1);
 
 		void ReleaseStaleDescriptors();
 
 		void Destroy();
 	private:
-		std::shared_ptr<FCpuDescriptorAllocatorPage> RequestNewHeap(uint32_t heapSize = 0);
+		std::shared_ptr<FCpuDescriptorAllocatorPage> RequestNewHeap(uint32 heapSize = 0);
 		
 	private:
 		using DescriptorHeapPool = std::vector<std::shared_ptr<FCpuDescriptorAllocatorPage>>;
 
 		D3D12_DESCRIPTOR_HEAP_TYPE mType;
-		uint32_t mDefaultHeapSize;
+		uint32 mDefaultHeapSize;
 
 		DescriptorHeapPool mHeapPool;
-		std::set<uint32_t> mAvailableHeaps;
+		std::set<uint32> mAvailableHeaps;
 
 		std::mutex mAllocationMutex;
 	};
@@ -38,15 +38,15 @@ namespace Dash
 		FCpuDescriptorAllocatorManager();
 		~FCpuDescriptorAllocatorManager() {};
 
-		FCpuDescriptorAllocation Allocate(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors = 1);
+		FCpuDescriptorAllocation Allocate(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32 numDescriptors = 1);
 
-		FCpuDescriptorAllocation AllocateCBVDescriptor(uint32_t numDescriptors = 1);
-		FCpuDescriptorAllocation AllocateSRVDescriptor(uint32_t numDescriptors = 1);
-		FCpuDescriptorAllocation AllocateUAVDescriptor(uint32_t numDescriptors = 1);
-		FCpuDescriptorAllocation AllocateRTVDescriptor(uint32_t numDescriptors = 1);
-		FCpuDescriptorAllocation AllocateDSVDescriptor(uint32_t numDescriptors = 1);
+		FCpuDescriptorAllocation AllocateCBVDescriptor(uint32 numDescriptors = 1);
+		FCpuDescriptorAllocation AllocateSRVDescriptor(uint32 numDescriptors = 1);
+		FCpuDescriptorAllocation AllocateUAVDescriptor(uint32 numDescriptors = 1);
+		FCpuDescriptorAllocation AllocateRTVDescriptor(uint32 numDescriptors = 1);
+		FCpuDescriptorAllocation AllocateDSVDescriptor(uint32 numDescriptors = 1);
 
-		FCpuDescriptorAllocation AllocateSamplerDescriptor(uint32_t numDescriptors = 1);
+		FCpuDescriptorAllocation AllocateSamplerDescriptor(uint32 numDescriptors = 1);
 
 		void ReleaseStaleDescriptors();
 

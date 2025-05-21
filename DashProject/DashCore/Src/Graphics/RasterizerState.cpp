@@ -34,7 +34,7 @@ namespace Dash
 		mDesc.FrontCounterClockwise = frontIsClockwise;
 	}
 
-	void FRasterizerState::SetDepthProperties(int32_t depthBias, float depthBiasClamp, float slopeScaledDepthBias, bool depthClipEnable)
+	void FRasterizerState::SetDepthProperties(int32 depthBias, float depthBiasClamp, float slopeScaledDepthBias, bool depthClipEnable)
 	{
 		mDesc.DepthBias = depthBias;
 		mDesc.DepthBiasClamp = depthBiasClamp;

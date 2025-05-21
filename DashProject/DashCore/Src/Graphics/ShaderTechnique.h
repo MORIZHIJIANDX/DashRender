@@ -16,8 +16,8 @@ namespace Dash
 		FShaderPassRef& AddShaderPass(const std::string& passName, const std::vector<FShaderCreationInfo>& creationInfos, 
 			const FBlendState& blendState, const FRasterizerState& rasterizerState, const FDepthStencilState& depthStencilState);
 
-		uint32_t GetNumPasses() const;
-		const FShaderPassRef& GetShaderPass(uint32_t index) const;
+		uint32 GetNumPasses() const;
+		const FShaderPassRef& GetShaderPass(uint32 index) const;
 		const std::vector<FShaderPassRef>& GetPasses() const { return mShaderPasses; }
 
 	private: 

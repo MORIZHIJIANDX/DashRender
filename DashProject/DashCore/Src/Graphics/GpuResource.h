@@ -31,7 +31,7 @@ namespace Dash
 
 		D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress();
 
-		uint32_t GetVersionID() const { return mVersionID; }
+		uint32 GetVersionID() const { return mVersionID; }
 
 		void SetName(const std::string& name) 
 		{  
@@ -61,6 +61,6 @@ namespace Dash
 		D3D12_GPU_VIRTUAL_ADDRESS mGpuVirtualAddress = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
 
 		std::string mResourceName;
-		uint32_t mVersionID = 0;
+		uint32 mVersionID = 0;
 	};
 }

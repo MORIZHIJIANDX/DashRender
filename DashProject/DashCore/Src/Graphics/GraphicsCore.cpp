@@ -69,7 +69,7 @@ namespace Dash
 		return pixInstallationPath / newestVersionFound / L"WinPixGpuCapturer.dll";
 	}
 
-	void FGraphicsCore::Initialize(uint32_t windowWidth, uint32_t windowHeight)
+	void FGraphicsCore::Initialize(uint32 windowWidth, uint32 windowHeight)
 	{
 		LOG_INFO << "FGraphicsCore::Initialize Begin.";
 

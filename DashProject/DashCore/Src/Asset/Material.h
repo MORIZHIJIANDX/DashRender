@@ -10,7 +10,7 @@ namespace Dash
 	public:
 		struct FShaderPassParameter
 		{
-			std::map<std::string, std::vector<uint8_t>> ConstantBufferMap;
+			std::map<std::string, std::vector<uint8>> ConstantBufferMap;
 			std::map<std::string, FTextureRef> TextureBufferMap;
 			FShaderPassRef ShaderPass;
 		};

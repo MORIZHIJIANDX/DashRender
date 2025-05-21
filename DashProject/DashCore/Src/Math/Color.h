@@ -17,7 +17,7 @@ namespace Dash
 	/**
 	 * Enum for the different kinds of gamma spaces we expect to need to convert from/to.
 	 */
-	enum class EGammaSpace : uint8_t
+	enum class EGammaSpace : uint8
 	{
 		/** No gamma correction is applied to this space, the incoming colors are assumed to already be in linear space. */
 		Linear,
@@ -81,12 +81,12 @@ namespace Dash
 
 		// Operators.
 
-		FORCEINLINE float& operator[](int32_t Index)
+		FORCEINLINE float& operator[](int32 Index)
 		{
 			return Data[Index];
 		}
 
-		FORCEINLINE const float& operator[](int32_t Index) const
+		FORCEINLINE const float& operator[](int32 Index) const
 		{
 			return Data[Index];
 		}
@@ -239,12 +239,12 @@ namespace Dash
 		}
 
 		//UE_DEPRECATED(4.22, "FGetHSV doesn't perform a valid HSV conversion, use MakeFromHSV8 instead")
-		//	static FLinearColor FGetHSV(uint8_t H, uint8_t S, uint8_t V);
+		//	static FLinearColor FGetHSV(uint8 H, uint8 S, uint8 V);
 
 		/**
 		 * Converts byte hue-saturation-brightness to floating point red-green-blue.
 		 */
-		static FLinearColor MakeFromHSV8(uint8_t H, uint8_t S, uint8_t V);
+		static FLinearColor MakeFromHSV8(uint8 H, uint8 S, uint8 V);
 
 		/**
 		* Makes a random but quite nice color.
@@ -383,20 +383,20 @@ namespace Dash
 #if PLATFORM_LITTLE_ENDIAN
 #ifdef _MSC_VER
 	// Win32 x86
-		union { struct { uint8_t b, g, r, a; }; uint32_t AlignmentDummy; };
+		union { struct { uint8 b, g, r, a; }; uint32 AlignmentDummy; };
 #else
 	// Linux x86, etc
-		uint8_t b GCC_ALIGN(4);
-		uint8_t g, r, a;
+		uint8 b GCC_ALIGN(4);
+		uint8 g, r, a;
 #endif
 #else // PLATFORM_LITTLE_ENDIAN
-		union { struct { uint8_t a, r, g, b; }; uint32_t AlignmentDummy; };
+		union { struct { uint8 a, r, g, b; }; uint32 AlignmentDummy; };
 #endif
 */
-		union { struct { uint8_t r, g, b, a; }; uint32_t AlignmentDummy; };
+		union { struct { uint8 r, g, b, a; }; uint32 AlignmentDummy; };
 
-		uint32_t& DWColor(void) { return *((uint32_t*)this); }
-		const uint32_t& DWColor(void) const { return *((uint32_t*)this); }
+		uint32& DWColor(void) { return *((uint32*)this); }
+		const uint32& DWColor(void) const { return *((uint32*)this); }
 
 		// Constructors.
 		FORCEINLINE FColor() 
@@ -407,14 +407,14 @@ namespace Dash
 			// put these into the body for proper ordering with INTEL vs non-INTEL_BYTE_ORDER
 			r = g = b = a = 0;
 		}
-		constexpr FORCEINLINE FColor(uint8_t InR, uint8_t InG, uint8_t InB, uint8_t InA = 255)
+		constexpr FORCEINLINE FColor(uint8 InR, uint8 InG, uint8 InB, uint8 InA = 255)
 			// put these into the body for proper ordering with INTEL vs non-INTEL_BYTE_ORDER
 			: r(InR), g(InG), b(InB), a(InA)
 		{}
 
-		FORCEINLINE explicit FColor(const TScalarArray<uint8_t, 4>& InColor);
+		FORCEINLINE explicit FColor(const TScalarArray<uint8, 4>& InColor);
 
-		FORCEINLINE explicit FColor(uint32_t InColor)
+		FORCEINLINE explicit FColor(uint32 InColor)
 		{
 			DWColor() = InColor;
 		}
@@ -432,10 +432,10 @@ namespace Dash
 
 		FORCEINLINE void operator+=(const FColor& C)
 		{
-			r = (uint8_t)FMath::Min((int32_t)r + (int32_t)C.r, 255);
-			g = (uint8_t)FMath::Min((int32_t)g + (int32_t)C.g, 255);
-			b = (uint8_t)FMath::Min((int32_t)b + (int32_t)C.b, 255);
-			a = (uint8_t)FMath::Min((int32_t)a + (int32_t)C.a, 255);
+			r = (uint8)FMath::Min((int32)r + (int32)C.r, 255);
+			g = (uint8)FMath::Min((int32)g + (int32)C.g, 255);
+			b = (uint8)FMath::Min((int32)b + (int32)C.b, 255);
+			a = (uint8)FMath::Min((int32)a + (int32)C.a, 255);
 		}
 
 		FLinearColor FromRGBE() const;
@@ -470,7 +470,7 @@ namespace Dash
 		 *	@return a new FColor based of this color with the new alpha value.
 		 *	Usage: const FColor& MyColor = FColorList::Green.WithAlpha(128);
 		 */
-		FColor WithAlpha(uint8_t Alpha) const
+		FColor WithAlpha(uint8 Alpha) const
 		{
 			return FColor(r, g, b, Alpha);
 		}
@@ -531,33 +531,33 @@ namespace Dash
 		  //}
 
 		  /**
-		   * Gets the color in a packed uint32_t format packed in the order ARGB.
+		   * Gets the color in a packed uint32 format packed in the order ARGB.
 		   */
-		FORCEINLINE uint32_t ToPackedARGB() const
+		FORCEINLINE uint32 ToPackedARGB() const
 		{
 			return (a << 24) | (r << 16) | (g << 8) | (b << 0);
 		}
 
 		/**
-		 * Gets the color in a packed uint32_t format packed in the order ABGR.
+		 * Gets the color in a packed uint32 format packed in the order ABGR.
 		 */
-		FORCEINLINE uint32_t ToPackedABGR() const
+		FORCEINLINE uint32 ToPackedABGR() const
 		{
 			return (a << 24) | (b << 16) | (g << 8) | (r << 0);
 		}
 
 		/**
-		 * Gets the color in a packed uint32_t format packed in the order RGBA.
+		 * Gets the color in a packed uint32 format packed in the order RGBA.
 		 */
-		FORCEINLINE uint32_t ToPackedRGBA() const
+		FORCEINLINE uint32 ToPackedRGBA() const
 		{
 			return (r << 24) | (g << 16) | (b << 8) | (a << 0);
 		}
 
 		/**
-		 * Gets the color in a packed uint32_t format packed in the order BGRA.
+		 * Gets the color in a packed uint32 format packed in the order BGRA.
 		 */
-		FORCEINLINE uint32_t ToPackedBGRA() const
+		FORCEINLINE uint32 ToPackedBGRA() const
 		{
 			return (b << 24) | (g << 16) | (r << 8) | (a << 0);
 		}
@@ -590,7 +590,7 @@ namespace Dash
 	};
 
 
-	FORCEINLINE uint32_t GetTypeHash(const FColor& Color)
+	FORCEINLINE uint32 GetTypeHash(const FColor& Color)
 	{
 		return Color.DWColor();
 	}

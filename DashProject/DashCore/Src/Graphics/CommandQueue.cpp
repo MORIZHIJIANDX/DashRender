@@ -84,7 +84,7 @@ namespace Dash
 		return commandList;
 	}
 
-	void FCommandListPool::RetiredUsedCommandList(uint64_t fenceID, FCommandList* commandList)
+	void FCommandListPool::RetiredUsedCommandList(uint64 fenceID, FCommandList* commandList)
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 		mRetiredCommandLists.push(std::make_pair(fenceID, commandList));
@@ -99,8 +99,8 @@ namespace Dash
 
 		DX_CALL(FGraphicsCore::Device->CreateCommandQueue(&commandQueueDesc, mCommandQueue));
 
-		mLastCompletedFenceValue = ((uint64_t)type) << COMMAND_TYPE_MASK;
-		mNextFenceValue = ((uint64_t)type) << COMMAND_TYPE_MASK | 1;
+		mLastCompletedFenceValue = ((uint64)type) << COMMAND_TYPE_MASK;
+		mNextFenceValue = ((uint64)type) << COMMAND_TYPE_MASK | 1;
 
 		DX_CALL(FGraphicsCore::Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, mFence));
 		mFence->Signal(mLastCompletedFenceValue);
@@ -142,7 +142,7 @@ namespace Dash
 		}
 	}
 
-	uint64_t FCommandQueue::ExecuteCommandList(FCommandList* commandList)
+	uint64 FCommandQueue::ExecuteCommandList(FCommandList* commandList)
 	{
 		commandList->Close();
 
@@ -152,7 +152,7 @@ namespace Dash
 		return Signal();
 	}
 
-	uint64_t FCommandQueue::ExecuteCommandLists(std::vector<FCommandList*> commandLists)
+	uint64 FCommandQueue::ExecuteCommandLists(std::vector<FCommandList*> commandLists)
 	{
 		if (commandLists.empty())
 		{
@@ -172,18 +172,18 @@ namespace Dash
 		return Signal();
 	}
 
-	uint64_t FCommandQueue::Signal()
+	uint64 FCommandQueue::Signal()
 	{
 		DX_CALL(mCommandQueue->Signal(mFence.Get(), mNextFenceValue));
 		return mNextFenceValue++;
 	}
 
-	uint64_t FCommandQueue::GetCompletedFence() const
+	uint64 FCommandQueue::GetCompletedFence() const
 	{
 		return mLastCompletedFenceValue;
 	}
 
-	bool FCommandQueue::IsFenceCompleted(uint64_t fenceValue)
+	bool FCommandQueue::IsFenceCompleted(uint64 fenceValue)
 	{
 		// Avoid querying the fence value by testing against the last one seen.
 		// The max() is to protect against an unlikely race condition that could cause the last
@@ -194,7 +194,7 @@ namespace Dash
 		return fenceValue <= mLastCompletedFenceValue;
 	}
 
-	void FCommandQueue::WaitForFence(uint64_t fenceValue)
+	void FCommandQueue::WaitForFence(uint64 fenceValue)
 	{
 		if (IsFenceCompleted(fenceValue))
 		{
@@ -251,12 +251,12 @@ namespace Dash
 		}
 	}
 
-	bool FCommandQueueManager::IsFenceCompleted(uint64_t fenceValue)
+	bool FCommandQueueManager::IsFenceCompleted(uint64 fenceValue)
 	{
 		return GetQueue(D3D12_COMMAND_LIST_TYPE(fenceValue >> COMMAND_TYPE_MASK)).IsFenceCompleted(fenceValue);
 	}
 
-	void FCommandQueueManager::WaitForFence(uint64_t fenceValue)
+	void FCommandQueueManager::WaitForFence(uint64 fenceValue)
 	{
 		GetQueue(D3D12_COMMAND_LIST_TYPE(fenceValue >> COMMAND_TYPE_MASK)).WaitForFence(fenceValue);
 	}
@@ -308,7 +308,7 @@ namespace Dash
 		return GetCommandListPool(type).RequestCommandList();
 	}
 
-	void FCommandListManager::RetiredUsedCommandList(uint64_t fenceID, FCommandList* commandList)
+	void FCommandListManager::RetiredUsedCommandList(uint64 fenceID, FCommandList* commandList)
 	{
 		GetCommandListPool(commandList->GetType()).RetiredUsedCommandList(fenceID, commandList);
 	}

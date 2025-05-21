@@ -10,9 +10,9 @@ namespace Dash
 		FPixelBuffer() {}
 		virtual ~FPixelBuffer() {}
 
-		virtual uint32_t GetWidth() const = 0;
-		virtual uint32_t GetHeight() const = 0;
-		virtual uint32_t GetDepth() const = 0;
+		virtual uint32 GetWidth() const = 0;
+		virtual uint32 GetHeight() const = 0;
+		virtual uint32 GetDepth() const = 0;
 		virtual const EResourceFormat& GetFormat() const = 0;
 
 	protected:

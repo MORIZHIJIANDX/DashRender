@@ -25,7 +25,7 @@ namespace Dash
 
 		void NewFrame();
 
-		uint32_t StartProfile(FCopyCommandContextBase& contex, const std::string& name);
+		uint32 StartProfile(FCopyCommandContextBase& contex, const std::string& name);
 		void EndProfile(FCopyCommandContextBase& contex, const std::string& name);
 
 		std::vector<FProfileResult> GetQueryResults() const;
@@ -34,7 +34,7 @@ namespace Dash
 		FQueryHeapRef mQueryHeap;
 		FReadbackBufferRef mReadbackBuffer;
 
-		int32_t mProfileCounter = 0;
+		int32 mProfileCounter = 0;
 	};
 
 	class FGPUProfilerScope

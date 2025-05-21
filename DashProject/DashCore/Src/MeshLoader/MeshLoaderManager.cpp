@@ -55,7 +55,7 @@ namespace Dash
     {
 		if (mImportMeshs.contains(meshPath))
 		{
-			int32_t RefCount = mImportMeshs[meshPath].Release();
+			int32 RefCount = mImportMeshs[meshPath].Release();
 			if (RefCount <= 0)
 			{
 				mImportMeshs.erase(meshPath);

@@ -12,19 +12,19 @@ namespace Dash
 
 	private:
 
-		int32_t AddRef()
+		int32 AddRef()
 		{
 			return ++RefCount;
 		}
 
-		int32_t Release()
+		int32 Release()
 		{
 			return --RefCount;
 		}
 
 	private:
 
-		int32_t RefCount = 0;
+		int32 RefCount = 0;
 	};
 
 	class FMeshLoaderManager

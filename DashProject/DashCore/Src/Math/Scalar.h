@@ -540,7 +540,7 @@ namespace Dash {
 			rad = rad + TScalarTraits<Scalar>::Pi();
 			// Perform the modulo, unsigned
 			float fTemp = Abs(rad);
-			fTemp = fTemp - (TScalarTraits<Scalar>::TwoPi() * static_cast<float>(static_cast<int32_t>(fTemp / TScalarTraits<Scalar>::TwoPi())));
+			fTemp = fTemp - (TScalarTraits<Scalar>::TwoPi() * static_cast<float>(static_cast<int32>(fTemp / TScalarTraits<Scalar>::TwoPi())));
 			// Restore the number to the range of -XM_PI to XM_PI-epsilon
 			fTemp = fTemp - TScalarTraits<Scalar>::Pi();
 			// If the modulo'd value was negative, restore negation

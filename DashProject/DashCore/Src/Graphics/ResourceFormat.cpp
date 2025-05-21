@@ -923,21 +923,21 @@ namespace Dash
 		}
 	}
 
-	FResourceMagnitude::FResourceMagnitude(uint32_t width, uint32_t height, uint32_t depth)
+	FResourceMagnitude::FResourceMagnitude(uint32 width, uint32 height, uint32 depth)
 		: Width(width)
 		, Height(height)
 		, Depth(depth)
 	{}
 
-	FResourceMagnitude::FResourceMagnitude(uint32_t width, uint32_t height)
+	FResourceMagnitude::FResourceMagnitude(uint32 width, uint32 height)
 		: FResourceMagnitude(width, height, 1)
 	{}
 
-	FResourceMagnitude::FResourceMagnitude(uint32_t width)
+	FResourceMagnitude::FResourceMagnitude(uint32 width)
 		: FResourceMagnitude(width, 1, 1)
 	{}
 
-	uint32_t FResourceMagnitude::LargestMagnitude() const
+	uint32 FResourceMagnitude::LargestMagnitude() const
 	{
 		return FMath::Max(Width, Height, Depth);
 	}
@@ -954,17 +954,17 @@ namespace Dash
 
 	FResourceMagnitude FResourceMagnitude::XMultiplied(float m) const
 	{
-		return FResourceMagnitude(static_cast<uint32_t>(Width * m));
+		return FResourceMagnitude(static_cast<uint32>(Width * m));
 	}
 
 	FResourceMagnitude FResourceMagnitude::XYMultiplied(float m) const
 	{
-		return FResourceMagnitude(static_cast<uint32_t>(Width * m), static_cast<uint32_t>(Height * m));
+		return FResourceMagnitude(static_cast<uint32>(Width * m), static_cast<uint32>(Height * m));
 	}
 
 	FResourceMagnitude FResourceMagnitude::XYZMultiplied(float m) const
 	{	
-		return FResourceMagnitude(static_cast<uint32_t>(Width * m), static_cast<uint32_t>(Height * m), static_cast<uint32_t>(Depth * m));
+		return FResourceMagnitude(static_cast<uint32>(Width * m), static_cast<uint32>(Height * m), static_cast<uint32>(Depth * m));
 	}
 }
 

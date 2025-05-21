@@ -5,11 +5,11 @@ using namespace DirectX;
 
 namespace Dash
 {
-	void InitTextureData(const TexMetadata& metadata, ScratchImage& scratchImage, Dash::FTextureBufferDescription& textureDescription, std::vector<FSubResourceData>& subResources, std::vector<uint8_t>& decodedData)
+	void InitTextureData(const TexMetadata& metadata, ScratchImage& scratchImage, Dash::FTextureBufferDescription& textureDescription, std::vector<FSubResourceData>& subResources, std::vector<uint8>& decodedData)
 	{
 		Dash::EResourceFormat format = Dash::ResourceFormatFromD3DFormat(metadata.format);
 
-		textureDescription = Dash::FTextureBufferDescription::Create2D(format, static_cast<uint32_t>(metadata.width), static_cast<uint32_t>(metadata.height), static_cast<uint32_t>(metadata.mipLevels));
+		textureDescription = Dash::FTextureBufferDescription::Create2D(format, static_cast<uint32>(metadata.width), static_cast<uint32>(metadata.height), static_cast<uint32>(metadata.mipLevels));
 
 		decodedData.resize(scratchImage.GetPixelsSize());
 		memcpy_s(decodedData.data(), scratchImage.GetPixelsSize(), scratchImage.GetPixels(), scratchImage.GetPixelsSize());

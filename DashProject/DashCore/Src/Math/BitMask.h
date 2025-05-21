@@ -10,14 +10,14 @@ namespace Dash
 	{
 	public:
 		BitMask();
-		explicit BitMask(uint32_t bits);
+		explicit BitMask(uint32 bits);
 		explicit BitMask(FZero);
-		template<uint32_t I> BitMask(FUnit<I>);
+		template<uint32 I> BitMask(FUnit<I>);
 
-		operator uint32_t() const;
+		operator uint32() const;
 		bool operator[](int i) const;
 
 	private:
-		uint32_t mBits;
+		uint32 mBits;
 	};
 }

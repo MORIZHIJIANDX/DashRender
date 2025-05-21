@@ -8,11 +8,11 @@ namespace Dash
 	class IRenderLayer
 	{
 	public:
-		IRenderLayer(const std::string& layerName, uint16_t layerId);
+		IRenderLayer(const std::string& layerName, uint16 layerId);
 		virtual ~IRenderLayer();
 
 		const std::string& GetLayerName() const;
-		uint16_t GetLayerId() const;
+		uint16 GetLayerId() const;
 
 		virtual void Init() = 0;
 		virtual void Shutdown() = 0;
@@ -28,6 +28,6 @@ namespace Dash
 	protected:
 		
 		std::string mLayerName;
-		uint16_t mLayerId;
+		uint16 mLayerId;
 	};
 }

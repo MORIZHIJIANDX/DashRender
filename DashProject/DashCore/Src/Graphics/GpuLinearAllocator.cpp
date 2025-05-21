@@ -34,7 +34,7 @@ namespace Dash
 		mOffset = FMath::AlignUp(mOffset, alignment);
 
 		FGpuLinearAllocator::FAllocation allocation{*this, mOffset, alignedSize};
-		allocation.CpuAddress = static_cast<uint8_t*>(mCpuAddress) + mOffset;
+		allocation.CpuAddress = static_cast<uint8*>(mCpuAddress) + mOffset;
 		allocation.GpuAddress = GetGpuVirtualAddress() + mOffset;
 
 		mOffset += alignedSize;
@@ -153,7 +153,7 @@ namespace Dash
 		return new FPage(Buffer, resourceState, resourceDesc.Width);
 	}
 
-	void FGpuLinearAllocator::FPageManager::DiscardPages(uint64_t fenceValue, const std::vector<FPage*>& pages, bool isLargePage)
+	void FGpuLinearAllocator::FPageManager::DiscardPages(uint64 fenceValue, const std::vector<FPage*>& pages, bool isLargePage)
 	{
 		std::lock_guard<std::mutex> lock(mMutex);
 
@@ -212,7 +212,7 @@ namespace Dash
 		return mCurrentPage->Allocate(alignedSize, alignment);
 	}
 
-	void FGpuLinearAllocator::RetireUsedPages(uint64_t fenceValue)
+	void FGpuLinearAllocator::RetireUsedPages(uint64 fenceValue)
 	{
 		if (mCurrentPage)
 		{

@@ -89,7 +89,7 @@ namespace Dash
 
 		mCompiledShaderBlob = compiledShaderBlob;
 		mShaderBinary.Data = mCompiledShaderBlob->GetBufferPointer();
-		mShaderBinary.Size = static_cast<uint32_t>(mCompiledShaderBlob->GetBufferSize());
+		mShaderBinary.Size = static_cast<uint32>(mCompiledShaderBlob->GetBufferSize());
 
 		mCreationInfo = creationInfo;
 
@@ -192,12 +192,12 @@ namespace Dash
 
 		if (EnumMaskEquals(mCreationInfo.Stage, EShaderStage::Vertex))
 		{
-			uint32_t currentInputSlot = 0;
+			uint32 currentInputSlot = 0;
 			std::string prevSemanticName{};
-			uint32_t prevSemanticIndex = 0;
+			uint32 prevSemanticIndex = 0;
 
-			int32_t systemValueStart = INDEX_NONE;
-			int32_t noSystemValueEnd = INDEX_NONE;
+			int32 systemValueStart = INDEX_NONE;
+			int32 noSystemValueEnd = INDEX_NONE;
 			
 			for (UINT parameterIndex = 0; parameterIndex < shaderDesc.InputParameters; ++parameterIndex)
 			{

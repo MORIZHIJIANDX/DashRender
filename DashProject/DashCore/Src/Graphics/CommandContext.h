@@ -27,14 +27,14 @@ namespace Dash
 		FCommandContextManager(){};
 
 		FCommandContext* AllocateContext(D3D12_COMMAND_LIST_TYPE type);
-		void FreeContext(uint64_t fenceValue, FCommandContext* context);
+		void FreeContext(uint64 fenceValue, FCommandContext* context);
 		void ResetAllContext();
 		void Destroy();
 
 	private:
 		std::vector<std::unique_ptr<FCommandContext>> mContextPool[4];
 		std::queue<FCommandContext*> mAvailableContexts[4];
-		std::deque<std::pair<uint64_t, FCommandContext*>> mRetiredContexts[4];
+		std::deque<std::pair<uint64, FCommandContext*>> mRetiredContexts[4];
 		std::mutex mAllocationMutex;
 	};
 
@@ -75,7 +75,7 @@ namespace Dash
 		void BindDescriptorHeaps();
 		void TrackResource(FGpuResourceRef resource);
 		void ReleaseTrackedObjects();
-		uint64_t Execute();
+		uint64 Execute();
 
 		void InitParameterBindState();
 		void InitStateForParameter(size_t parameterNum, std::vector<bool>& bindStateMap);
@@ -117,9 +117,9 @@ namespace Dash
 	public:
 		using FCommandContext::FCommandContext;
 
-		void BeginQuery(FQueryHeapRef queryHeap, uint32_t queryIndex);
-		void EndQuery(FQueryHeapRef queryHeap, uint32_t queryIndex);
-		void ResolveQueryData(FQueryHeapRef queryHeap, uint32_t startIndex, uint32_t numQueries, FGpuBufferRef dest, uint32_t destOffset);
+		void BeginQuery(FQueryHeapRef queryHeap, uint32 queryIndex);
+		void EndQuery(FQueryHeapRef queryHeap, uint32 queryIndex);
+		void ResolveQueryData(FQueryHeapRef queryHeap, uint32 startIndex, uint32 numQueries, FGpuBufferRef dest, uint32 destOffset);
 
 		void TransitionBarrier(FGpuResourceRef resource, EResourceState newState, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, bool flushImmediate = false);
 		void UAVBarrier(FGpuResourceRef resource, bool flushImmediate = false);
@@ -127,13 +127,13 @@ namespace Dash
 		void FlushResourceBarriers();
 
 		static void InitializeBuffer(FGpuBufferRef dest, const void* bufferData, size_t numBytes, size_t offset = 0);
-		static void UpdateTextureBuffer(FTextureBufferRef dest, uint32_t firstSubresource, uint32_t numSubresources, const FSubResourceData* subresourceData);
+		static void UpdateTextureBuffer(FTextureBufferRef dest, uint32 firstSubresource, uint32 numSubresources, const FSubResourceData* subresourceData);
 
 		// Flush existing commands to the GPU but keep the context alive
-		uint64_t Flush(bool waitForCompletion = false);
+		uint64 Flush(bool waitForCompletion = false);
 
 		// Flush existing commands and release the current context
-		uint64_t Finish(bool waitForCompletion = false);
+		uint64 Finish(bool waitForCompletion = false);
 	};
 
 	class FComputeCommandContextBase : public FCopyCommandContextBase
@@ -164,7 +164,7 @@ namespace Dash
 		void ClearUAV(FGpuBufferRef target);
 		void ClearUAV(FColorBufferRef target);
 
-		void Dispatch(uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ);
+		void Dispatch(uint32 groupCountX, uint32 groupCountY, uint32 groupCountZ);
 
 	protected:
 
@@ -220,7 +220,7 @@ namespace Dash
 		void SetVertexBuffer(UINT slot, FGpuVertexBufferRef vertexBuffer);
 		void SetVertexBuffers(UINT startSlot, UINT count, const FGpuVertexBufferRef* vertexBuffer);
 
-		void SetDynamicIndexBuffer(size_t indexCount, const uint16_t* data);
+		void SetDynamicIndexBuffer(size_t indexCount, const uint16* data);
 		void SetDynamicVertexBuffer(UINT slot, size_t vertexCount, size_t vertexStride, const void* data);
 
 		void SetDepthBounds(float min, float max);

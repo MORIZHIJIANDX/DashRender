@@ -29,7 +29,7 @@ namespace Dash
             break;
         }
         
-        mDesc = FColorBufferDescription::Create(ResourceFormatFromD3DFormat(desc.Format), dimension, FResourceMagnitude(static_cast<uint32_t>(desc.Width), static_cast<uint32_t>(desc.Height), static_cast<uint32_t>(desc.DepthOrArraySize)), mDesc.ClearValue,
+        mDesc = FColorBufferDescription::Create(ResourceFormatFromD3DFormat(desc.Format), dimension, FResourceMagnitude(static_cast<uint32>(desc.Width), static_cast<uint32>(desc.Height), static_cast<uint32>(desc.DepthOrArraySize)), mDesc.ClearValue,
             desc.MipLevels, initStates, desc.SampleDesc.Count, desc.SampleDesc.Quality);
 
         AssociateWithResource(resource, initStates, name);
@@ -43,7 +43,7 @@ namespace Dash
         CreateBuffer(name);
     }
 
-    void FColorBuffer::Create(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format)
+    void FColorBuffer::Create(const std::string& name, uint32 width, uint32 height, uint32 numMips, EResourceFormat format)
     {
         ASSERT(IsColorFormat(format));
 
@@ -52,7 +52,7 @@ namespace Dash
         CreateBuffer(name);
     }
 
-    void FColorBuffer::CreateArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format)
+    void FColorBuffer::CreateArray(const std::string& name, uint32 width, uint32 height, uint32 arrayCount, uint32 numMips, EResourceFormat format)
     {
         ASSERT(IsColorFormat(format));
 
@@ -142,7 +142,7 @@ namespace Dash
             {
                 mUnorderedAccessView = FGraphicsCore::DescriptorAllocator->AllocateUAVDescriptor(desc.MipLevels);
 
-                for (uint32_t i = 0; i < desc.MipLevels; i++)
+                for (uint32 i = 0; i < desc.MipLevels; i++)
                 {
                     D3D12_UNORDERED_ACCESS_VIEW_DESC UAVDesc = GetUAVDesc(desc, i);
                     FGraphicsCore::Device->CreateUnorderedAccessView(mResource.Get(), nullptr, &UAVDesc, mUnorderedAccessView.GetDescriptorHandle(i));
@@ -173,7 +173,7 @@ namespace Dash
         return mShaderResourceView.GetDescriptorHandle();
     }
 
-    D3D12_CPU_DESCRIPTOR_HANDLE FColorBuffer::GetUnorderedAccessView(uint32_t mipIndex) const
+    D3D12_CPU_DESCRIPTOR_HANDLE FColorBuffer::GetUnorderedAccessView(uint32 mipIndex) const
     {
         ASSERT(mipIndex >= 0 && mipIndex < mDesc.MipCount);
         return mUnorderedAccessView.GetDescriptorHandle(mipIndex);
@@ -184,7 +184,7 @@ namespace Dash
         mDesc.ClearValue = clearColor;
     }
 
-    void FColorBuffer::SetMsaaMode(uint32_t numSamples, uint32_t quality)
+    void FColorBuffer::SetMsaaMode(uint32 numSamples, uint32 quality)
     {
         mDesc.MsaaSampleCount = numSamples;
         mDesc.MsaaQuality = quality;

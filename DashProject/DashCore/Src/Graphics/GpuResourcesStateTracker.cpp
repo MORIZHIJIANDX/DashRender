@@ -198,7 +198,7 @@ namespace Dash
 
 				flushBarrierCommandAux->GetCommandList()->ResourceBarrier(num, resourceBarriers.data());
 
-				uint64_t fenceValue = FGraphicsCore::CommandQueueManager->GetQueue(flushBarriersCommandListType).ExecuteCommandList(flushBarrierCommandAux);
+				uint64 fenceValue = FGraphicsCore::CommandQueueManager->GetQueue(flushBarriersCommandListType).ExecuteCommandList(flushBarrierCommandAux);
 
 				FGraphicsCore::CommandListManager->RetiredUsedCommandList(fenceValue, flushBarrierCommandAux);
 
@@ -219,11 +219,11 @@ namespace Dash
 		return flushBarrierCommand;
 	}
 
-	uint32_t FGpuResourcesStateTracker::FlushResourceBarriers(FCommandList* commandList)
+	uint32 FGpuResourcesStateTracker::FlushResourceBarriers(FCommandList* commandList)
 	{
 		ASSERT(commandList != nullptr);
 
-		uint32_t num = static_cast<uint32_t>(mResourceBarriers.size());
+		uint32 num = static_cast<uint32>(mResourceBarriers.size());
 		if (num > 0)
 		{
 			D3D12_COMMAND_LIST_TYPE flushBarriersCommandListType = FlushBarriersQueueType(commandList->GetType(), mResourceBarriers);
@@ -234,7 +234,7 @@ namespace Dash
 
 				flushBarrierCommand->GetCommandList()->ResourceBarrier(num, mResourceBarriers.data());
 
-				uint64_t fenceValue = FGraphicsCore::CommandQueueManager->GetQueue(flushBarriersCommandListType).ExecuteCommandList(flushBarrierCommand);
+				uint64 fenceValue = FGraphicsCore::CommandQueueManager->GetQueue(flushBarriersCommandListType).ExecuteCommandList(flushBarrierCommand);
 
 				FGraphicsCore::CommandListManager->RetiredUsedCommandList(fenceValue, flushBarrierCommand);
 
@@ -331,7 +331,7 @@ namespace Dash
 		{
 			bool anyBarrierNeedFlusOnDirectQueue = false;
 
-			for (uint32_t index = 0; index < barriers.size(); index++)
+			for (uint32 index = 0; index < barriers.size(); index++)
 			{
 				if (barriers[index].Type == D3D12_RESOURCE_BARRIER_TYPE::D3D12_RESOURCE_BARRIER_TYPE_TRANSITION)
 				{

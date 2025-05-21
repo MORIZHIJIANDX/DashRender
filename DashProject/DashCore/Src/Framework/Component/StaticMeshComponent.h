@@ -11,15 +11,15 @@ namespace Dash
 		std::vector<FGpuVertexBufferRef> VertexBuffers;
 		FGpuIndexBufferRef IndexBuffer;
 
-		const std::map<std::string, std::vector<uint8_t>>* ConstantBufferMapPtr;
+		const std::map<std::string, std::vector<uint8>>* ConstantBufferMapPtr;
 		const std::map<std::string, FTextureRef>* TextureBufferMapPtr;
 
 		FGraphicsPSORef PSO;
 
-		uint32_t VertexStart{ 0 };
-		uint32_t VertexCount{ 0 };
-		uint32_t IndexStart{ 0 };
-		uint32_t IndexCount{ 0 };
+		uint32 VertexStart{ 0 };
+		uint32 VertexCount{ 0 };
+		uint32 IndexStart{ 0 };
+		uint32 IndexCount{ 0 };
 	};
 
 	class TStaticMeshComponent : public TComponent

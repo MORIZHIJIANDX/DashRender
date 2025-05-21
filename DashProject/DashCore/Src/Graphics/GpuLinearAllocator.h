@@ -79,7 +79,7 @@ namespace Dash
 			FPage* CreateNewPage(size_t pageSize = 0);
 
 			// Discarded pages will get recycled.
-			void DiscardPages(uint64_t fenceID, const std::vector<FPage*>& pages, bool isLargePage = false);
+			void DiscardPages(uint64 fenceID, const std::vector<FPage*>& pages, bool isLargePage = false);
 
 			void Destroy();
 
@@ -89,8 +89,8 @@ namespace Dash
 			AllocatorType mAllocatorType;
 			std::vector<std::unique_ptr<FPage>> mPagePool;
 			std::vector<std::unique_ptr<FPage>> mLargePagePool;
-			std::queue<std::pair<uint64_t, FPage*>> mRetiredPages;
-			std::queue<std::pair<uint64_t, FPage*>> mRetiredLargePages; //DeletionQueue
+			std::queue<std::pair<uint64, FPage*>> mRetiredPages;
+			std::queue<std::pair<uint64, FPage*>> mRetiredLargePages; //DeletionQueue
 			std::queue<FPage*> mAvailablePages;
 			std::mutex mMutex;
 		};
@@ -108,7 +108,7 @@ namespace Dash
 
 		FAllocation Allocate(size_t sizeInBytes, size_t alignment = DEFAULT_ALIGN);
 
-		void RetireUsedPages(uint64_t fenceValue);
+		void RetireUsedPages(uint64 fenceValue);
 
 		static void Destroy();
 

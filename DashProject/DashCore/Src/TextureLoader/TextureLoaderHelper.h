@@ -11,28 +11,28 @@ namespace Dash
 		std::string SourceTexturePath;
 		FTextureBufferDescription TextureDescription;
 		std::vector<FSubResourceData> SubResource;
-		std::vector<uint8_t> DecodedData;
+		std::vector<uint8> DecodedData;
 
 	private:
 
-		int32_t AddRef()
+		int32 AddRef()
 		{
 			return ++RefCount;
 		}
 
-		int32_t Release()
+		int32 Release()
 		{
 			return --RefCount;
 		}
 
 	private:
 
-		int32_t RefCount = 0;
+		int32 RefCount = 0;
 	};
 
 	void InitTextureData(const DirectX::TexMetadata& metadata,
 		DirectX::ScratchImage& scratchImage,
 		FTextureBufferDescription& textureDescription,
 		std::vector<FSubResourceData>& subResources,
-		std::vector<uint8_t>& decodedData);
+		std::vector<uint8>& decodedData);
 }

@@ -43,9 +43,9 @@ namespace Dash
 		CreateSwapChain(IGameApp::GetInstance()->GetWindowWidth(), IGameApp::GetInstance()->GetWindowHeight());
 		CreateBuffers();
 
-		for (uint32_t index = 0; index < SWAP_CHAIN_BUFFER_COUNT; ++index)
+		for (uint32 index = 0; index < SWAP_CHAIN_BUFFER_COUNT; ++index)
 		{
-			mFenceValue[index] = ((uint64_t)D3D12_COMMAND_LIST_TYPE_DIRECT) << COMMAND_TYPE_MASK;
+			mFenceValue[index] = ((uint64)D3D12_COMMAND_LIST_TYPE_DIRECT) << COMMAND_TYPE_MASK;
 		}
 
 		KeyboardPressDelegate = FKeyboardEventDelegate::Create<FSwapChain, &FSwapChain::OnKeyPressed>(this);
@@ -82,7 +82,7 @@ namespace Dash
 		}
 	}
 
-	void FSwapChain::OnWindowResize(uint32_t displayWdith, uint32_t displayHeight)
+	void FSwapChain::OnWindowResize(uint32 displayWdith, uint32 displayHeight)
 	{
 		if (mSwapChainBuffer[mCurrentBackBufferIndex]->GetWidth() != displayWdith || mSwapChainBuffer[mCurrentBackBufferIndex]->GetHeight() != displayHeight)
 		{
@@ -90,7 +90,7 @@ namespace Dash
 		}
 	}
 
-	void FSwapChain::OnWindowMoved(uint32_t xPos, uint32_t yPos)
+	void FSwapChain::OnWindowMoved(uint32 xPos, uint32 yPos)
 	{
 		CheckDisplayHDRSupport();
 	}
@@ -127,7 +127,7 @@ namespace Dash
 		mFenceValue[mCurrentBackBufferIndex] = FGraphicsCore::CommandQueueManager->GetGraphicsQueue().Signal();
 
 		mCurrentBackBufferIndex = mSwapChain->GetCurrentBackBufferIndex();
-		uint64_t nextBufferFenceValue = mFenceValue[mCurrentBackBufferIndex];
+		uint64 nextBufferFenceValue = mFenceValue[mCurrentBackBufferIndex];
 		FGraphicsCore::CommandQueueManager->GetGraphicsQueue().WaitForFence(nextBufferFenceValue);	
 
 		FGraphicsCore::DescriptorAllocator->ReleaseStaleDescriptors();
@@ -158,7 +158,7 @@ namespace Dash
 		DX_CALL(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&mDxgiFactory)));
 	}
 
-	void FSwapChain::CreateSwapChain(uint32_t displayWdith, uint32_t displayHeight)
+	void FSwapChain::CreateSwapChain(uint32 displayWdith, uint32 displayHeight)
 	{
 		ASSERT_MSG(mSwapChain == nullptr, "Swap Chain Already Initialized");
 		
@@ -197,21 +197,21 @@ namespace Dash
 
 		CheckDisplayHDRSupport();
 		EnsureSwapChainColorSpace(mCurrentSwapChainBitDepth, mHDRSupport);
-		int32_t HDRMetadataPoolIndex = 0;
+		int32 HDRMetadataPoolIndex = 0;
 		SetHDRMetaData(HDRMetaDataPool[HDRMetadataPoolIndex][0], HDRMetaDataPool[HDRMetadataPoolIndex][1], HDRMetaDataPool[HDRMetadataPoolIndex][2], HDRMetaDataPool[HDRMetadataPoolIndex][3]);
 	}
 
 	void FSwapChain::CreateBuffers()
 	{
-		for (uint32_t index = 0; index < SWAP_CHAIN_BUFFER_COUNT; ++index)
+		for (uint32 index = 0; index < SWAP_CHAIN_BUFFER_COUNT; ++index)
 		{
 			ComPtr<ID3D12Resource> backBuffer;
 			DX_CALL(mSwapChain->GetBuffer(index, IID_PPV_ARGS(&backBuffer)));
 			mSwapChainBuffer[index] = FGraphicsCore::Device->CreateColorBuffer("Swap Chain Buffer[" + FStringUtility::ToString(index) + "]", backBuffer.Detach(), EResourceState::Common); // D3D12_RESOURCE_STATE_PRESENT ?
 		}
 
-		mDisplayWdith = static_cast<uint32_t>(FMath::AlignUp(mSwapChainBuffer[0]->GetWidth() * mDisplayRate, 2));
-		mDisplayHeight = static_cast<uint32_t>(FMath::AlignUp(mSwapChainBuffer[0]->GetHeight() * mDisplayRate, 2));
+		mDisplayWdith = static_cast<uint32>(FMath::AlignUp(mSwapChainBuffer[0]->GetWidth() * mDisplayRate, 2));
+		mDisplayHeight = static_cast<uint32>(FMath::AlignUp(mSwapChainBuffer[0]->GetHeight() * mDisplayRate, 2));
 		mColorBuffer = FGraphicsCore::Device->CreateColorBuffer("Color Buffer", mDisplayWdith, mDisplayHeight, 1, mColorBufferFormat);
 		mDepthBuffer = FGraphicsCore::Device->CreateDepthBuffer("Depth Buffer", mDisplayWdith, mDisplayHeight, mDepthBufferFormat);
 		LOG_INFO << "Set Display Width : " << mDisplayWdith << ", Display Height : " << mDisplayHeight;
@@ -221,7 +221,7 @@ namespace Dash
 
 	void FSwapChain::DestroyBuffers()
 	{
-		for (uint32_t index = 0; index < SWAP_CHAIN_BUFFER_COUNT; ++index)
+		for (uint32 index = 0; index < SWAP_CHAIN_BUFFER_COUNT; ++index)
 		{
 			mSwapChainBuffer[index]->Destroy();
 			mSwapChainBuffer[index] = nullptr;
@@ -234,7 +234,7 @@ namespace Dash
 		mDepthBuffer = nullptr;
 	}
 
-	void FSwapChain::ForceRecreateBuffers(uint32_t newWidth, uint32_t newHeight)
+	void FSwapChain::ForceRecreateBuffers(uint32 newWidth, uint32 newHeight)
 	{
 		FGraphicsCore::CommandQueueManager->Flush();
 
@@ -252,7 +252,7 @@ namespace Dash
 
 		CreateBuffers();
 
-		int32_t HDRMetadataPoolIndex = 0;
+		int32 HDRMetadataPoolIndex = 0;
 		SetHDRMetaData(HDRMetaDataPool[HDRMetadataPoolIndex][0], HDRMetaDataPool[HDRMetadataPoolIndex][1], HDRMetaDataPool[HDRMetadataPoolIndex][2], HDRMetaDataPool[HDRMetadataPoolIndex][3]);
 	}
 
@@ -461,12 +461,12 @@ namespace Dash
 		return mDepthBufferFormat;
 	}
 
-	uint32_t FSwapChain::GetDisplayWidth() const
+	uint32 FSwapChain::GetDisplayWidth() const
 	{
 		return mDisplayWdith;
 	}
 
-	uint32_t FSwapChain::GetDisplayHeight() const
+	uint32 FSwapChain::GetDisplayHeight() const
 	{
 		return mDisplayHeight;
 	}

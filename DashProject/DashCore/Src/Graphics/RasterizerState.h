@@ -21,7 +21,7 @@ namespace Dash
 		void SetFillMode(ERasterizerFillMode fillMode);
 		void SetCullMode(ERasterizerCullMode cullMode);
 		void SetFrontClockwise(bool frontIsClockwise);
-		void SetDepthProperties(int32_t depthBias = 0, float depthBiasClamp = 0.0f, float slopeScaledDepthBias = 0.0f, bool depthClipEnable = true);
+		void SetDepthProperties(int32 depthBias = 0, float depthBiasClamp = 0.0f, float slopeScaledDepthBias = 0.0f, bool depthClipEnable = true);
 		void SetMultisampleEnable(bool enable);
 		void SetAntialiasedLineEnable(bool enable);
 		void SetForcedSampleCount(UINT count);

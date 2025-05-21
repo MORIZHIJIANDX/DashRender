@@ -8,7 +8,7 @@
 
 namespace Dash
 {
-	static constexpr uint64_t MaxProfiles = 128;
+	static constexpr uint64 MaxProfiles = 128;
 
 	struct FProfileData
 	{
@@ -17,7 +17,7 @@ namespace Dash
 	};
 
 	std::array<FProfileData, MaxProfiles> ProfileData;
-	std::map<std::string, uint32_t> NameToProfileIndex;
+	std::map<std::string, uint32> NameToProfileIndex;
 
 	FGPUProfiler::FGPUProfiler()
 	{
@@ -36,7 +36,7 @@ namespace Dash
 		heapDesc.type = EGpuQueryType::Timestamp;
 		mQueryHeap = std::make_shared<FQueryHeap>(heapDesc);
 
-		mReadbackBuffer = FGraphicsCore::Device->CreateReadbackBuffer("QueryReadbackBuffer", MaxProfiles * 2 * FGraphicsCore::BackBufferCount, sizeof(uint64_t));
+		mReadbackBuffer = FGraphicsCore::Device->CreateReadbackBuffer("QueryReadbackBuffer", MaxProfiles * 2 * FGraphicsCore::BackBufferCount, sizeof(uint64));
 	}
 
 	void FGPUProfiler::Destroy()
@@ -57,18 +57,18 @@ namespace Dash
 		mProfileCounter = 0;
 	}
 
-	uint32_t FGPUProfiler::StartProfile(FCopyCommandContextBase& contex, const std::string& name)
+	uint32 FGPUProfiler::StartProfile(FCopyCommandContextBase& contex, const std::string& name)
 	{
 		ASSERT(!NameToProfileIndex.contains(name));
 
-		int32_t profileIndex = mProfileCounter++;
+		int32 profileIndex = mProfileCounter++;
 		ASSERT(profileIndex < MaxProfiles);
 
 		NameToProfileIndex[name] = profileIndex;
 		ProfileData[profileIndex].Started = true;
 		ASSERT(ProfileData[profileIndex].Finished == false);
 
-		int32_t beginQueryIndex = profileIndex * 2;
+		int32 beginQueryIndex = profileIndex * 2;
 		contex.EndQuery(mQueryHeap, beginQueryIndex);
 
 		return profileIndex;
@@ -78,31 +78,31 @@ namespace Dash
 	{
 		ASSERT(NameToProfileIndex.contains(name));
 
-		int32_t profileIndex = NameToProfileIndex[name];
+		int32 profileIndex = NameToProfileIndex[name];
 		ASSERT(profileIndex < MaxProfiles);
 
 		ProfileData[profileIndex].Finished = true;
 		ASSERT(ProfileData[profileIndex].Started == true);
 
-		int32_t beginQueryIndex = profileIndex * 2;
-		int32_t endQueryIndex = beginQueryIndex + 1;
+		int32 beginQueryIndex = profileIndex * 2;
+		int32 endQueryIndex = beginQueryIndex + 1;
 		contex.EndQuery(mQueryHeap, endQueryIndex);
 
-		int32_t currentBackBufferIndex = FGraphicsCore::SwapChain->GetCurrentBackBufferIndex();
-		int32_t dataOffset = (MaxProfiles * 2 * currentBackBufferIndex + beginQueryIndex) * sizeof(uint64_t);
+		int32 currentBackBufferIndex = FGraphicsCore::SwapChain->GetCurrentBackBufferIndex();
+		int32 dataOffset = (MaxProfiles * 2 * currentBackBufferIndex + beginQueryIndex) * sizeof(uint64);
 		contex.ResolveQueryData(mQueryHeap, beginQueryIndex, 2, mReadbackBuffer, dataOffset);
 	}
 
 	std::vector<FGPUProfiler::FProfileResult> FGPUProfiler::GetQueryResults() const
 	{
-		uint64_t gpuFrequency = 0;
+		uint64 gpuFrequency = 0;
 		FGraphicsCore::CommandQueueManager->GetGraphicsQueue().GetD3DCommandQueue()->GetTimestampFrequency(&gpuFrequency);
 		float frequency = static_cast<float>(gpuFrequency);
 
-		int32_t currentBackBufferIndex = FGraphicsCore::SwapChain->GetCurrentBackBufferIndex();
-		int32_t currentFrameQueryDataOffset = MaxProfiles * 2 * currentBackBufferIndex;
+		int32 currentBackBufferIndex = FGraphicsCore::SwapChain->GetCurrentBackBufferIndex();
+		int32 currentFrameQueryDataOffset = MaxProfiles * 2 * currentBackBufferIndex;
 
-		const uint64_t* queryData = static_cast<uint64_t*>(mReadbackBuffer->Map()) + currentFrameQueryDataOffset;
+		const uint64* queryData = static_cast<uint64*>(mReadbackBuffer->Map()) + currentFrameQueryDataOffset;
 
 		std::vector<FProfileResult> results;
 
@@ -112,10 +112,10 @@ namespace Dash
 			FProfileData& data = ProfileData[index];
 			if (data.Started && data.Finished)
 			{
-				uint64_t startTime = queryData[index * 2];
-				uint64_t endTime = queryData[index * 2 + 1];
+				uint64 startTime = queryData[index * 2];
+				uint64 endTime = queryData[index * 2 + 1];
 
-				uint64_t delta = endTime - startTime;
+				uint64 delta = endTime - startTime;
 				float timeMs = delta / frequency * 1000.0f;
 				results.emplace_back(timeMs, name);
 			}

@@ -95,7 +95,7 @@ namespace Dash
 
 		const std::vector<FMeshSectionData>& meshSectionData = mStaticMesh->GetMeshSections();
 
-		for (uint32_t sectionIndex = 0; sectionIndex < meshSectionData.size(); sectionIndex++)
+		for (uint32 sectionIndex = 0; sectionIndex < meshSectionData.size(); sectionIndex++)
 		{
 			const FMeshSectionData& sectionData = meshSectionData[sectionIndex];
 			FMaterialRef material = mStaticMesh->GetMaterial(sectionData.MaterialSlotName);
@@ -115,15 +115,15 @@ namespace Dash
 
 			const std::vector<FShaderPassRef>& shaderPasses = shaderTechnique->GetPasses();
 
-			for (uint32_t passIndex = 0; passIndex < shaderPasses.size(); passIndex++)
+			for (uint32 passIndex = 0; passIndex < shaderPasses.size(); passIndex++)
 			{
 				FShaderPassRef shaderPass = shaderPasses[passIndex];
 
 				FMeshDrawCommand meshDrawCommand;
 
-				const std::vector<std::pair<uint32_t, std::string>>& perVertexSemantics = shaderPass->GetInputLayout().GetPerVertexSemantics();
+				const std::vector<std::pair<uint32, std::string>>& perVertexSemantics = shaderPass->GetInputLayout().GetPerVertexSemantics();
 
-				for (uint32_t semanticIndex = 0; semanticIndex < perVertexSemantics.size(); semanticIndex++)
+				for (uint32 semanticIndex = 0; semanticIndex < perVertexSemantics.size(); semanticIndex++)
 				{	
 					EPerVertexSemantic semantic = GetVertexSemanticType(perVertexSemantics[semanticIndex].second);
 					if (semantic == EPerVertexSemantic::Position)

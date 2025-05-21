@@ -24,7 +24,7 @@ namespace Dash
 		Clear, Set, Copy, CopyInverted, Noop, Invert, And, Nand, Or, Nor, Xor, Equalv, AndReverse, AndInverted, OrReverse, OrInverted
 	};
 
-	enum class ERenderTargetWriteMask : uint8_t
+	enum class ERenderTargetWriteMask : uint8
 	{
 		None = 0,
 		Red = 1,

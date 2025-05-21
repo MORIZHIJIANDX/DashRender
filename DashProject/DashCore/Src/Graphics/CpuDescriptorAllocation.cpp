@@ -11,7 +11,7 @@ namespace Dash
 	{
 	}
 
-	FCpuDescriptorAllocation::FCpuDescriptorAllocation(D3D12_CPU_DESCRIPTOR_HANDLE descriptor, uint32_t numDecriptors, uint32_t descriptorSize, std::shared_ptr<FCpuDescriptorAllocatorPage> page)
+	FCpuDescriptorAllocation::FCpuDescriptorAllocation(D3D12_CPU_DESCRIPTOR_HANDLE descriptor, uint32 numDecriptors, uint32 descriptorSize, std::shared_ptr<FCpuDescriptorAllocatorPage> page)
 		: mDescriptorHandle(descriptor)
 		, mNumDescriptors(numDecriptors)
 		, mDescriptorSize(descriptorSize)
@@ -56,13 +56,13 @@ namespace Dash
 		return mNumDescriptors == 0 || mDescriptorHandle.ptr == 0;
 	}
 
-	D3D12_CPU_DESCRIPTOR_HANDLE FCpuDescriptorAllocation::GetDescriptorHandle(uint32_t offset) const
+	D3D12_CPU_DESCRIPTOR_HANDLE FCpuDescriptorAllocation::GetDescriptorHandle(uint32 offset) const
 	{
 		ASSERT(offset < mNumDescriptors);
 		return D3D12_CPU_DESCRIPTOR_HANDLE{mDescriptorHandle.ptr + (static_cast<size_t>(mDescriptorSize) * static_cast<size_t>(offset))};
 	}
 
-	uint32_t FCpuDescriptorAllocation::GetNumDescriptors() const
+	uint32 FCpuDescriptorAllocation::GetNumDescriptors() const
 	{
 		return mNumDescriptors;
 	}

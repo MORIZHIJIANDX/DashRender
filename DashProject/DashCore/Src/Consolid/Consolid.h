@@ -15,6 +15,18 @@
 //#   define USE_SSE 1
 //#endif
 
+typedef int8_t int8;
+typedef uint8_t uint8;
+
+typedef int16_t int16;
+typedef uint16_t uint16;
+
+typedef int32_t int32;
+typedef uint32_t uint32;
+
+typedef int64_t int64;
+typedef uint64_t uint64;
+
 #define USE_IEEE_754 1
 #define USE_ROUNDING_CONTROL 0
 #define INDEX_NONE -1
@@ -39,13 +51,13 @@
 template<typename T>
 void WriteData(const T& src, void* dest, std::size_t offset = 0)
 {
-	std::memcpy(static_cast<uint8_t*>(dest) + offset, &src, sizeof(T));
+	std::memcpy(static_cast<uint8*>(dest) + offset, &src, sizeof(T));
 }
 
 template<typename T>
 void GetData(T& dest, void* src, std::size_t offset = 0)
 {
-	std::memcpy(&dest, static_cast<uint8_t*>(src) + offset, sizeof(T));
+	std::memcpy(&dest, static_cast<uint8*>(src) + offset, sizeof(T));
 }
 
 const DWORD MS_VC_EXCEPTION = 0x406D1388;

@@ -16,35 +16,35 @@ namespace Dash
 
 		virtual ~FColorBuffer() {}
 
-		virtual uint32_t GetWidth() const { return mDesc.Magnitude.Width; }
-		virtual uint32_t GetHeight() const { return mDesc.Magnitude.Height; }
-		virtual uint32_t GetDepth() const { return mDesc.Magnitude.Depth; }
+		virtual uint32 GetWidth() const { return mDesc.Magnitude.Width; }
+		virtual uint32 GetHeight() const { return mDesc.Magnitude.Height; }
+		virtual uint32 GetDepth() const { return mDesc.Magnitude.Depth; }
 		virtual const EResourceFormat& GetFormat() const { return mDesc.Format; }
 
 		D3D12_CPU_DESCRIPTOR_HANDLE GetRenderTargetView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE GetShaderResourceView() const;
-		D3D12_CPU_DESCRIPTOR_HANDLE GetUnorderedAccessView(uint32_t mipIndex = 0) const;
+		D3D12_CPU_DESCRIPTOR_HANDLE GetUnorderedAccessView(uint32 mipIndex = 0) const;
 
 		void SetClearColor(const FLinearColor& clearColor);
 		FLinearColor GetClearColor() const { return mDesc.ClearValue; }
 
-		void SetMsaaMode(uint32_t numSamples, uint32_t quality = 0);
+		void SetMsaaMode(uint32 numSamples, uint32 quality = 0);
 
-		uint32_t GetNumMips() const { return mDesc.MipCount; }
+		uint32 GetNumMips() const { return mDesc.MipCount; }
 
 		const FColorBufferDescription& GetDesc() const { return mDesc; }
 
 	protected:
 		void Create(const std::string& name, ID3D12Resource* resource, EResourceState initStates = EResourceState::Common);
 		void Create(const std::string& name, const FColorBufferDescription& desc);
-		void Create(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format);
-		void CreateArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format);
+		void Create(const std::string& name, uint32 width, uint32 height, uint32 numMips, EResourceFormat format);
+		void CreateArray(const std::string& name, uint32 width, uint32 height, uint32 arrayCount, uint32 numMips, EResourceFormat format);
 
 		void CreateBuffer(const std::string& name);
 		
-		static inline uint32_t ComputeNumMips(uint32_t width, uint32_t height)
+		static inline uint32 ComputeNumMips(uint32 width, uint32 height)
 		{	
-			uint32_t highBit;
+			uint32 highBit;
 			_BitScanReverse((unsigned long*)&highBit, width | height);
 			return highBit + 1;
 		}

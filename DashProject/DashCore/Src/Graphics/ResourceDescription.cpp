@@ -21,15 +21,15 @@ namespace Dash
 
 		D3D12_RESOURCE_ALLOCATION_INFO allocInfo = FGraphicsCore::Device->GetResourceAllocationInfo(0, 1, &mDescription);
 		
-		mResourceAlignment = static_cast<uint32_t>(allocInfo.Alignment);
-		mResourceSizeInBytes = static_cast<uint32_t>(allocInfo.SizeInBytes);
+		mResourceAlignment = static_cast<uint32>(allocInfo.Alignment);
+		mResourceSizeInBytes = static_cast<uint32>(allocInfo.SizeInBytes);
 		mDescription.Alignment = mResourceAlignment;
 	}
 
-	FResourceMagnitude FTextureDescription::ComputeMipSize(uint8_t mip) const
+	FResourceMagnitude FTextureDescription::ComputeMipSize(uint8 mip) const
 	{
 		FResourceMagnitude mipMagnitude = Magnitude.XYZMultiplied(1.0f / FMath::Pow(Scalar(2), Scalar(mip)));
-		mipMagnitude.Depth = FMath::Max(mipMagnitude.Depth, uint32_t(1));
+		mipMagnitude.Depth = FMath::Max(mipMagnitude.Depth, uint32(1));
 		return mipMagnitude;
 	}
 
@@ -83,15 +83,15 @@ namespace Dash
 		}
 	}
 
-	uint32_t FTextureDescription::ComputeNumMips() const
+	uint32 FTextureDescription::ComputeNumMips() const
 	{
-		uint32_t highBit;
+		uint32 highBit;
 		_BitScanReverse((unsigned long*)&highBit, Magnitude.Width | Magnitude.Height);
 		return highBit + 1;
 	}
 
-	FColorBufferDescription FColorBufferDescription::Create(EResourceFormat format, ETextureDimension dimension, const FResourceMagnitude& magnitude, const FLinearColor& optimizedClearValue, uint32_t mipCount /*= 1*/,
-			EResourceState initialStateMask /*= EResourceState::Common*/, uint32_t sampleCount /*= 1*/, uint32_t msaaQuality /*= 0*/)
+	FColorBufferDescription FColorBufferDescription::Create(EResourceFormat format, ETextureDimension dimension, const FResourceMagnitude& magnitude, const FLinearColor& optimizedClearValue, uint32 mipCount /*= 1*/,
+			EResourceState initialStateMask /*= EResourceState::Common*/, uint32 sampleCount /*= 1*/, uint32 msaaQuality /*= 0*/)
 	{
 		FColorBufferDescription desc;
 		desc.Dimension = dimension;
@@ -108,28 +108,28 @@ namespace Dash
 		return desc;
 	}
 
-	FColorBufferDescription FColorBufferDescription::Create1D(EResourceFormat format, uint32_t width, const FLinearColor& optimizedClearValue, uint32_t mipCount /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
+	FColorBufferDescription FColorBufferDescription::Create1D(EResourceFormat format, uint32 width, const FLinearColor& optimizedClearValue, uint32 mipCount /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
 	{
 		return FColorBufferDescription::Create(format, ETextureDimension::Texture1D, FResourceMagnitude(width), optimizedClearValue, mipCount, initialStateMask);
 	}
 
-	FColorBufferDescription FColorBufferDescription::Create2D(EResourceFormat format, uint32_t width, uint32_t height, const FLinearColor& optimizedClearValue, uint32_t mipCount /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
+	FColorBufferDescription FColorBufferDescription::Create2D(EResourceFormat format, uint32 width, uint32 height, const FLinearColor& optimizedClearValue, uint32 mipCount /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
 	{
 		return FColorBufferDescription::Create(format, ETextureDimension::Texture2D, FResourceMagnitude(width, height), optimizedClearValue, mipCount, initialStateMask);
 	}
 
-	FColorBufferDescription FColorBufferDescription::Create2DArray(EResourceFormat format, uint32_t width, uint32_t height, uint32_t arraySize, const FLinearColor& optimizedClearValue, uint32_t mipCount, EResourceState initialStateMask)
+	FColorBufferDescription FColorBufferDescription::Create2DArray(EResourceFormat format, uint32 width, uint32 height, uint32 arraySize, const FLinearColor& optimizedClearValue, uint32 mipCount, EResourceState initialStateMask)
 	{
 		return FColorBufferDescription::Create(format, ETextureDimension::Texture2D, FResourceMagnitude(width, height, arraySize), optimizedClearValue, mipCount, initialStateMask);
 	}
 
-	FColorBufferDescription FColorBufferDescription::Create3D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t depth, const FLinearColor& optimizedClearValue, uint32_t mipCount /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
+	FColorBufferDescription FColorBufferDescription::Create3D(EResourceFormat format, uint32 width, uint32 height, uint32 depth, const FLinearColor& optimizedClearValue, uint32 mipCount /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
 	{
 		return FColorBufferDescription::Create(format, ETextureDimension::Texture3D, FResourceMagnitude(width, height, depth), optimizedClearValue, mipCount, initialStateMask);
 	}
 
-	FDepthBufferDescription FDepthBufferDescription::Create(EResourceFormat format, uint32_t width, uint32_t height, const FDepthStencilClearValue& optimizedClearValue, uint32_t mipCount /*= 1*/, 
-		EResourceState initialStateMask /*= EResourceState::Common*/, uint32_t sampleCount /*= 1*/, uint32_t msaaQuality /*= 0*/)
+	FDepthBufferDescription FDepthBufferDescription::Create(EResourceFormat format, uint32 width, uint32 height, const FDepthStencilClearValue& optimizedClearValue, uint32 mipCount /*= 1*/, 
+		EResourceState initialStateMask /*= EResourceState::Common*/, uint32 sampleCount /*= 1*/, uint32 msaaQuality /*= 0*/)
 	{
 		FDepthBufferDescription desc;
 		desc.Dimension = ETextureDimension::Texture2D;
@@ -146,7 +146,7 @@ namespace Dash
 		return desc;
 	}
 
-	FBufferDescription FBufferDescription::Create(uint32_t elementSize, uint32_t elementCount, bool cpuAccess, uint32_t elementAlignment /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
+	FBufferDescription FBufferDescription::Create(uint32 elementSize, uint32 elementCount, bool cpuAccess, uint32 elementAlignment /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
 	{
 		ASSERT(elementSize > 0);
 
@@ -180,7 +180,7 @@ namespace Dash
 		QueryAllocationInfo();
 	}
 
-	FTextureBufferDescription FTextureBufferDescription::Create(EResourceFormat format, ETextureDimension dimension, const FResourceMagnitude& magnitude, uint32_t mipCount)
+	FTextureBufferDescription FTextureBufferDescription::Create(EResourceFormat format, ETextureDimension dimension, const FResourceMagnitude& magnitude, uint32 mipCount)
 	{
 		FTextureBufferDescription desc;
 		desc.Dimension = dimension;
@@ -196,22 +196,22 @@ namespace Dash
 		return desc;
 	}
 
-	FTextureBufferDescription FTextureBufferDescription::Create1D(EResourceFormat format, uint32_t width, uint32_t mipCount)
+	FTextureBufferDescription FTextureBufferDescription::Create1D(EResourceFormat format, uint32 width, uint32 mipCount)
 	{
 		return Create(format, ETextureDimension::Texture1D, FResourceMagnitude(width), mipCount);
 	}
 
-	FTextureBufferDescription FTextureBufferDescription::Create2D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t mipCount)
+	FTextureBufferDescription FTextureBufferDescription::Create2D(EResourceFormat format, uint32 width, uint32 height, uint32 mipCount)
 	{
 		return Create(format, ETextureDimension::Texture2D, FResourceMagnitude(width, height), mipCount);
 	}
 
-	FTextureBufferDescription FTextureBufferDescription::Create2DArray(EResourceFormat format, uint32_t width, uint32_t height, uint32_t arraySize, uint32_t mipCount)
+	FTextureBufferDescription FTextureBufferDescription::Create2DArray(EResourceFormat format, uint32 width, uint32 height, uint32 arraySize, uint32 mipCount)
 	{
 		return Create(format, ETextureDimension::Texture2D, FResourceMagnitude(width, height, arraySize), mipCount);
 	}
 
-	FTextureBufferDescription FTextureBufferDescription::Create3D(EResourceFormat format, uint32_t width, uint32_t height, uint32_t depth, uint32_t mipCount)
+	FTextureBufferDescription FTextureBufferDescription::Create3D(EResourceFormat format, uint32 width, uint32 height, uint32 depth, uint32 mipCount)
 	{
 		return Create(format, ETextureDimension::Texture3D, FResourceMagnitude(width, height, depth), mipCount);
 	}

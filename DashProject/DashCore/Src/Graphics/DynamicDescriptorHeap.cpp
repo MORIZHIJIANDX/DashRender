@@ -8,7 +8,7 @@
 
 namespace Dash
 {
-	FDynamicDescriptorHeap::FDynamicDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptorsPerHeap)
+	FDynamicDescriptorHeap::FDynamicDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32 numDescriptorsPerHeap)
 		: mDescriptorHeapType(type)
 		, mNumDescriptorsPerHeap(numDescriptorsPerHeap)
 		, mDescriptorTableBitMask(0)
@@ -22,12 +22,12 @@ namespace Dash
 
 		mDescriptorHandleCache = std::make_unique<D3D12_CPU_DESCRIPTOR_HANDLE[]>(mNumDescriptorsPerHeap);
 
-		for (uint32_t index = 0; index < mNumDescriptorsPerHeap; index++)
+		for (uint32 index = 0; index < mNumDescriptorsPerHeap; index++)
 		{
 			mDescriptorHandleCache[index] = D3D12_CPU_DESCRIPTOR_HANDLE{ SIZE_T(-1) };
 		}
 
-		for (uint32_t index = 0; index < MaxDescriptorTables; ++index)
+		for (uint32 index = 0; index < MaxDescriptorTables; ++index)
 		{
 			mInlineCBV[index] = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
 			mInlineSRV[index] = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
@@ -40,7 +40,7 @@ namespace Dash
 		Destroy();
 	}
 
-	void FDynamicDescriptorHeap::StageDescriptors(uint32_t rootParameterIndex, uint32_t offset, uint32_t numDescriptors, const D3D12_CPU_DESCRIPTOR_HANDLE& srcDescriptors)
+	void FDynamicDescriptorHeap::StageDescriptors(uint32 rootParameterIndex, uint32 offset, uint32 numDescriptors, const D3D12_CPU_DESCRIPTOR_HANDLE& srcDescriptors)
 	{
 		ASSERT(rootParameterIndex < MaxDescriptorTables && numDescriptors < mNumDescriptorsPerHeap);
 
@@ -57,7 +57,7 @@ namespace Dash
 		mStaleDescriptorTableBitMask |= (1 << rootParameterIndex);
 	}
 
-	void FDynamicDescriptorHeap::StageInlineCBV(uint32_t rootParameterIndex, D3D12_GPU_VIRTUAL_ADDRESS gpuAddress)
+	void FDynamicDescriptorHeap::StageInlineCBV(uint32 rootParameterIndex, D3D12_GPU_VIRTUAL_ADDRESS gpuAddress)
 	{
 		ASSERT(rootParameterIndex < MaxDescriptorTables);
 
@@ -66,7 +66,7 @@ namespace Dash
 		mStaleCBVBitMask |= (1 << rootParameterIndex);
 	}
 
-	void FDynamicDescriptorHeap::StageInlineSRV(uint32_t rootParameterIndex, D3D12_GPU_VIRTUAL_ADDRESS gpuAddress)
+	void FDynamicDescriptorHeap::StageInlineSRV(uint32 rootParameterIndex, D3D12_GPU_VIRTUAL_ADDRESS gpuAddress)
 	{
 		ASSERT(rootParameterIndex < MaxDescriptorTables);
 
@@ -75,7 +75,7 @@ namespace Dash
 		mStaleSRVBitMask |= (1 << rootParameterIndex);
 	}
 
-	void FDynamicDescriptorHeap::StageInlineUAV(uint32_t rootParameterIndex, D3D12_GPU_VIRTUAL_ADDRESS gpuAddress)
+	void FDynamicDescriptorHeap::StageInlineUAV(uint32 rootParameterIndex, D3D12_GPU_VIRTUAL_ADDRESS gpuAddress)
 	{
 		ASSERT(rootParameterIndex < MaxDescriptorTables);
 
@@ -107,13 +107,13 @@ namespace Dash
 		mStaleDescriptorTableBitMask = 0;
 
 		mDescriptorTableBitMask = rootSignature.GetDescriptorTableBitMask(mDescriptorHeapType);
-		uint32_t descriptorTableBitMask = mDescriptorTableBitMask;
+		uint32 descriptorTableBitMask = mDescriptorTableBitMask;
 
-		uint32_t currentOffset = 0;
+		uint32 currentOffset = 0;
 		DWORD rootParameterIndex;
 		while (_BitScanForward(&rootParameterIndex, descriptorTableBitMask))
 		{
-			uint32_t numDescriptors = rootSignature.GetNumDescriptors(rootParameterIndex);
+			uint32 numDescriptors = rootSignature.GetNumDescriptors(rootParameterIndex);
 
 			ASSERT(numDescriptors > 0);
 
@@ -171,7 +171,7 @@ namespace Dash
 		mStaleSRVBitMask = 0;
 		mStaleUAVBitMask = 0;
 
-		for (uint32_t index = 0; index < MaxDescriptorTables; ++index)
+		for (uint32 index = 0; index < MaxDescriptorTables; ++index)
 		{
 			mRootSignatureDescriptorTableCache[index].Reset();
 			mInlineCBV[index] = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
@@ -220,11 +220,11 @@ namespace Dash
 		return descriptorHeap.Get();
 	}
 
-	uint32_t FDynamicDescriptorHeap::ComputeStaleDescriptorCount() const
+	uint32 FDynamicDescriptorHeap::ComputeStaleDescriptorCount() const
 	{
-		uint32_t staleDescriptorTableBitMask = mStaleDescriptorTableBitMask;
+		uint32 staleDescriptorTableBitMask = mStaleDescriptorTableBitMask;
 
-		uint32_t numStaleDescriptors = 0;
+		uint32 numStaleDescriptors = 0;
 		DWORD rootParameterIndex;
 		while (_BitScanForward(&rootParameterIndex, staleDescriptorTableBitMask))
 		{
@@ -240,7 +240,7 @@ namespace Dash
 	void FDynamicDescriptorHeap::CommitDescriptorTables(FComputeCommandContextBase& context, std::function<void(ID3D12GraphicsCommandList*, UINT, D3D12_GPU_DESCRIPTOR_HANDLE)> setFunc)
 	{
 		// Compute the number of descriptors that need to be copied
-		uint32_t staleDescriptorCount = ComputeStaleDescriptorCount();
+		uint32 staleDescriptorCount = ComputeStaleDescriptorCount();
 
 		if (staleDescriptorCount > 0)
 		{
@@ -281,7 +281,7 @@ namespace Dash
 		}
 	}
 
-	void FDynamicDescriptorHeap::CommitInlineDescriptors(FCommandContext& context, const D3D12_GPU_VIRTUAL_ADDRESS* gpuAddressArray, uint32_t& bitMask, std::function<void(ID3D12GraphicsCommandList*, UINT, D3D12_GPU_VIRTUAL_ADDRESS)> setFunc)
+	void FDynamicDescriptorHeap::CommitInlineDescriptors(FCommandContext& context, const D3D12_GPU_VIRTUAL_ADDRESS* gpuAddressArray, uint32& bitMask, std::function<void(ID3D12GraphicsCommandList*, UINT, D3D12_GPU_VIRTUAL_ADDRESS)> setFunc)
 	{
 		if (bitMask != 0)
 		{

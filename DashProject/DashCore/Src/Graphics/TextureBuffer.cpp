@@ -20,7 +20,7 @@ namespace Dash
 		CreateBuffer(name);
 	}
 
-	void FTextureBuffer::Create(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format)
+	void FTextureBuffer::Create(const std::string& name, uint32 width, uint32 height, uint32 numMips, EResourceFormat format)
 	{
 		ASSERT(IsColorFormat(format));
 
@@ -29,7 +29,7 @@ namespace Dash
 		CreateBuffer(name);
 	}
 
-	void FTextureBuffer::Create(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format)
+	void FTextureBuffer::Create(const std::string& name, uint32 width, uint32 height, uint32 arrayCount, uint32 numMips, EResourceFormat format)
 	{
 		ASSERT(IsColorFormat(format));
 

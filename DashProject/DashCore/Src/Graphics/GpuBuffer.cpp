@@ -38,7 +38,7 @@ namespace Dash
 		return mUnorderedAccessView.GetDescriptorHandle();
 	}
 
-	void FGpuBuffer::Create(const std::string& name, uint32_t numElements, uint32_t elementSize, D3D12_RESOURCE_FLAGS flags /*D3D12_RESOURCE_FLAG_NONE*/)
+	void FGpuBuffer::Create(const std::string& name, uint32 numElements, uint32 elementSize, D3D12_RESOURCE_FLAGS flags /*D3D12_RESOURCE_FLAG_NONE*/)
 	{
 		Destroy();
 
@@ -201,7 +201,7 @@ namespace Dash
 		FGraphicsCore::Device->CreateUnorderedAccessView(mResource.Get(), nullptr, &uavDesc, mUnorderedAccessView.GetDescriptorHandle());
 	}
 
-	D3D12_VERTEX_BUFFER_VIEW FGpuVertexBuffer::GetVertexBufferView(uint32_t offset, uint32_t size, uint32_t stride) const
+	D3D12_VERTEX_BUFFER_VIEW FGpuVertexBuffer::GetVertexBufferView(uint32 offset, uint32 size, uint32 stride) const
 	{
 		D3D12_VERTEX_BUFFER_VIEW view{};
 		view.BufferLocation = mGpuVirtualAddress + offset;
@@ -210,7 +210,7 @@ namespace Dash
 		return view;
 	}
 
-	D3D12_INDEX_BUFFER_VIEW FGpuIndexBuffer::GetIndexBufferView(uint32_t offset, uint32_t size, bool is32Bit /*= false*/) const
+	D3D12_INDEX_BUFFER_VIEW FGpuIndexBuffer::GetIndexBufferView(uint32 offset, uint32 size, bool is32Bit /*= false*/) const
 	{
 		D3D12_INDEX_BUFFER_VIEW view{};
 		view.BufferLocation = mGpuVirtualAddress + offset;

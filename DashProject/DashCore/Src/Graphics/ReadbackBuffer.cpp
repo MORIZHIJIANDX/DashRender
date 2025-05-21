@@ -34,7 +34,7 @@ namespace Dash
 		}
 	}
 
-	void FReadbackBuffer::CreateReadbackBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize)
+	void FReadbackBuffer::CreateReadbackBuffer(const std::string& name, uint32 numElements, uint32 elementSize)
 	{
 		Destroy();
 

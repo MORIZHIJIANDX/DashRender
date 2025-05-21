@@ -63,7 +63,7 @@ namespace Dash
 		 * Flush any (non-pending) resource barriers that have been pushed to the resource state
 		 * tracker.
 		 */
-		uint32_t FlushResourceBarriers(FCommandList* commandList);
+		uint32 FlushResourceBarriers(FCommandList* commandList);
 
 		/**
 		 * Commit final resource states to the global resource state map.

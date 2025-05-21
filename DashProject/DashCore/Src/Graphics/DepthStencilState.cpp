@@ -19,7 +19,7 @@ namespace Dash
 	}
 
 	FDepthStencilState::FDepthStencilState(bool depthTestEnable, EDepthWriteMask depthWriteMask, EDepthStencilComparisonFunc depthFunc, bool stencilTestEnable,
-		uint8_t stencilReadMask, uint8_t stencilWriteMask)
+		uint8 stencilReadMask, uint8 stencilWriteMask)
 	{
 		mDesc.DepthEnable = depthTestEnable;
 		mDesc.DepthWriteMask = GetD3DDepthWriteMask(depthWriteMask);
@@ -49,7 +49,7 @@ namespace Dash
 		mDesc.DepthBoundsTestEnable = enable;
 	}
 
-	void FDepthStencilState::SetStencilMask(uint8_t stencilReadMask, uint8_t stencilWriteMask)
+	void FDepthStencilState::SetStencilMask(uint8 stencilReadMask, uint8 stencilWriteMask)
 	{
 		mDesc.StencilReadMask = stencilReadMask;
 		mDesc.StencilWriteMask = stencilWriteMask;

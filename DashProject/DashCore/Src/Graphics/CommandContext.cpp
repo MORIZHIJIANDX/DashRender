@@ -18,7 +18,7 @@ namespace Dash
 
 		std::lock_guard<std::mutex> lock(mAllocationMutex);
 
-		for (int32_t contextType = 0; contextType < 4; ++contextType)
+		for (int32 contextType = 0; contextType < 4; ++contextType)
 		{
 			while (!mRetiredContexts[contextType].empty() && FGraphicsCore::CommandQueueManager->IsFenceCompleted(mRetiredContexts[contextType].front().first))
 			{
@@ -65,7 +65,7 @@ namespace Dash
 		return context;
 	}
 
-	void FCommandContextManager::FreeContext(uint64_t fenceValue, FCommandContext* context)
+	void FCommandContextManager::FreeContext(uint64 fenceValue, FCommandContext* context)
 	{
 		ASSERT(context != nullptr);
 		std::lock_guard<std::mutex> lock(mAllocationMutex);
@@ -77,7 +77,7 @@ namespace Dash
 	{
 		std::lock_guard<std::mutex> lock(mAllocationMutex);
 
-		for (int32_t index = 0; index < 4; ++index)
+		for (int32 index = 0; index < 4; ++index)
 		{
 			for (auto& contextPtr : mContextPool[index])
 			{
@@ -88,7 +88,7 @@ namespace Dash
 
 	void FCommandContextManager::Destroy()
 	{
-		for (uint32_t index = 0; index < 4; ++index)
+		for (uint32 index = 0; index < 4; ++index)
 		{
 			mContextPool[index].clear();
 		}
@@ -118,19 +118,19 @@ namespace Dash
 		return newContext;
 	}
 
-	void FCopyCommandContextBase::BeginQuery(FQueryHeapRef queryHeap, uint32_t queryIndex)
+	void FCopyCommandContextBase::BeginQuery(FQueryHeapRef queryHeap, uint32 queryIndex)
 	{
 		D3D12_QUERY_TYPE queryType = D3DQueryType(queryHeap->GetDesc().type);
 		mD3DCommandList->BeginQuery(queryHeap->D3DQueryHeap(), queryType, queryIndex);
 	}
 
-	void FCopyCommandContextBase::EndQuery(FQueryHeapRef queryHeap, uint32_t queryIndex)
+	void FCopyCommandContextBase::EndQuery(FQueryHeapRef queryHeap, uint32 queryIndex)
 	{
 		D3D12_QUERY_TYPE queryType = D3DQueryType(queryHeap->GetDesc().type);
 		mD3DCommandList->EndQuery(queryHeap->D3DQueryHeap(), queryType, queryIndex);
 	}
 
-	void FCopyCommandContextBase::ResolveQueryData(FQueryHeapRef queryHeap, uint32_t startIndex, uint32_t numQueries, FGpuBufferRef dest, uint32_t destOffset)
+	void FCopyCommandContextBase::ResolveQueryData(FQueryHeapRef queryHeap, uint32 startIndex, uint32 numQueries, FGpuBufferRef dest, uint32 destOffset)
 	{
 		TransitionBarrier(dest, EResourceState::CopyDestination, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 
@@ -138,11 +138,11 @@ namespace Dash
 		mD3DCommandList->ResolveQueryData(queryHeap->D3DQueryHeap(), queryType, startIndex, numQueries, dest->GetResource(), destOffset);
 	}
 
-	uint64_t FCopyCommandContextBase::Flush(bool waitForCompletion /*= false*/)
+	uint64 FCopyCommandContextBase::Flush(bool waitForCompletion /*= false*/)
 	{
 		FlushResourceBarriers();
 
-		uint64_t fenceValue = Execute();
+		uint64 fenceValue = Execute();
 
 		if (waitForCompletion)
 		{
@@ -173,13 +173,13 @@ namespace Dash
 		return fenceValue;
 	}
 
-	uint64_t FCopyCommandContextBase::Finish(bool waitForCompletion /*= false*/)
+	uint64 FCopyCommandContextBase::Finish(bool waitForCompletion /*= false*/)
 	{
 		FlushResourceBarriers();
 
 		PIXEndEvent();
 
-		uint64_t fenceValue = Execute();
+		uint64 fenceValue = Execute();
 
 		if (waitForCompletion)
 		{
@@ -241,7 +241,7 @@ namespace Dash
 		context.Finish(true);
 	}
 
-	void FCopyCommandContextBase::UpdateTextureBuffer(FTextureBufferRef dest, uint32_t firstSubresource, uint32_t numSubresources, const FSubResourceData* subresourceData)
+	void FCopyCommandContextBase::UpdateTextureBuffer(FTextureBufferRef dest, uint32 firstSubresource, uint32 numSubresources, const FSubResourceData* subresourceData)
 	{
 		ASSERT(subresourceData != nullptr);
 
@@ -376,7 +376,7 @@ namespace Dash
 		mTrackedObjects.clear();
 	}
 
-	uint64_t FCommandContext::Execute()
+	uint64 FCommandContext::Execute()
 	{
 		FGpuResourcesStateTracker::Lock();
 
@@ -388,7 +388,7 @@ namespace Dash
 		{
 			std::vector<FCommandList*> commandListsToExecute{ flushBarrierCommand, mCommandList };
 
-			uint64_t fenceValue = FGraphicsCore::CommandQueueManager->GetQueue(mType).ExecuteCommandLists(commandListsToExecute);
+			uint64 fenceValue = FGraphicsCore::CommandQueueManager->GetQueue(mType).ExecuteCommandLists(commandListsToExecute);
 
 			FGraphicsCore::CommandListManager->RetiredUsedCommandList(fenceValue, flushBarrierCommand);
 
@@ -400,7 +400,7 @@ namespace Dash
 		{
 			std::vector<FCommandList*> commandListsToExecute{ mCommandList };
 
-			uint64_t fenceValue = FGraphicsCore::CommandQueueManager->GetQueue(mType).ExecuteCommandLists(commandListsToExecute);
+			uint64 fenceValue = FGraphicsCore::CommandQueueManager->GetQueue(mType).ExecuteCommandLists(commandListsToExecute);
 
 			FGpuResourcesStateTracker::Unlock();
 
@@ -505,7 +505,7 @@ namespace Dash
 		TrackResource(target);
 	}
 
-	void FComputeCommandContextBase::Dispatch(uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)
+	void FComputeCommandContextBase::Dispatch(uint32 groupCountX, uint32 groupCountY, uint32 groupCountZ)
 	{
 		CheckUnboundShaderParameters();
 
@@ -531,7 +531,7 @@ namespace Dash
 
 		if (shaderPass)
 		{
-			int32_t shaderParameterIndex = shaderPass->FindCBVParameterByName(bufferName);
+			int32 shaderParameterIndex = shaderPass->FindCBVParameterByName(bufferName);
 			if (shaderParameterIndex != INDEX_NONE)
 			{
 				const std::vector<FShaderParameter>& parameters = shaderPass->GetCBVParameters();
@@ -554,7 +554,7 @@ namespace Dash
 
 		if (shaderPass)
 		{
-			int32_t shaderParameterIndex = shaderPass->FindSRVParameterByName(srvrName);
+			int32 shaderParameterIndex = shaderPass->FindSRVParameterByName(srvrName);
 			if (shaderParameterIndex != INDEX_NONE)
 			{
 				const std::vector<FShaderParameter>& parameters = shaderPass->GetSRVParameters();
@@ -576,7 +576,7 @@ namespace Dash
 
 		if (shaderPass)
 		{
-			int32_t shaderParameterIndex = shaderPass->FindSRVParameterByName(srvrName);
+			int32 shaderParameterIndex = shaderPass->FindSRVParameterByName(srvrName);
 			if (shaderParameterIndex != INDEX_NONE)
 			{
 				const std::vector<FShaderParameter>& parameters = shaderPass->GetSRVParameters();
@@ -598,7 +598,7 @@ namespace Dash
 
 		if (shaderPass)
 		{
-			int32_t shaderParameterIndex = shaderPass->FindSRVParameterByName(srvrName);
+			int32 shaderParameterIndex = shaderPass->FindSRVParameterByName(srvrName);
 			if (shaderParameterIndex != INDEX_NONE)
 			{
 				const std::vector<FShaderParameter>& parameters = shaderPass->GetSRVParameters();
@@ -618,7 +618,7 @@ namespace Dash
 
 		if (shaderPass)
 		{
-			int32_t shaderParameterIndex = shaderPass->FindUAVParameterByName(uavName);
+			int32 shaderParameterIndex = shaderPass->FindUAVParameterByName(uavName);
 			if (shaderParameterIndex != INDEX_NONE)
 			{
 				const std::vector<FShaderParameter>& parameters = shaderPass->GetUAVParameters();
@@ -886,9 +886,9 @@ namespace Dash
 		mD3DCommandList->IASetVertexBuffers(startSlot, static_cast<UINT>(vetexBufferViews.size()), vetexBufferViews.data());
 	}
 
-	void FGraphicsCommandContextBase::SetDynamicIndexBuffer(size_t indexCount, const uint16_t* data)
+	void FGraphicsCommandContextBase::SetDynamicIndexBuffer(size_t indexCount, const uint16* data)
 	{
-		size_t dataSize = indexCount * sizeof(uint16_t);
+		size_t dataSize = indexCount * sizeof(uint16);
 		FGpuLinearAllocator::FAllocation alloc = mLinearAllocator.Allocate(dataSize);
 		memcpy(alloc.CpuAddress, data, dataSize);
 

@@ -209,7 +209,7 @@ namespace Dash
 	{
 	public:
 		using base = FEventArgs;
-		FUpdateEventArgs(double fDeltaTime, double fTotalTime, uint64_t frameCounter)
+		FUpdateEventArgs(double fDeltaTime, double fTotalTime, uint64 frameCounter)
 			: ElapsedTime(fDeltaTime)
 			, TotalTime(fTotalTime)
 			, FrameCounter(frameCounter)
@@ -217,7 +217,7 @@ namespace Dash
 
 		double ElapsedTime;
 		double TotalTime;
-		uint64_t FrameCounter;
+		uint64 FrameCounter;
 	};
 
 	using FUpdateEvent = TMulticastDelegate<void(FUpdateEventArgs&)>;
@@ -229,7 +229,7 @@ namespace Dash
 	public:
 		using base = FEventArgs;
 		FRenderEventArgs(double fDeltaTime, double fTotalTime,
-			uint64_t frameCounter)
+			uint64 frameCounter)
 			: ElapsedTime(fDeltaTime)
 			, TotalTime(fTotalTime)
 			, FrameCounter(frameCounter)
@@ -237,7 +237,7 @@ namespace Dash
 
 		double ElapsedTime;
 		double TotalTime;
-		uint64_t FrameCounter;
+		uint64 FrameCounter;
 	};
 
 	using FRenderEvent = TMulticastDelegate<void(FRenderEventArgs&)>;

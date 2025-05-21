@@ -5,7 +5,7 @@
 namespace Dash
 {
 
-	FCpuDescriptorAllocator::FCpuDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t defaultHeapSize /*= 256*/)
+	FCpuDescriptorAllocator::FCpuDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32 defaultHeapSize /*= 256*/)
 	: mType(type)
 	, mDefaultHeapSize(defaultHeapSize)
 	{	
@@ -16,7 +16,7 @@ namespace Dash
 		Destroy();
 	}
 
-	FCpuDescriptorAllocation FCpuDescriptorAllocator::Allocate(uint32_t numDescriptors)
+	FCpuDescriptorAllocation FCpuDescriptorAllocator::Allocate(uint32 numDescriptors)
 	{
 		std::lock_guard lock(mAllocationMutex);
 
@@ -56,7 +56,7 @@ namespace Dash
 	{
 		std::lock_guard lock(mAllocationMutex);
 
-		for (int32_t Index = 0; Index < mHeapPool.size(); ++Index)
+		for (int32 Index = 0; Index < mHeapPool.size(); ++Index)
 		{
 			mHeapPool[Index]->ReleaseStaleDescriptors();
 
@@ -75,12 +75,12 @@ namespace Dash
 		mHeapPool.clear();
 	}
 
-	std::shared_ptr<FCpuDescriptorAllocatorPage> FCpuDescriptorAllocator::RequestNewHeap(uint32_t heapSize /*= 0*/)
+	std::shared_ptr<FCpuDescriptorAllocatorPage> FCpuDescriptorAllocator::RequestNewHeap(uint32 heapSize /*= 0*/)
 	{
 		std::shared_ptr<FCpuDescriptorAllocatorPage> page = std::make_shared<FCpuDescriptorAllocatorPage>(mType, heapSize);
 
 		mHeapPool.push_back(page);
-		mAvailableHeaps.insert(static_cast<uint32_t>(mHeapPool.size()) - 1);
+		mAvailableHeaps.insert(static_cast<uint32>(mHeapPool.size()) - 1);
 
 		return page;
 	}
@@ -93,7 +93,7 @@ namespace Dash
 	{
 	}
 
-	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::Allocate(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors)
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::Allocate(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32 numDescriptors)
 	{
 		if (type == D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
 		{
@@ -105,32 +105,32 @@ namespace Dash
 		}
 	}
 
-	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateCBVDescriptor(uint32_t numDescriptors)
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateCBVDescriptor(uint32 numDescriptors)
 	{
 		return mCbvSrvUavAllocator.Allocate(numDescriptors);
 	}
 
-	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateSRVDescriptor(uint32_t numDescriptors)
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateSRVDescriptor(uint32 numDescriptors)
 	{
 		return mCbvSrvUavAllocator.Allocate(numDescriptors);
 	}
 
-	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateUAVDescriptor(uint32_t numDescriptors)
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateUAVDescriptor(uint32 numDescriptors)
 	{
 		return mCbvSrvUavAllocator.Allocate(numDescriptors);
 	}
 
-	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateRTVDescriptor(uint32_t numDescriptors)
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateRTVDescriptor(uint32 numDescriptors)
 	{
 		return mRTVAllocator.Allocate(numDescriptors);
 	}
 
-	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateDSVDescriptor(uint32_t numDescriptors)
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateDSVDescriptor(uint32 numDescriptors)
 	{
 		return mDSVAllocator.Allocate(numDescriptors);
 	}
 
-	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateSamplerDescriptor(uint32_t numDescriptors)
+	FCpuDescriptorAllocation FCpuDescriptorAllocatorManager::AllocateSamplerDescriptor(uint32 numDescriptors)
 	{
 		return mSamplerAllocator.Allocate(numDescriptors);
 	}

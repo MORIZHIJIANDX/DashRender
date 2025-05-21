@@ -10,16 +10,16 @@ namespace Dash
 	class FDynamicDescriptorHeap
 	{
 	public:
-		FDynamicDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptorsPerHeap = 1024);
+		FDynamicDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32 numDescriptorsPerHeap = 1024);
 		~FDynamicDescriptorHeap();
 
-		void StageDescriptors(uint32_t rootParameterIndex, uint32_t offset, uint32_t numDescriptors, const D3D12_CPU_DESCRIPTOR_HANDLE& srcDescriptors);
+		void StageDescriptors(uint32 rootParameterIndex, uint32 offset, uint32 numDescriptors, const D3D12_CPU_DESCRIPTOR_HANDLE& srcDescriptors);
 
-		void StageInlineCBV(uint32_t rootParameterIndex, D3D12_GPU_VIRTUAL_ADDRESS gpuAddress);
+		void StageInlineCBV(uint32 rootParameterIndex, D3D12_GPU_VIRTUAL_ADDRESS gpuAddress);
 
-		void StageInlineSRV(uint32_t rootParameterIndex, D3D12_GPU_VIRTUAL_ADDRESS gpuAddress);
+		void StageInlineSRV(uint32 rootParameterIndex, D3D12_GPU_VIRTUAL_ADDRESS gpuAddress);
 
-		void StageInlineUAV(uint32_t rootParameterIndex, D3D12_GPU_VIRTUAL_ADDRESS gpuAddress);
+		void StageInlineUAV(uint32 rootParameterIndex, D3D12_GPU_VIRTUAL_ADDRESS gpuAddress);
 
 		void CommitStagedDescriptorsForDraw(FGraphicsCommandContextBase& context);
 		void CommitStagedDescriptorsForDispatch(FComputeCommandContextBase& context);
@@ -36,12 +36,12 @@ namespace Dash
 		ID3D12DescriptorHeap* RequestDescriptorHeap();
 		ID3D12DescriptorHeap* CreateDescriptorHeap();
 
-		uint32_t ComputeStaleDescriptorCount() const;
+		uint32 ComputeStaleDescriptorCount() const;
 
 		void CommitDescriptorTables(FComputeCommandContextBase& context, std::function<void(ID3D12GraphicsCommandList*, UINT, D3D12_GPU_DESCRIPTOR_HANDLE)> setFunc);
-		void CommitInlineDescriptors(FCommandContext& context, const D3D12_GPU_VIRTUAL_ADDRESS* gpuAddressArray, uint32_t& bitMask, std::function<void(ID3D12GraphicsCommandList*, UINT, D3D12_GPU_VIRTUAL_ADDRESS)> setFunc);
+		void CommitInlineDescriptors(FCommandContext& context, const D3D12_GPU_VIRTUAL_ADDRESS* gpuAddressArray, uint32& bitMask, std::function<void(ID3D12GraphicsCommandList*, UINT, D3D12_GPU_VIRTUAL_ADDRESS)> setFunc);
 
-		static const uint32_t MaxDescriptorTables = 32;
+		static const uint32 MaxDescriptorTables = 32;
 
 		struct FDescriptorTableCache
 		{
@@ -56,15 +56,15 @@ namespace Dash
 				BaseDescriptor = nullptr;
 			}
 
-			uint32_t NumDescriptors;
+			uint32 NumDescriptors;
 			D3D12_CPU_DESCRIPTOR_HANDLE* BaseDescriptor;
 		};
 
 		D3D12_DESCRIPTOR_HEAP_TYPE mDescriptorHeapType;
 
-		uint32_t mNumDescriptorsPerHeap;
+		uint32 mNumDescriptorsPerHeap;
 
-		uint32_t mDescriptorHandleIncrementSize;
+		uint32 mDescriptorHandleIncrementSize;
 
 		std::unique_ptr<D3D12_CPU_DESCRIPTOR_HANDLE[]> mDescriptorHandleCache;
 
@@ -76,15 +76,15 @@ namespace Dash
 
 		D3D12_GPU_VIRTUAL_ADDRESS mInlineUAV[MaxDescriptorTables];
 
-		uint32_t mDescriptorTableBitMask;
+		uint32 mDescriptorTableBitMask;
 
-		uint32_t mStaleDescriptorTableBitMask;
+		uint32 mStaleDescriptorTableBitMask;
 
-		uint32_t mStaleCBVBitMask;
+		uint32 mStaleCBVBitMask;
 
-		uint32_t mStaleSRVBitMask;
+		uint32 mStaleSRVBitMask;
 
-		uint32_t mStaleUAVBitMask;
+		uint32 mStaleUAVBitMask;
 
 		using DescriptorHeapPool = std::queue<Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>>;
 
@@ -95,6 +95,6 @@ namespace Dash
 		CD3DX12_GPU_DESCRIPTOR_HANDLE mCurrentGpuDescriptorHandle;
 		CD3DX12_CPU_DESCRIPTOR_HANDLE mCurrentCpuDescriptorHandle;
 
-		uint32_t mNumFreeHandles;
+		uint32 mNumFreeHandles;
 	};
 }

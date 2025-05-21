@@ -14,12 +14,12 @@ namespace Dash
 	struct FDepthStencilClearValue
 	{
 		float Depth;
-		uint8_t Stencil;
+		uint8 Stencil;
 	};
 
 	using FClearValue = std::variant<FColorClearValue, FDepthStencilClearValue>;
 
-	enum class EResourceFormat : uint32_t
+	enum class EResourceFormat : uint32
 	{
 		Unknown,
 
@@ -59,17 +59,17 @@ namespace Dash
 		Depth16_Float, Depth24_Float_Stencil8_Unsigned, Depth32_Float, Depth32_Float_Stencil8_Unsigned
 	};
 
-	enum class EColorSpace : uint8_t
+	enum class EColorSpace : uint8
 	{
 		Rec709, Rec2020
 	};
 
-	enum class ETextureDimension : uint8_t
+	enum class ETextureDimension : uint8
 	{
 		Texture1D, Texture2D, Texture3D
 	};
 
-	enum class EFormatSupport : uint16_t
+	enum class EFormatSupport : uint16
 	{
 		Invalid = 0,
 		Buffer = 1 << 1,
@@ -119,12 +119,12 @@ namespace Dash
 
 	struct FResourceMagnitude
 	{
-		FResourceMagnitude(uint32_t width, uint32_t height, uint32_t depth);
-		FResourceMagnitude(uint32_t width, uint32_t height);
-		FResourceMagnitude(uint32_t width);
+		FResourceMagnitude(uint32 width, uint32 height, uint32 depth);
+		FResourceMagnitude(uint32 width, uint32 height);
+		FResourceMagnitude(uint32 width);
 		FResourceMagnitude() = default;
 
-		uint32_t LargestMagnitude() const;
+		uint32 LargestMagnitude() const;
 		bool operator==(const FResourceMagnitude& rhs);
 		bool operator!=(const FResourceMagnitude& rhs);
 
@@ -132,9 +132,9 @@ namespace Dash
 		FResourceMagnitude XYMultiplied(float m) const;
 		FResourceMagnitude XYZMultiplied(float m) const;
 
-		uint32_t Width = 1;
-		uint32_t Height = 1;
-		uint32_t Depth = 1;
+		uint32 Width = 1;
+		uint32 Height = 1;
+		uint32 Depth = 1;
 	};
 
 	template<typename T>

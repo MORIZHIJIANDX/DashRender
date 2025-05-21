@@ -21,7 +21,7 @@ namespace Dash
 		RootSignatureHashMap.clear();
 	}
 
-	uint32_t FRootSignature::GetDescriptorTableBitMask(D3D12_DESCRIPTOR_HEAP_TYPE type) const
+	uint32 FRootSignature::GetDescriptorTableBitMask(D3D12_DESCRIPTOR_HEAP_TYPE type) const
 	{
 		if (type == D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
 		{
@@ -33,7 +33,7 @@ namespace Dash
 		}
 	}
 
-	uint32_t FRootSignature::GetNumDescriptors(uint32_t rootParameterIndex) const
+	uint32 FRootSignature::GetNumDescriptors(uint32 rootParameterIndex) const
 	{
 		ASSERT(rootParameterIndex < mNumParameters);
 		return mNumDescriptorsPerTable[rootParameterIndex];

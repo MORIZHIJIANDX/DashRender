@@ -56,5 +56,5 @@ namespace Dash
         EWIC_LOAD_FLAGS loadFlags,
         FTextureBufferDescription& textureDescription,
         std::vector<FSubResourceData>& subResource,
-        std::vector<uint8_t>& decodedData);
+        std::vector<uint8>& decodedData);
 }

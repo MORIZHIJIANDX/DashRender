@@ -8,11 +8,11 @@ namespace Dash
 {
     struct FD3D12VideoMemoryInfo
     {
-        uint64_t LocalMemoryUsage;
-        uint64_t LocalMemoryBudget;
+        uint64 LocalMemoryUsage;
+        uint64 LocalMemoryBudget;
 
-        uint64_t NonLocalMemoryUsage;
-        uint64_t NonLocalMemoryBudget;
+        uint64 NonLocalMemoryUsage;
+        uint64 NonLocalMemoryBudget;
     };
     
 

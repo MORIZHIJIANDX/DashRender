@@ -5,7 +5,7 @@ namespace Dash
 	class FQueryHeap;
 	using FQueryHeapRef = std::shared_ptr<FQueryHeap>;
 
-	enum class EGpuQueryType : uint8_t
+	enum class EGpuQueryType : uint8
 	{
 		Occlusion,
 		BinaryOcclusion,
@@ -18,7 +18,7 @@ namespace Dash
 
 	struct FQueryHeapDesc
 	{
-		uint32_t count;
+		uint32 count;
 		EGpuQueryType type;
 	};
 

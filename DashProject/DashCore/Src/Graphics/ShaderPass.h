@@ -32,10 +32,10 @@ namespace Dash
 		const std::map<EShaderStage, FShaderResourceRef>& GetShaders() const { return mShaders; }
 		size_t GetShadersHash() const { return ShadersHash; }
 
-		int32_t FindCBVParameterByName(const std::string& parameterName) const;
-		int32_t FindSRVParameterByName(const std::string& parameterName) const;
-		int32_t FindUAVParameterByName(const std::string& parameterName) const;
-		int32_t FindSamplerParameterByName(const std::string& parameterName) const;
+		int32 FindCBVParameterByName(const std::string& parameterName) const;
+		int32 FindSRVParameterByName(const std::string& parameterName) const;
+		int32 FindUAVParameterByName(const std::string& parameterName) const;
+		int32 FindSamplerParameterByName(const std::string& parameterName) const;
 
 		size_t GetCBVParameterNum() const { return mCBVParameters.size(); }
 		size_t GetSRVParameterNum() const { return mSRVParameters.size(); }
@@ -64,7 +64,7 @@ namespace Dash
 		void CreateRootSignature(bool createStaticSamplers);
 		D3D12_SHADER_VISIBILITY GetShaderVisibility(EShaderStage stage);
 		std::vector<FSamplerDesc> CreateStaticSamplers();
-		int32_t FindParameterByName(const std::vector<FShaderParameter>& parameterArray, const std::string& parameterName) const;
+		int32 FindParameterByName(const std::vector<FShaderParameter>& parameterArray, const std::string& parameterName) const;
 		std::vector<std::string> GetParameterNames(const std::vector<FShaderParameter>& parameterArray) const;
 		void InitDescriptorRanges(std::vector<FShaderParameter>& parameters, UINT& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType);
 

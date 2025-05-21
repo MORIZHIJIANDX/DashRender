@@ -37,7 +37,7 @@ namespace Dash
 
 	void IGameApp::Cleanup()
 	{
-		for (uint32_t i = 0; i < mRenderLayers.size(); i++)
+		for (uint32 i = 0; i < mRenderLayers.size(); i++)
 		{
 			mRenderLayers[i]->Shutdown();
 		}
@@ -52,7 +52,7 @@ namespace Dash
 			return false;
 		}
 
-		for (uint32_t i = 0; i < mRenderLayers.size(); i++)
+		for (uint32 i = 0; i < mRenderLayers.size(); i++)
 		{
 			if (mRenderLayers[i]->GetLayerId() == layer->GetLayerId() ||
 				mRenderLayers[i]->GetLayerName() == layer->GetLayerName())
@@ -92,7 +92,7 @@ namespace Dash
 
 	void IGameApp::OnBeginFrame()
 	{
-		for (uint32_t i = 0; i < mRenderLayers.size(); i++)
+		for (uint32 i = 0; i < mRenderLayers.size(); i++)
 		{
 			mRenderLayers[i]->OnBeginFrame();
 		}
@@ -100,7 +100,7 @@ namespace Dash
 
 	void IGameApp::OnEndFrame()
 	{
-		for (uint32_t i = 0; i < mRenderLayers.size(); i++)
+		for (uint32 i = 0; i < mRenderLayers.size(); i++)
 		{
 			mRenderLayers[i]->OnEndFrame();
 		}
@@ -112,7 +112,7 @@ namespace Dash
 	{
 		FGraphicsCore::Profiler->NewFrame();
 
-		for (uint32_t i = 0; i < mRenderLayers.size(); i++)
+		for (uint32 i = 0; i < mRenderLayers.size(); i++)
 		{
 			mRenderLayers[i]->OnUpdate(e);
 		}
@@ -120,7 +120,7 @@ namespace Dash
 
 	void IGameApp::OnRender(const FRenderEventArgs& e)
 	{
-		for (uint32_t i = 0; i < mRenderLayers.size(); i++)
+		for (uint32 i = 0; i < mRenderLayers.size(); i++)
 		{
 			mRenderLayers[i]->OnRender(e);
 		}
@@ -133,7 +133,7 @@ namespace Dash
 
 		FGraphicsCore::SwapChain->OnWindowResize(mWindowWidth, mWindowHeight);
 
-		for (uint32_t i = 0; i < mRenderLayers.size(); i++)
+		for (uint32 i = 0; i < mRenderLayers.size(); i++)
 		{
 			mRenderLayers[i]->OnWindowResize(e);
 		}

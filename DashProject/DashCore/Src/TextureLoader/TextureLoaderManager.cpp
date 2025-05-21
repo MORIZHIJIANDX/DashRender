@@ -72,7 +72,7 @@ namespace Dash
 	{
 		if (mImportTextures.contains(texturePath))
 		{
-			int32_t RefCount = mImportTextures[texturePath].Release();
+			int32 RefCount = mImportTextures[texturePath].Release();
 			if (RefCount <= 0)
 			{
 				mImportTextures.erase(texturePath);		
@@ -89,7 +89,7 @@ namespace Dash
 		ConstructPureColorTexture("Black", FColor::Black);
 	}
 
-	void FTextureLoaderManager::ConstructPureColorTexture(const std::string_view& textureName, const FColor& color, int32_t width, int32_t height)
+	void FTextureLoaderManager::ConstructPureColorTexture(const std::string_view& textureName, const FColor& color, int32 width, int32 height)
 	{
 		FImportedTextureData importedTextureData;
 		importedTextureData.SourceTexturePath = textureName;
@@ -98,9 +98,9 @@ namespace Dash
 
 		FColor* DataPtr = (FColor*)importedTextureData.DecodedData.data();
 
-		for (uint32_t y = 0; y < importedTextureData.TextureDescription.Magnitude.Height; y++)
+		for (uint32 y = 0; y < importedTextureData.TextureDescription.Magnitude.Height; y++)
 		{
-			for (uint32_t x = 0; x < importedTextureData.TextureDescription.Magnitude.Width; x++)
+			for (uint32 x = 0; x < importedTextureData.TextureDescription.Magnitude.Width; x++)
 			{
 				*DataPtr = color;
 			}

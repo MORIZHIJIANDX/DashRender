@@ -3,7 +3,7 @@
 
 namespace Dash
 {
-	D3D_PRIMITIVE_TOPOLOGY D3DPrimitiveTopology(EPrimitiveTopology topology, uint8_t numControlPatches)
+	D3D_PRIMITIVE_TOPOLOGY D3DPrimitiveTopology(EPrimitiveTopology topology, uint8 numControlPatches)
 	{
 		switch (topology)
 		{

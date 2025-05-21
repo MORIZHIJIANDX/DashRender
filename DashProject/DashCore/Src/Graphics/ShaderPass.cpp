@@ -40,14 +40,14 @@ namespace Dash
 	void FShaderPass::SetShaders(const std::vector<FShaderCreationInfo>& creationInfos)
 	{
 		std::set<EShaderStage> validShaderStages;
-		for (int32_t i = 0; i < creationInfos.size(); i++)
+		for (int32 i = 0; i < creationInfos.size(); i++)
 		{
 			validShaderStages.insert(creationInfos[i].Stage);
 		}
 		
 		ASSERT_MSG(validShaderStages.size() == creationInfos.size(), "Set duplicates shader stages.");
 
-		for (int32_t i = 0; i < creationInfos.size(); i++)
+		for (int32 i = 0; i < creationInfos.size(); i++)
 		{
 			EShaderStage stage = creationInfos[i].Stage;
 			mShaders[stage] = FShaderMap::LoadShader(creationInfos[i]);
@@ -182,22 +182,22 @@ namespace Dash
 		CreateRootSignature(createStaticSamplers);
 	}
 
-	int32_t FShaderPass::FindCBVParameterByName(const std::string& parameterName) const
+	int32 FShaderPass::FindCBVParameterByName(const std::string& parameterName) const
 	{
 		return FindParameterByName(mCBVParameters, parameterName);
 	}
 
-	int32_t FShaderPass::FindSRVParameterByName(const std::string& parameterName) const
+	int32 FShaderPass::FindSRVParameterByName(const std::string& parameterName) const
 	{
 		return FindParameterByName(mSRVParameters, parameterName);
 	}
 
-	int32_t FShaderPass::FindUAVParameterByName(const std::string& parameterName) const
+	int32 FShaderPass::FindUAVParameterByName(const std::string& parameterName) const
 	{
 		return FindParameterByName(mUAVParameters, parameterName);
 	}
 
-	int32_t FShaderPass::FindSamplerParameterByName(const std::string& parameterName) const
+	int32 FShaderPass::FindSamplerParameterByName(const std::string& parameterName) const
 	{
 		return FindParameterByName(mSamplerParameters, parameterName);
 	}
@@ -219,7 +219,7 @@ namespace Dash
 		UINT numRootParameters = numConstantParameters + (hasSRVParameters ? UINT(1) : UINT(0)) + (hasUAVParameters ? UINT(1) : UINT(0)) + (hasDynamicSamplerParameters ? UINT(1) : UINT(0));
 		mRootSignatureRef->Reset(numRootParameters, createStaticSamplers ? 8 : 0);
 		
-		uint32_t rootParameterIndex = 0;
+		uint32 rootParameterIndex = 0;
 		if (hasConstantParameters)
 		{
 			std::sort(mCBVParameters.begin(), mCBVParameters.end(), [](const FShaderParameter& paramA, const FShaderParameter& paramB)
@@ -300,9 +300,9 @@ namespace Dash
 		return StaticSamplers;
 	}
 
-	int32_t FShaderPass::FindParameterByName(const std::vector<FShaderParameter>& parameterArray, const std::string& parameterName) const
+	int32 FShaderPass::FindParameterByName(const std::vector<FShaderParameter>& parameterArray, const std::string& parameterName) const
 	{
-		for (int32_t i = 0; i < parameterArray.size(); i++)
+		for (int32 i = 0; i < parameterArray.size(); i++)
 		{
 			if (parameterArray[i].Name == parameterName)
 			{

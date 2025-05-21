@@ -166,20 +166,20 @@ namespace Dash
 	FColor FLinearColor::Quantize() const
 	{
 		return FColor(
-			(uint8_t)FMath::Clamp<int>(FMath::TruncToInt(r * 255.f), 0, 255),
-			(uint8_t)FMath::Clamp<int>(FMath::TruncToInt(g * 255.f), 0, 255),
-			(uint8_t)FMath::Clamp<int>(FMath::TruncToInt(b * 255.f), 0, 255),
-			(uint8_t)FMath::Clamp<int>(FMath::TruncToInt(a * 255.f), 0, 255)
+			(uint8)FMath::Clamp<int>(FMath::TruncToInt(r * 255.f), 0, 255),
+			(uint8)FMath::Clamp<int>(FMath::TruncToInt(g * 255.f), 0, 255),
+			(uint8)FMath::Clamp<int>(FMath::TruncToInt(b * 255.f), 0, 255),
+			(uint8)FMath::Clamp<int>(FMath::TruncToInt(a * 255.f), 0, 255)
 		);
 	}
 
 	FColor FLinearColor::QuantizeRound() const
 	{
 		return FColor(
-			(uint8_t)FMath::Clamp<int>(FMath::RoundToInt(r * 255.f), 0, 255),
-			(uint8_t)FMath::Clamp<int>(FMath::RoundToInt(g * 255.f), 0, 255),
-			(uint8_t)FMath::Clamp<int>(FMath::RoundToInt(b * 255.f), 0, 255),
-			(uint8_t)FMath::Clamp<int>(FMath::RoundToInt(a * 255.f), 0, 255)
+			(uint8)FMath::Clamp<int>(FMath::RoundToInt(r * 255.f), 0, 255),
+			(uint8)FMath::Clamp<int>(FMath::RoundToInt(g * 255.f), 0, 255),
+			(uint8)FMath::Clamp<int>(FMath::RoundToInt(b * 255.f), 0, 255),
+			(uint8)FMath::Clamp<int>(FMath::RoundToInt(a * 255.f), 0, 255)
 		);
 	}
 
@@ -235,7 +235,7 @@ namespace Dash
 		return FColor(FZero{});
 	}
 
-	FColor::FColor(const TScalarArray<uint8_t, 4>& InColor)
+	FColor::FColor(const TScalarArray<uint8, 4>& InColor)
 		: r(InColor.X), g(InColor.Y), b(InColor.Z), a(InColor.W)
 	{
 	}
@@ -255,7 +255,7 @@ namespace Dash
 	/**
 	 * Old version of MakeFromHSV8, formula is not correct
 	 */
-	//FLinearColor FLinearColor::FGetHSV(uint8_t H, uint8_t S, uint8_t V)
+	//FLinearColor FLinearColor::FGetHSV(uint8 H, uint8 S, uint8 V)
 	//{
 	//	float Brightness = V * 1.4f / 255.f;
 	//	Brightness *= 0.7f / (0.01f + FMath::Sqrt(Brightness));
@@ -268,7 +268,7 @@ namespace Dash
 	/**
 	 * Converts byte hue-saturation-brightness to floating point red-green-blue.
 	 */
-	FLinearColor FLinearColor::MakeFromHSV8(uint8_t H, uint8_t S, uint8_t V)
+	FLinearColor FLinearColor::MakeFromHSV8(uint8 H, uint8 S, uint8 V)
 	{
 		// want a given H value of 255 to map to just below 360 degrees
 		const FLinearColor HSVColor((float)H * (360.0f / 256.0f), (float)S / 255.0f, (float)V / 255.0f);
@@ -315,7 +315,7 @@ namespace Dash
 			Value * (1.0f - (HDiv60_Fraction * Saturation)),
 			Value * (1.0f - ((1.0f - HDiv60_Fraction) * Saturation)),
 		};
-		const uint32_t RGBSwizzle[6][3] = {
+		const uint32 RGBSwizzle[6][3] = {
 			{0, 3, 1},
 			{2, 0, 1},
 			{1, 0, 3},
@@ -323,7 +323,7 @@ namespace Dash
 			{3, 1, 0},
 			{0, 1, 2},
 		};
-		const uint32_t SwizzleIndex = ((uint32_t)HDiv60_Floor) % 6;
+		const uint32 SwizzleIndex = ((uint32)HDiv60_Floor) % 6;
 
 		return FLinearColor(RGBValues[RGBSwizzle[SwizzleIndex][0]],
 			RGBValues[RGBSwizzle[SwizzleIndex][1]],
@@ -377,7 +377,7 @@ namespace Dash
 	*/
 	FLinearColor FLinearColor::MakeRandomColor()
 	{
-		const uint8_t Hue = (uint8_t)(FMath::FRand() * 255.f);
+		const uint8 Hue = (uint8)(FMath::FRand() * 255.f);
 		return FLinearColor::MakeFromHSV8(Hue, 255, 255);
 	}
 

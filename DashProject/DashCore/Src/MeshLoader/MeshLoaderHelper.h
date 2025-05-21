@@ -8,7 +8,7 @@
 
 namespace Dash
 {
-    enum class EVertexAttribute : uint8_t
+    enum class EVertexAttribute : uint8
     {
         Position,
         Normal,
@@ -23,10 +23,10 @@ namespace Dash
 
     struct FMeshSectionData
     {
-        uint32_t VertexStart{ 0 };
-        uint32_t VertexCount{ 0 };
-        uint32_t IndexStart{ 0 };
-        uint32_t IndexCount{ 0 };
+        uint32 VertexStart{ 0 };
+        uint32 VertexCount{ 0 };
+        uint32 IndexStart{ 0 };
+        uint32 IndexCount{ 0 };
 
         std::string MaterialSlotName;
     };
@@ -38,9 +38,9 @@ namespace Dash
         bool HasVertexColor = false;
         bool HasUV = false;
 
-        uint32_t NumVertexes = 0;
-        uint32_t NumTexCoord = 0;
-        std::vector<uint32_t> Indices;
+        uint32 NumVertexes = 0;
+        uint32 NumTexCoord = 0;
+        std::vector<uint32> Indices;
 
         std::vector<FVector3f> PositionData;
         std::vector<FVector3f> NormalData;

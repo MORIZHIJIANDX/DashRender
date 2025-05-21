@@ -11,7 +11,7 @@ namespace Dash
 {
 	#define SWAP_CHAIN_BUFFER_COUNT 3
 
-	enum class ESwapChainBitDepth : uint8_t
+	enum class ESwapChainBitDepth : uint8
 	{
 		_8 = 0,
 		_10,
@@ -22,7 +22,7 @@ namespace Dash
 	class FSwapChain
 	{
 	public:
-		FSwapChain(uint32_t displayWdith, uint32_t displayHeight, EResourceFormat colorBufferFormat =
+		FSwapChain(uint32 displayWdith, uint32 displayHeight, EResourceFormat colorBufferFormat =
 			EResourceFormat::RGBA16_Float, EResourceFormat depthBufferFormat = EResourceFormat::Depth32_Float, ESwapChainBitDepth swapChainBitDepth = ESwapChainBitDepth::_8)
 			: mDisplayWdith(displayWdith)
 			, mDisplayHeight(displayHeight)
@@ -45,8 +45,8 @@ namespace Dash
 		EResourceFormat GetColorBufferFormat() const;
 		EResourceFormat GetDepthBufferFormat() const;
 
-		uint32_t GetDisplayWidth() const;
-		uint32_t GetDisplayHeight() const;
+		uint32 GetDisplayWidth() const;
+		uint32 GetDisplayHeight() const;
 
 		void Present();
 		void ToggleFullscreenMode();
@@ -54,8 +54,8 @@ namespace Dash
 		UINT GetCurrentBackBufferIndex() const;
 
 		void OnKeyPressed(FKeyEventArgs& args);
-		void OnWindowResize(uint32_t newWidth, uint32_t newHeight);
-		void OnWindowMoved(uint32_t xPos, uint32_t yPos);
+		void OnWindowResize(uint32 newWidth, uint32 newHeight);
+		void OnWindowMoved(uint32 xPos, uint32 yPos);
 
 		void Destroy();
 	
@@ -81,10 +81,10 @@ namespace Dash
 
 		void Initialize();
 		void CreateDxgiFactory();
-		void CreateSwapChain(uint32_t newWidth, uint32_t newHeight);
+		void CreateSwapChain(uint32 newWidth, uint32 newHeight);
 		void CreateBuffers();
 		void DestroyBuffers();
-		void ForceRecreateBuffers(uint32_t newWidth, uint32_t newHeight);
+		void ForceRecreateBuffers(uint32 newWidth, uint32 newHeight);
 
 		void CheckDisplayHDRSupport();
 		void EnsureSwapChainColorSpace(ESwapChainBitDepth swapChainBitDepth, bool enableST2084);
@@ -93,8 +93,8 @@ namespace Dash
 		EResourceFormat BitDepthToSwapChainFormat(ESwapChainBitDepth bitDepth);
 
 	protected:
-		uint32_t mDisplayWdith = 1080;
-		uint32_t mDisplayHeight = 720;
+		uint32 mDisplayWdith = 1080;
+		uint32 mDisplayHeight = 720;
 		float mDisplayRate = 1.0f;
 		EResourceFormat mColorBufferFormat;
 		EResourceFormat mDepthBufferFormat;
@@ -110,7 +110,7 @@ namespace Dash
 		FColorBufferRef mColorBuffer = nullptr;
 		FDepthBufferRef mDepthBuffer = nullptr;
 		FColorBufferRef mSwapChainBuffer[SWAP_CHAIN_BUFFER_COUNT];
-		uint64_t mFenceValue[SWAP_CHAIN_BUFFER_COUNT];
+		uint64 mFenceValue[SWAP_CHAIN_BUFFER_COUNT];
 
 		Microsoft::WRL::ComPtr<IDXGIFactory4> mDxgiFactory;
 		Microsoft::WRL::ComPtr<IDXGISwapChain4> mSwapChain;

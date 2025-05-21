@@ -143,9 +143,9 @@ namespace Dash
 			mNumInitializedStaticSamplers = 0;
 		}
 
-		uint32_t GetDescriptorTableBitMask(D3D12_DESCRIPTOR_HEAP_TYPE type) const;
+		uint32 GetDescriptorTableBitMask(D3D12_DESCRIPTOR_HEAP_TYPE type) const;
 
-		uint32_t GetNumDescriptors(uint32_t rootParameterIndex) const;
+		uint32 GetNumDescriptors(uint32 rootParameterIndex) const;
 
 		void InitStaticSampler(UINT shaderRegister, const FSamplerDesc& desc, D3D12_SHADER_VISIBILITY visibility, UINT space = 0);
 
@@ -173,9 +173,9 @@ namespace Dash
 		UINT mNumParameters;
 		UINT mNumStaticSamplers;
 		UINT mNumInitializedStaticSamplers;
-		uint32_t mSamplerTableMask;
-		uint32_t mDescriptorTableMask;
-		uint32_t mNumDescriptorsPerTable[32];
+		uint32 mSamplerTableMask;
+		uint32 mDescriptorTableMask;
+		uint32 mNumDescriptorsPerTable[32];
 		std::unique_ptr<D3D12_STATIC_SAMPLER_DESC[]> mSamplerArray;
 		std::unique_ptr<FRootParameter[]> mParameterArray;
 		ID3D12RootSignature* mRootSignature;

@@ -96,15 +96,15 @@ namespace Dash
 
 		mInstanceBuffer = FGraphicsCore::Device->CreateStructuredBuffer<FInstanceDataType>("InstanceBuffer", 2, InstanceData.data());
 
-		std::vector<uint32_t> MatrixInstanceIDBuffer;
+		std::vector<uint32> MatrixInstanceIDBuffer;
 		MatrixInstanceIDBuffer.emplace_back(0);
 		MatrixInstanceIDBuffer.emplace_back(1);
-		mMatrixInstanceBuffer = FGraphicsCore::Device->CreateVertexBuffer<uint32_t>("MatrixInstanceIDBuffer", (uint32_t)MatrixInstanceIDBuffer.size(), MatrixInstanceIDBuffer.data());
+		mMatrixInstanceBuffer = FGraphicsCore::Device->CreateVertexBuffer<uint32>("MatrixInstanceIDBuffer", (uint32)MatrixInstanceIDBuffer.size(), MatrixInstanceIDBuffer.data());
 
-		std::vector<uint32_t> ColorInstanceIDBuffer;
+		std::vector<uint32> ColorInstanceIDBuffer;
 		ColorInstanceIDBuffer.emplace_back(1);
 		ColorInstanceIDBuffer.emplace_back(0);
-		mColorInstanceBuffer = FGraphicsCore::Device->CreateVertexBuffer<uint32_t>("ColorInstanceIDBuffer", (uint32_t)ColorInstanceIDBuffer.size(), ColorInstanceIDBuffer.data());
+		mColorInstanceBuffer = FGraphicsCore::Device->CreateVertexBuffer<uint32>("ColorInstanceIDBuffer", (uint32)ColorInstanceIDBuffer.size(), ColorInstanceIDBuffer.data());
 
 		OnMouseWheelDownDelegate = FMouseWheelEventDelegate::Create<FSceneRenderLayer, &FSceneRenderLayer::OnMouseWheelDown>(this);
 		OnMouseWheelUpDelegate = FMouseWheelEventDelegate::Create<FSceneRenderLayer, &FSceneRenderLayer::OnMouseWheelUp>(this);

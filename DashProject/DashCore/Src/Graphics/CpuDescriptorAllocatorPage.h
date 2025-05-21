@@ -7,31 +7,31 @@ namespace Dash
 	class FCpuDescriptorAllocatorPage : public std::enable_shared_from_this<FCpuDescriptorAllocatorPage>
 	{
 	public:
-		FCpuDescriptorAllocatorPage(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors);
+		FCpuDescriptorAllocatorPage(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32 numDescriptors);
 		~FCpuDescriptorAllocatorPage();
 
 		D3D12_DESCRIPTOR_HEAP_TYPE GetHeapType() const;
 
-		bool HasSpace(uint32_t numDescriptors) const;
+		bool HasSpace(uint32 numDescriptors) const;
 
-		uint32_t NumFreeHandles() const;
+		uint32 NumFreeHandles() const;
 
-		FCpuDescriptorAllocation Allocate(uint32_t numDescriptors);
+		FCpuDescriptorAllocation Allocate(uint32 numDescriptors);
 
 		void Free(FCpuDescriptorAllocation&& allocation);
 
 		void ReleaseStaleDescriptors();
 
 	private:
-		uint32_t ComputeOffset(D3D12_CPU_DESCRIPTOR_HANDLE descriptor) const;
+		uint32 ComputeOffset(D3D12_CPU_DESCRIPTOR_HANDLE descriptor) const;
 
-		void AddNewBlock(uint32_t offset, uint32_t numDescriptors);
+		void AddNewBlock(uint32 offset, uint32 numDescriptors);
 
-		void FreeBlock(uint32_t offset, uint32_t numDescriptors);
+		void FreeBlock(uint32 offset, uint32 numDescriptors);
 
 	private:
-		using OffsetType = uint32_t;
-		using SizeType = uint32_t;
+		using OffsetType = uint32;
+		using SizeType = uint32;
 
 		struct FFreeBlockInfo;
 
@@ -70,9 +70,9 @@ namespace Dash
 		D3D12_DESCRIPTOR_HEAP_TYPE mDescriptorHeapType;
 		D3D12_CPU_DESCRIPTOR_HANDLE mBaseDescriptor;
 
-		uint32_t mDescriptorHandelIncrementSize = 0;
-		uint32_t mNumFreeHandels = 0;
-		uint32_t mNumDescriptorsInHeap = 0;
+		uint32 mDescriptorHandelIncrementSize = 0;
+		uint32 mNumFreeHandels = 0;
+		uint32 mNumDescriptorsInHeap = 0;
 
 		std::mutex mAllocationMutex;
 	};

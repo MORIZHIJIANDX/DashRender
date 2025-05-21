@@ -303,54 +303,54 @@ namespace Dash
 
 		FColorBufferRef CreateColorBuffer(const std::string& name, ID3D12Resource* resource, EResourceState initStates = EResourceState::Common);
 		FColorBufferRef CreateColorBuffer(const std::string& name, const FColorBufferDescription& desc);
-		FColorBufferRef CreateColorBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t numMips, EResourceFormat format);
-		FColorBufferRef CreateColorBufferArray(const std::string& name, uint32_t width, uint32_t height, uint32_t arrayCount, uint32_t numMips, EResourceFormat format);
+		FColorBufferRef CreateColorBuffer(const std::string& name, uint32 width, uint32 height, uint32 numMips, EResourceFormat format);
+		FColorBufferRef CreateColorBufferArray(const std::string& name, uint32 width, uint32 height, uint32 arrayCount, uint32 numMips, EResourceFormat format);
 
 		FDepthBufferRef CreateDepthBuffer(const std::string& name, const FDepthBufferDescription& desc);
-		FDepthBufferRef CreateDepthBuffer(const std::string& name, uint32_t width, uint32_t height, EResourceFormat format);
-		FDepthBufferRef CreateDepthBuffer(const std::string& name, uint32_t width, uint32_t height, uint32_t sampleCount, uint32_t sampleQuality, EResourceFormat format);
+		FDepthBufferRef CreateDepthBuffer(const std::string& name, uint32 width, uint32 height, EResourceFormat format);
+		FDepthBufferRef CreateDepthBuffer(const std::string& name, uint32 width, uint32 height, uint32 sampleCount, uint32 sampleQuality, EResourceFormat format);
 
 		FTextureBufferRef CreateTextureBufferFromMemory(const std::string& name, const FTextureBufferDescription& desc, const std::vector<const void*>& initialMipsData);
 		FTextureBufferRef CreateTextureBufferFromFile(const std::string& name, const std::string& fileName);
 
-		FGpuVertexBufferRef CreateVertexBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData = nullptr);
+		FGpuVertexBufferRef CreateVertexBuffer(const std::string& name, uint32 numElements, uint32 elementSize, const void* initData = nullptr);
 		template<typename VertexType>
-		FGpuVertexBufferRef CreateVertexBuffer(const std::string& name, uint32_t numElements, const void* initData)
+		FGpuVertexBufferRef CreateVertexBuffer(const std::string& name, uint32 numElements, const void* initData)
 		{
 			return CreateVertexBuffer(name, numElements, sizeof(VertexType), initData);
 		}
 		template<typename VertexType>
 		FGpuVertexBufferRef CreateVertexBuffer(const std::string& name, const std::vector<VertexType>& data)
 		{
-			return CreateVertexBuffer(name, static_cast<uint32_t>(data.size()), sizeof(VertexType), data.data());
+			return CreateVertexBuffer(name, static_cast<uint32>(data.size()), sizeof(VertexType), data.data());
 		}
 
-		FGpuIndexBufferRef CreateIndexBuffer(const std::string& name, uint32_t numElements, const void* initData, bool is32Bit = false);
+		FGpuIndexBufferRef CreateIndexBuffer(const std::string& name, uint32 numElements, const void* initData, bool is32Bit = false);
 
-		FGpuDynamicVertexBufferRef CreateDynamicVertexBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize);
+		FGpuDynamicVertexBufferRef CreateDynamicVertexBuffer(const std::string& name, uint32 numElements, uint32 elementSize);
 		template<typename VertexType>
-		FGpuDynamicVertexBufferRef CreateDynamicVertexBuffer(const std::string& name, uint32_t numElements)
+		FGpuDynamicVertexBufferRef CreateDynamicVertexBuffer(const std::string& name, uint32 numElements)
 		{
 			return CreateDynamicVertexBuffer(name, numElements, sizeof(VertexType));
 		}
 
-		FGpuDynamicIndexBufferRef CreateDynamicIndexBuffer(const std::string& name, uint32_t numElements, bool is32Bit = false);
+		FGpuDynamicIndexBufferRef CreateDynamicIndexBuffer(const std::string& name, uint32 numElements, bool is32Bit = false);
 
-		FGpuConstantBufferRef CreateConstantBuffer(const std::string& name, uint32_t sizeInBytes, const void* initData);
+		FGpuConstantBufferRef CreateConstantBuffer(const std::string& name, uint32 sizeInBytes, const void* initData);
 		template<typename ConstantBufferType>
 		FGpuConstantBufferRef CreateConstantBuffer(const std::string& name, const ConstantBufferType* initData)
 		{
 			return CreateConstantBuffer(name, sizeof(ConstantBufferType), initData);
 		}
 
-		FStructuredBufferRef CreateStructuredBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize, const void* initData);
+		FStructuredBufferRef CreateStructuredBuffer(const std::string& name, uint32 numElements, uint32 elementSize, const void* initData);
 		template<typename StructuredBufferType>
-		FStructuredBufferRef CreateStructuredBuffer(const std::string& name, uint32_t numElements, const StructuredBufferType* initData)
+		FStructuredBufferRef CreateStructuredBuffer(const std::string& name, uint32 numElements, const StructuredBufferType* initData)
 		{
 			return CreateStructuredBuffer(name, numElements, sizeof(StructuredBufferType), initData);
 		}
 
-		FReadbackBufferRef CreateReadbackBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize);
+		FReadbackBufferRef CreateReadbackBuffer(const std::string& name, uint32 numElements, uint32 elementSize);
 
 		bool UAVLoadSupportR11G11B10Float() const { return mTypedUAVLoadSupport_R11G11B10_FLOAT; }
 		bool UAVLoadSupportR16G16B16A16Float() const { return mTypedUAVLoadSupport_R16G16B16A16_FLOAT; }

@@ -23,7 +23,7 @@ namespace Dash
 	private:
 		void CreateDefaultTextures();
 
-		void ConstructPureColorTexture(const std::string_view& textureName, const FColor& color, int32_t width = 32, int32_t height = 32);
+		void ConstructPureColorTexture(const std::string_view& textureName, const FColor& color, int32 width = 32, int32 height = 32);
 
 	private:
 		std::map<std::string, FImportedTextureData> mImportTextures;

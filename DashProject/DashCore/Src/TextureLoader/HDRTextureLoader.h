@@ -9,5 +9,5 @@ namespace Dash
         const std::string& fileName,
         FTextureBufferDescription& textureDescription,
         std::vector<FSubResourceData>& subResource,
-        std::vector<uint8_t>& decodedData);
+        std::vector<uint8>& decodedData);
 }

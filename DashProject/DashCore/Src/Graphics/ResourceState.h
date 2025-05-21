@@ -4,7 +4,7 @@
 
 namespace Dash
 {
-    enum class EResourceState : uint32_t
+    enum class EResourceState : uint32
     {
         Common = 0,
         UnorderedAccess = 1 << 1,

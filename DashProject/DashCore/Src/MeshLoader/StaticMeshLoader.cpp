@@ -21,18 +21,18 @@ namespace Dash
         }
 
         // Track material per submesh
-        std::vector<uint32_t> submeshToMaterialIndex;
+        std::vector<uint32> submeshToMaterialIndex;
         std::vector<FMeshSectionData>& meshSections = importedMeshData.SectionData;
 
         // Load mesh
         {
-            std::vector<uint32_t>& indices = importedMeshData.Indices;
+            std::vector<uint32>& indices = importedMeshData.Indices;
 
             // Reserve space
             {
-                uint32_t totalVertexs{ 0 };
-                uint32_t maxTexCoord{ 0 };
-                for (uint32_t i = 0; i < scene->mNumMeshes; ++i)
+                uint32 totalVertexs{ 0 };
+                uint32 maxTexCoord{ 0 };
+                for (uint32 i = 0; i < scene->mNumMeshes; ++i)
                 {
                     totalVertexs += scene->mMeshes[i]->mNumVertices;
                     maxTexCoord = FMath::Max(scene->mMeshes[i]->GetNumUVChannels(), maxTexCoord);
@@ -51,31 +51,31 @@ namespace Dash
             }
 
             // Go through all meshes
-            for (uint32_t mesh_idx = 0; mesh_idx < scene->mNumMeshes; ++mesh_idx)
+            for (uint32 mesh_idx = 0; mesh_idx < scene->mNumMeshes; ++mesh_idx)
             {
                 aiMesh* mesh = scene->mMeshes[mesh_idx];
 
                 // Track submesh
                 FMeshSectionData sectionData{};
-                sectionData.VertexStart = (uint32_t)importedMeshData.PositionData.size();
+                sectionData.VertexStart = (uint32)importedMeshData.PositionData.size();
                 sectionData.VertexCount = mesh->mNumVertices;
-                sectionData.IndexStart = (uint32_t)indices.size();
+                sectionData.IndexStart = (uint32)indices.size();
                 sectionData.IndexCount = 0;
                 // Count indices
-                for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex)
+                for (uint32 faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex)
                 {
                     const aiFace& face = mesh->mFaces[faceIndex];
-                    for (uint32_t index_idx = 0; index_idx < face.mNumIndices; ++index_idx)
+                    for (uint32 index_idx = 0; index_idx < face.mNumIndices; ++index_idx)
                         indices.push_back(face.mIndices[index_idx]);
                     sectionData.IndexCount += face.mNumIndices;
                 }
 
                 // Grab per vertex data
-                for (uint32_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; ++vertexIndex)
+                for (uint32 vertexIndex = 0; vertexIndex < mesh->mNumVertices; ++vertexIndex)
                 {
                     importedMeshData.PositionData.push_back(FVector3f{ mesh->mVertices[vertexIndex].x, mesh->mVertices[vertexIndex].y, mesh->mVertices[vertexIndex].z });
 
-                    for (uint32_t uvIndex = 0; uvIndex < importedMeshData.NumTexCoord; uvIndex++)
+                    for (uint32 uvIndex = 0; uvIndex < importedMeshData.NumTexCoord; uvIndex++)
                     {
                         if (mesh->HasTextureCoords(uvIndex))
                         {

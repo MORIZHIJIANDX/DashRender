@@ -23,12 +23,12 @@ namespace Dash
 		FDepthStencilState(bool depthTestEnable, bool stencilTestEnable);
 
 		FDepthStencilState(bool depthTestEnable, EDepthWriteMask depthWriteMask = EDepthWriteMask::All, EDepthStencilComparisonFunc depthFunc = EDepthStencilComparisonFunc::LessEqual, 
-			bool stencilTestEnable = false, uint8_t stencilReadMask = 0, uint8_t stencilWriteMask = 0);
+			bool stencilTestEnable = false, uint8 stencilReadMask = 0, uint8 stencilWriteMask = 0);
 
 		void SetDepthTestEnable(bool enable);
 		void SetStencilTestEnable(bool enable);
 		void SetDepthBoundsTestEnable(bool enable);
-		void SetStencilMask(uint8_t stencilReadMask = 0, uint8_t stencilWriteMask = 0);
+		void SetStencilMask(uint8 stencilReadMask = 0, uint8 stencilWriteMask = 0);
 		void SetFrontFaceStencilState(EStencilOperation stencilFailOp, EStencilOperation stencilDepthFailOp, EStencilOperation stencilPassOp, EDepthStencilComparisonFunc stencilFunc);
 		void SetBackFaceStencilState(EStencilOperation stencilFailOp, EStencilOperation stencilDepthFailOp, EStencilOperation stencilPassOp, EDepthStencilComparisonFunc stencilFunc);
 		

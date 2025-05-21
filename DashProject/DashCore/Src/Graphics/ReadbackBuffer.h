@@ -14,7 +14,7 @@ namespace Dash
 		void Unmap();
 
 	protected:
-		void CreateReadbackBuffer(const std::string& name, uint32_t numElements, uint32_t elementSize);
+		void CreateReadbackBuffer(const std::string& name, uint32 numElements, uint32 elementSize);
 		virtual void CreateViews() {};
 
 	protected:
