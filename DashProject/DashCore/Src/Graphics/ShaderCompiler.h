@@ -5,6 +5,7 @@
 #include "dxc/inc/d3d12shader.h"
 #include "dxc/inc/dxcapi.h"
 #include "ShaderResource.h"
+#include "Utility/RefCounting.h"
 
 namespace Dash
 {
@@ -19,11 +20,11 @@ namespace Dash
 		FDX12CompiledShader CompileShaderInternal(const FShaderCreationInfo& info);
 		bool SaveShaderBlob(const FShaderCreationInfo& info, const FDX12CompiledShader& compiledShader);
 		FDX12CompiledShader LoadShaderBlob(const FShaderCreationInfo& info);
-		Microsoft::WRL::ComPtr<IDxcBlobEncoding> LoadBlobFromFile(const std::string& fileName);
+		TRefCountPtr<IDxcBlobEncoding> LoadBlobFromFile(const std::string& fileName);
 		
 	protected:
-		Microsoft::WRL::ComPtr<IDxcUtils> mUtils;
-		Microsoft::WRL::ComPtr<IDxcCompiler3> mCompiler;
-		Microsoft::WRL::ComPtr<IDxcIncludeHandler> mIncludeHandler;
+		TRefCountPtr<IDxcUtils> mUtils;
+		TRefCountPtr<IDxcCompiler3> mCompiler;
+		TRefCountPtr<IDxcIncludeHandler> mIncludeHandler;
 	};
 }

@@ -2,6 +2,7 @@
 
 #include "d3dx12.h"
 #include <queue>
+#include "DX12Helper.h"
 
 namespace Dash
 {
@@ -21,14 +22,14 @@ namespace Dash
 			return mType;
 		}
 
-		ID3D12GraphicsCommandList4* GetCommandList() { return mGraphicsCommandList.Get(); }
-		const ID3D12GraphicsCommandList4* GetCommandList() const { return mGraphicsCommandList.Get(); }
+		ID3D12GraphicsCommandList4* GetCommandList() { return mGraphicsCommandList.GetReference(); }
+		const ID3D12GraphicsCommandList4* GetCommandList() const { return mGraphicsCommandList.GetReference(); }
 
 	private:
 		D3D12_COMMAND_LIST_TYPE mType;
 
-		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList4> mGraphicsCommandList;
-		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> mCommandAllocator;
+		TRefCountPtr<ID3D12GraphicsCommandList4> mGraphicsCommandList;
+		TRefCountPtr<ID3D12CommandAllocator> mCommandAllocator;
 
 	};
 
@@ -107,15 +108,15 @@ namespace Dash
 
 		void Flush();
 
-		ID3D12CommandQueue* GetD3DCommandQueue() { return mCommandQueue.Get(); }
-		const ID3D12CommandQueue* GetD3DCommandQueue() const { return mCommandQueue.Get(); }
+		ID3D12CommandQueue* GetD3DCommandQueue() { return mCommandQueue.GetReference(); }
+		const ID3D12CommandQueue* GetD3DCommandQueue() const { return mCommandQueue.GetReference(); }
 	private:
 		uint64 mNextFenceValue;
 		uint64 mLastCompletedFenceValue;
 		HANDLE mFenceEventHandle;
 
-		Microsoft::WRL::ComPtr<ID3D12Fence> mFence;
-		Microsoft::WRL::ComPtr<ID3D12CommandQueue> mCommandQueue;
+		TRefCountPtr<ID3D12Fence> mFence;
+		TRefCountPtr<ID3D12CommandQueue> mCommandQueue;
 	};
 
 	class FCommandQueueManager

@@ -19,15 +19,15 @@ namespace Dash
 
 		virtual void Destroy();
 
-		ID3D12Resource* operator->() { return mResource.Get(); }
-		const ID3D12Resource* operator->() const { return mResource.Get(); }
+		ID3D12Resource* operator->() { return mResource.GetReference(); }
+		const ID3D12Resource* operator->() const { return mResource.GetReference(); }
 
-		ID3D12Resource* GetResource() { return mResource.Get(); }
-		const ID3D12Resource* GetResource() const { return mResource.Get(); }
+		ID3D12Resource* GetResource() { return mResource.GetReference(); }
+		const ID3D12Resource* GetResource() const { return mResource.GetReference(); }
 
-		Microsoft::WRL::ComPtr<ID3D12Resource> GetResourceComPtr() const { return mResource; }
+		TRefCountPtr<ID3D12Resource> GetResourceComPtr() const { return mResource; }
 
-		ID3D12Resource** GetAddressOf() { return mResource.GetAddressOf(); }
+		//ID3D12Resource** GetAddressOf() { return mResource.Ge(); }
 
 		D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress();
 
@@ -36,7 +36,7 @@ namespace Dash
 		void SetName(const std::string& name) 
 		{  
 			mResourceName = name;
-			SetD3D12DebugName(mResource.Get(), name);
+			SetD3D12DebugName(mResource.GetReference(), name);
 		}
 
 		const std::string& GetName() const { return mResourceName; }
@@ -46,7 +46,7 @@ namespace Dash
 		{
 		}
 
-		FGpuResource(Microsoft::WRL::ComPtr<ID3D12Resource> resource)
+		FGpuResource(TRefCountPtr<ID3D12Resource> resource)
 			: mResource(resource)
 		{
 			if (mResource)
@@ -57,7 +57,7 @@ namespace Dash
 
 	protected:
 
-		Microsoft::WRL::ComPtr<ID3D12Resource> mResource = nullptr;
+		TRefCountPtr<ID3D12Resource> mResource = nullptr;
 		D3D12_GPU_VIRTUAL_ADDRESS mGpuVirtualAddress = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
 
 		std::string mResourceName;

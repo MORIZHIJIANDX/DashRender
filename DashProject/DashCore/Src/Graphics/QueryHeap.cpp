@@ -17,17 +17,17 @@ namespace Dash
 
 	ID3D12QueryHeap* FQueryHeap::D3DQueryHeap()
 	{
-		return mQueryHeap.Get();
+		return mQueryHeap.GetReference();
 	}
 
 	const ID3D12QueryHeap* FQueryHeap::D3DQueryHeap() const
 	{
-		return mQueryHeap.Get();
+		return mQueryHeap.GetReference();
 	}
 
 	FQueryHeap::operator ID3D12QueryHeap* () const
 	{
-		return mQueryHeap.Get();
+		return mQueryHeap.GetReference();
 	}
 
 	const FQueryHeapDesc& FQueryHeap::GetDesc() const

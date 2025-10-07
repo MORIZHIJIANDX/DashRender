@@ -6,6 +6,7 @@
 #include "InputAssemblerLayout.h"
 #include "dxc/inc/dxcapi.h"
 #include "dxc/inc/d3d12shader.h"
+#include "Utility/RefCounting.h"
 
 namespace Dash
 {
@@ -62,9 +63,9 @@ namespace Dash
 
 	struct FDX12CompiledShader
 	{
-		Microsoft::WRL::ComPtr<IDxcBlob> CompiledShaderBlob = nullptr;
-		Microsoft::WRL::ComPtr<IDxcBlob> ShaderRelectionBlob = nullptr;
-		Microsoft::WRL::ComPtr<ID3D12ShaderReflection> ShaderReflector = nullptr;
+		TRefCountPtr<IDxcBlob> CompiledShaderBlob = nullptr;
+		TRefCountPtr<IDxcBlob> ShaderRelectionBlob = nullptr;
+		TRefCountPtr<ID3D12ShaderReflection> ShaderReflector = nullptr;
 
 		bool IsValid() const
 		{
@@ -115,12 +116,12 @@ namespace Dash
 		const FInputAssemblerLayout& GetInputLayout() const { return mInputLayout; }
 
 	protected:
-		void Init(Microsoft::WRL::ComPtr<IDxcBlob> compiledShaderBlob, Microsoft::WRL::ComPtr<ID3D12ShaderReflection> reflector, const FShaderCreationInfo& creationInfo);
-		void ReflectShaderParameter(Microsoft::WRL::ComPtr<ID3D12ShaderReflection> reflector);
+		void Init(TRefCountPtr<IDxcBlob>& compiledShaderBlob, TRefCountPtr<ID3D12ShaderReflection>& reflector, const FShaderCreationInfo& creationInfo);
+		void ReflectShaderParameter(TRefCountPtr<ID3D12ShaderReflection>& reflector);
 		bool IsSystemGeneratedValues(const std::string& semantic) const;
 
 		FShaderCreationInfo mCreationInfo;
-		Microsoft::WRL::ComPtr<IDxcBlob> mCompiledShaderBlob;
+		TRefCountPtr<IDxcBlob> mCompiledShaderBlob;
 		FCompiledBinary mShaderBinary;
 		std::vector<FShaderParameter> mParameters;
 		FInputAssemblerLayout mInputLayout;

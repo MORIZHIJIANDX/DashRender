@@ -52,7 +52,7 @@ namespace Dash
 		CreateViews();
 
 		SetName(name);
-		SetD3D12DebugName(mResource.Get(), name.c_str());
+		SetD3D12DebugName(mResource.GetReference(), name.c_str());
 	}
 
 	void FGpuBuffer::CreateBufferResource(const D3D12_RESOURCE_DESC& desc)
@@ -110,7 +110,7 @@ namespace Dash
 		srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_RAW;
 
 		mShaderResourceView = FGraphicsCore::DescriptorAllocator->AllocateSRVDescriptor();
-		FGraphicsCore::Device->CreateShaderResourceView(mResource.Get(), &srvDesc, mShaderResourceView.GetDescriptorHandle());
+		FGraphicsCore::Device->CreateShaderResourceView(mResource.GetReference(), &srvDesc, mShaderResourceView.GetDescriptorHandle());
 
 		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc{};
 		cbvDesc.BufferLocation = mResource->GetGPUVirtualAddress();
@@ -130,7 +130,7 @@ namespace Dash
 		srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_RAW;
 
 		mShaderResourceView = FGraphicsCore::DescriptorAllocator->AllocateSRVDescriptor();
-		FGraphicsCore::Device->CreateShaderResourceView(mResource.Get(), &srvDesc, mShaderResourceView.GetDescriptorHandle());
+		FGraphicsCore::Device->CreateShaderResourceView(mResource.GetReference(), &srvDesc, mShaderResourceView.GetDescriptorHandle());
 
 		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
 		uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
@@ -139,7 +139,7 @@ namespace Dash
 		uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_RAW;
 
 		mUnorderedAccessView = FGraphicsCore::DescriptorAllocator->AllocateUAVDescriptor();
-		FGraphicsCore::Device->CreateUnorderedAccessView(mResource.Get(), nullptr, &uavDesc, mUnorderedAccessView.GetDescriptorHandle());
+		FGraphicsCore::Device->CreateUnorderedAccessView(mResource.GetReference(), nullptr, &uavDesc, mUnorderedAccessView.GetDescriptorHandle());
 	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE FStructuredBuffer::GetCounterBufferShaderResourceView() const
@@ -163,7 +163,7 @@ namespace Dash
 		srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 
 		mShaderResourceView = FGraphicsCore::DescriptorAllocator->AllocateSRVDescriptor();
-		FGraphicsCore::Device->CreateShaderResourceView(mResource.Get(), &srvDesc, mShaderResourceView.GetDescriptorHandle());
+		FGraphicsCore::Device->CreateShaderResourceView(mResource.GetReference(), &srvDesc, mShaderResourceView.GetDescriptorHandle());
 
 		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
 		uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
@@ -176,7 +176,7 @@ namespace Dash
 		mCounterBuffer.Create("FStructuredBuffer::CounterBuffer", 1, 4);
 
 		mUnorderedAccessView = FGraphicsCore::DescriptorAllocator->AllocateUAVDescriptor();
-		FGraphicsCore::Device->CreateUnorderedAccessView(mResource.Get(), mCounterBuffer.GetResource(), &uavDesc, mUnorderedAccessView.GetDescriptorHandle());
+		FGraphicsCore::Device->CreateUnorderedAccessView(mResource.GetReference(), mCounterBuffer.GetResource(), &uavDesc, mUnorderedAccessView.GetDescriptorHandle());
 	}
 
 	void FTypedBuffer::CreateViews()
@@ -189,7 +189,7 @@ namespace Dash
 		srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 
 		mShaderResourceView = FGraphicsCore::DescriptorAllocator->AllocateSRVDescriptor();
-		FGraphicsCore::Device->CreateShaderResourceView(mResource.Get(), &srvDesc, mShaderResourceView.GetDescriptorHandle());
+		FGraphicsCore::Device->CreateShaderResourceView(mResource.GetReference(), &srvDesc, mShaderResourceView.GetDescriptorHandle());
 
 		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
 		uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
@@ -198,7 +198,7 @@ namespace Dash
 		uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
 
 		mUnorderedAccessView = FGraphicsCore::DescriptorAllocator->AllocateUAVDescriptor();
-		FGraphicsCore::Device->CreateUnorderedAccessView(mResource.Get(), nullptr, &uavDesc, mUnorderedAccessView.GetDescriptorHandle());
+		FGraphicsCore::Device->CreateUnorderedAccessView(mResource.GetReference(), nullptr, &uavDesc, mUnorderedAccessView.GetDescriptorHandle());
 	}
 
 	D3D12_VERTEX_BUFFER_VIEW FGpuVertexBuffer::GetVertexBufferView(uint32 offset, uint32 size, uint32 stride) const

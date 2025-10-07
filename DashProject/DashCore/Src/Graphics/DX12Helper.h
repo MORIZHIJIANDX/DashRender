@@ -2,6 +2,7 @@
 
 #include <dxgi.h>
 #include <strsafe.h>
+#include "Utility/RefCounting.h"
 #include "Utility/StringUtility.h"
 
 namespace Dash

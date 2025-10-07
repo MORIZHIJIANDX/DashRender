@@ -147,15 +147,15 @@ namespace Dash
 	{
 		UINT dxgiFactoryFlags = 0;
 #if DASH_DEBUG
-		ComPtr<ID3D12Debug> DebugInterface;
-		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&DebugInterface))))
+		TRefCountPtr<ID3D12Debug> DebugInterface;
+		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(DebugInterface.GetInitReference()))))
 		{
 			DebugInterface->EnableDebugLayer();
 			dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 		}
 #endif // DASH_DEBUG
 
-		DX_CALL(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&mDxgiFactory)));
+		DX_CALL(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(mDxgiFactory.GetInitReference())));
 	}
 
 	void FSwapChain::CreateSwapChain(uint32 displayWdith, uint32 displayHeight)
@@ -180,20 +180,22 @@ namespace Dash
 		DXGI_SWAP_CHAIN_FULLSCREEN_DESC fullScreenDesc{};
 		fullScreenDesc.Windowed = TRUE;
 
-		ComPtr<IDXGISwapChain1> dxgiSwapChain1;
+		TRefCountPtr<IDXGISwapChain1> dxgiSwapChain1;
 		DX_CALL(mDxgiFactory->CreateSwapChainForHwnd(FGraphicsCore::CommandQueueManager->GetGraphicsQueue().GetD3DCommandQueue(),
 			IGameApp::GetInstance()->GetWindowHandle(),
 			&swapChainDesc,
 			&fullScreenDesc,
 			nullptr,
-			&dxgiSwapChain1));
+			dxgiSwapChain1.GetInitReference()));
 
 		if (FGraphicsCore::Device->SupportsTearing())
 		{
 			mDxgiFactory->MakeWindowAssociation(IGameApp::GetInstance()->GetWindowHandle(), DXGI_MWA_NO_ALT_ENTER);
 		}
 
-		DX_CALL(dxgiSwapChain1.As(&mSwapChain));
+		DX_CALL(dxgiSwapChain1->QueryInterface(IID_PPV_ARGS(mSwapChain.GetInitReference())));
+
+		//DX_CALL(dxgiSwapChain1.As(&mSwapChain));
 
 		CheckDisplayHDRSupport();
 		EnsureSwapChainColorSpace(mCurrentSwapChainBitDepth, mHDRSupport);
@@ -205,9 +207,9 @@ namespace Dash
 	{
 		for (uint32 index = 0; index < SWAP_CHAIN_BUFFER_COUNT; ++index)
 		{
-			ComPtr<ID3D12Resource> backBuffer;
-			DX_CALL(mSwapChain->GetBuffer(index, IID_PPV_ARGS(&backBuffer)));
-			mSwapChainBuffer[index] = FGraphicsCore::Device->CreateColorBuffer("Swap Chain Buffer[" + FStringUtility::ToString(index) + "]", backBuffer.Detach(), EResourceState::Common); // D3D12_RESOURCE_STATE_PRESENT ?
+			TRefCountPtr<ID3D12Resource> backBuffer;
+			DX_CALL(mSwapChain->GetBuffer(index, IID_PPV_ARGS(backBuffer.GetInitReference())));
+			mSwapChainBuffer[index] = FGraphicsCore::Device->CreateColorBuffer("Swap Chain Buffer[" + FStringUtility::ToString(index) + "]", backBuffer.GetReference(), EResourceState::Common); // D3D12_RESOURCE_STATE_PRESENT ? // 
 		}
 
 		mDisplayWdith = static_cast<uint32>(FMath::AlignUp(mSwapChainBuffer[0]->GetWidth() * mDisplayRate, 2));
@@ -287,8 +289,8 @@ namespace Dash
 		// app is on a HDR capable display. 
 
 		// Retrieve the current default adapter.
-		ComPtr<IDXGIAdapter1> dxgiAdapter;
-		DX_CALL(mDxgiFactory->EnumAdapters1(0, &dxgiAdapter));
+		TRefCountPtr<IDXGIAdapter1> dxgiAdapter;
+		DX_CALL(mDxgiFactory->EnumAdapters1(0, dxgiAdapter.GetInitReference()));
 
 		// Iterate through the DXGI outputs associated with the DXGI adapter,
 		// and find the output whose bounds have the greatest overlap with the
@@ -296,12 +298,17 @@ namespace Dash
 		// greatest).
 
 		UINT i = 0;
-		ComPtr<IDXGIOutput> currentOutput;
-		ComPtr<IDXGIOutput> bestOutput;
+		TRefCountPtr<IDXGIOutput> bestOutput;
 		float bestIntersectArea = -1;
 
-		while (dxgiAdapter->EnumOutputs(i, &currentOutput) != DXGI_ERROR_NOT_FOUND)
+		for (uint32 index = 0; true; ++index)
 		{
+			TRefCountPtr<IDXGIOutput> currentOutput;
+			if (S_OK != dxgiAdapter->EnumOutputs(index, currentOutput.GetInitReference()))
+			{
+				break;
+			}
+
 			// Get the retangle bounds of the app window
 			int ax1 = mWindowRect.left;
 			int ay1 = mWindowRect.top;
@@ -324,14 +331,12 @@ namespace Dash
 				bestOutput = currentOutput;
 				bestIntersectArea = static_cast<float>(intersectArea);
 			}
-
-			i++;
 		}
 
 		// Having determined the output (display) upon which the app is primarily being 
 		// rendered, retrieve the HDR capabilities of that display by checking the color space.
-		ComPtr<IDXGIOutput6> output6;
-		DX_CALL(bestOutput.As(&output6));
+		TRefCountPtr<IDXGIOutput6> output6;
+		DX_CALL(bestOutput->QueryInterface(output6.GetInitReference()));
 
 		DXGI_OUTPUT_DESC1 desc1;
 		DX_CALL(output6->GetDesc1(&desc1));
@@ -495,8 +500,8 @@ namespace Dash
 
 			SetWindowLong(IGameApp::GetInstance()->GetWindowHandle(), GWL_STYLE, mWindowStyle & ~(WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU | WS_THICKFRAME));
 
-			ComPtr<IDXGIOutput> pOutput;
-			DX_CALL(mSwapChain->GetContainingOutput(&pOutput));
+			TRefCountPtr<IDXGIOutput> pOutput;
+			DX_CALL(mSwapChain->GetContainingOutput(pOutput.GetInitReference()));
 			DXGI_OUTPUT_DESC desc;
 			DX_CALL(pOutput->GetDesc(&desc));
 

@@ -98,6 +98,21 @@ namespace Dash
 		D3D12_ROOT_PARAMETER1 mRootParameter{};
 	};
 
+	class BoundShaderState
+	{
+	public:
+		BoundShaderState() {};
+		~BoundShaderState() {};
+
+	private:
+		UINT mNumParameters;
+		UINT mNumStaticSamplers;
+		UINT mNumInitializedStaticSamplers;
+
+		std::unique_ptr<D3D12_STATIC_SAMPLER_DESC[]> mSamplerArray;
+		std::unique_ptr<FRootParameter[]> mParameterArray;
+	};
+
 	class FRootSignature
 	{
 	public:

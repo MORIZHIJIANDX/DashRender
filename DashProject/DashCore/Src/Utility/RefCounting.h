@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Utility/Assert.h"
+
 namespace Dash
 {
 	template<typename ReferencedType>
@@ -45,16 +47,19 @@ namespace Dash
 
 		TRefCountPtr& operator=(ReferencedType* InReference)
 		{
-			// Call AddRef before Release, in case the new reference is the same as the old reference.
-			ReferencedType* OldReference = mReference;
-			mReference = InReference;
-			if (mReference)
+			if (mReference != InReference)
 			{
-				mReference->AddRef();
-			}
-			if (OldReference)
-			{
-				OldReference->Release();
+				// Call AddRef before Release, in case the new reference is the same as the old reference.
+				ReferencedType* OldReference = mReference;
+				mReference = InReference;
+				if (mReference)
+				{
+					mReference->AddRef();
+				}
+				if (OldReference)
+				{
+					OldReference->Release();
+				}
 			}
 			return *this;
 		}

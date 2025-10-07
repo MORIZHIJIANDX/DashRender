@@ -13,7 +13,7 @@ namespace Dash
 		
 		Destroy();
 
-		mResource.Attach(resource);
+		mResource = resource;
 
 		SetName(name);
 

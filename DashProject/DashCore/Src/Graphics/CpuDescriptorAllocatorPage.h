@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CpuDescriptorAllocation.h"
+#include "DX12Helper.h"
 
 namespace Dash
 {
@@ -66,7 +67,7 @@ namespace Dash
 		FreeListBySize mFreeListBySize;
 		StaleDescriptorQueue mStaleDescriptorQueue;
 
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDescriptorHeap;
+		TRefCountPtr<ID3D12DescriptorHeap> mDescriptorHeap;
 		D3D12_DESCRIPTOR_HEAP_TYPE mDescriptorHeapType;
 		D3D12_CPU_DESCRIPTOR_HANDLE mBaseDescriptor;
 

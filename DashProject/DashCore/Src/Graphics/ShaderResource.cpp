@@ -83,7 +83,7 @@ namespace Dash
 		ShaderTarget = FStringUtility::ToLower(splitStrs[0]) + targetLevel;
 	}
 
-	void FShaderResource::Init(ComPtr<IDxcBlob> compiledShaderBlob, ComPtr<ID3D12ShaderReflection> reflector, const FShaderCreationInfo& creationInfo)
+	void FShaderResource::Init(TRefCountPtr<IDxcBlob>& compiledShaderBlob, TRefCountPtr<ID3D12ShaderReflection>& reflector, const FShaderCreationInfo& creationInfo)
 	{
 		ASSERT(compiledShaderBlob != nullptr);
 
@@ -103,7 +103,7 @@ namespace Dash
 		Short,
 	};
 
-	void FShaderResource::ReflectShaderParameter(ComPtr<ID3D12ShaderReflection> reflector)
+	void FShaderResource::ReflectShaderParameter(TRefCountPtr<ID3D12ShaderReflection>& reflector)
 	{
 		D3D12_SHADER_DESC shaderDesc;
 		reflector->GetDesc(&shaderDesc);

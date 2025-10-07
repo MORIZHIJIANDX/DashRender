@@ -112,8 +112,8 @@ namespace Dash
 		FColorBufferRef mSwapChainBuffer[SWAP_CHAIN_BUFFER_COUNT];
 		uint64 mFenceValue[SWAP_CHAIN_BUFFER_COUNT];
 
-		Microsoft::WRL::ComPtr<IDXGIFactory4> mDxgiFactory;
-		Microsoft::WRL::ComPtr<IDXGISwapChain4> mSwapChain;
+		TRefCountPtr<IDXGIFactory4> mDxgiFactory;
+		TRefCountPtr<IDXGISwapChain4> mSwapChain;
 
 		UINT mCurrentBackBufferIndex = 0;
 		ESwapChainBitDepth mCurrentSwapChainBitDepth = ESwapChainBitDepth::_8;

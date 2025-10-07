@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Utility/RefCounting.h"
+
 namespace Dash
 {
 	class FCommandContext;
@@ -86,7 +88,7 @@ namespace Dash
 
 		uint32 mStaleUAVBitMask;
 
-		using DescriptorHeapPool = std::queue<Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>>;
+		using DescriptorHeapPool = std::queue<TRefCountPtr<ID3D12DescriptorHeap>>;
 
 		DescriptorHeapPool mDescriptorHeapPool;
 		DescriptorHeapPool mAvailableDescriptorHeaps;

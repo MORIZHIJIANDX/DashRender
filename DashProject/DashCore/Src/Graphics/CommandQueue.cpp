@@ -10,10 +10,10 @@ namespace Dash
 		: mType(type)
 	{
 		DX_CALL(FGraphicsCore::Device->CreateCommandAllocator(type, mCommandAllocator));
-		DX_CALL(FGraphicsCore::Device->CreateCommandList(0, type, mCommandAllocator.Get(), nullptr, mGraphicsCommandList));
+		DX_CALL(FGraphicsCore::Device->CreateCommandList(0, type, mCommandAllocator.GetReference(), nullptr, mGraphicsCommandList));
 
-		SetD3D12DebugName(mCommandAllocator.Get(), "CommandAllocator");
-		SetD3D12DebugName(mGraphicsCommandList.Get(), "CommandList");
+		SetD3D12DebugName(mCommandAllocator.GetReference(), "CommandAllocator");
+		SetD3D12DebugName(mGraphicsCommandList.GetReference(), "CommandList");
 	}
 
 	FCommandList::~FCommandList()
@@ -28,7 +28,7 @@ namespace Dash
 		{
 			DX_CALL(mCommandAllocator->Reset());
 		}	
-		DX_CALL(mGraphicsCommandList->Reset(mCommandAllocator.Get(), nullptr));
+		DX_CALL(mGraphicsCommandList->Reset(mCommandAllocator.GetReference(), nullptr));
 	}
 
 	void FCommandList::Close()
@@ -112,20 +112,20 @@ namespace Dash
 		{
 		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
 			{
-				SetD3D12DebugName(mCommandQueue.Get(), "ComputeQueue");
-				SetD3D12DebugName(mFence.Get(), "ComputeFence");
+				SetD3D12DebugName(mCommandQueue.GetReference(), "ComputeQueue");
+				SetD3D12DebugName(mFence.GetReference(), "ComputeFence");
 				break;
 			}
 		case D3D12_COMMAND_LIST_TYPE_COPY:
 			{
-				SetD3D12DebugName(mCommandQueue.Get(), "CopyQueue");
-				SetD3D12DebugName(mFence.Get(), "CopyFence");
+				SetD3D12DebugName(mCommandQueue.GetReference(), "CopyQueue");
+				SetD3D12DebugName(mFence.GetReference(), "CopyFence");
 				break;
 			}
 		default:
 			{
-				SetD3D12DebugName(mCommandQueue.Get(), "GraphicsQueue");
-				SetD3D12DebugName(mFence.Get(), "GraphicsFence");
+				SetD3D12DebugName(mCommandQueue.GetReference(), "GraphicsQueue");
+				SetD3D12DebugName(mFence.GetReference(), "GraphicsFence");
 				break;
 			}
 		}
@@ -174,7 +174,7 @@ namespace Dash
 
 	uint64 FCommandQueue::Signal()
 	{
-		DX_CALL(mCommandQueue->Signal(mFence.Get(), mNextFenceValue));
+		DX_CALL(mCommandQueue->Signal(mFence.GetReference(), mNextFenceValue));
 		return mNextFenceValue++;
 	}
 
@@ -208,7 +208,7 @@ namespace Dash
 
 	void FCommandQueue::WaitForCommandQueue(const FCommandQueue& queue)
 	{
-		DX_CALL(mCommandQueue->Wait(queue.mFence.Get(), queue.mNextFenceValue - 1));
+		DX_CALL(mCommandQueue->Wait(queue.mFence.GetReference(), queue.mNextFenceValue - 1));
 	}
 
 	void FCommandQueue::Flush()

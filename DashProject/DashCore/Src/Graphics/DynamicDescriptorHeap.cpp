@@ -192,7 +192,7 @@ namespace Dash
 
 		if (!mAvailableDescriptorHeaps.empty())
 		{
-			descriptorHeap = mAvailableDescriptorHeaps.front().Get();
+			descriptorHeap = mAvailableDescriptorHeaps.front().GetReference();
 			mAvailableDescriptorHeaps.pop();
 		}
 		else
@@ -211,13 +211,13 @@ namespace Dash
 		desc.NumDescriptors = mNumDescriptorsPerHeap;
 		desc.Type = mDescriptorHeapType;
 
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap;
+		TRefCountPtr<ID3D12DescriptorHeap> descriptorHeap;
 		DX_CALL(FGraphicsCore::Device->CreateDescriptorHeap(&desc, descriptorHeap));
 		mDescriptorHeapPool.push(descriptorHeap);
 
-		SetD3D12DebugName(descriptorHeap.Get(), "DynamicDescriptorHeap");
+		SetD3D12DebugName(descriptorHeap.GetReference(), "DynamicDescriptorHeap");
 
-		return descriptorHeap.Get();
+		return descriptorHeap.GetReference();
 	}
 
 	uint32 FDynamicDescriptorHeap::ComputeStaleDescriptorCount() const

@@ -11,12 +11,12 @@ namespace Dash
 	FGpuLinearAllocator::AllocatorType FGpuLinearAllocator::FPageManager::AutoAllocatorType = GpuExclusive;
 	FGpuLinearAllocator::FPageManager FGpuLinearAllocator::AllocatorPageManger[2];
 	 
-	FGpuLinearAllocator::FPage::FPage(Microsoft::WRL::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES defaultState, size_t pageSize)
+	FGpuLinearAllocator::FPage::FPage(TRefCountPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES defaultState, size_t pageSize)
 		: FGpuResource(resource)
 		, mPageSie(pageSize)
 		, mOffset(0)
 	{
-		FGpuResourcesStateTracker::AddGlobalResourceState(resource.Get(), defaultState);
+		FGpuResourcesStateTracker::AddGlobalResourceState(resource.GetReference(), defaultState);
 		mResource->Map(0, nullptr, &mCpuAddress);
 	}
 
@@ -145,10 +145,10 @@ namespace Dash
 			resourceState = D3D12_RESOURCE_STATE_GENERIC_READ;
 		}
 
-		Microsoft::WRL::ComPtr<ID3D12Resource> Buffer;
+		TRefCountPtr<ID3D12Resource> Buffer;
 		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, resourceState, nullptr, Buffer));
 
-		SetD3D12DebugName(Buffer.Get(), "CpuLinearAllocatorPage");
+		SetD3D12DebugName(Buffer.GetReference(), "CpuLinearAllocatorPage");
 
 		return new FPage(Buffer, resourceState, resourceDesc.Width);
 	}

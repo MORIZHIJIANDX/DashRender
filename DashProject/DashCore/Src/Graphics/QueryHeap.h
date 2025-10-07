@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Utility/RefCounting.h"
+
 namespace Dash
 {
 	class FQueryHeap;
@@ -39,6 +41,6 @@ namespace Dash
 
 	private:
 		FQueryHeapDesc mDesc{};
-		Microsoft::WRL::ComPtr<ID3D12QueryHeap> mQueryHeap = nullptr;
+		TRefCountPtr<ID3D12QueryHeap> mQueryHeap = nullptr;
 	};
 }

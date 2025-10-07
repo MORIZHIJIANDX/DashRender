@@ -197,13 +197,13 @@ namespace Dash
 #if DASH_DEBUG
 		//Enable debug layer
 		{
-			ComPtr<ID3D12Debug> debugInterface;
-			if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugInterface))))
+			TRefCountPtr<ID3D12Debug> debugInterface;
+			if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(debugInterface.GetInitReference()))))
 			{
 				debugInterface->EnableDebugLayer();
 
-				ComPtr<ID3D12Debug1> debugInterface1;
-				if (SUCCEEDED(debugInterface->QueryInterface(IID_PPV_ARGS(&debugInterface1))))
+				TRefCountPtr<ID3D12Debug1> debugInterface1;
+				if (SUCCEEDED(debugInterface->QueryInterface(IID_PPV_ARGS(debugInterface1.GetInitReference()))))
 				{
 					debugInterface1->SetEnableGPUBasedValidation(TRUE);
 				}
@@ -213,8 +213,8 @@ namespace Dash
 				LOG_WARNING << "Unable To Enable D3D12 Debug Layer!";
 			}
 
-			ComPtr<IDXGIInfoQueue> dxgiInfoQueue;
-			if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(dxgiInfoQueue.GetAddressOf()))))
+			TRefCountPtr<IDXGIInfoQueue> dxgiInfoQueue;
+			if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(dxgiInfoQueue.GetInitReference()))))
 			{
 				dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 
@@ -236,12 +236,12 @@ namespace Dash
 #endif // DASH_DEBUG
 
 		//Create DXGI Factory
-		ComPtr<IDXGIFactory6> dxgiFactory;
-		DX_CALL(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&dxgiFactory)));
+		TRefCountPtr<IDXGIFactory6> dxgiFactory;
+		DX_CALL(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(dxgiFactory.GetInitReference())));
 
 		//Enumerate adapter and create device
 		for (UINT adapterIndex = 0;
-			DXGI_ERROR_NOT_FOUND != dxgiFactory->EnumAdapterByGpuPreference(adapterIndex, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&mAdapter));
+			DXGI_ERROR_NOT_FOUND != dxgiFactory->EnumAdapterByGpuPreference(adapterIndex, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(mAdapter.GetInitReference()));
 			++adapterIndex)
 		{
 			DXGI_ADAPTER_DESC1 desc;
@@ -253,7 +253,7 @@ namespace Dash
 				continue;
 			}
 
-			if (SUCCEEDED(D3D12CreateDevice(mAdapter.Get(), D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(&mDevice))))
+			if (SUCCEEDED(D3D12CreateDevice(mAdapter.GetReference(), D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(mDevice.GetInitReference()))))
 			{
 				LOG_INFO << "Create Device With Adapter : " << FStringUtility::WideStringToUTF8(desc.Description);
 				LOG_INFO << "Adapter Memory " << desc.DedicatedVideoMemory / static_cast<size_t>(1024 * 1024) << " MB";
@@ -460,8 +460,8 @@ namespace Dash
 		}
 
 #if DASH_DEBUG
-		ComPtr<IDXGIDebug1> dxgiDebug;
-		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
+		TRefCountPtr<IDXGIDebug1> dxgiDebug;
+		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(dxgiDebug.GetInitReference()))))
 		{
 			dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_FLAGS(DXGI_DEBUG_RLO_SUMMARY | DXGI_DEBUG_RLO_IGNORE_INTERNAL));
 		}
@@ -483,19 +483,19 @@ namespace Dash
 		mDevice->CopyDescriptorsSimple(numDescriptors, destDescriptorRangeStart, srcDescriptorRangeStart, descriptorHeapsType);
 	}
 
-	HRESULT FRenderDevice::CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE type, Microsoft::WRL::ComPtr<ID3D12CommandAllocator>& pCommandAllocator)
+	HRESULT FRenderDevice::CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE type, TRefCountPtr<ID3D12CommandAllocator>& pCommandAllocator)
 	{
-		return mDevice->CreateCommandAllocator(type, IID_PPV_ARGS(&pCommandAllocator));
+		return mDevice->CreateCommandAllocator(type, IID_PPV_ARGS(pCommandAllocator.GetInitReference()));
 	}
 
-	HRESULT FRenderDevice::CreateCommandList(UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, ID3D12CommandAllocator* pCommandAllocator, ID3D12PipelineState* pInitialState, Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList4>& pCommandList)
+	HRESULT FRenderDevice::CreateCommandList(UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, ID3D12CommandAllocator* pCommandAllocator, ID3D12PipelineState* pInitialState, TRefCountPtr<ID3D12GraphicsCommandList4>& pCommandList)
 	{
-		return mDevice->CreateCommandList(nodeMask, type, pCommandAllocator, pInitialState, IID_PPV_ARGS(&pCommandList));
+		return mDevice->CreateCommandList(nodeMask, type, pCommandAllocator, pInitialState, IID_PPV_ARGS(pCommandList.GetInitReference()));
 	}
 
-	HRESULT FRenderDevice::CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC* pDesc, Microsoft::WRL::ComPtr<ID3D12CommandQueue>& pCommandQueue)
+	HRESULT FRenderDevice::CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC* pDesc, TRefCountPtr<ID3D12CommandQueue>& pCommandQueue)
 	{
-		return mDevice->CreateCommandQueue(pDesc, IID_PPV_ARGS(&pCommandQueue));
+		return mDevice->CreateCommandQueue(pDesc, IID_PPV_ARGS(pCommandQueue.GetInitReference()));
 	}
 
 	HRESULT FRenderDevice::CreateCommandSignature(const D3D12_COMMAND_SIGNATURE_DESC* pDesc, ID3D12RootSignature* pRootSignature, Microsoft::WRL::ComPtr<ID3D12CommandSignature>& pvCommandSignature)
@@ -503,9 +503,9 @@ namespace Dash
 		return mDevice->CreateCommandSignature(pDesc, pRootSignature, IID_PPV_ARGS(&pvCommandSignature));
 	}
 
-	HRESULT FRenderDevice::CreateCommittedResource(const D3D12_HEAP_PROPERTIES* pHeapProperties, D3D12_HEAP_FLAGS heapFlags, const D3D12_RESOURCE_DESC* pDesc, D3D12_RESOURCE_STATES initialResourceState, const D3D12_CLEAR_VALUE* pOptimizedClearValue, Microsoft::WRL::ComPtr<ID3D12Resource>& pvResource)
+	HRESULT FRenderDevice::CreateCommittedResource(const D3D12_HEAP_PROPERTIES* pHeapProperties, D3D12_HEAP_FLAGS heapFlags, const D3D12_RESOURCE_DESC* pDesc, D3D12_RESOURCE_STATES initialResourceState, const D3D12_CLEAR_VALUE* pOptimizedClearValue, TRefCountPtr<ID3D12Resource>& pvResource)
 	{
-		return mDevice->CreateCommittedResource(pHeapProperties, heapFlags, pDesc, initialResourceState, pOptimizedClearValue, IID_PPV_ARGS(&pvResource));
+		return mDevice->CreateCommittedResource(pHeapProperties, heapFlags, pDesc, initialResourceState, pOptimizedClearValue, IID_PPV_ARGS(pvResource.GetInitReference()));
 	}
 
 	HRESULT FRenderDevice::CreateComputePipelineState(const D3D12_COMPUTE_PIPELINE_STATE_DESC* pDesc, Microsoft::WRL::ComPtr<ID3D12PipelineState>& pPipelineState)
@@ -523,14 +523,14 @@ namespace Dash
 		mDevice->CreateDepthStencilView(pResource, pDesc, destDescriptor);
 	}
 
-	HRESULT FRenderDevice::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC* pDescriptorHeapDesc, Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& ppvHeap)
+	HRESULT FRenderDevice::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC* pDescriptorHeapDesc, TRefCountPtr<ID3D12DescriptorHeap>& ppvHeap)
 	{
-		return mDevice->CreateDescriptorHeap(pDescriptorHeapDesc, IID_PPV_ARGS(&ppvHeap));
+		return mDevice->CreateDescriptorHeap(pDescriptorHeapDesc, IID_PPV_ARGS(ppvHeap.GetInitReference()));
 	}
 
-	HRESULT FRenderDevice::CreateFence(UINT64 initialValue, D3D12_FENCE_FLAGS flags, Microsoft::WRL::ComPtr<ID3D12Fence>& ppFence)
+	HRESULT FRenderDevice::CreateFence(UINT64 initialValue, D3D12_FENCE_FLAGS flags, TRefCountPtr<ID3D12Fence>& ppFence)
 	{
-		return mDevice->CreateFence(initialValue, flags, IID_PPV_ARGS(&ppFence));
+		return mDevice->CreateFence(initialValue, flags, IID_PPV_ARGS(ppFence.GetInitReference()));
 	}
 
 	HRESULT FRenderDevice::CreateGraphicsPipelineState(const D3D12_GRAPHICS_PIPELINE_STATE_DESC* pDesc, Microsoft::WRL::ComPtr<ID3D12PipelineState>& ppPipelineState)
@@ -543,19 +543,19 @@ namespace Dash
 		return mDevice->CreatePipelineState(pDesc, IID_PPV_ARGS(&ppPipelineState));
 	}
 
-	HRESULT FRenderDevice::CreateHeap(const D3D12_HEAP_DESC* pDesc, Microsoft::WRL::ComPtr<ID3D12Heap>& ppvHeap)
+	HRESULT FRenderDevice::CreateHeap(const D3D12_HEAP_DESC* pDesc, TRefCountPtr<ID3D12Heap>& ppvHeap)
 	{
-		return mDevice->CreateHeap(pDesc, IID_PPV_ARGS(&ppvHeap));
+		return mDevice->CreateHeap(pDesc, IID_PPV_ARGS(ppvHeap.GetInitReference()));
 	}
 
-	HRESULT FRenderDevice::CreatePlacedResource(ID3D12Heap* pHeap, UINT64 heapOffset, const D3D12_RESOURCE_DESC* pDesc, D3D12_RESOURCE_STATES initialState, const D3D12_CLEAR_VALUE* pOptimizedClearValue, Microsoft::WRL::ComPtr<ID3D12Resource>& pvResource)
+	HRESULT FRenderDevice::CreatePlacedResource(ID3D12Heap* pHeap, UINT64 heapOffset, const D3D12_RESOURCE_DESC* pDesc, D3D12_RESOURCE_STATES initialState, const D3D12_CLEAR_VALUE* pOptimizedClearValue, TRefCountPtr<ID3D12Resource>& pvResource)
 	{
-		return mDevice->CreatePlacedResource(pHeap, heapOffset, pDesc, initialState, pOptimizedClearValue, IID_PPV_ARGS(&pvResource));
+		return mDevice->CreatePlacedResource(pHeap, heapOffset, pDesc, initialState, pOptimizedClearValue, IID_PPV_ARGS(pvResource.GetInitReference()));
 	}
 
-	HRESULT FRenderDevice::CreateQueryHeap(const D3D12_QUERY_HEAP_DESC* pDesc, Microsoft::WRL::ComPtr<ID3D12QueryHeap>& ppvHeap)
+	HRESULT FRenderDevice::CreateQueryHeap(const D3D12_QUERY_HEAP_DESC* pDesc, TRefCountPtr<ID3D12QueryHeap>& ppvHeap)
 	{
-		return mDevice->CreateQueryHeap(pDesc, IID_PPV_ARGS(&ppvHeap));
+		return mDevice->CreateQueryHeap(pDesc, IID_PPV_ARGS(ppvHeap.GetInitReference()));
 	}
 
 	void FRenderDevice::CreateRenderTargetView(ID3D12Resource* pResource, const D3D12_RENDER_TARGET_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor)
@@ -563,9 +563,9 @@ namespace Dash
 		mDevice->CreateRenderTargetView(pResource, pDesc, destDescriptor);
 	}
 
-	HRESULT FRenderDevice::CreateReservedResource(const D3D12_RESOURCE_DESC* pDesc, D3D12_RESOURCE_STATES initialState, const D3D12_CLEAR_VALUE* pOptimizedClearValue, Microsoft::WRL::ComPtr<ID3D12Resource>& pvResource)
+	HRESULT FRenderDevice::CreateReservedResource(const D3D12_RESOURCE_DESC* pDesc, D3D12_RESOURCE_STATES initialState, const D3D12_CLEAR_VALUE* pOptimizedClearValue, TRefCountPtr<ID3D12Resource>& pvResource)
 	{
-		return mDevice->CreateReservedResource(pDesc, initialState, pOptimizedClearValue, IID_PPV_ARGS(&pvResource));
+		return mDevice->CreateReservedResource(pDesc, initialState, pOptimizedClearValue, IID_PPV_ARGS(pvResource.GetInitReference()));
 	}
 
 	HRESULT FRenderDevice::CreateRootSignature(UINT nodeMask, const void* pBlobWithRootSignature, SIZE_T blobLengthInBytes, Microsoft::WRL::ComPtr<ID3D12RootSignature>& pvRootSignature)

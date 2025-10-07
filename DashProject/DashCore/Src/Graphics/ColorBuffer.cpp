@@ -129,13 +129,13 @@ namespace Dash
             if ((desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET) != 0 && EnumMaskContains(formatSupport, EFormatSupport::RenderTargetView))
             {
                 mRenderTargetView = FGraphicsCore::DescriptorAllocator->AllocateRTVDescriptor();
-                FGraphicsCore::Device->CreateRenderTargetView(mResource.Get(), nullptr, mRenderTargetView.GetDescriptorHandle());
+                FGraphicsCore::Device->CreateRenderTargetView(mResource.GetReference(), nullptr, mRenderTargetView.GetDescriptorHandle());
             }
 
             if ((desc.Flags & D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE) == 0 && EnumMaskContains(formatSupport, EFormatSupport::ShaderResourceView))
             {
                 mShaderResourceView = FGraphicsCore::DescriptorAllocator->AllocateSRVDescriptor();
-                FGraphicsCore::Device->CreateShaderResourceView(mResource.Get(), nullptr, mShaderResourceView.GetDescriptorHandle());
+                FGraphicsCore::Device->CreateShaderResourceView(mResource.GetReference(), nullptr, mShaderResourceView.GetDescriptorHandle());
             }
 
             if ((desc.SampleDesc.Count <= 1) && (desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) != 0 && EnumMaskContains(formatSupport, EFormatSupport::UnorderAccessView))
@@ -145,7 +145,7 @@ namespace Dash
                 for (uint32 i = 0; i < desc.MipLevels; i++)
                 {
                     D3D12_UNORDERED_ACCESS_VIEW_DESC UAVDesc = GetUAVDesc(desc, i);
-                    FGraphicsCore::Device->CreateUnorderedAccessView(mResource.Get(), nullptr, &UAVDesc, mUnorderedAccessView.GetDescriptorHandle(i));
+                    FGraphicsCore::Device->CreateUnorderedAccessView(mResource.GetReference(), nullptr, &UAVDesc, mUnorderedAccessView.GetDescriptorHandle(i));
                 }
             }
         }

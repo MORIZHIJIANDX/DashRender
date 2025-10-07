@@ -54,6 +54,6 @@ namespace Dash
 
 		mGpuVirtualAddress = mResource->GetGPUVirtualAddress();
 
-		SetD3D12DebugName(mResource.Get(), name.c_str());
+		SetD3D12DebugName(mResource.GetReference(), name.c_str());
 	}
 }

@@ -80,7 +80,7 @@ namespace Dash
 		// Creates a command allocator object.
 		HRESULT CreateCommandAllocator(
 			D3D12_COMMAND_LIST_TYPE type,
-			Microsoft::WRL::ComPtr<ID3D12CommandAllocator>& pCommandAllocator
+			TRefCountPtr<ID3D12CommandAllocator>& pCommandAllocator
 		);
 
 		// Creates a command list.
@@ -89,13 +89,13 @@ namespace Dash
 			D3D12_COMMAND_LIST_TYPE type,
 			ID3D12CommandAllocator* pCommandAllocator,
 			ID3D12PipelineState* pInitialState,
-			Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList4>& pCommandList
+			TRefCountPtr<ID3D12GraphicsCommandList4>& pCommandList
 		);
 
 		// Creates a command queue.
 		HRESULT CreateCommandQueue(
 			const D3D12_COMMAND_QUEUE_DESC* pDesc,
-			Microsoft::WRL::ComPtr<ID3D12CommandQueue>& pCommandQueue
+			TRefCountPtr<ID3D12CommandQueue>& pCommandQueue
 		);
 
 		// This method creates a command signature.
@@ -112,7 +112,7 @@ namespace Dash
 			const D3D12_RESOURCE_DESC* pDesc,
 			D3D12_RESOURCE_STATES       initialResourceState,
 			const D3D12_CLEAR_VALUE* pOptimizedClearValue,
-			Microsoft::WRL::ComPtr<ID3D12Resource>& pvResource
+			TRefCountPtr<ID3D12Resource>& pvResource
 		);
 
 		// Creates a compute pipeline state object.
@@ -137,14 +137,14 @@ namespace Dash
 		// Creates a descriptor heap object.
 		HRESULT CreateDescriptorHeap(
 			const D3D12_DESCRIPTOR_HEAP_DESC* pDescriptorHeapDesc,
-			Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& ppvHeap
+			TRefCountPtr<ID3D12DescriptorHeap>& ppvHeap
 		);
 
 		// Creates a fence object. (ID3D12Device.CreateFence)
 		HRESULT CreateFence(
 			UINT64            initialValue,
 			D3D12_FENCE_FLAGS flags,
-			Microsoft::WRL::ComPtr<ID3D12Fence>& ppFence
+			TRefCountPtr<ID3D12Fence>& ppFence
 		);
 
 		// Creates a graphics pipeline state object.
@@ -162,7 +162,7 @@ namespace Dash
 		// Creates a heap that can be used with placed resources and reserved resources.
 		HRESULT CreateHeap(
 			const D3D12_HEAP_DESC* pDesc,
-			Microsoft::WRL::ComPtr<ID3D12Heap>& ppvHeap
+			TRefCountPtr<ID3D12Heap>& ppvHeap
 		);
 
 		// Creates a resource that is placed in a specific heap. Placed resources are the lightest weight resource objects available, and are the fastest to create and destroy. (ID3D12Device.CreatePlacedResource)
@@ -172,13 +172,13 @@ namespace Dash
 			const D3D12_RESOURCE_DESC* pDesc,
 			D3D12_RESOURCE_STATES     initialState,
 			const D3D12_CLEAR_VALUE* pOptimizedClearValue,
-			Microsoft::WRL::ComPtr<ID3D12Resource>& pvResource
+			TRefCountPtr<ID3D12Resource>& pvResource
 		);
 
 		// Creates a query heap. A query heap contains an array of queries.
 		HRESULT CreateQueryHeap(
 			const D3D12_QUERY_HEAP_DESC* pDesc,
-			Microsoft::WRL::ComPtr<ID3D12QueryHeap>& ppvHeap
+			TRefCountPtr<ID3D12QueryHeap>& ppvHeap
 		);
 
 		// Creates a render-target view for accessing resource data. (ID3D12Device.CreateRenderTargetView)
@@ -193,7 +193,7 @@ namespace Dash
 			const D3D12_RESOURCE_DESC* pDesc,
 			D3D12_RESOURCE_STATES     initialState,
 			const D3D12_CLEAR_VALUE* pOptimizedClearValue,
-			Microsoft::WRL::ComPtr<ID3D12Resource>& pvResource
+			TRefCountPtr<ID3D12Resource>& pvResource
 		);
 
 		// Creates a root signature layout.
@@ -362,8 +362,8 @@ namespace Dash
 		FD3D12VideoMemoryInfo QueryVideoMemoryInfo();
 
 	private:
-		Microsoft::WRL::ComPtr<ID3D12Device5> mDevice = nullptr;
-		Microsoft::WRL::ComPtr<IDXGIAdapter3> mAdapter = nullptr;
+		TRefCountPtr<ID3D12Device5> mDevice = nullptr;
+		TRefCountPtr<IDXGIAdapter3> mAdapter = nullptr;
 
 		bool mTypedUAVLoadSupport_R11G11B10_FLOAT = false;
 		bool mTypedUAVLoadSupport_R16G16B16A16_FLOAT = false;

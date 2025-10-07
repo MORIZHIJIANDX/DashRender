@@ -11,12 +11,12 @@ namespace Dash
 
 	void FShaderCompiler::Init()
 	{
-		DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&mUtils));
+		DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(mUtils.GetInitReference()));
 
-		DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&mCompiler));
+		DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(mCompiler.GetInitReference()));
 
 		//create default include handler
-		mUtils->CreateDefaultIncludeHandler(&mIncludeHandler);
+		mUtils->CreateDefaultIncludeHandler(mIncludeHandler.GetInitReference());
 	}
 
 	FDX12CompiledShader FShaderCompiler::CompileShader(const FShaderCreationInfo& info)
@@ -52,8 +52,8 @@ namespace Dash
 		
 		LOG_INFO << "Load File : " << info.FileName;
 
-		ComPtr<IDxcBlobEncoding> source = nullptr;
-		DX_CALL(mUtils->LoadFile(wFileName.c_str(), nullptr, &source));
+		TRefCountPtr<IDxcBlobEncoding> source = nullptr;
+		DX_CALL(mUtils->LoadFile(wFileName.c_str(), nullptr, source.GetInitReference()));
 
 		std::vector<LPCWSTR> args;
 
@@ -109,12 +109,12 @@ namespace Dash
 		buffer.Ptr = source->GetBufferPointer();
 		buffer.Size = source->GetBufferSize();
 
-		ComPtr<IDxcResult> compiledResult;
-		DX_CALL(mCompiler->Compile(&buffer, args.data(), static_cast<UINT32>(args.size()), mIncludeHandler.Get(), IID_PPV_ARGS(&compiledResult)));
+		TRefCountPtr<IDxcResult> compiledResult;
+		DX_CALL(mCompiler->Compile(&buffer, args.data(), static_cast<UINT32>(args.size()), mIncludeHandler.GetReference(), IID_PPV_ARGS(compiledResult.GetInitReference())));
 
-		ComPtr<IDxcBlobUtf8> errors;
-		ComPtr<IDxcBlobWide> errorOutputName;
-		DX_CALL(compiledResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&errors), &errorOutputName));
+		TRefCountPtr<IDxcBlobUtf8> errors;
+		TRefCountPtr<IDxcBlobWide> errorOutputName;
+		DX_CALL(compiledResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(errors.GetInitReference()), errorOutputName.GetInitReference()));
 
 		if (errors != nullptr && errors->GetStringLength() != 0)
 		{
@@ -133,15 +133,15 @@ namespace Dash
 			return FDX12CompiledShader{};
 		}
 
-		ComPtr<IDxcBlob> shaderBlob = nullptr;
-		ComPtr<IDxcBlobUtf16> shaderName = nullptr;
-		DX_CALL(compiledResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), &shaderName));
+		TRefCountPtr<IDxcBlob> shaderBlob = nullptr;
+		TRefCountPtr<IDxcBlobUtf16> shaderName = nullptr;
+		DX_CALL(compiledResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(shaderBlob.GetInitReference()), shaderName.GetInitReference()));
 
-		ComPtr<ID3D12ShaderReflection> shaderReflector;
+		TRefCountPtr<ID3D12ShaderReflection> shaderReflector;
 
-		ComPtr<IDxcBlob> reflectionBlob;
-		ComPtr<IDxcBlobWide> reflectionOutputName;
-		DX_CALL(compiledResult->GetOutput(DXC_OUT_REFLECTION, IID_PPV_ARGS(&reflectionBlob), &reflectionOutputName));
+		TRefCountPtr<IDxcBlob> reflectionBlob;
+		TRefCountPtr<IDxcBlobWide> reflectionOutputName;
+		DX_CALL(compiledResult->GetOutput(DXC_OUT_REFLECTION, IID_PPV_ARGS(reflectionBlob.GetInitReference()), reflectionOutputName.GetInitReference()));
 		if (reflectionBlob != nullptr)
 		{
 			// Create reflection interface.
@@ -150,13 +150,13 @@ namespace Dash
 			reflectionData.Ptr = reflectionBlob->GetBufferPointer();
 			reflectionData.Size = reflectionBlob->GetBufferSize();
 
-			mUtils->CreateReflection(&reflectionData, IID_PPV_ARGS(&shaderReflector));
+			mUtils->CreateReflection(&reflectionData, IID_PPV_ARGS(shaderReflector.GetInitReference()));
 		}
 
 #if defined(DASH_DEBUG)
-		ComPtr<IDxcBlob> pdbBlob;
-		ComPtr<IDxcBlobWide> pdbOutputName;
-		DX_CALL(compiledResult->GetOutput(DXC_OUT_PDB, IID_PPV_ARGS(&pdbBlob), &pdbOutputName));
+		TRefCountPtr<IDxcBlob> pdbBlob;
+		TRefCountPtr<IDxcBlobWide> pdbOutputName;
+		DX_CALL(compiledResult->GetOutput(DXC_OUT_PDB, IID_PPV_ARGS(pdbBlob.GetInitReference()), pdbOutputName.GetInitReference()));
 		std::string pdbPath = info.GetHashedFileName() + PDB_BLOB_FILE_EXTENSION;
 
 		if (FFileUtility::WriteBinaryFileSync(pdbPath, reinterpret_cast<unsigned char*>(pdbBlob->GetBufferPointer()), pdbBlob->GetBufferSize()))
@@ -207,12 +207,12 @@ namespace Dash
 	FDX12CompiledShader FShaderCompiler::LoadShaderBlob(const FShaderCreationInfo& info)
 	{
 		std::string hasedShaderName = info.GetHashedFileName() + SHADER_BLOB_FILE_EXTENSION;
-		ComPtr<IDxcBlobEncoding> compiledShaderBlob = LoadBlobFromFile(hasedShaderName);
+		TRefCountPtr<IDxcBlobEncoding> compiledShaderBlob = LoadBlobFromFile(hasedShaderName);
 
 		std::string reflectionFileName = info.GetHashedFileName() + REFLECTION_BLOB_FILE_EXTENSION;
-		ComPtr<IDxcBlobEncoding> reflectionBlob = LoadBlobFromFile(reflectionFileName);
+		TRefCountPtr<IDxcBlobEncoding> reflectionBlob = LoadBlobFromFile(reflectionFileName);
 
-		ComPtr<ID3D12ShaderReflection> shaderReflector;
+		TRefCountPtr<ID3D12ShaderReflection> shaderReflector;
 
 		// Create reflection interface.
 		DxcBuffer reflectionData;
@@ -220,7 +220,7 @@ namespace Dash
 		reflectionData.Ptr = reflectionBlob->GetBufferPointer();
 		reflectionData.Size = reflectionBlob->GetBufferSize();
 
-		mUtils->CreateReflection(&reflectionData, IID_PPV_ARGS(&shaderReflector));
+		mUtils->CreateReflection(&reflectionData, IID_PPV_ARGS(shaderReflector.GetInitReference()));
 
 		FDX12CompiledShader compiledShader;
 		compiledShader.CompiledShaderBlob = compiledShaderBlob;
@@ -230,15 +230,15 @@ namespace Dash
 		return compiledShader;
 	}
 
-	ComPtr<IDxcBlobEncoding> FShaderCompiler::LoadBlobFromFile(const std::string& fileName)
+	TRefCountPtr<IDxcBlobEncoding> FShaderCompiler::LoadBlobFromFile(const std::string& fileName)
 	{
-		ComPtr<IDxcBlobEncoding> blob = nullptr;
+		TRefCountPtr<IDxcBlobEncoding> blob = nullptr;
 
 		std::wstring wShaderFileName = FStringUtility::UTF8ToWideString(fileName);
 
 		if (FFileUtility::IsPathExistent(fileName))
 		{
-			DX_CALL(mUtils->LoadFile(wShaderFileName.c_str(), nullptr, &blob));
+			DX_CALL(mUtils->LoadFile(wShaderFileName.c_str(), nullptr, blob.GetInitReference()));
 
 			LOG_INFO << "Success to load shader blob : " << fileName;
 		}
