@@ -79,8 +79,12 @@ namespace Dash
 
 	void TerminateApplication(IGameApp* app)
 	{
-		FGraphicsCore::Shutdown();
+		FGraphicsCore::CommandQueueManager->Flush();
+
 		app->Cleanup();
+
+		FGraphicsCore::Shutdown();
+		
 		FLogManager::Get()->Shutdown();
 		FAssetManager::Get().Shutdown();
 

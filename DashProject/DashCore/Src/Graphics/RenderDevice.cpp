@@ -316,8 +316,8 @@ namespace Dash
 
 #if DASH_DEBUG
 		// Enable debug messages (only works if the debug layer has already been enabled).
-		ID3D12InfoQueue* d3dInfoQueue = nullptr;
-		if (SUCCEEDED(mDevice->QueryInterface(IID_PPV_ARGS(&d3dInfoQueue))))
+		TRefCountPtr<ID3D12InfoQueue> d3dInfoQueue = nullptr;
+		if (SUCCEEDED(mDevice->QueryInterface(IID_PPV_ARGS(d3dInfoQueue.GetInitReference()))))
 		{
 			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
 			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_ERROR, true);
@@ -360,7 +360,6 @@ namespace Dash
 			newFilter.DenyList.pIDList = denyIds;
 
 			d3dInfoQueue->PushStorageFilter(&newFilter);
-			d3dInfoQueue->Release();
 		}
 #endif // DASH_DEBUG
 
@@ -434,22 +433,30 @@ namespace Dash
 	}
 
 	void FRenderDevice::Destroy()
-	{
-#if DASH_DEBUG
-		ID3D12InfoQueue* d3dInfoQueue = nullptr;
-		if (SUCCEEDED(mDevice->QueryInterface(IID_PPV_ARGS(&d3dInfoQueue))))
+	{	
+		if (mAdapter)
 		{
-			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_CORRUPTION, false);
-			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_ERROR, false);
-			d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_WARNING, false);
-			d3dInfoQueue->Release();
+			mAdapter = nullptr;
 		}
 
-		ID3D12DebugDevice* debugInterface;
-		if (SUCCEEDED(mDevice->QueryInterface(&debugInterface)))
+#if DASH_DEBUG
 		{
-			debugInterface->ReportLiveDeviceObjects(D3D12_RLDO_FLAGS(D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL));
-			debugInterface->Release();
+			{
+				TRefCountPtr<ID3D12InfoQueue> d3dInfoQueue = nullptr;
+				if (SUCCEEDED(mDevice->QueryInterface(IID_PPV_ARGS(d3dInfoQueue.GetInitReference()))))
+				{
+					d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_CORRUPTION, false);
+					d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_ERROR, false);
+					d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY::D3D12_MESSAGE_SEVERITY_WARNING, false);
+				}
+			}
+
+
+			TRefCountPtr<ID3D12DebugDevice> debugInterface;
+			if (SUCCEEDED(mDevice->QueryInterface(debugInterface.GetInitReference())))
+			{
+				debugInterface->ReportLiveDeviceObjects(D3D12_RLDO_FLAGS(D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL));
+			}
 		}
 #endif
 
@@ -464,6 +471,7 @@ namespace Dash
 		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(dxgiDebug.GetInitReference()))))
 		{
 			dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_FLAGS(DXGI_DEBUG_RLO_SUMMARY | DXGI_DEBUG_RLO_IGNORE_INTERNAL));
+			dxgiDebug->ReportLiveObjects(DXGI_DEBUG_DX, DXGI_DEBUG_RLO_FLAGS(DXGI_DEBUG_RLO_ALL));
 		}
 #endif
 	}

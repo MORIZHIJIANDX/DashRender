@@ -20,11 +20,6 @@ namespace Dash
 
 	FPostProcessRenderLayer::~FPostProcessRenderLayer()
 	{
-		if (mTempRT)
-		{
-			mTempRT->Destroy();
-			mTempRT = nullptr;
-		}
 	}
 
 	void FPostProcessRenderLayer::Init()
@@ -67,6 +62,11 @@ namespace Dash
 
 	void FPostProcessRenderLayer::Shutdown()
 	{
+		if (mTempRT)
+		{
+			mTempRT->Destroy();
+			mTempRT = nullptr;
+		}
 	}
 
 	void FPostProcessRenderLayer::OnBeginFrame()
