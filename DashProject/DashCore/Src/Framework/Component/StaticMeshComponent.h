@@ -14,7 +14,7 @@ namespace Dash
 		const std::map<std::string, std::vector<uint8>>* ConstantBufferMapPtr;
 		const std::map<std::string, FTextureRef>* TextureBufferMapPtr;
 
-		FGraphicsPSORef PSO;
+		FGraphicsPSO* PSO;
 
 		uint32 VertexStart{ 0 };
 		uint32 VertexCount{ 0 };

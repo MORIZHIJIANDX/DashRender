@@ -21,5 +21,7 @@ namespace Dash
 		virtual void OnWindowResize(const FWindowResizeEventArgs& e) override;
 
 		FColorBufferRef mTempRT = nullptr;
+		FGraphicsPSO* PostProcessPSO = nullptr;
+		FComputePSO* ComputeGrayscalePSO = nullptr;
 	};
 }

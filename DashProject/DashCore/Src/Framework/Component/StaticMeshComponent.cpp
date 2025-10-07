@@ -159,12 +159,14 @@ namespace Dash
 				meshDrawCommand.ConstantBufferMapPtr = &iter->second.ConstantBufferMap;
 				meshDrawCommand.TextureBufferMapPtr = &iter->second.TextureBufferMap;
 
-				meshDrawCommand.PSO = FGraphicsPSO::MakeGraphicsPSO(mName);
-				meshDrawCommand.PSO->SetShaderPass(shaderPass);
-				meshDrawCommand.PSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
-				meshDrawCommand.PSO->SetSamplerMask(UINT_MAX);
-				meshDrawCommand.PSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetColorBufferFormat(), FGraphicsCore::SwapChain->GetDepthBufferFormat());
-				meshDrawCommand.PSO->Finalize();
+				FGraphicsPipelineStateInitializer drawCommandPSOInitializer;
+				drawCommandPSOInitializer.SetShaderPass(shaderPass);
+				drawCommandPSOInitializer.SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
+				drawCommandPSOInitializer.SetSamplerMask(UINT_MAX);
+				drawCommandPSOInitializer.SetRenderTargetFormat(FGraphicsCore::SwapChain->GetColorBufferFormat(), FGraphicsCore::SwapChain->GetDepthBufferFormat());
+				drawCommandPSOInitializer.Finalize();
+
+				meshDrawCommand.PSO = FGraphicsCore::PipelineStateCache->GetGraphicsPipelineState(drawCommandPSOInitializer, mName);
 
 				meshDrawCommand.VertexStart = sectionData.VertexStart;
 				meshDrawCommand.VertexCount = sectionData.VertexCount;

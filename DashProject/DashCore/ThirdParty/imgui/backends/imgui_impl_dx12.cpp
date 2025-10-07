@@ -100,7 +100,7 @@ namespace Dash
 
     struct ImGui_ImplDX12_Data_Refactoring
     {
-        FGraphicsPSORef pPipelineState;
+        FGraphicsPSO* pPipelineState;
         FTextureBufferRef pFontTextureResource;
         ImGui_ImplDX12_RenderBuffers_Refactoring* pFrameResources;
         UINT                            numFramesInFlight;
@@ -392,15 +392,15 @@ namespace Dash
 
             FShaderPassRef drawPass = FShaderPass::MakeGraphicShaderPass("IMGUI_DrawPass", { vsInfo , psInfo }, blendDisable, rasterizerCullOff, depthStateDisabled);
 
-            FGraphicsPSORef drawPSO = FGraphicsPSO::MakeGraphicsPSO("IMGUI_PSO");
+            FGraphicsPipelineStateInitializer drawPSOInitializer;
 
-            drawPSO->SetShaderPass(drawPass);
-            drawPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
-            drawPSO->SetSamplerMask(UINT_MAX);
-            drawPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetBackBufferFormat(), FGraphicsCore::SwapChain->GetDepthBufferFormat());
-            drawPSO->Finalize();
+            drawPSOInitializer.SetShaderPass(drawPass);
+            drawPSOInitializer.SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
+            drawPSOInitializer.SetSamplerMask(UINT_MAX);
+            drawPSOInitializer.SetRenderTargetFormat(FGraphicsCore::SwapChain->GetBackBufferFormat(), FGraphicsCore::SwapChain->GetDepthBufferFormat());
+            drawPSOInitializer.Finalize();
 
-            bd->pPipelineState = drawPSO;
+            bd->pPipelineState = FGraphicsCore::PipelineStateCache->GetGraphicsPipelineState(drawPSOInitializer, "IMGUI_PSO");
 
             ImGui_ImplDX12_CreateFontsTexture_Refactoring();
         }

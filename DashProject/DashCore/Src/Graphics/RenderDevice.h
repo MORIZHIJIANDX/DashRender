@@ -102,7 +102,7 @@ namespace Dash
 		HRESULT CreateCommandSignature(
 			const D3D12_COMMAND_SIGNATURE_DESC* pDesc,
 			ID3D12RootSignature* pRootSignature,
-			Microsoft::WRL::ComPtr<ID3D12CommandSignature>& pvCommandSignature
+			TRefCountPtr<ID3D12CommandSignature>& pvCommandSignature
 		);
 		
 		// Creates both a resource and an implicit heap, such that the heap is big enough to contain the entire resource, and the resource is mapped to the heap.
@@ -113,12 +113,6 @@ namespace Dash
 			D3D12_RESOURCE_STATES       initialResourceState,
 			const D3D12_CLEAR_VALUE* pOptimizedClearValue,
 			TRefCountPtr<ID3D12Resource>& pvResource
-		);
-
-		// Creates a compute pipeline state object.
-		HRESULT CreateComputePipelineState(
-			const D3D12_COMPUTE_PIPELINE_STATE_DESC* pDesc,
-			Microsoft::WRL::ComPtr<ID3D12PipelineState>& pPipelineState
 		);
 
 		// Creates a constant-buffer view for accessing resource data.
@@ -147,16 +141,10 @@ namespace Dash
 			TRefCountPtr<ID3D12Fence>& ppFence
 		);
 
-		// Creates a graphics pipeline state object.
-		HRESULT CreateGraphicsPipelineState(
-			const D3D12_GRAPHICS_PIPELINE_STATE_DESC* pDesc,
-			Microsoft::WRL::ComPtr<ID3D12PipelineState>& ppPipelineState
-		);
-
 		// Creates a pipeline state object.
 		HRESULT CreatePipelineState(
 			const D3D12_PIPELINE_STATE_STREAM_DESC* pDesc,
-			Microsoft::WRL::ComPtr<ID3D12PipelineState>& ppPipelineState
+			TRefCountPtr<ID3D12PipelineState>& ppPipelineState
 		);
 
 		// Creates a heap that can be used with placed resources and reserved resources.

@@ -104,7 +104,7 @@ namespace Dash
 		ID3D12RootSignature* mCurrentRootSignature = nullptr;
 		ID3D12PipelineState* mCurrentPipelineState = nullptr;
 
-		FPipelineStateObjectRef mPSORef;
+		FPipelineStateObject* mPSO;
 
 		std::vector<bool> mConstantBufferBindState;
 		std::vector<bool> mShaderResourceViewBindState;
@@ -144,7 +144,7 @@ namespace Dash
 		void SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type, ID3D12DescriptorHeap* heap);
 		void SetDescriptorHeaps(UINT count, D3D12_DESCRIPTOR_HEAP_TYPE types[], ID3D12DescriptorHeap* heaps[]);
 
-		void SetComputePipelineState(FComputePSORef pso);
+		void SetComputePipelineState(FComputePSO* pso);
 		
 		//Set Root Parameters
 		void SetRootConstantBufferView(const std::string& bufferName, size_t sizeInBytes, const void* constants);
@@ -196,7 +196,7 @@ namespace Dash
 		void ClearStencil(FDepthBufferRef target);
 		void ClearDepthAndStencil(FDepthBufferRef target);
 
-		void SetGraphicsPipelineState(FGraphicsPSORef pso);
+		void SetGraphicsPipelineState(FGraphicsPSO* pso);
 
 		void SetRenderTargets(UINT numRTVs, FColorBufferRef* rtvs);
 		void SetRenderTargets(UINT numRTVs, FColorBufferRef* rtvs, FDepthBufferRef depthBuffer);

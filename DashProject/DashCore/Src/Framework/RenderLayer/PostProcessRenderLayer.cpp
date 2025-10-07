@@ -7,10 +7,10 @@
 
 namespace Dash
 {
-	FGraphicsPSORef PostProcessPSO = FGraphicsPSO::MakeGraphicsPSO("PostProcessPSO");
+	//FGraphicsPSORef PostProcessPSO = FGraphicsPSO::MakeGraphicsPSO("PostProcessPSO");
 	FShaderPassRef PostProcessPass = nullptr;
 
-	FComputePSORef ComputeGrayscalePSO = FComputePSO::MakeComputePSO("ComputeGrayscalePSO");
+	//FComputePSORef ComputeGrayscalePSO = FComputePSO::MakeComputePSO("ComputeGrayscalePSO");
 	FShaderPassRef ComputeGrayscalePass = nullptr;
 
 	FPostProcessRenderLayer::FPostProcessRenderLayer()
@@ -40,18 +40,24 @@ namespace Dash
 
 		PostProcessPass = FShaderPass::MakeGraphicShaderPass("PostProcessPass", { vsInfo , psInfo }, blendDisable, rasterizerDefault, depthStateDisabled);
 
-		PostProcessPSO->SetShaderPass(PostProcessPass);
-		PostProcessPSO->SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
-		PostProcessPSO->SetSamplerMask(UINT_MAX);
-		PostProcessPSO->SetRenderTargetFormat(FGraphicsCore::SwapChain->GetBackBufferFormat(), FGraphicsCore::SwapChain->GetDepthBufferFormat());
-		PostProcessPSO->Finalize();
+		FGraphicsPipelineStateInitializer PostProcessPSOInitializer;
+		PostProcessPSOInitializer.SetShaderPass(PostProcessPass);
+		PostProcessPSOInitializer.SetPrimitiveTopologyType(EPrimitiveTopology::TriangleList);
+		PostProcessPSOInitializer.SetSamplerMask(UINT_MAX);
+		PostProcessPSOInitializer.SetRenderTargetFormat(FGraphicsCore::SwapChain->GetBackBufferFormat(), FGraphicsCore::SwapChain->GetDepthBufferFormat());
+		PostProcessPSOInitializer.Finalize();
+
+		PostProcessPSO = FGraphicsCore::PipelineStateCache->GetGraphicsPipelineState(PostProcessPSOInitializer, "PostProcessPSO");
 
 		{
 			FShaderCreationInfo csInfo{ EShaderStage::Compute, FFileUtility::GetEngineShaderDir("ComputeGrayscaleShader.hlsl"),  "CS_Main" };
 			ComputeGrayscalePass = FShaderPass::MakeComputeShaderPass("ComputeGrayscalePass", csInfo);
 
-			ComputeGrayscalePSO->SetShaderPass(ComputeGrayscalePass);
-			ComputeGrayscalePSO->Finalize();
+			FComputePipelineStateInitializer ComputeGrayscalePSOInitializer;
+			ComputeGrayscalePSOInitializer.SetShaderPass(ComputeGrayscalePass);
+			ComputeGrayscalePSOInitializer.Finalize();
+
+			ComputeGrayscalePSO = FGraphicsCore::PipelineStateCache->GetComputePipelineState(ComputeGrayscalePSOInitializer, "ComputeGrayscalePSO");
 
 			mTempRT = FGraphicsCore::Device->CreateColorBuffer("Temp Buffer", FColorBufferDescription::Create2D(FGraphicsCore::SwapChain->GetColorBufferFormat(),
 				FGraphicsCore::SwapChain->GetDisplayWidth(), FGraphicsCore::SwapChain->GetDisplayHeight(), FLinearColor::Black,

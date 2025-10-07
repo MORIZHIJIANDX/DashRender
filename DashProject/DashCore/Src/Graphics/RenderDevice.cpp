@@ -498,19 +498,14 @@ namespace Dash
 		return mDevice->CreateCommandQueue(pDesc, IID_PPV_ARGS(pCommandQueue.GetInitReference()));
 	}
 
-	HRESULT FRenderDevice::CreateCommandSignature(const D3D12_COMMAND_SIGNATURE_DESC* pDesc, ID3D12RootSignature* pRootSignature, Microsoft::WRL::ComPtr<ID3D12CommandSignature>& pvCommandSignature)
+	HRESULT FRenderDevice::CreateCommandSignature(const D3D12_COMMAND_SIGNATURE_DESC* pDesc, ID3D12RootSignature* pRootSignature, TRefCountPtr<ID3D12CommandSignature>& pvCommandSignature)
 	{
-		return mDevice->CreateCommandSignature(pDesc, pRootSignature, IID_PPV_ARGS(&pvCommandSignature));
+		return mDevice->CreateCommandSignature(pDesc, pRootSignature, IID_PPV_ARGS(pvCommandSignature.GetInitReference()));
 	}
 
 	HRESULT FRenderDevice::CreateCommittedResource(const D3D12_HEAP_PROPERTIES* pHeapProperties, D3D12_HEAP_FLAGS heapFlags, const D3D12_RESOURCE_DESC* pDesc, D3D12_RESOURCE_STATES initialResourceState, const D3D12_CLEAR_VALUE* pOptimizedClearValue, TRefCountPtr<ID3D12Resource>& pvResource)
 	{
 		return mDevice->CreateCommittedResource(pHeapProperties, heapFlags, pDesc, initialResourceState, pOptimizedClearValue, IID_PPV_ARGS(pvResource.GetInitReference()));
-	}
-
-	HRESULT FRenderDevice::CreateComputePipelineState(const D3D12_COMPUTE_PIPELINE_STATE_DESC* pDesc, Microsoft::WRL::ComPtr<ID3D12PipelineState>& pPipelineState)
-	{
-		return mDevice->CreateComputePipelineState(pDesc, IID_PPV_ARGS(&pPipelineState));
 	}
 
 	void FRenderDevice::CreateConstantBufferView(const D3D12_CONSTANT_BUFFER_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor)
@@ -533,14 +528,9 @@ namespace Dash
 		return mDevice->CreateFence(initialValue, flags, IID_PPV_ARGS(ppFence.GetInitReference()));
 	}
 
-	HRESULT FRenderDevice::CreateGraphicsPipelineState(const D3D12_GRAPHICS_PIPELINE_STATE_DESC* pDesc, Microsoft::WRL::ComPtr<ID3D12PipelineState>& ppPipelineState)
+	HRESULT FRenderDevice::CreatePipelineState(const D3D12_PIPELINE_STATE_STREAM_DESC* pDesc, TRefCountPtr<ID3D12PipelineState>& ppPipelineState)
 	{
-		return mDevice->CreateGraphicsPipelineState(pDesc, IID_PPV_ARGS(&ppPipelineState));
-	}
-
-	HRESULT FRenderDevice::CreatePipelineState(const D3D12_PIPELINE_STATE_STREAM_DESC* pDesc, Microsoft::WRL::ComPtr<ID3D12PipelineState>& ppPipelineState)
-	{
-		return mDevice->CreatePipelineState(pDesc, IID_PPV_ARGS(&ppPipelineState));
+		return mDevice->CreatePipelineState(pDesc, IID_PPV_ARGS(ppPipelineState.GetInitReference()));
 	}
 
 	HRESULT FRenderDevice::CreateHeap(const D3D12_HEAP_DESC* pDesc, TRefCountPtr<ID3D12Heap>& ppvHeap)

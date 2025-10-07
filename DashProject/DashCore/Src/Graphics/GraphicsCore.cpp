@@ -26,6 +26,7 @@ namespace Dash
 	FCpuDescriptorAllocatorManager* FGraphicsCore::DescriptorAllocator = nullptr;
 	FCommandContextManager* FGraphicsCore::ContextManager = nullptr;
 	FRootSignatureManager* FGraphicsCore::RootSignatureManager = nullptr;
+	FPipelineStateCache* FGraphicsCore::PipelineStateCache = nullptr;
 	FSwapChain* FGraphicsCore::SwapChain = nullptr;
 	FGPUProfiler* FGraphicsCore::Profiler = nullptr;
 
@@ -84,6 +85,7 @@ namespace Dash
 		DescriptorAllocator = new FCpuDescriptorAllocatorManager();
 		ContextManager = new FCommandContextManager();
 		RootSignatureManager = new FRootSignatureManager();
+		PipelineStateCache = new FPipelineStateCache();
 		SwapChain = new FSwapChain(windowWidth, windowHeight);
 		Profiler = new FGPUProfiler();
 
@@ -141,7 +143,11 @@ namespace Dash
 			LOG_INFO << "Destroy Swap Chain.";
 		}
 
-		FPipelineStateObject::DestroyAll();
+		if (PipelineStateCache)
+		{
+			PipelineStateCache->Destroy();
+		}
+
 		if (RootSignatureManager)
 		{
 			RootSignatureManager->Destroy();

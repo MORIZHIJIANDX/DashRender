@@ -141,6 +141,8 @@ namespace Dash
 
 	void FRootSignatureManager::Destroy()
 	{
+		std::lock_guard<std::mutex> lock(mLock);
+
 		for (auto& Pair : RootSignatureHashMap)
 		{
 			delete Pair.second;

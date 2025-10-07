@@ -290,11 +290,13 @@ namespace Dash
 		}
 	}
 
-	void FComputeCommandContextBase::SetComputePipelineState(FComputePSORef pso)
+	void FComputeCommandContextBase::SetComputePipelineState(FComputePSO* pso)
 	{
-		ASSERT(pso->IsFinalized());
+		ASSERT(pso);
 
 		ID3D12PipelineState* pipelineState = pso->GetPipelineState();
+
+		ASSERT(pipelineState);
 
 		if (pipelineState == mCurrentPipelineState)
 		{
@@ -305,7 +307,7 @@ namespace Dash
 		mD3DCommandList->SetPipelineState(pipelineState);
 		mCurrentPipelineState = pipelineState;
 
-		mPSORef = pso;
+		mPSO = pso;
 
 		InitParameterBindState();
 	}
@@ -409,14 +411,14 @@ namespace Dash
 
 	void FCommandContext::InitParameterBindState()
 	{
-		if (mPSORef == nullptr)
+		if (mPSO == nullptr)
 		{
 			return;
 		}
 		
-		ASSERT_MSG(mPSORef->GetShaderPass() != nullptr, "Shader Pass Is Not Set.");
+		ASSERT_MSG(mPSO->GetShaderPass() != nullptr, "Shader Pass Is Not Set.");
 
-		FShaderPassRef shaderPass = mPSORef->GetShaderPass();
+		FShaderPassRef shaderPass = mPSO->GetShaderPass();
 
 		InitStateForParameter(shaderPass->GetCBVParameterNum(), mConstantBufferBindState);
 		InitStateForParameter(shaderPass->GetSRVParameterNum(), mShaderResourceViewBindState);
@@ -446,10 +448,10 @@ namespace Dash
 			}
 		};
 
-		checkUnboundParameterFunc(mConstantBufferBindState, mPSORef->GetShaderPass()->GetCBVParameters(), "Constant Buffer");
-		checkUnboundParameterFunc(mShaderResourceViewBindState, mPSORef->GetShaderPass()->GetSRVParameters(), "Shader Resource View");
-		checkUnboundParameterFunc(mUnorderAccessViewBindState, mPSORef->GetShaderPass()->GetUAVParameters(), "Unorder Access View");
-		checkUnboundParameterFunc(mSamplerBindState, mPSORef->GetShaderPass()->GetCBVParameters(), "Sampler");
+		checkUnboundParameterFunc(mConstantBufferBindState, mPSO->GetShaderPass()->GetCBVParameters(), "Constant Buffer");
+		checkUnboundParameterFunc(mShaderResourceViewBindState, mPSO->GetShaderPass()->GetSRVParameters(), "Shader Resource View");
+		checkUnboundParameterFunc(mUnorderAccessViewBindState, mPSO->GetShaderPass()->GetUAVParameters(), "Unorder Access View");
+		checkUnboundParameterFunc(mSamplerBindState, mPSO->GetShaderPass()->GetCBVParameters(), "Sampler");
 	}
 
 	void FCommandContext::Initialize()
@@ -472,7 +474,7 @@ namespace Dash
 
 		mCurrentRootSignature = nullptr;
 		mCurrentPipelineState = nullptr;
-		mPSORef = nullptr;
+		mPSO = nullptr;
 		mCommandList = nullptr;
 		mD3DCommandList = nullptr;
 	}
@@ -524,9 +526,9 @@ namespace Dash
 
 	void FComputeCommandContextBase::SetRootConstantBufferView(const std::string& bufferName, size_t sizeInBytes, const void* constants)
 	{
-		ASSERT_MSG(mPSORef != nullptr, "Pipeline State Is Not Set.");
+		ASSERT_MSG(mPSO != nullptr, "Pipeline State Is Not Set.");
 
-		FShaderPassRef shaderPass = mPSORef->GetShaderPass();
+		FShaderPassRef shaderPass = mPSO->GetShaderPass();
 
 		if (shaderPass)
 		{
@@ -547,9 +549,9 @@ namespace Dash
 
 	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, FColorBufferRef buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
 	{
-		ASSERT_MSG(mPSORef != nullptr, "Pipeline State Is Not Set.");
+		ASSERT_MSG(mPSO != nullptr, "Pipeline State Is Not Set.");
 
-		FShaderPassRef shaderPass = mPSORef->GetShaderPass();
+		FShaderPassRef shaderPass = mPSO->GetShaderPass();
 
 		if (shaderPass)
 		{
@@ -569,9 +571,9 @@ namespace Dash
 
 	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, FTextureBufferRef buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
 	{
-		ASSERT_MSG(mPSORef != nullptr, "Pipeline State Is Not Set.");
+		ASSERT_MSG(mPSO != nullptr, "Pipeline State Is Not Set.");
 
-		FShaderPassRef shaderPass = mPSORef->GetShaderPass();
+		FShaderPassRef shaderPass = mPSO->GetShaderPass();
 
 		if (shaderPass)
 		{
@@ -591,9 +593,9 @@ namespace Dash
 
 	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, FStructuredBufferRef buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
 	{
-		ASSERT_MSG(mPSORef != nullptr, "Pipeline State Is Not Set.");
+		ASSERT_MSG(mPSO != nullptr, "Pipeline State Is Not Set.");
 
-		FShaderPassRef shaderPass = mPSORef->GetShaderPass();
+		FShaderPassRef shaderPass = mPSO->GetShaderPass();
 
 		if (shaderPass)
 		{
@@ -613,7 +615,7 @@ namespace Dash
 
 	void FComputeCommandContextBase::SetUnorderAccessView(const std::string& uavName, FColorBufferRef buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
 	{
-		FShaderPassRef shaderPass = mPSORef->GetShaderPass();
+		FShaderPassRef shaderPass = mPSO->GetShaderPass();
 
 		if (shaderPass)
 		{
@@ -727,9 +729,9 @@ namespace Dash
 		TrackResource(target);
 	}
 
-	void FGraphicsCommandContextBase::SetGraphicsPipelineState(FGraphicsPSORef pso)
+	void FGraphicsCommandContextBase::SetGraphicsPipelineState(FGraphicsPSO* pso)
 	{
-		ASSERT(pso->IsFinalized());
+		ASSERT(pso);
 
 		ID3D12PipelineState* pipelineState = pso->GetPipelineState();
 
@@ -743,7 +745,7 @@ namespace Dash
 		SetPrimitiveTopology(pso->GetPrimitiveTopology());
 		mCurrentPipelineState = pipelineState;
 
-		mPSORef = pso;
+		mPSO = pso;
 
 		InitParameterBindState();
 	}

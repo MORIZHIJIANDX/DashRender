@@ -19,50 +19,18 @@ namespace Dash
 	using FGraphicsPSORef = std::shared_ptr<FGraphicsPSO>;
 	using FComputePSORef = std::shared_ptr<FComputePSO>;
 
-	class FPipelineStateObject
+	struct FGraphicsPipelineStateInitializer
 	{
 	public:
-		FPipelineStateObject(const std::string& name);
-		virtual ~FPipelineStateObject() {}
-
-		static void DestroyAll();
-
-		FRootSignature* GetRootSignature() const
+		FGraphicsPipelineStateInitializer()
+			: PrimitiveTopology(EPrimitiveTopology::None)
+			, HashCode(0)
+			, PipelineStateStream()
 		{
-			ASSERT(mShaderPass != nullptr);
-			return mShaderPass->GetRootSignature();
+			PipelineStateStream.NodeMask = 0;
+			PipelineStateStream.SampleMask = UINT_MAX;
+			PipelineStateStream.SampleDesc = DXGI_SAMPLE_DESC{ 1, 0 };
 		}
-
-		ID3D12PipelineState* GetPipelineState() const { return mPSO; }
-		
-		virtual void SetShader(FShaderResourceRef shader) = 0;
-		void SetShaderPass(FShaderPassRef shaderPass) { mShaderPass = shaderPass; }
-		virtual void Finalize() = 0;
-
-		bool IsFinalized() const { return mIsFinalized; }
-
-		FShaderPassRef GetShaderPass() const { return mShaderPass;}
-
-	protected:
-		void ApplyShaderPass();
-
-	protected:
-		std::string mName;
-
-		bool mIsFinalized = false;
-
-		CD3DX12_PIPELINE_STATE_STREAM2 mPipelineStateStream;
-
-		ID3D12PipelineState* mPSO = nullptr;
-		FShaderPassRef mShaderPass = nullptr;
-	};
-
-	class FGraphicsPSO : public FPipelineStateObject
-	{
-	public:
-		FGraphicsPSO(const std::string& name);
-
-		static FGraphicsPSORef MakeGraphicsPSO(const std::string& name);
 
 		void SetBlendState(const FBlendState& blendDesc);
 		void SetSamplerMask(UINT samperMask);
@@ -74,24 +42,80 @@ namespace Dash
 		void SetRenderTargetFormats(UINT numRTVs, const EResourceFormat* renderTargetFormats, EResourceFormat depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
 		void SetInputLayout(const FInputAssemblerLayout& layout);
 		void SetPrimitiveRestart(D3D12_INDEX_BUFFER_STRIP_CUT_VALUE indexBufferProps);
+		void SetShaderPass(FShaderPassRef shaderPass);
 
-		void SetVertexShader(const void* binaryCode, size_t size) { mPipelineStateStream.VS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
-		void SetPixelShader(const void* binaryCode, size_t size) { mPipelineStateStream.PS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
-		void SetGeometryShader(const void* binaryCode, size_t size) { mPipelineStateStream.GS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
-		void SetHullShader(const void* binaryCode, size_t size) { mPipelineStateStream.HS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
-		void SetDomainShader(const void* binaryCode, size_t size) { mPipelineStateStream.DS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
+		void Finalize();
 
-		void SetVertexShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPipelineStateStream.VS = shaderByteCode; }
-		void SetPixelShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPipelineStateStream.PS = shaderByteCode; }
-		void SetGeometryShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPipelineStateStream.GS = shaderByteCode; }
-		void SetHullShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPipelineStateStream.HS = shaderByteCode; }
-		void SetDomainShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPipelineStateStream.DS = shaderByteCode; }
+		FInputAssemblerLayout InputLayout;
+		EPrimitiveTopology PrimitiveTopology;
+		FShaderPassRef ShaderPass;
+		size_t HashCode;
+		CD3DX12_PIPELINE_STATE_STREAM2 PipelineStateStream;
 
-		virtual void SetShader(FShaderResourceRef shader) override;
+	protected:
+		void SetVertexShader(const void* binaryCode, size_t size) { PipelineStateStream.VS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
+		void SetPixelShader(const void* binaryCode, size_t size) { PipelineStateStream.PS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
+		void SetGeometryShader(const void* binaryCode, size_t size) { PipelineStateStream.GS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
+		void SetHullShader(const void* binaryCode, size_t size) { PipelineStateStream.HS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
+		void SetDomainShader(const void* binaryCode, size_t size) { PipelineStateStream.DS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
 
-		virtual void Finalize() override;
+		void SetShader(FShaderResourceRef shader);
+	};
+
+	struct FComputePipelineStateInitializer
+	{
+	public:
+		FComputePipelineStateInitializer() 
+			: HashCode(0)
+			, PipelineStateStream()
+		{}
+
+		void SetShaderPass(FShaderPassRef shaderPass);
+
+		void Finalize();
+
+		FShaderPassRef ShaderPass;
+		size_t HashCode;
+		CD3DX12_PIPELINE_STATE_STREAM2 PipelineStateStream;
+
+	protected:
+		void SetComputeShader(const void* binaryCode, size_t size) { PipelineStateStream.CS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
+	};
+
+	class FPipelineStateObject
+	{
+	public:
+		FPipelineStateObject(const std::string& name);
+		virtual ~FPipelineStateObject() {}
+
+		FRootSignature* GetRootSignature() const
+		{
+			ASSERT(mShaderPass != nullptr);
+			return mShaderPass->GetRootSignature();
+		}
+
+		ID3D12PipelineState* GetPipelineState() const { return mPSO.GetReference(); }
+		
+		FShaderPassRef GetShaderPass() const { return mShaderPass;}
+
+	protected:
+		std::string mName;
+
+		CD3DX12_PIPELINE_STATE_STREAM2 mPipelineStateStream;
+
+		TRefCountPtr<ID3D12PipelineState> mPSO = nullptr;
+		FShaderPassRef mShaderPass = nullptr;
+	};
+
+	class FGraphicsPSO : public FPipelineStateObject
+	{
+	public:
+		FGraphicsPSO(const FGraphicsPipelineStateInitializer& initializer, const std::string& name);
 
 		EPrimitiveTopology GetPrimitiveTopology() const { return mPrimitiveTopology; }
+
+	private:
+		void Init(const FGraphicsPipelineStateInitializer& initializer, const std::string& name);
 
 	private:
 		FInputAssemblerLayout mInputLayout;
@@ -101,15 +125,25 @@ namespace Dash
 	class FComputePSO : public FPipelineStateObject
 	{
 	public:
-		FComputePSO(const std::string& name);
+		FComputePSO(const FComputePipelineStateInitializer& initializer, const std::string& name);
 
-		static FComputePSORef MakeComputePSO(const std::string& name);
+	private:
+		void Init(const FComputePipelineStateInitializer& initializer, const std::string& name);
+	};
 
-		void SetComputeShader(const void* binaryCode, size_t size) { mPipelineStateStream.CS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
-		void SetComputeShader(const D3D12_SHADER_BYTECODE& shaderByteCode) { mPipelineStateStream.CS = shaderByteCode; }
+	class FPipelineStateCache
+	{
+	public:
+		FGraphicsPSO* GetGraphicsPipelineState(const FGraphicsPipelineStateInitializer& initializer, const std::string& name);
+		FComputePSO* GetComputePipelineState(const FComputePipelineStateInitializer& initializer, const std::string& name);
 
-		virtual void SetShader(FShaderResourceRef shader) override;
+		void Destroy();
 
-		virtual void Finalize() override;
+	private:
+		std::mutex mGraphicsPipelineStateLock;
+		std::mutex mComputePipelineStateLock;
+
+		std::map<size_t, FGraphicsPSO*> mGraphicsPipelineStateHashMap;
+		std::map<size_t, FComputePSO*> mComputePipelineStateHashMap;
 	};
 }
