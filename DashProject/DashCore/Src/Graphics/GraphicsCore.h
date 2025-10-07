@@ -6,6 +6,7 @@ namespace Dash
 	class FCommandListManager;
 	class FCpuDescriptorAllocatorManager;
 	class FCommandContextManager;
+	class FRootSignatureManager;
 	class FSwapChain;
 	class FRenderDevice;
 	class FGPUProfiler;
@@ -23,6 +24,7 @@ namespace Dash
 		static FCommandListManager* CommandListManager;
 		static FCpuDescriptorAllocatorManager* DescriptorAllocator;
 		static FCommandContextManager* ContextManager;
+		static FRootSignatureManager* RootSignatureManager;
 		static FSwapChain* SwapChain;
 		static FGPUProfiler* Profiler;
 

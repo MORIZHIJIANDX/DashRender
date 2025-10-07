@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SamplerDesc.h"
+#include "Utility/RefCounting.h"
 
 namespace Dash
 {
@@ -98,103 +99,123 @@ namespace Dash
 		D3D12_ROOT_PARAMETER1 mRootParameter{};
 	};
 
-	class BoundShaderState
+	struct FBoundShaderState
 	{
 	public:
-		BoundShaderState() {};
-		~BoundShaderState() {};
+		FBoundShaderState(UINT numRootParameters = 0, UINT numStaticSamplers = 0)
+			: NumParameters(numRootParameters)
+			, NumStaticSamplers(numStaticSamplers)
+			, NumInitializedStaticSamplers(0)
+			, NumDescriptorsPerTable{ 0 }
+		{
+			if (numRootParameters > 0)
+			{
+				ParameterArray.reset(new FRootParameter[numRootParameters]);
+			}
+			else
+			{
+				ParameterArray = nullptr;
+			}
 
-	private:
-		UINT mNumParameters;
-		UINT mNumStaticSamplers;
-		UINT mNumInitializedStaticSamplers;
+			if (numStaticSamplers > 0)
+			{
+				SamplerArray.reset(new D3D12_STATIC_SAMPLER_DESC[numStaticSamplers]);
+			}
+			else
+			{
+				SamplerArray = nullptr;
+			}
 
-		std::unique_ptr<D3D12_STATIC_SAMPLER_DESC[]> mSamplerArray;
-		std::unique_ptr<FRootParameter[]> mParameterArray;
+			NumParameters = numRootParameters;
+			NumStaticSamplers = numStaticSamplers;
+			NumInitializedStaticSamplers = 0;
+		}
+
+		~FBoundShaderState() {};
+
+		FRootParameter& operator[](size_t parameterIndex)
+		{
+			ASSERT(parameterIndex < NumParameters);
+			return ParameterArray.get()[parameterIndex];
+		}
+
+		const FRootParameter& operator[](size_t parameterIndex) const
+		{
+			ASSERT(parameterIndex < NumParameters);
+			return ParameterArray.get()[parameterIndex];
+		}
+		
+		void InitStaticSampler(UINT shaderRegister, const FSamplerDesc& desc, D3D12_SHADER_VISIBILITY visibility, UINT space = 0);
+
+		void Finalize(D3D12_ROOT_SIGNATURE_FLAGS flag = D3D12_ROOT_SIGNATURE_FLAG_NONE);
+
+		UINT NumParameters;
+		UINT NumStaticSamplers;
+		UINT NumInitializedStaticSamplers;
+
+		uint32 SamplerTableMask;
+		uint32 DescriptorTableMask;
+		uint32 NumDescriptorsPerTable[32];
+
+		std::unique_ptr<D3D12_STATIC_SAMPLER_DESC[]> SamplerArray;
+		std::unique_ptr<FRootParameter[]> ParameterArray;
+
+		D3D12_ROOT_SIGNATURE_DESC1 RootSignatureDesc;
+		size_t HashCode;
 	};
 
 	class FRootSignature
 	{
 	public:
-		FRootSignature(UINT numRootParameters = 0, UINT numStaticSamplers = 0)
-			: mFinalized(false)
-			, mNumParameters(numRootParameters)
-			, mNumStaticSamplers(numStaticSamplers)
-			, mNumInitializedStaticSamplers(0)
-			, mSamplerTableMask(0)
-			, mDescriptorTableMask(0)
-			, mNumDescriptorsPerTable{0}
-			, mRootSignature(nullptr)
-		{}
+		FRootSignature(const FBoundShaderState& boundShaderState, const std::string& name)
+			: mName(name)
+			, mNumParameters(boundShaderState.NumParameters)
+			, mSamplerTableMask(boundShaderState.SamplerTableMask)
+			, mDescriptorTableMask(boundShaderState.DescriptorTableMask)
+			, mRootSignatureDesc(boundShaderState.RootSignatureDesc)
+		{
+			Init(boundShaderState);
+		}
 
 		~FRootSignature() {}
-
-		static FRootSignatureRef MakeRootSignature(UINT numRootParameters = 0, UINT numStaticSamplers = 0);
-
-		static void DestroyAll();
-
-		void Reset(UINT numRootParameters, UINT numStaticSamplers)
-		{
-			if (numRootParameters > 0)
-			{
-				mParameterArray.reset(new FRootParameter[numRootParameters]);
-			}
-			else
-			{
-				mParameterArray = nullptr;
-			}
-
-			if (numStaticSamplers > 0)
-			{
-				mSamplerArray.reset(new D3D12_STATIC_SAMPLER_DESC[numStaticSamplers]);
-			}
-			else
-			{
-				mSamplerArray = nullptr;
-			}
-
-			mNumParameters = numRootParameters;
-			mNumStaticSamplers = numStaticSamplers;
-			mNumInitializedStaticSamplers = 0;
-		}
 
 		uint32 GetDescriptorTableBitMask(D3D12_DESCRIPTOR_HEAP_TYPE type) const;
 
 		uint32 GetNumDescriptors(uint32 rootParameterIndex) const;
 
-		void InitStaticSampler(UINT shaderRegister, const FSamplerDesc& desc, D3D12_SHADER_VISIBILITY visibility, UINT space = 0);
-
-		void Finalize(const std::string& name, D3D12_ROOT_SIGNATURE_FLAGS flag = D3D12_ROOT_SIGNATURE_FLAG_NONE);
-
-		FRootParameter& operator[](size_t parameterIndex)
-		{
-			ASSERT(parameterIndex < mNumParameters);
-			return mParameterArray.get()[parameterIndex];
-		}
-
-		const FRootParameter& operator[](size_t parameterIndex) const
-		{
-			ASSERT(parameterIndex < mNumParameters);
-			return mParameterArray.get()[parameterIndex];
-		}
-
 		ID3D12RootSignature* GetSignature() const { return mRootSignature; }
 
-		bool IsFinalized() const { return mFinalized; }
+	protected:
+		void Init(const FBoundShaderState& boundShaderState);
 
 	protected:
 		std::string mName;
-		std::atomic<bool> mFinalized;
 		UINT mNumParameters;
-		UINT mNumStaticSamplers;
-		UINT mNumInitializedStaticSamplers;
 		uint32 mSamplerTableMask;
 		uint32 mDescriptorTableMask;
 		uint32 mNumDescriptorsPerTable[32];
-		std::unique_ptr<D3D12_STATIC_SAMPLER_DESC[]> mSamplerArray;
-		std::unique_ptr<FRootParameter[]> mParameterArray;
-		ID3D12RootSignature* mRootSignature;
+		D3D12_ROOT_SIGNATURE_DESC1 mRootSignatureDesc;
+		TRefCountPtr<ID3D12RootSignature> mRootSignature;
 	};
 
-	
+	class FRootSignatureManager
+	{
+	public:
+		FRootSignatureManager() {}
+		~FRootSignatureManager()
+		{
+			ASSERT(RootSignatureHashMap.size() == 0);
+		}
+
+		void Destroy();
+
+		FRootSignature* GetRootSignature(const FBoundShaderState& boundShaderState, const std::string& name);
+
+	private:
+		FRootSignature* CreateRootSignature(const FBoundShaderState& boundShaderState, const std::string& name);
+
+	private:
+		std::mutex mLock;
+		std::map<size_t, FRootSignature*> RootSignatureHashMap;
+	};
 }

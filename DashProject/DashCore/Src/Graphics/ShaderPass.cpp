@@ -2,6 +2,7 @@
 #include "ShaderPass.h"
 #include "ShaderMap.h"
 #include "Utility/StringUtility.h"
+#include "GraphicsCore.h"
 
 namespace Dash
 {
@@ -204,8 +205,6 @@ namespace Dash
 
 	void FShaderPass::CreateRootSignature(bool createStaticSamplers)
 	{
-		mRootSignatureRef = FRootSignature::MakeRootSignature();
-
 		UINT numConstantParameters = static_cast<UINT>(mCBVParameters.size());
 		UINT numSRVParameters = static_cast<UINT>(mSRVParameters.size());
 		UINT numUAVParameters = static_cast<UINT>(mUAVParameters.size());
@@ -217,7 +216,8 @@ namespace Dash
 		bool hasDynamicSamplerParameters = numDynamicSamplerParameters > 0;
 
 		UINT numRootParameters = numConstantParameters + (hasSRVParameters ? UINT(1) : UINT(0)) + (hasUAVParameters ? UINT(1) : UINT(0)) + (hasDynamicSamplerParameters ? UINT(1) : UINT(0));
-		mRootSignatureRef->Reset(numRootParameters, createStaticSamplers ? 8 : 0);
+
+		FBoundShaderState boundShaderState(numRootParameters, createStaticSamplers ? 8 : 0);
 		
 		uint32 rootParameterIndex = 0;
 		if (hasConstantParameters)
@@ -232,14 +232,14 @@ namespace Dash
 			{
 				FShaderParameter& cbv = mCBVParameters[i];
 				cbv.RootParameterIndex = rootParameterIndex;
-				(*mRootSignatureRef)[rootParameterIndex].InitAsRootConstantBufferView(cbv.BindPoint, GetShaderVisibility(cbv.ShaderStage), cbv.RegisterSpace);
+				boundShaderState[rootParameterIndex].InitAsRootConstantBufferView(cbv.BindPoint, GetShaderVisibility(cbv.ShaderStage), cbv.RegisterSpace);
 				++rootParameterIndex;
 			}
 		}
 
-		InitDescriptorRanges(mSRVParameters, rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
-		InitDescriptorRanges(mUAVParameters, rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_UAV);
-		InitDescriptorRanges(mSamplerParameters, rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER);
+		InitDescriptorRanges(boundShaderState, mSRVParameters, rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
+		InitDescriptorRanges(boundShaderState, mUAVParameters, rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_UAV);
+		InitDescriptorRanges(boundShaderState, mSamplerParameters, rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER);
 		 
 		if (createStaticSamplers)
 		{
@@ -247,11 +247,13 @@ namespace Dash
 
 			for (UINT index = 0; index < staticSamplers.size(); index++)
 			{
-				mRootSignatureRef->InitStaticSampler(index, staticSamplers[index], D3D12_SHADER_VISIBILITY_ALL);
+				boundShaderState.InitStaticSampler(index, staticSamplers[index], D3D12_SHADER_VISIBILITY_ALL);
 			}
 		}
 		
-		mRootSignatureRef->Finalize(mPassName + "_RootSignature", D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+		boundShaderState.Finalize(D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+		mRootSignature = FGraphicsCore::RootSignatureManager->GetRootSignature(boundShaderState, mPassName + "_RootSignature");
 	}
 
 	D3D12_SHADER_VISIBILITY FShaderPass::GetShaderVisibility(EShaderStage stage)
@@ -323,7 +325,7 @@ namespace Dash
 		return names;
 	}
 
-	void FShaderPass::InitDescriptorRanges(std::vector<FShaderParameter>& parameters, UINT& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType)
+	void FShaderPass::InitDescriptorRanges(FBoundShaderState& boundShaderState, std::vector<FShaderParameter>& parameters, UINT& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType)
 	{
 		size_t parametersCount = parameters.size();
 		if (parametersCount > 0)
@@ -363,7 +365,7 @@ namespace Dash
 			UINT rangeCount = static_cast<UINT>(ranges.size());
 			if (rangeCount > 0)
 			{
-				(*mRootSignatureRef)[rootParameterIndex].InitAsDescriptorTable(rangeCount, GetShaderVisibility(shaderStages));
+				boundShaderState[rootParameterIndex].InitAsDescriptorTable(rangeCount, GetShaderVisibility(shaderStages));
 
 				UINT parameterDescriptorOffset = 0;
 				for (size_t rangeIndex = 0; rangeIndex < rangeCount; rangeIndex++)
@@ -380,7 +382,7 @@ namespace Dash
 						descriptorCountInRange += parameters[parameterIndex].BindCount;
 						parameterDescriptorOffset += parameters[parameterIndex].BindCount;
 					}
-					(*mRootSignatureRef)[rootParameterIndex].SetTableRange(static_cast<UINT>(rangeIndex), rangeType, baseShaderRegister, descriptorCountInRange, registerSpace);
+					boundShaderState[rootParameterIndex].SetTableRange(static_cast<UINT>(rangeIndex), rangeType, baseShaderRegister, descriptorCountInRange, registerSpace);
 				}
 				++rootParameterIndex;
 			}

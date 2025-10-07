@@ -310,10 +310,9 @@ namespace Dash
 		InitParameterBindState();
 	}
 
-	void FComputeCommandContextBase::SetComputeRootSignature(FRootSignatureRef rootSignature)
+	void FComputeCommandContextBase::SetComputeRootSignature(FRootSignature* rootSignature)
 	{
 		ASSERT(rootSignature != nullptr);
-		ASSERT(rootSignature->IsFinalized());
 
 		if (rootSignature->GetSignature() == mCurrentRootSignature)
 		{
@@ -749,10 +748,9 @@ namespace Dash
 		InitParameterBindState();
 	}
 
-	void FGraphicsCommandContextBase::SetGraphicsRootSignature(FRootSignatureRef rootSignature)
+	void FGraphicsCommandContextBase::SetGraphicsRootSignature(FRootSignature* rootSignature)
 	{
 		ASSERT(rootSignature != nullptr);
-		ASSERT(rootSignature->IsFinalized());
 
 		if (rootSignature->GetSignature() == mCurrentRootSignature)
 		{

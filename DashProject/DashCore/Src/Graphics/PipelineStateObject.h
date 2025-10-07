@@ -27,7 +27,7 @@ namespace Dash
 
 		static void DestroyAll();
 
-		FRootSignatureRef GetRootSignature() const
+		FRootSignature* GetRootSignature() const
 		{
 			ASSERT(mShaderPass != nullptr);
 			return mShaderPass->GetRootSignature();

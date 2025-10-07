@@ -7,20 +7,6 @@
 
 namespace Dash
 {
-	using namespace Microsoft::WRL;
-
-	static std::map<size_t, Microsoft::WRL::ComPtr<ID3D12RootSignature>> RootSignatureHashMap;
-
-	FRootSignatureRef FRootSignature::MakeRootSignature(UINT numRootParameters, UINT numStaticSamplers)
-	{
-		return std::make_shared<FRootSignature>(numRootParameters, numStaticSamplers);
-	}
-
-	void FRootSignature::DestroyAll()
-	{
-		RootSignatureHashMap.clear();
-	}
-
 	uint32 FRootSignature::GetDescriptorTableBitMask(D3D12_DESCRIPTOR_HEAP_TYPE type) const
 	{
 		if (type == D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
@@ -39,11 +25,30 @@ namespace Dash
 		return mNumDescriptorsPerTable[rootParameterIndex];
 	}
 
-	void FRootSignature::InitStaticSampler(UINT shaderRegister, const FSamplerDesc& desc, D3D12_SHADER_VISIBILITY visibility, UINT space /* = 0 */)
+	void FRootSignature::Init(const FBoundShaderState& boundShaderState)
 	{
-		ASSERT(mNumInitializedStaticSamplers < mNumStaticSamplers);
+		std::memcpy(mNumDescriptorsPerTable, boundShaderState.NumDescriptorsPerTable, sizeof(mNumDescriptorsPerTable));
+
+		TRefCountPtr<ID3DBlob> outBlob;
+		TRefCountPtr<ID3DBlob> errorBlob;
+
+		D3D_ROOT_SIGNATURE_VERSION version = FGraphicsCore::GetRootSignatureVersion();
+
+		D3D12_VERSIONED_ROOT_SIGNATURE_DESC VersionedrootSigDesc{};
+		VersionedrootSigDesc.Version = version;
+		VersionedrootSigDesc.Desc_1_1 = boundShaderState.RootSignatureDesc;
+
+		DX_CALL(D3D12SerializeVersionedRootSignature(&VersionedrootSigDesc, outBlob.GetInitReference(), errorBlob.GetInitReference()));
+		DX_CALL(FGraphicsCore::Device->CreateRootSignature(0, outBlob->GetBufferPointer(), outBlob->GetBufferSize(), mRootSignature));
+
+		SetD3D12DebugName(mRootSignature.GetReference(), mName.c_str());
+	}
+
+	void FBoundShaderState::InitStaticSampler(UINT shaderRegister, const FSamplerDesc& desc, D3D12_SHADER_VISIBILITY visibility, UINT space /* = 0 */)
+	{
+		ASSERT(NumInitializedStaticSamplers < NumStaticSamplers);
 		const D3D12_SAMPLER_DESC& samplerDesc = desc.D3DSamplerDesc();
-		D3D12_STATIC_SAMPLER_DESC& staticSamplerDec = mSamplerArray[mNumInitializedStaticSamplers++];
+		D3D12_STATIC_SAMPLER_DESC& staticSamplerDec = SamplerArray[NumInitializedStaticSamplers++];
 
 		staticSamplerDec.AddressU = samplerDesc.AddressU;
 		staticSamplerDec.AddressV = samplerDesc.AddressV;
@@ -63,10 +68,10 @@ namespace Dash
 			samplerDesc.AddressV == D3D12_TEXTURE_ADDRESS_MODE_BORDER ||
 			samplerDesc.AddressW == D3D12_TEXTURE_ADDRESS_MODE_BORDER)
 		{
-			ASSERT_MSG(	samplerDesc.BorderColor[0] == 0.0f && samplerDesc.BorderColor[1] == 0.0f && samplerDesc.BorderColor[2] == 0.0f && samplerDesc.BorderColor[3] == 0.0f || // Transparent Black
-						samplerDesc.BorderColor[0] == 0.0f && samplerDesc.BorderColor[1] == 0.0f && samplerDesc.BorderColor[2] == 0.0f && samplerDesc.BorderColor[3] == 1.0f || // Opaque Black
-						samplerDesc.BorderColor[0] == 1.0f && samplerDesc.BorderColor[1] == 1.0f && samplerDesc.BorderColor[2] == 1.0f && samplerDesc.BorderColor[3] == 1.0f ,  // Opaque White
-						"Sampler border color does not match static sampler limitations");
+			ASSERT_MSG(samplerDesc.BorderColor[0] == 0.0f && samplerDesc.BorderColor[1] == 0.0f && samplerDesc.BorderColor[2] == 0.0f && samplerDesc.BorderColor[3] == 0.0f || // Transparent Black
+				samplerDesc.BorderColor[0] == 0.0f && samplerDesc.BorderColor[1] == 0.0f && samplerDesc.BorderColor[2] == 0.0f && samplerDesc.BorderColor[3] == 1.0f || // Opaque Black
+				samplerDesc.BorderColor[0] == 1.0f && samplerDesc.BorderColor[1] == 1.0f && samplerDesc.BorderColor[2] == 1.0f && samplerDesc.BorderColor[3] == 1.0f,  // Opaque White
+				"Sampler border color does not match static sampler limitations");
 
 			if (samplerDesc.BorderColor[3] == 1.0f)
 			{
@@ -86,110 +91,86 @@ namespace Dash
 		}
 	}
 
-	void FRootSignature::Finalize(const std::string& name, D3D12_ROOT_SIGNATURE_FLAGS flag)
+	void FBoundShaderState::Finalize(D3D12_ROOT_SIGNATURE_FLAGS flag)
 	{
-		if (mFinalized == true)
+		ASSERT(NumInitializedStaticSamplers == NumStaticSamplers);
+
+		RootSignatureDesc.Flags = flag;
+		RootSignatureDesc.NumParameters = NumParameters;
+		RootSignatureDesc.NumStaticSamplers = NumStaticSamplers;
+		RootSignatureDesc.pParameters = (const D3D12_ROOT_PARAMETER1*)(ParameterArray.get());
+		RootSignatureDesc.pStaticSamplers = (const D3D12_STATIC_SAMPLER_DESC*)(SamplerArray.get());
+
+		DescriptorTableMask = 0;
+		SamplerTableMask = 0;
+
+		HashCode = HashState(&RootSignatureDesc);
+		HashCode = HashState(RootSignatureDesc.pStaticSamplers, NumStaticSamplers, HashCode);
+
+		for (UINT paramIndex = 0; paramIndex < NumParameters; paramIndex++)
 		{
-			return;
-		}
-
-		ASSERT(mNumInitializedStaticSamplers == mNumStaticSamplers);
-
-		mName = name;
-
-		D3D12_ROOT_SIGNATURE_DESC1 desc{};
-		desc.Flags = flag;
-		desc.NumParameters = mNumParameters;
-		desc.NumStaticSamplers = mNumStaticSamplers;
-		desc.pParameters = (const D3D12_ROOT_PARAMETER1*)(mParameterArray.get());
-		desc.pStaticSamplers = (const D3D12_STATIC_SAMPLER_DESC*)(mSamplerArray.get());
-
-		mDescriptorTableMask = 0;
-		mSamplerTableMask = 0;
-
-		size_t hashCode = HashState(&desc);
-		hashCode = HashState(desc.pStaticSamplers, mNumStaticSamplers, hashCode);
-
-		for (UINT paramIndex = 0; paramIndex < mNumParameters; paramIndex++)
-		{
-			const D3D12_ROOT_PARAMETER1& rootParameter = desc.pParameters[paramIndex];
-			mNumDescriptorsPerTable[paramIndex] = 0;
+			const D3D12_ROOT_PARAMETER1& rootParameter = RootSignatureDesc.pParameters[paramIndex];
+			NumDescriptorsPerTable[paramIndex] = 0;
 
 			if (rootParameter.ParameterType == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE)
 			{
 				ASSERT(rootParameter.DescriptorTable.pDescriptorRanges != nullptr);
 
-				hashCode = HashState(rootParameter.DescriptorTable.pDescriptorRanges, rootParameter.DescriptorTable.NumDescriptorRanges, hashCode);
+				HashCode = HashState(rootParameter.DescriptorTable.pDescriptorRanges, rootParameter.DescriptorTable.NumDescriptorRanges, HashCode);
 
 				if (rootParameter.DescriptorTable.pDescriptorRanges->RangeType == D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER)
 				{
-					 mSamplerTableMask |= (1 << paramIndex);
+					SamplerTableMask |= (1 << paramIndex);
 				}
 				else
 				{
-					mDescriptorTableMask |= (1 << paramIndex);
+					DescriptorTableMask |= (1 << paramIndex);
 				}
 
 				for (UINT rangeIndex = 0; rangeIndex < rootParameter.DescriptorTable.NumDescriptorRanges; rangeIndex++)
 				{
-					mNumDescriptorsPerTable[paramIndex] += rootParameter.DescriptorTable.pDescriptorRanges[rangeIndex].NumDescriptors;
+					NumDescriptorsPerTable[paramIndex] += rootParameter.DescriptorTable.pDescriptorRanges[rangeIndex].NumDescriptors;
 				}
 			}
 			else
 			{
-				hashCode = HashState(&rootParameter, 1, hashCode);
+				HashCode = HashState(&rootParameter, 1, HashCode);
 			}
 		}
+	}
 
-		static std::mutex signatureMutex;
-		ComPtr<ID3D12RootSignature>* signatureRef = nullptr;
-		bool firstTimeCompile = false;
+	void FRootSignatureManager::Destroy()
+	{
+		for (auto& Pair : RootSignatureHashMap)
 		{
-			std::lock_guard<std::mutex> lock(signatureMutex);
-
-			auto iter = RootSignatureHashMap.find(hashCode);
-			if (iter == RootSignatureHashMap.end())
-			{
-				signatureRef = &RootSignatureHashMap[hashCode];
-				firstTimeCompile = true;
-			}
-			else
-			{
-				signatureRef = &iter->second;
-			}
+			delete Pair.second;
 		}
 
-		if (firstTimeCompile == true)
+		RootSignatureHashMap.clear();
+	}
+
+	FRootSignature* FRootSignatureManager::GetRootSignature(const FBoundShaderState& boundShaderState, const std::string& name)
+	{
+		std::lock_guard<std::mutex> lock(mLock);
+
+		auto iter = RootSignatureHashMap.find(boundShaderState.HashCode);
+
+		if (iter == RootSignatureHashMap.end())
 		{
-			Microsoft::WRL::ComPtr<ID3DBlob> outBlob, errorBlob;
-
-			D3D_ROOT_SIGNATURE_VERSION version = FGraphicsCore::GetRootSignatureVersion(); 
-
-			D3D12_VERSIONED_ROOT_SIGNATURE_DESC VersionedrootSigDesc{};
-			VersionedrootSigDesc.Version = version;
-			VersionedrootSigDesc.Desc_1_1 = desc;
-
-			Microsoft::WRL::ComPtr<ID3D12RootSignature> newRootSignature;
-			DX_CALL(D3D12SerializeVersionedRootSignature(&VersionedrootSigDesc, &outBlob, &errorBlob));
-			DX_CALL(FGraphicsCore::Device->CreateRootSignature(0, outBlob->GetBufferPointer(), outBlob->GetBufferSize(), newRootSignature));
-
-			SetD3D12DebugName(newRootSignature.Get(), name.c_str());
-
-			RootSignatureHashMap[hashCode] = newRootSignature;
-			mRootSignature = newRootSignature.Get();
-
-			ASSERT(*signatureRef == newRootSignature);
-		}
-		else
-		{
-			while (*signatureRef == nullptr)
-			{
-				std::this_thread::yield();
-			}
-
-			mRootSignature = signatureRef->Get();
+			return CreateRootSignature(boundShaderState, name);
 		}
 
-		mFinalized = true;
+		ASSERT(iter->second);
+		return iter->second;
+	}
+
+	FRootSignature* FRootSignatureManager::CreateRootSignature(const FBoundShaderState& boundShaderState, const std::string& name)
+	{
+		FRootSignature* newRootSignature = new FRootSignature(boundShaderState, name);
+		ASSERT(newRootSignature);
+
+		RootSignatureHashMap.emplace(boundShaderState.HashCode, newRootSignature);
+
+		return newRootSignature;
 	}
 }

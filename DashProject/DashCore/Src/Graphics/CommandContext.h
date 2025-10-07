@@ -168,7 +168,7 @@ namespace Dash
 
 	protected:
 
-		void SetComputeRootSignature(FRootSignatureRef rootSignature);
+		void SetComputeRootSignature(FRootSignature* rootSignature);
 
 		void SetRootConstantBufferView(UINT rootIndex, size_t sizeInBytes, const void* constants);
 
@@ -227,7 +227,7 @@ namespace Dash
 
 	protected:
 
-		void SetGraphicsRootSignature(FRootSignatureRef rootSignature);
+		void SetGraphicsRootSignature(FRootSignature* rootSignature);
 	};
 
 	class FCopyCommandContext : public FCopyCommandContextBase

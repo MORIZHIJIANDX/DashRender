@@ -568,9 +568,9 @@ namespace Dash
 		return mDevice->CreateReservedResource(pDesc, initialState, pOptimizedClearValue, IID_PPV_ARGS(pvResource.GetInitReference()));
 	}
 
-	HRESULT FRenderDevice::CreateRootSignature(UINT nodeMask, const void* pBlobWithRootSignature, SIZE_T blobLengthInBytes, Microsoft::WRL::ComPtr<ID3D12RootSignature>& pvRootSignature)
+	HRESULT FRenderDevice::CreateRootSignature(UINT nodeMask, const void* pBlobWithRootSignature, SIZE_T blobLengthInBytes, TRefCountPtr<ID3D12RootSignature>& pvRootSignature)
 	{
-		return mDevice->CreateRootSignature(nodeMask, pBlobWithRootSignature, blobLengthInBytes, IID_PPV_ARGS(&pvRootSignature));
+		return mDevice->CreateRootSignature(nodeMask, pBlobWithRootSignature, blobLengthInBytes, IID_PPV_ARGS(pvRootSignature.GetInitReference()));
 	}
 
 	void FRenderDevice::CreateSampler(const D3D12_SAMPLER_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor)

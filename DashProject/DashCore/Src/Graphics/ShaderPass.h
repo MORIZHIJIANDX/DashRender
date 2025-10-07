@@ -28,7 +28,7 @@ namespace Dash
 
 		EShaderPassType GetPassType() const { return mPassType; }
 		const std::string& GetPassName() const { return mPassName; }
-		FRootSignatureRef GetRootSignature() const { return mRootSignatureRef; }
+		FRootSignature* GetRootSignature() const { return mRootSignature; }
 		const std::map<EShaderStage, FShaderResourceRef>& GetShaders() const { return mShaders; }
 		size_t GetShadersHash() const { return ShadersHash; }
 
@@ -66,8 +66,8 @@ namespace Dash
 		std::vector<FSamplerDesc> CreateStaticSamplers();
 		int32 FindParameterByName(const std::vector<FShaderParameter>& parameterArray, const std::string& parameterName) const;
 		std::vector<std::string> GetParameterNames(const std::vector<FShaderParameter>& parameterArray) const;
-		void InitDescriptorRanges(std::vector<FShaderParameter>& parameters, UINT& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType);
-
+		void InitDescriptorRanges(FBoundShaderState& boundShaderState, std::vector<FShaderParameter>& parameters, UINT& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType);
+		 
 	private:
 		std::map<EShaderStage, FShaderResourceRef> mShaders;
 
@@ -81,7 +81,7 @@ namespace Dash
 		FDepthStencilState mDepthStencilState{true, false};
 
 		EShaderPassType mPassType;
-		FRootSignatureRef mRootSignatureRef;
+		FRootSignature* mRootSignature;
 		std::string mPassName;
 		size_t ShadersHash;
 	};

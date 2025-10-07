@@ -102,8 +102,6 @@ namespace Dash
 
 	void FDynamicDescriptorHeap::ParseRootSignature(const FRootSignature& rootSignature)
 	{
-		ASSERT(rootSignature.IsFinalized());
-
 		mStaleDescriptorTableBitMask = 0;
 
 		mDescriptorTableBitMask = rootSignature.GetDescriptorTableBitMask(mDescriptorHeapType);

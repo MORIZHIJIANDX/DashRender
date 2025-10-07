@@ -201,7 +201,7 @@ namespace Dash
 			 UINT       nodeMask,
 			const void* pBlobWithRootSignature,
 			SIZE_T     blobLengthInBytes,
-			Microsoft::WRL::ComPtr<ID3D12RootSignature>& pvRootSignature
+			TRefCountPtr<ID3D12RootSignature>& pvRootSignature
 		);
 
 		// Create a sampler object that encapsulates sampling information for a texture.

@@ -167,7 +167,6 @@ namespace Dash
 		}
 
 		ASSERT(mShaderPass != nullptr);
-		ASSERT(mShaderPass->GetRootSignature()->IsFinalized());
 
 		mPipelineStateStream.pRootSignature = mShaderPass->GetRootSignature()->GetSignature();
 
@@ -251,7 +250,6 @@ namespace Dash
 		}
 
 		ASSERT(mShaderPass != nullptr);
-		ASSERT(mShaderPass->GetRootSignature()->IsFinalized());
 
 		mPipelineStateStream.pRootSignature = mShaderPass->GetRootSignature()->GetSignature();
 
