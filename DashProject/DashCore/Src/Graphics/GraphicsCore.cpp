@@ -73,7 +73,7 @@ namespace Dash
 
 	void FGraphicsCore::Initialize(uint32 windowWidth, uint32 windowHeight)
 	{
-		LOG_INFO << "FGraphicsCore::Initialize Begin.";
+		//LOG_INFO << "FGraphicsCore::Initialize Begin.";
 
 		EnablePixCapture();
 
@@ -89,18 +89,18 @@ namespace Dash
 		SwapChain = new FSwapChain(windowWidth, windowHeight);
 		Profiler = new FGPUProfiler();
 
-		LOG_INFO << "FGraphicsCore::Initialize End.";
+		//LOG_INFO << "FGraphicsCore::Initialize End.";
 	}
 
 	void FGraphicsCore::Shutdown()
 	{
-		LOG_INFO << "FGraphicsCore::Shutdown Begin.";
+		//LOG_INFO << "FGraphicsCore::Shutdown Begin.";
 
 		if (CommandQueueManager)
 		{
 			CommandQueueManager->Flush();
 
-			LOG_INFO << "Flush Command Queue.";
+			//LOG_INFO << "Flush Command Queue.";
 		}
 
 		if (ContextManager)
@@ -108,7 +108,7 @@ namespace Dash
 			ContextManager->Destroy();
 			delete ContextManager;
 
-			LOG_INFO << "Destroy Command Context Manager.";
+			//LOG_INFO << "Destroy Command Context Manager.";
 		}
 
 		if (CommandQueueManager)
@@ -116,7 +116,7 @@ namespace Dash
 			CommandQueueManager->Destroy();
 			delete CommandQueueManager;
 
-			LOG_INFO << "Destroy Command Queue Manager.";
+			//LOG_INFO << "Destroy Command Queue Manager.";
 		}
 
 		if (CommandListManager)
