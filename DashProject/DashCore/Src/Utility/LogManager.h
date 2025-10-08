@@ -7,7 +7,6 @@
 #define LOGURU_WITH_FILEABS     0
 
 #include "DesignPatterns/Singleton.h"
-#include "loguru/loguru.h"
 
 namespace Dash
 {
@@ -23,9 +22,9 @@ namespace Dash
 	};
 }
 
-#define LOG_INFO LOG_S(INFO)
-#define LOG_WARNING LOG_S(WARNING)
-#define LOG_ERROR LOG_S(ERROR)
+#define LOG_INFO std::cout
+#define LOG_WARNING std::cout
+#define LOG_ERROR std::cout
 
 
 

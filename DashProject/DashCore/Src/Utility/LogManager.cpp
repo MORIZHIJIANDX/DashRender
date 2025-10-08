@@ -78,14 +78,9 @@ namespace Dash
 	{
 		int argc = 0;
 		LPSTR* argv = CommandLineToArgvA(GetCommandLineA(), &argc);
-		loguru::init(argc, argv);
-
-		loguru::add_file("ProgramLog.log", loguru::Truncate, loguru::Verbosity_MAX);
-		loguru::add_vslog(loguru::Verbosity_MAX);
 	}
 
 	void FLogManager::Shutdown()
 	{
-		loguru::shutdown();
 	}
 }
