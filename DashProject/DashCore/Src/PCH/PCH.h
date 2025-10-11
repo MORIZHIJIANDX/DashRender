@@ -43,6 +43,11 @@
 #include <wrl.h>
 #include <shellapi.h>
 
+namespace Dash
+{
+	DECLARE_LOG_CATEGORY(LogTemp, All)
+}
+
 /*
 static void SetThreadName(std::thread& thread, const char* threadName)
 {

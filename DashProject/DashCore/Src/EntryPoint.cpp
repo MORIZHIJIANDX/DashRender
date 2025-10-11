@@ -13,8 +13,6 @@
 
 namespace Dash
 {
-	DEFINE_LOG_CATEGORY(LogTemp);
-
 	bool AppPaused = false;
 	bool Minimized = false;
 	bool Maximized = false;
@@ -73,7 +71,9 @@ namespace Dash
 
 		FAssetManager::Get().Init();
 
-		DASH_LOG(LogTemp, Info, "Intialize %p", app);
+		//DASH_LOG(LogTemp, Info, "Intialize %p", app);
+
+		DASH_LOG(LogTemp, Info, L"Intialize wchar {}", reinterpret_cast<uintptr_t>(app));
 
 		app->Startup();
 
@@ -212,7 +212,7 @@ namespace Dash
 			int ClientWidth = LOWORD(lParam);
 			int ClientHeight = HIWORD(lParam);
 
-			//LOG_INFO << "Window Event, Wdith : " << ClientWidth << ", Height : " << ClientHeight;
+			DASH_LOG(LogTemp, Info, "Window Reize Event, Wdith : {}, Height {}", ClientWidth, ClientHeight);
 
 			if(app)
 			{

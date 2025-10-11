@@ -44,13 +44,13 @@ namespace Dash
 	{
 		if (!FFileUtility::IsPathExistent(info.FileName))
 		{
-			LOG_WARNING << "Cannot found file : " << info.FileName;
+			DASH_LOG(LogTemp, Warning, "Cannot found file : {}", info.FileName);
 			return FDX12CompiledShader{};
 		}
 
 		std::wstring wFileName = FStringUtility::UTF8ToWideString(info.FileName);
 		
-		LOG_INFO << "Load File : " << info.FileName;
+		DASH_LOG(LogTemp, Info, "Load File : {}", info.FileName);
 
 		TRefCountPtr<IDxcBlobEncoding> source = nullptr;
 		DX_CALL(mUtils->LoadFile(wFileName.c_str(), nullptr, source.GetInitReference()));
@@ -102,7 +102,7 @@ namespace Dash
 			combinedStr += define + "_";
 		}
 
-		LOG_INFO << "begin compile : " << info.FileName << ", entry point : " << info.EntryPoint << ", defines : " << combinedStr;
+		DASH_LOG(LogTemp, Info, "Begin compile : {}, entry point : {}, defines : {}", info.FileName, info.EntryPoint, combinedStr);
 
 		DxcBuffer buffer{};
 		buffer.Encoding = DXC_CP_ACP;
@@ -118,18 +118,18 @@ namespace Dash
 
 		if (errors != nullptr && errors->GetStringLength() != 0)
 		{
-			LOG_INFO << info.FileName << " Compile error : \n" << errors->GetStringPointer();
+			DASH_LOG(LogTemp, Error, "{}  Compile error : \n {}", info.FileName, errors->GetStringPointer());
 		}
 		else
 		{
-			LOG_INFO << info.FileName << " Compile succeed.";
+			DASH_LOG(LogTemp, Info, "{} Compile succeed.", info.FileName);
 		}
 
 		HRESULT status;
 		DX_CALL(compiledResult->GetStatus(&status));
 		if (FAILED(status))
 		{
-			LOG_INFO << info.FileName << " Compile failed.";
+			DASH_LOG(LogTemp, Error, "{}  Compile failed.", info.FileName);
 			return FDX12CompiledShader{};
 		}
 
@@ -161,11 +161,11 @@ namespace Dash
 
 		if (FFileUtility::WriteBinaryFileSync(pdbPath, reinterpret_cast<unsigned char*>(pdbBlob->GetBufferPointer()), pdbBlob->GetBufferSize()))
 		{
-			LOG_INFO << "Success to save compiled shader pdb : " << pdbPath;
+			DASH_LOG(LogTemp, Info, "Success to save compiled shader pdb : {}", pdbPath);
 		}
 		else
 		{
-			LOG_ERROR << "Failed to save compiled shader pdb : " << pdbPath;
+			DASH_LOG(LogTemp, Error, "Failed to save compiled shader pdb : {}.", pdbPath);
 		}
 #endif
 
@@ -183,22 +183,22 @@ namespace Dash
 
 		if (FFileUtility::WriteBinaryFileSync(hasedShaderName, reinterpret_cast<unsigned char*>(compiledShader.CompiledShaderBlob->GetBufferPointer()), compiledShader.CompiledShaderBlob->GetBufferSize()))
 		{
-			LOG_INFO << "Success to save compiled shader blob : " << hasedShaderName;
+			DASH_LOG(LogTemp, Info, "Success to save compiled shader blob : {}", hasedShaderName);
 		}
 		else
 		{
-			LOG_ERROR << "Failed to save compiled shader blob : " << hasedShaderName;
+			DASH_LOG(LogTemp, Error, "Failed to save compiled shader blob : {}.", hasedShaderName);
 		}
 
 		std::string hasedRefectionName = info.GetHashedFileName() + REFLECTION_BLOB_FILE_EXTENSION;
 
 		if (FFileUtility::WriteBinaryFileSync(hasedRefectionName, reinterpret_cast<unsigned char*>(compiledShader.ShaderRelectionBlob->GetBufferPointer()), compiledShader.ShaderRelectionBlob->GetBufferSize()))
 		{
-			LOG_INFO << "Success to save shader reflection blob : " << hasedRefectionName;
+			DASH_LOG(LogTemp, Info, "Success to save shader reflection blob : {}", hasedRefectionName);
 		}
 		else
 		{
-			LOG_ERROR << "Failed to save shader reflection blob : " << hasedRefectionName;
+			DASH_LOG(LogTemp, Error, "Failed to save shader reflection blob : {}.", hasedRefectionName);
 		}
 
 		return false;
@@ -240,7 +240,7 @@ namespace Dash
 		{
 			DX_CALL(mUtils->LoadFile(wShaderFileName.c_str(), nullptr, blob.GetInitReference()));
 
-			LOG_INFO << "Success to load shader blob : " << fileName;
+			DASH_LOG(LogTemp, Info, "Success to load shader blob : {}", fileName);
 		}
 
 		return blob;

@@ -39,10 +39,10 @@ namespace Dash
 
 		if (mFocusedWindow != NULL)
 			if (!ClientToScreen(mFocusedWindow, &point))
-				LOG_ERROR << "Can't Transform Cursor Pos To Screen";
+				DASH_LOG(LogTemp, Error, "Can't Transform Cursor Pos To Screen");
 
 		if (!::SetCursorPos(point.x, point.y))
-			LOG_ERROR << "Can't Set Cursor Pos";
+			DASH_LOG(LogTemp, Error, "Can't Set Cursor Pos");
 	}
 
 	void FMouse::Initialize(HWND hwnd)

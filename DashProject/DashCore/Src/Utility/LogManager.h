@@ -3,6 +3,7 @@
 #include "DesignPatterns/Singleton.h"
 #include "Utility/BitwiseEnum.h"
 #include "Utility/StringUtility.h"
+#include "Utility/Assert.h"
 #include <format>
 
 namespace Dash
@@ -28,7 +29,7 @@ namespace Dash
 		virtual void Flush() {};
 	};
 
-	class FLogCategory
+	struct FLogCategory
 	{
 	public:
 		FLogCategory(std::string_view name, ELogLevel level)
@@ -67,35 +68,38 @@ namespace Dash
 		std::string string_format(const char* fmt, Args&&... args) {
 			// 第一次调用：查询需要的长度
 			int n = std::snprintf(nullptr, 0, fmt, std::forward<Args>(args)...);
-			if (n < 0) throw std::runtime_error("swprintf formatting error");
+			if (n < 0) ASSERT("swprintf formatting error");
 			std::vector<char> buf(n + 1);
-			std::snprintf(buf.data(), buf.size(), fmt, std::forward<Args>(args)...);
+			int ret = std::snprintf(buf.data(), buf.size(), fmt, std::forward<Args>(args)...);
+			if (ret < 0) ASSERT("swprintf formatting error");
 			return std::string(buf.data(), static_cast<size_t>(n));
 		}
 
 		template<typename... Args>
 		std::wstring wstring_format(const wchar_t* fmt, Args&&... args) {
 			int n = std::swprintf(nullptr, 0, fmt, std::forward<Args>(args)...);
-			if (n < 0) throw std::runtime_error("swprintf formatting error");
+			if (n < 0) ASSERT("swprintf formatting error");
 			std::vector<wchar_t> buf(static_cast<size_t>(n) + 1);
-			std::swprintf(buf.data(), buf.size(), fmt, std::forward<Args>(args)...);
+			int ret = std::swprintf(buf.data(), buf.size(), fmt, std::forward<Args>(args)...);
+			if (ret < 0) ASSERT("swprintf formatting error");
 			return std::wstring(buf.data(), static_cast<size_t>(n));
 		}
 
 		template<typename... TArgs>
 		void DispatchLog(ELogLevel level, std::string_view category, std::string_view file, uint32 line, std::string_view Message, TArgs&&... Args)
 		{
-			//std::string Buffer = std::vformat(Message, std::make_format_args(Args...));
-			std::string Buffer = string_format(Message.data(), std::forward<TArgs>(Args)...);
-			Write(level, category, file, line, Buffer);
+			//std::string Buffer = string_format(Message.data(), std::forward<TArgs>(Args)...);
+			std::string buffer = std::vformat(Message, std::make_format_args(Args...));
+			Write(level, category, file, line, buffer);
 		}
 
 		template<typename... TArgs>
 		void DispatchLog(ELogLevel level, std::string_view category, std::string_view file, uint32 line, std::wstring_view Message, TArgs&&... Args)
 		{
-			std::wstring WideBuffer = wstring_format(Message.data(), std::forward<TArgs>(Args)...);
-			std::string	Buffer = FStringUtility::WideStringToUTF8(WideBuffer);
-			Write(level, category, file, line, Buffer);
+			//std::wstring WideBuffer = wstring_format(Message.data(), std::forward<TArgs>(Args)...);
+			std::wstring wideBuffer = std::vformat(Message, std::make_wformat_args(Args...));
+			std::string	buffer = FStringUtility::WideStringToUTF8(wideBuffer);
+			Write(level, category, file, line, buffer);
 		}
 
 		void Write(ELogLevel level, std::string_view category, std::string_view file, uint32 line, std::string_view log);
@@ -107,26 +111,22 @@ namespace Dash
 	#define LOG_CONCATENATE(a, b) a##b
 
 	#define DECLARE_LOG_CATEGORY(Name, Level)					\
-		extern struct FLogCategory##Name : public FLogCategory	\
+		struct FLogCategory##Name : public FLogCategory			\
 		{														\
 			FLogCategory##Name()								\
-				: FLogCategory(#Name, ELogLevel::##Level)					\
+			: FLogCategory(#Name, ELogLevel::Level)				\
 			{													\
 			}													\
-		} LOG_CONCATENATE(GLog, Name)
+		};														\
+		extern FLogCategory##Name LOG_CONCATENATE(GLog, Name);	
 
 	#define DEFINE_LOG_CATEGORY(Name)	 FLogCategory##Name LOG_CONCATENATE(GLog, Name)
 
 	#define DASH_LOG(Name, Level, ...)																										\
-		if(LOG_CONCATENATE(GLog, Name).IsPermitted(ELogLevel::##Level))																	\
+		if(LOG_CONCATENATE(GLog, Name).IsPermitted(ELogLevel::##Level))																		\
 		{																																	\
 			FLogManager::Get()->Log(ELogLevel::##Level, LOG_CONCATENATE(GLog, Name).GetCategoryName(), __FILE__, __LINE__, __VA_ARGS__);	\
 		}
-		
-
-	#define LOG_INFO std::cout
-	#define LOG_WARNING std::cout
-	#define LOG_ERROR std::cout
 }
 
 

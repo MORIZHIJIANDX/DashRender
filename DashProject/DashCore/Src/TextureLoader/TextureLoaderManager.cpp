@@ -59,7 +59,7 @@ namespace Dash
 			
 			if (!loadSucceed)
 			{
-				LOG_ERROR << "Failed to load texture : " << texturePath;
+				DASH_LOG(LogTemp, Error, "Failed to load texture : {}", texturePath);
 				return mImportTextures["ErrorTexture"];
 			}
 		}

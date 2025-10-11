@@ -65,7 +65,7 @@ namespace Dash
 		if (newestVersionFound.empty())
 		{
 			// TODO: Error, no PIX installation found
-			LOG_ERROR << "No PIX installation found";
+			DASH_LOG(LogTemp, Error, "No PIX installation found.");
 		}
 
 		return pixInstallationPath / newestVersionFound / L"WinPixGpuCapturer.dll";
@@ -73,7 +73,7 @@ namespace Dash
 
 	void FGraphicsCore::Initialize(uint32 windowWidth, uint32 windowHeight)
 	{
-		//LOG_INFO << "FGraphicsCore::Initialize Begin.";
+		DASH_LOG(LogTemp, Info, "FGraphicsCore::Initialize Begin.");
 
 		EnablePixCapture();
 
@@ -89,18 +89,18 @@ namespace Dash
 		SwapChain = new FSwapChain(windowWidth, windowHeight);
 		Profiler = new FGPUProfiler();
 
-		//LOG_INFO << "FGraphicsCore::Initialize End.";
+		DASH_LOG(LogTemp, Info, "FGraphicsCore::Initialize End.");
 	}
 
 	void FGraphicsCore::Shutdown()
 	{
-		//LOG_INFO << "FGraphicsCore::Shutdown Begin.";
+		DASH_LOG(LogTemp, Info, "FGraphicsCore::Shutdown Begin.");
 
 		if (CommandQueueManager)
 		{
 			CommandQueueManager->Flush();
 
-			//LOG_INFO << "Flush Command Queue.";
+			DASH_LOG(LogTemp, Info, "Flush Command Queue.");
 		}
 
 		if (ContextManager)
@@ -108,7 +108,7 @@ namespace Dash
 			ContextManager->Destroy();
 			delete ContextManager;
 
-			//LOG_INFO << "Destroy Command Context Manager.";
+			DASH_LOG(LogTemp, Info, "Destroy Command Context Manager.");
 		}
 
 		if (CommandQueueManager)
@@ -116,7 +116,7 @@ namespace Dash
 			CommandQueueManager->Destroy();
 			delete CommandQueueManager;
 
-			//LOG_INFO << "Destroy Command Queue Manager.";
+			DASH_LOG(LogTemp, Info, "Destroy Command Queue Manager.");
 		}
 
 		if (CommandListManager)
@@ -124,7 +124,7 @@ namespace Dash
 			CommandListManager->Destroy();
 			delete CommandListManager;
 
-			LOG_INFO << "Destroy Command List Manager.";
+			DASH_LOG(LogTemp, Info, "Destroy Command List Manager.");
 		}
 
 		if (DescriptorAllocator)
@@ -132,7 +132,7 @@ namespace Dash
 			DescriptorAllocator->Destroy();
 			delete DescriptorAllocator;
 
-			LOG_INFO << "Destroy CPU Descriptor Allocator.";
+			DASH_LOG(LogTemp, Info, "Destroy CPU Descriptor Allocator.");
 		}
 
 		if(SwapChain)
@@ -140,7 +140,7 @@ namespace Dash
 			SwapChain->Destroy();
 			delete SwapChain;
 
-			LOG_INFO << "Destroy Swap Chain.";
+			DASH_LOG(LogTemp, Info, "Destroy Swap Chain.");
 		}
 
 		if (PipelineStateCache)
@@ -166,10 +166,10 @@ namespace Dash
 			Device->Destroy();
 			delete Device;
 
-			LOG_INFO << "Destroy Render Device.";
+			DASH_LOG(LogTemp, Info, "Destroy Render Device.");
 		}
 	
-		LOG_INFO << "FGraphicsCore::Shutdown End.";
+		DASH_LOG(LogTemp, Info, "FGraphicsCore::Shutdown End.");
 	}
 
 	D3D_ROOT_SIGNATURE_VERSION FGraphicsCore::GetRootSignatureVersion()

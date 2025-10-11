@@ -40,17 +40,12 @@ namespace Dash
 	     */
 	    static FORCEINLINE std::string WideStringToUTF8(const std::wstring& wstr)
 	    {
-		    auto ret = ::WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), -1, nullptr, 0, nullptr, nullptr);
-		    if (!ret) {
-			    throw std::system_error(GetLastError(), std::generic_category(), "failed to get the buffer size that is needed to store string");
-		    }
-
-		    std::string dst(ret, '\0');
-		    ret = ::WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), -1, dst.data(), static_cast<int>(dst.size()), nullptr, nullptr);
-		    if (!ret) {
-			    throw std::system_error(GetLastError(), std::generic_category(), "failed to get the buffer size that is needed to store string");
-		    }
-		    return dst;
+            int wideLength = static_cast<int>(wstr.size());
+            int size = WideCharToMultiByte(CP_UTF8, 0, wstr.data(), wideLength, nullptr, 0, nullptr, nullptr);
+            std::string dst;
+            dst.resize(size);
+            WideCharToMultiByte(CP_UTF8, 0, wstr.data(), wideLength, dst.data(), size, nullptr, nullptr);
+            return dst;
 	    }
 
         /**
@@ -360,6 +355,19 @@ namespace Dash
         static FORCEINLINE bool StartsWith(const std::string& str, const char prefix)
         {
             return !str.empty() && (str.front() == prefix);
+        }
+
+        static FORCEINLINE std::pair<std::string, std::string> SplitFirst(const std::string& s, const std::string& delim, bool includeDelim = false) {
+            if (delim.empty()) throw std::invalid_argument("empty delimiter");
+            size_t pos = s.find(delim);
+            if (pos == std::string::npos) {
+                return { s, std::string() };
+            }
+            size_t splitPos = includeDelim ? (pos + delim.size()) : pos;
+            return {
+                s.substr(0, splitPos),
+                s.substr(splitPos)
+            };
         }
 
         /**

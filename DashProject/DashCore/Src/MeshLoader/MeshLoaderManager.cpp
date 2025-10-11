@@ -42,7 +42,7 @@ namespace Dash
 
 			if (!loadSucceed)
 			{
-				LOG_ERROR << "Failed to load texture : " << meshPath;
+                DASH_LOG(LogTemp, Error, "Failed to load mesh : {}.", meshPath);
 				return mImportMeshs["Cube"];
 			}
 		}

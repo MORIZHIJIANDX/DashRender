@@ -443,7 +443,7 @@ namespace Dash
 			{
 				if (bindStateMap[parameterIndex] == false)
 				{
-					LOG_WARNING << "Shader Parameter : " << parameters[parameterIndex].Name << ", Type : " << type << ", Is Not Bounded!";
+					DASH_LOG(LogTemp, Warning, "Shader Parameter : {}, Type : {}, Is Not Bounded!", parameters[parameterIndex].Name, type);
 				}
 			}
 		};
@@ -542,7 +542,7 @@ namespace Dash
 			}
 			else
 			{
-				LOG_WARNING << "Can't Find Constant Buffer Parameter : " << bufferName;
+				DASH_LOG(LogTemp, Warning, "Can't Find Constant Buffer Parameter : {}", bufferName);
 			}
 		}
 	}
@@ -564,7 +564,7 @@ namespace Dash
 			}
 			else
 			{
-				LOG_WARNING << "Can't Find Shader Resource Parameter : " << srvrName;
+				DASH_LOG(LogTemp, Warning, "Can't Find Shader Resource Parameter : {}", srvrName);
 			}
 		}
 	}
@@ -586,7 +586,7 @@ namespace Dash
 			}
 			else
 			{
-				LOG_WARNING << "Can't Find Shader Resource Parameter : " << srvrName;
+				DASH_LOG(LogTemp, Warning, "Can't Find Shader Resource Parameter : {}", srvrName);
 			}
 		}
 	}
@@ -608,7 +608,7 @@ namespace Dash
 			}
 			else
 			{
-				LOG_WARNING << "Can't Find Shader Resource Parameter : " << srvrName;
+				DASH_LOG(LogTemp, Warning, "Can't Find Shader Resource Parameter : {}", srvrName);
 			}
 		}
 	}
@@ -628,7 +628,7 @@ namespace Dash
 			}
 			else
 			{
-				LOG_WARNING << "Can't Find Unorder Access Parameter : " << uavName;
+				DASH_LOG(LogTemp, Warning, "Can't Find Unorder Access Parameter : {}", uavName);
 			}
 		}
 	}

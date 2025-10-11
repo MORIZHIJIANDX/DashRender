@@ -3,6 +3,53 @@
 
 namespace Dash
 {
+	enum class EPathType
+	{
+		File,
+		Directory,
+		Unknown,
+	};
+
+	static EPathType GetPathType(const std::string& str)
+	{
+		if (str.empty())
+		{
+			return EPathType::Unknown;
+		}
+
+		if (FFileUtility::IsPathExistent(str))
+		{
+			if (FFileUtility::IsFile(str))
+			{
+				return EPathType::File;
+			}
+			else if (FFileUtility::IsDirectory(str))
+			{
+				return EPathType::Directory;
+			}
+			else
+			{
+				return EPathType::Unknown;
+			}
+		}
+		
+		std::string path = str;
+		FStringUtility::Trim(path);
+
+		if (path.empty())
+		{
+			return EPathType::Unknown;
+		}
+
+		std::filesystem::path filePath{ path };
+		if (filePath.extension().empty())
+		{
+			return EPathType::Directory;
+		}
+
+		return EPathType::File;
+	}
+
 	FFileUtility::ByteArray FFileUtility::NullFile{};
 
 	FFileUtility::ByteArray ReadBinaryFileHelper(const std::string& fileName)
@@ -151,14 +198,67 @@ namespace Dash
 
 	std::string FFileUtility::GetEngineDir()
 	{
-		std::string EngineDir{ ENGINE_PATH };
+		static std::string engineDir;
 
-		return EngineDir;
+		if (engineDir.size() == 0)
+		{
+			std::string appPath = GetExecutableDir();
+
+			std::pair<std::string, std::string> pair = FStringUtility::SplitFirst(appPath, "DashProject", true);
+			engineDir = FFileUtility::CombinePath(pair.first, "DashCore");
+		}
+		return engineDir;
+	}
+
+	std::string FFileUtility::GetProjectDir()
+	{
+		static std::string engineDir;
+
+		if (engineDir.size() == 0)
+		{
+			std::string appPath = GetExecutableDir();
+
+			std::pair<std::string, std::string> pair = FStringUtility::SplitFirst(appPath, "DashProject", true);
+			engineDir = FFileUtility::CombinePath(pair.first, "DashProject");
+		}
+		return engineDir;
+	}
+
+	std::string FFileUtility::GetExecutableDir()
+	{
+		static std::string executableDir;
+
+		if (executableDir.size() == 0)
+		{
+			std::wstring buf;
+			DWORD size = 0;
+			for (DWORD cap = 260; ; cap *= 2)
+			{
+				buf.resize(cap);
+				size = GetModuleFileNameW(nullptr, &buf[0], cap);
+				if (size == 0)
+				{
+					throw std::runtime_error("GetModuleFileNameW failed");
+				}
+				if (size < cap)
+				{
+					buf.resize(size);
+					break;
+				}
+			}
+
+			std::string appPath = FStringUtility::WideStringToUTF8(buf);
+			executableDir = FFileUtility::GetParentPath(appPath);
+		}
+
+		return executableDir;
 	}
 
 	std::string FFileUtility::GetEngineShaderDir(const std::string& shaderFileName)
 	{
-		return GetEngineDir() + "/Src/Shaders/" + shaderFileName;
+		std::string temp = CombinePath("Src\\Shaders\\", shaderFileName);
+		std::string shaderPath = CombinePath(GetEngineDir(), temp);
+		return CombinePath(GetEngineDir(), temp);
 	}
 
 	Dash::FFileUtility::FileTimeType FFileUtility::GetFileLastWriteTime(const std::string& str)
@@ -171,14 +271,60 @@ namespace Dash
 		return std::filesystem::exists(std::filesystem::path(str));
 	}
 
-	bool FFileUtility::IsPath(const std::string& str)
+	bool FFileUtility::IsDirectory(const std::string& str)
 	{
-		return std::filesystem::is_directory(std::filesystem::path(str));
+		return GetPathType(str) == EPathType::Directory;
 	}
 
 	bool FFileUtility::IsFile(const std::string& str)
 	{
-		return std::filesystem::is_regular_file(std::filesystem::path(str));
+		return GetPathType(str) == EPathType::File;
+	}
+
+	bool FFileUtility::EnsurePathExist(const std::string& str)
+	{
+		if (str.empty())
+		{
+			return false;
+		}
+
+		std::string path = str;
+
+		if (!FFileUtility::IsPathExistent(path))
+		{
+			if (FFileUtility::IsFile(str))
+			{
+				path = FFileUtility::GetParentPath(str);
+			}
+
+			std::filesystem::create_directories(path);
+		}
+
+		return true;
+	}
+
+	bool FFileUtility::EnsureFileExist(const std::string& str)
+	{
+		if (str.empty())
+		{
+			return false;
+		}
+
+		if (!FFileUtility::IsPathExistent(str))
+		{
+			EnsurePathExist(str);
+			std::ofstream ofs(str, std::ios::app | std::ios::binary);
+		}
+
+		return true;
+	}
+
+	void FFileUtility::CreatePath(const std::string& str)
+	{
+		if (!FFileUtility::IsPathExistent(str))
+		{
+			std::filesystem::create_directories(str);
+		}
 	}
 
 	void FFileUtility::DeletePath(const std::string& str)

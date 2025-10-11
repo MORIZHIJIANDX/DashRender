@@ -16,7 +16,7 @@ namespace Dash
 
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
         {
-            LOG_ERROR << "ERROR::ASSIMP::" << import.GetErrorString();
+            DASH_LOG(LogTemp, Error, "Assimp load error : {}", import.GetErrorString());
             return false;
         }
 

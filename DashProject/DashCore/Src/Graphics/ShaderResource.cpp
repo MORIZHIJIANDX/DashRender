@@ -108,10 +108,10 @@ namespace Dash
 		D3D12_SHADER_DESC shaderDesc;
 		reflector->GetDesc(&shaderDesc);
 
-		LOG_INFO << "Num ConstantBuffers : " << shaderDesc.ConstantBuffers;
-		LOG_INFO << "Num BoundResources : " << shaderDesc.BoundResources;
+		DASH_LOG(LogTemp, Info, "Num ConstantBuffers {} ", shaderDesc.ConstantBuffers);
+		DASH_LOG(LogTemp, Info, "Num BoundResources {} ", shaderDesc.BoundResources);
 
-		LOG_INFO << " ---------------------------------------------------- ";
+		DASH_LOG(LogTemp, Info, " ---------------------------------------------------- ");
 
 		std::map<std::string, UINT> bufferSizeMap;
 		std::map<std::string, std::vector<FConstantBufferVariable>> bufferVariableMap;
@@ -123,14 +123,6 @@ namespace Dash
 			shaderReflectionConstantBuffer->GetDesc(&bufferDesc);
 
 			bufferSizeMap.emplace(bufferDesc.Name, bufferDesc.Size);
-
-			/*
-			LOG_INFO << "Buffer Name : " << std::string(bufferDesc.Name);
-			LOG_INFO << "Buffer Type : " << bufferDesc.Type;
-			LOG_INFO << "Buffer Variables : " << bufferDesc.Variables;
-			LOG_INFO << "Buffer Size : " << bufferDesc.Size;
-			LOG_INFO << "Buffer uFlags : " << bufferDesc.uFlags;
-			*/
 
 			for (UINT variableIndex = 0; variableIndex < bufferDesc.Variables; variableIndex++)
 			{
@@ -145,12 +137,10 @@ namespace Dash
 				bufferVariable.StartOffset = variableDesc.StartOffset;
 
 				bufferVariableMap[bufferDesc.Name].push_back(bufferVariable);
-
-				// LOG_INFO << "Buffer Variable : " << variableDesc.Name << " , Size : " << variableDesc.Size << " , Offset : " << variableDesc.StartOffset;
 			}
 		}
 
-		LOG_INFO << " ---------------------------------------------------- ";
+		DASH_LOG(LogTemp, Info, " ---------------------------------------------------- ");
 
 		for (UINT resourceIndex = 0; resourceIndex < shaderDesc.BoundResources; ++resourceIndex)
 		{
@@ -173,21 +163,6 @@ namespace Dash
 			}
 
 			mParameters.push_back(resourceParameter);
-
-			/*
-			LOG_INFO << "Resource Name : " << std::string(resourceDesc.Name);
-			LOG_INFO << "Resource Type : " << resourceDesc.Type;
-			LOG_INFO << "Resource BindPoint : " << resourceDesc.BindPoint;
-			LOG_INFO << "Resource BindCount : " << resourceDesc.BindCount;
-			LOG_INFO << "Resource uFlags : " << resourceDesc.uFlags;
-			LOG_INFO << "Resource ReturnType : " << resourceDesc.ReturnType;
-			LOG_INFO << "Resource Dimension : " << resourceDesc.Dimension;
-			LOG_INFO << "Resource NumSamples : " << resourceDesc.NumSamples;
-			LOG_INFO << "Resource Space : " << resourceDesc.Space;
-			LOG_INFO << "Resource uID : " << resourceDesc.uID;
-
-			LOG_INFO << " ================================== ";
-			*/
 		}
 
 		if (EnumMaskEquals(mCreationInfo.Stage, EShaderStage::Vertex))
@@ -444,18 +419,6 @@ namespace Dash
 					}
 				}
 
-				/*
-				LOG_INFO << "Input Parameter Name : " << std::string(inputSignatureParameterDesc.SemanticName);
-				LOG_INFO << "Input Parameter Index : " << inputSignatureParameterDesc.SemanticIndex;
-				LOG_INFO << "Input Parameter Mask : " << int(inputSignatureParameterDesc.Mask);
-				LOG_INFO << "Input Parameter Component Type: " << inputSignatureParameterDesc.ComponentType;
-				LOG_INFO << "Input Parameter Register : " << inputSignatureParameterDesc.Register;
-				LOG_INFO << "Input Parameter SystemValueType : " << int(inputSignatureParameterDesc.SystemValueType);
-				LOG_INFO << "Input Parameter MinPrecision : " << inputSignatureParameterDesc.MinPrecision;
-				LOG_INFO << "Input Parameter Stream : " << inputSignatureParameterDesc.Stream;
-				LOG_INFO << "Input Parameter ReadWriteMask : " << int(inputSignatureParameterDesc.ReadWriteMask);
-				*/
-
 				if (!prevSemanticName.empty())
 				{
 					if (currentSemanticName != prevSemanticName && (prevSemanticIndex + 1) != inputSignatureParameterDesc.SemanticIndex)
@@ -476,7 +439,7 @@ namespace Dash
 				prevSemanticName = std::string(inputSignatureParameterDesc.SemanticName);
 				prevSemanticIndex = inputSignatureParameterDesc.SemanticIndex;
 
-				LOG_INFO << " ================================== ";
+				DASH_LOG(LogTemp, Info, " =================================================== ");
 			}
 
 			if ((systemValueStart != INDEX_NONE) && (noSystemValueEnd != INDEX_NONE) && (systemValueStart < noSystemValueEnd))

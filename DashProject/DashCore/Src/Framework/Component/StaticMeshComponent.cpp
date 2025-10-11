@@ -79,7 +79,7 @@ namespace Dash
 			return EPerVertexSemantic::TexCoord;
 		}
 
-		//LOG_INFO << "Unknown Material Vertex Semantic : " << semanticName;
+		DASH_LOG(LogTemp, Info, "Unknown Material Vertex Semantic : {} ", semanticName);
 
 		return EPerVertexSemantic::Unknown;
 	}

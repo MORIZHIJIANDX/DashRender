@@ -78,7 +78,7 @@ namespace Dash
 		{
 			mDisplayRate = displayRate;
 			ForceRecreateBuffers(mSwapChainBuffer[0]->GetWidth(), mSwapChainBuffer[0]->GetHeight());
-			LOG_INFO << "Set Display Rate : " << displayRate;
+			DASH_LOG(LogTemp, Info, "Set Display Rate : {}", displayRate);
 		}
 	}
 
@@ -216,7 +216,8 @@ namespace Dash
 		mDisplayHeight = static_cast<uint32>(FMath::AlignUp(mSwapChainBuffer[0]->GetHeight() * mDisplayRate, 2));
 		mColorBuffer = FGraphicsCore::Device->CreateColorBuffer("Color Buffer", mDisplayWdith, mDisplayHeight, 1, mColorBufferFormat);
 		mDepthBuffer = FGraphicsCore::Device->CreateDepthBuffer("Depth Buffer", mDisplayWdith, mDisplayHeight, mDepthBufferFormat);
-		LOG_INFO << "Set Display Width : " << mDisplayWdith << ", Display Height : " << mDisplayHeight;
+
+		DASH_LOG(LogTemp, Info, "Set Display Width : {}, Display Height : {}", mDisplayWdith, mDisplayHeight);
 
 		mCurrentBackBufferIndex = mSwapChain->GetCurrentBackBufferIndex();
 	}

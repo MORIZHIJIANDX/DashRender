@@ -210,7 +210,7 @@ namespace Dash
 			}
 			else
 			{
-				LOG_WARNING << "Unable To Enable D3D12 Debug Layer!";
+				DASH_LOG(LogTemp, Warning, "Unable To Enable D3D12 Debug Layer!");
 			}
 
 			TRefCountPtr<IDXGIInfoQueue> dxgiInfoQueue;
@@ -255,8 +255,8 @@ namespace Dash
 
 			if (SUCCEEDED(D3D12CreateDevice(mAdapter.GetReference(), D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(mDevice.GetInitReference()))))
 			{
-				LOG_INFO << "Create Device With Adapter : " << FStringUtility::WideStringToUTF8(desc.Description);
-				LOG_INFO << "Adapter Memory " << desc.DedicatedVideoMemory / static_cast<size_t>(1024 * 1024) << " MB";
+				DASH_LOG(LogTemp, Info, "Create Device With Adapter : {}", FStringUtility::WideStringToUTF8(desc.Description).c_str());
+				DASH_LOG(LogTemp, Info, "Adapter Memory : {} MB", desc.DedicatedVideoMemory / static_cast<size_t>(1024 * 1024));
 
 				std::string vendorType = "Adapter Type : ";
 				switch (desc.VendorId)
@@ -275,14 +275,14 @@ namespace Dash
 					break;
 				}
 
-				LOG_INFO << vendorType;
+				DASH_LOG(LogTemp, Info, "{}", vendorType);
 				break;
 			}
 		}
 
 		if (mDevice == nullptr)
 		{
-			LOG_ERROR << "Failed To Create D3D12 Device!";
+			DASH_LOG(LogTemp, Error, "Failed To Create D3D12 Device!");
 		}
 
 #ifndef DASH_RELEASE
@@ -305,7 +305,7 @@ namespace Dash
 
 			if (developerModeEnabled == false)
 			{
-				LOG_INFO << "Enable Developer Mode on Windows 10 to get consistent profiling results";
+				DASH_LOG(LogTemp, Info, "Enable Developer Mode on Windows 10 to get consistent profiling results");
 			}
 
 			// Prevent the GPU from overclocking or underclocking to get consistent timings
@@ -412,7 +412,7 @@ namespace Dash
 			D3D12_FEATURE_DATA_GPU_VIRTUAL_ADDRESS_SUPPORT featureDataVirtualAddress = {};
 			if (SUCCEEDED(mDevice->CheckFeatureSupport(D3D12_FEATURE_GPU_VIRTUAL_ADDRESS_SUPPORT, &featureDataVirtualAddress, sizeof(featureDataVirtualAddress))))
 			{
-				LOG_INFO << "MaxGPUVirtualAddress" << featureDataVirtualAddress.MaxGPUVirtualAddressBitsPerProcess;
+				DASH_LOG(LogTemp, Info, "MaxGPUVirtualAddress {}", featureDataVirtualAddress.MaxGPUVirtualAddressBitsPerProcess);
 			}
 
 			D3D12_FEATURE_DATA_ROOT_SIGNATURE featureDataSignature{};
@@ -424,7 +424,7 @@ namespace Dash
 			}
 			mHighestRootSignatureVersion = featureDataSignature.HighestVersion;
 
-			bool allowTearing = false;
+			BOOL allowTearing = false;
 			if(SUCCEEDED(dxgiFactory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(allowTearing))))
 			{
 				mSupportsTearing = allowTearing;
@@ -462,8 +462,9 @@ namespace Dash
 
 		if (mDevice != nullptr)
 		{
-			mDevice = nullptr;
-			LOG_INFO << "Destroy D3D Device.";
+			ULONG DeviceRefCount = mDevice.SafeRelease();
+			ASSERT(DeviceRefCount == 0);
+			DASH_LOG(LogTemp, Info, "Destroy D3D Device (Device RefCount {}).", DeviceRefCount);
 		}
 
 #if DASH_DEBUG

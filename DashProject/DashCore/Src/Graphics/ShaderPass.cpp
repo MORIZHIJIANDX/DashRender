@@ -130,7 +130,7 @@ namespace Dash
 		}
 		ShadersHash = std::hash<std::string>{}(HashedShaderFileName);
 
-		LOG_INFO << "Num Pass Parameters : " << parameterMap.size();
+		DASH_LOG(LogTemp, Info, "Num Pass Parameters : {}", parameterMap.size());
 
 		for (auto& pair : parameterMap)
 		{
@@ -141,7 +141,7 @@ namespace Dash
 			case D3D_SHADER_INPUT_TYPE::D3D10_SIT_CBUFFER:
 			{
 				mCBVParameters.push_back(pair.second);
-				LOG_INFO << "Add CBV Pass Parameter : " << pair.second.Name;
+				DASH_LOG(LogTemp, Info, "Add CBV Pass Parameter : {}", pair.second.Name);
 				break;
 			}
 			case D3D_SHADER_INPUT_TYPE::D3D_SIT_TBUFFER:
@@ -150,7 +150,7 @@ namespace Dash
 			case D3D_SHADER_INPUT_TYPE::D3D_SIT_BYTEADDRESS:
 			{
 				mSRVParameters.push_back(pair.second);
-				LOG_INFO << "Add SRV Pass Parameter : " << pair.second.Name;
+				DASH_LOG(LogTemp, Info, "Add SRV Pass Parameter : {}", pair.second.Name);
 				break;
 			}
 			case D3D_SHADER_INPUT_TYPE::D3D_SIT_UAV_RWTYPED:
@@ -162,7 +162,7 @@ namespace Dash
 			case D3D_SHADER_INPUT_TYPE::D3D_SIT_UAV_FEEDBACKTEXTURE:
 			{
 				mUAVParameters.push_back(pair.second);
-				LOG_INFO << "Add UAV Pass Parameter : " << pair.second.Name;
+				DASH_LOG(LogTemp, Info, "Add UAV Pass Parameter : {}", pair.second.Name);
 				break;
 			}
 			case D3D_SHADER_INPUT_TYPE::D3D_SIT_SAMPLER:
@@ -170,7 +170,7 @@ namespace Dash
 				if (!FStringUtility::Contains(pair.second.Name, "_Static"))
 				{
 					mSamplerParameters.push_back(pair.second);
-					LOG_INFO << "Add Sampler Pass Parameter : " << pair.second.Name;
+					DASH_LOG(LogTemp, Info, "Add Sampler Pass Parameter : {}", pair.second.Name);
 				}
 				break;
 			}
