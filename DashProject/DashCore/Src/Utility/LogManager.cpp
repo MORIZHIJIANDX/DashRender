@@ -290,5 +290,10 @@ namespace Dash
 		{
 			sink->Log(level, category, formattedMessage);
 		}
+
+		if (EnumMaskContains(level, ELogLevel::Fatal))
+		{
+			ASSERT(false);
+		}
 	}
 }
