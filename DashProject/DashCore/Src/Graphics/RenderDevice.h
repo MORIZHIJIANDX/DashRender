@@ -358,6 +358,7 @@ namespace Dash
 		bool mSupportsUniversalHeaps = false;
 		bool mSupportsTearing = false;
 		bool mSupportRaytracing = false;
+		bool mGPUUploadHeapSupported = false;
 		D3D_ROOT_SIGNATURE_VERSION mHighestRootSignatureVersion = D3D_ROOT_SIGNATURE_VERSION::D3D_ROOT_SIGNATURE_VERSION_1_1;
 	};
 }

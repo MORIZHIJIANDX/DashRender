@@ -400,6 +400,8 @@ namespace Dash
 				}
 			}
 
+			DASH_LOG(LogTemp, Info, "SupportsUniversalHeaps {}", mSupportsUniversalHeaps);
+
 			D3D12_FEATURE_DATA_D3D12_OPTIONS5 featureDataOptions5 = {};
 			if (SUCCEEDED(mDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &featureDataOptions5, sizeof(featureDataOptions5))))
 			{
@@ -408,6 +410,16 @@ namespace Dash
 					mSupportRaytracing = true;
 				}
 			}
+
+			DASH_LOG(LogTemp, Info, "SupportRaytracing {}", mSupportRaytracing);
+
+			D3D12_FEATURE_DATA_D3D12_OPTIONS16 options16 = {};
+			if (SUCCEEDED(mDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS16, &options16, sizeof(options16))))
+			{
+				mGPUUploadHeapSupported = options16.GPUUploadHeapSupported;
+			}
+
+			DASH_LOG(LogTemp, Info, "GPUUploadHeapSupported {}", mGPUUploadHeapSupported);
 
 			D3D12_FEATURE_DATA_GPU_VIRTUAL_ADDRESS_SUPPORT featureDataVirtualAddress = {};
 			if (SUCCEEDED(mDevice->CheckFeatureSupport(D3D12_FEATURE_GPU_VIRTUAL_ADDRESS_SUPPORT, &featureDataVirtualAddress, sizeof(featureDataVirtualAddress))))
@@ -429,6 +441,8 @@ namespace Dash
 			{
 				mSupportsTearing = allowTearing;
 			}
+
+			DASH_LOG(LogTemp, Info, "SupportsTearing {}", mSupportsTearing);
 		}
 	}
 
