@@ -115,9 +115,19 @@ namespace Dash
 			return mReference != nullptr;
 		}
 
-		void SafeRelease()
+		uint32 SafeRelease()
 		{
-			*this = nullptr;
+			uint32 refCount = 0;
+			if (mReference != nullptr)
+			{
+				ReferencedType* OldReference = mReference;
+				mReference = nullptr;
+				if (OldReference)
+				{
+					refCount = OldReference->Release();
+				}
+			}
+			return refCount;
 		}
 
 		uint32 GetRefCount()
