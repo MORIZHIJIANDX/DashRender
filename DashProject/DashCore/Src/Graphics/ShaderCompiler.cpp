@@ -52,8 +52,7 @@ namespace Dash
 		
 		DASH_LOG(LogTemp, Info, "Load File : {}", info.FileName);
 
-		TRefCountPtr<IDxcBlobEncoding> source = nullptr;
-		DX_CALL(mUtils->LoadFile(wFileName.c_str(), nullptr, source.GetInitReference()));
+		FFileUtility::ByteArray fileContent = FFileUtility::ReadBinaryFileSync(info.FileName);
 
 		std::vector<LPCWSTR> args;
 
@@ -106,8 +105,8 @@ namespace Dash
 
 		DxcBuffer buffer{};
 		buffer.Encoding = DXC_CP_ACP;
-		buffer.Ptr = source->GetBufferPointer();
-		buffer.Size = source->GetBufferSize();
+		buffer.Ptr = fileContent->data();
+		buffer.Size = fileContent->size();
 
 		TRefCountPtr<IDxcResult> compiledResult;
 		DX_CALL(mCompiler->Compile(&buffer, args.data(), static_cast<UINT32>(args.size()), mIncludeHandler.GetReference(), IID_PPV_ARGS(compiledResult.GetInitReference())));
@@ -246,4 +245,8 @@ namespace Dash
 		return blob;
 	}
 
+	std::string FShaderCompiler::PreprocessShaderFile(const FShaderCreationInfo& info)
+	{
+		return std::string();
+	}
 }
