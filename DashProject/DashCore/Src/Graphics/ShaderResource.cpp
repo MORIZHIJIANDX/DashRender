@@ -111,8 +111,6 @@ namespace Dash
 		DASH_LOG(LogTemp, Info, "Num ConstantBuffers {} ", shaderDesc.ConstantBuffers);
 		DASH_LOG(LogTemp, Info, "Num BoundResources {} ", shaderDesc.BoundResources);
 
-		DASH_LOG(LogTemp, Info, " ---------------------------------------------------- ");
-
 		std::map<std::string, UINT> bufferSizeMap;
 		std::map<std::string, std::vector<FConstantBufferVariable>> bufferVariableMap;
 		for (UINT constantBufferIndex = 0; constantBufferIndex < shaderDesc.ConstantBuffers; ++constantBufferIndex)
@@ -136,11 +134,9 @@ namespace Dash
 				bufferVariable.Size = variableDesc.Size;
 				bufferVariable.StartOffset = variableDesc.StartOffset;
 
-				bufferVariableMap[bufferDesc.Name].push_back(bufferVariable);
+				bufferVariableMap[bufferDesc.Name].push_back(bufferVariable);	
 			}
 		}
-
-		DASH_LOG(LogTemp, Info, " ---------------------------------------------------- ");
 
 		for (UINT resourceIndex = 0; resourceIndex < shaderDesc.BoundResources; ++resourceIndex)
 		{
@@ -156,10 +152,12 @@ namespace Dash
 			resourceParameter.ResourceDimension = resourceDesc.Dimension;
 			resourceParameter.BindCount = resourceDesc.BindCount;
 
-			if (bufferSizeMap.contains(resourceParameter.Name))
+			if ((resourceDesc.Type == D3D_SIT_CBUFFER || resourceDesc.Type == D3D_SIT_TBUFFER) && bufferSizeMap.contains(resourceParameter.Name))
 			{
 				resourceParameter.Size = bufferSizeMap[resourceParameter.Name];
 				resourceParameter.ConstantBufferVariables = bufferVariableMap[resourceParameter.Name];
+
+				DASH_LOG(LogTemp, Info, "Found CBuffer {} BindPoint {} Register Space {}", resourceParameter.Name, resourceParameter.BindPoint, resourceParameter.RegisterSpace);
 			}
 
 			mParameters.push_back(resourceParameter);
