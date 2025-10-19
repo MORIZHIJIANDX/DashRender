@@ -15,6 +15,9 @@
 
 #include "Graphics/GPUProfiler.h"
 
+#include "Graphics/ShaderPreprocesser.h"
+#include "Utility/FileUtility.h"
+
 namespace Dash
 {
 	IGameApp* IGameApp::mAppInstance = nullptr;
@@ -30,6 +33,27 @@ namespace Dash
 
 	void IGameApp::Startup()
 	{
+		{
+			std::string result = FShaderPreprocesser::Process(FFileUtility::GetEngineShaderDir("TestBindlessPS.hlsl"));
+
+			std::string processedShaderPass = FFileUtility::GetEngineShaderDir("TestBindlessPSAfter.hlsl");
+
+			if (!std::filesystem::exists(processedShaderPass))
+			{
+				std::filesystem::create_directory(std::filesystem::path(processedShaderPass).parent_path());
+			}
+
+			std::ofstream file(processedShaderPass);
+
+			if (!file)
+			{
+				ASSERT(false);
+			}
+
+			file << result;
+			file.close();
+		}
+
 		AddRenderLayer(std::make_unique<FSceneRenderLayer>());
 		AddRenderLayer(std::make_unique<FPostProcessRenderLayer>());
 		AddRenderLayer(std::make_unique<FUIRenderLayer>());
