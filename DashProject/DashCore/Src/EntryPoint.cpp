@@ -71,10 +71,6 @@ namespace Dash
 
 		FAssetManager::Get().Init();
 
-		//DASH_LOG(LogTemp, Info, "Intialize %p", app);
-
-		DASH_LOG(LogTemp, Info, L"Intialize wchar {}", reinterpret_cast<uintptr_t>(app));
-
 		app->Startup();
 
 		::ShowWindow(app->GetWindowHandle(), SW_SHOWDEFAULT);
