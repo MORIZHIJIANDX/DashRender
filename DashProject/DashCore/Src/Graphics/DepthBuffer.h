@@ -7,6 +7,7 @@ namespace Dash
 {
 	class FDepthBuffer : public FPixelBuffer
 	{
+		friend class FRenderDevice;
 	public:
 		FDepthBuffer(float clearDepth = 1.0f, uint8 clearStencil = 0)
 		{

@@ -348,6 +348,35 @@ namespace Dash
 		return BytesPerPixel(D3DFormat(format));
 	}
 
+	DXGI_FORMAT FindDepthStencilParentDXGIFormat(DXGI_FORMAT format)
+	{
+		switch (format)
+		{
+		case DXGI_FORMAT_D24_UNORM_S8_UINT:			return DXGI_FORMAT_R24G8_TYPELESS;
+		case DXGI_FORMAT_X24_TYPELESS_G8_UINT:		return DXGI_FORMAT_R24G8_TYPELESS;
+
+		case DXGI_FORMAT_D32_FLOAT_S8X24_UINT:		return DXGI_FORMAT_R32G8X24_TYPELESS;
+		case DXGI_FORMAT_X32_TYPELESS_G8X24_UINT:	return DXGI_FORMAT_R32G8X24_TYPELESS;
+
+		case DXGI_FORMAT_D32_FLOAT:					return DXGI_FORMAT_R32_TYPELESS;
+		case DXGI_FORMAT_D16_UNORM:					return DXGI_FORMAT_R16_TYPELESS;
+		};
+		return format;
+	}
+
+	uint8 GetFormatPlaneCount(DXGI_FORMAT Format)
+	{
+		// Currently, the only planar resources used are depth-stencil formats
+		switch (FindDepthStencilParentDXGIFormat(Format))
+		{
+		case DXGI_FORMAT_R24G8_TYPELESS:
+		case DXGI_FORMAT_R32G8X24_TYPELESS:
+			return 2;
+		default:
+			return 1;
+		}
+	}
+
 	DXGI_FORMAT D3DFormat(EResourceFormat format)
 	{
 		switch (format)

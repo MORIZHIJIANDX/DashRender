@@ -1,4 +1,6 @@
 #pragma once
+
+#include "GraphicTypesFwd.h"
 #include "ShaderCompiler.h"
 
 namespace Dash

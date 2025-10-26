@@ -43,6 +43,7 @@ namespace Dash
 	// 可以使用 GpuLinearAllocator 进行代替.
 	class FGpuConstantBuffer : public FGpuBuffer
 	{
+		friend class FRenderDevice;
 	public:
 		FGpuConstantBuffer() { mCpuAccess = true; }
 		virtual ~FGpuConstantBuffer();
@@ -60,6 +61,7 @@ namespace Dash
 
 	class FByteAddressBuffer : public FGpuBuffer
 	{
+		friend class FRenderDevice;
 	public:
 		friend class FStructuredBuffer;
 		virtual ~FByteAddressBuffer() {}
@@ -70,6 +72,7 @@ namespace Dash
 
 	class FStructuredBuffer : public FGpuBuffer
 	{
+		friend class FRenderDevice;
 	public:
 		virtual ~FStructuredBuffer() {}
 
@@ -93,6 +96,7 @@ namespace Dash
 
 	class FTypedBuffer : public FGpuBuffer
 	{
+		friend class FRenderDevice;
 	public:
 		FTypedBuffer(EResourceFormat format)
 			: mFormat(format)
@@ -111,6 +115,7 @@ namespace Dash
 
 	class FGpuVertexBuffer : public FGpuBuffer
 	{
+		friend class FRenderDevice;
 	public:
 		virtual ~FGpuVertexBuffer() {}
 
@@ -128,6 +133,7 @@ namespace Dash
 
 	class FGpuIndexBuffer : public FGpuBuffer
 	{
+		friend class FRenderDevice;
 	public:
 		virtual ~FGpuIndexBuffer() {}
 
@@ -148,6 +154,7 @@ namespace Dash
 
 	class FGpuDynamicVertexBuffer : public FGpuVertexBuffer
 	{
+		friend class FRenderDevice;
 	public:
 		FGpuDynamicVertexBuffer() { mCpuAccess = true; }
 		virtual ~FGpuDynamicVertexBuffer() {}
@@ -163,6 +170,7 @@ namespace Dash
 
 	class FGpuDynamicIndexBuffer : public FGpuIndexBuffer
 	{
+		friend class FRenderDevice;
 	public:
 		FGpuDynamicIndexBuffer() { mCpuAccess = true; }
 		virtual ~FGpuDynamicIndexBuffer() {}

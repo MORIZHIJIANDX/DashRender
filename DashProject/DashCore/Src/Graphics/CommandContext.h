@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GraphicTypesFwd.h"
 #include "CommandQueue.h"
 #include "ColorBuffer.h"
 #include "DynamicDescriptorHeap.h"

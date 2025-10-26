@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GraphicTypesFwd.h"
 #include "CommandContext.h"
 
 namespace Dash

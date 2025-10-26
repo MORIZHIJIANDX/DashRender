@@ -3,13 +3,11 @@
 #include "DX12Helper.h"
 #include "ResourceFormat.h"
 #include "ResourceDescription.h"
+#include "Utility/ThreadSafeCounter.h"
 
 namespace Dash
 {
-	class FGpuResource;
-	using FGpuResourceRef = std::shared_ptr<FGpuResource>;
-
-	class FGpuResource
+	class FGpuResource : public FRefCount
 	{
 	public:
 		virtual ~FGpuResource()
@@ -25,9 +23,7 @@ namespace Dash
 		ID3D12Resource* GetResource() { return mResource.GetReference(); }
 		const ID3D12Resource* GetResource() const { return mResource.GetReference(); }
 
-		TRefCountPtr<ID3D12Resource> GetResourceComPtr() const { return mResource; }
-
-		//ID3D12Resource** GetAddressOf() { return mResource.Ge(); }
+		TRefCountPtr<ID3D12Resource> GetResourceRefPtr() const { return mResource; }
 
 		D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress();
 

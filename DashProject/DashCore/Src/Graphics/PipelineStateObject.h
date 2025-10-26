@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GraphicTypesFwd.h"
 #include "InputAssemblerLayout.h"
 #include "ShaderPass.h"
 #include "RasterizerState.h"
@@ -14,10 +15,6 @@ namespace Dash
 	class FPipelineStateObject;
 	class FGraphicsPSO;
 	class FComputePSO;
-
-	using FPipelineStateObjectRef = std::shared_ptr<FPipelineStateObject>;
-	using FGraphicsPSORef = std::shared_ptr<FGraphicsPSO>;
-	using FComputePSORef = std::shared_ptr<FComputePSO>;
 
 	struct FGraphicsPipelineStateInitializer
 	{

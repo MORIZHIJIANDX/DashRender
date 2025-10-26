@@ -7,6 +7,7 @@
 #include "dxc/inc/dxcapi.h"
 #include "dxc/inc/d3d12shader.h"
 #include "Utility/RefCounting.h"
+#include "Utility/ThreadSafeCounter.h"
 
 namespace Dash
 {
@@ -101,7 +102,7 @@ namespace Dash
 		std::vector<FConstantBufferVariable> ConstantBufferVariables;
 	};
 
-	struct FShaderResource
+	struct FShaderResource : public FRefCount
 	{
 	public:
 		friend class FShaderMap;
@@ -126,6 +127,4 @@ namespace Dash
 		std::vector<FShaderParameter> mParameters;
 		FInputAssemblerLayout mInputLayout;
 	}; 
-
-	using FShaderResourceRef = std::shared_ptr<FShaderResource>;
 }

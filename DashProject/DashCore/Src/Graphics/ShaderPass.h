@@ -1,4 +1,7 @@
 #pragma once
+
+#include "GraphicTypesFwd.h"
+#include "Utility/ThreadSafeCounter.h"
 #include "ShaderResource.h"
 #include "RootSignature.h"
 #include "SamplerDesc.h"
@@ -15,10 +18,7 @@ namespace Dash
 		Compute
 	};
 
-	class FShaderPass;
-	using FShaderPassRef = std::shared_ptr<FShaderPass>;
-
-	class FShaderPass
+	class FShaderPass : public FRefCount
 	{
 	public:
 		static FShaderPassRef MakeGraphicShaderPass(const std::string& passName, const std::vector<FShaderCreationInfo>& creationInfos,

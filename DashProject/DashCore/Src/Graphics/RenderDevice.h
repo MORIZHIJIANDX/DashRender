@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GraphicTypesFwd.h"
 #include "ResourceState.h"
 #include "ResourceFormat.h"
 #include "ResourceDescription.h"
@@ -8,39 +9,6 @@
 
 namespace Dash
 {
-	class FColorBuffer;
-	using FColorBufferRef = std::shared_ptr<FColorBuffer>;
-	
-	class FDepthBuffer;
-	using FDepthBufferRef = std::shared_ptr<FDepthBuffer>;
-
-	class FTextureBuffer;
-	using FTextureBufferRef = std::shared_ptr<FTextureBuffer>;
-
-	class FGpuBuffer;
-	using FGpuBufferRef = std::shared_ptr<FGpuBuffer>;
-
-	class FGpuConstantBuffer;
-	using FGpuConstantBufferRef = std::shared_ptr<FGpuConstantBuffer>;
-
-	class FStructuredBuffer;
-	using FStructuredBufferRef = std::shared_ptr<FStructuredBuffer>;
-
-	class FGpuVertexBuffer;
-	using FGpuVertexBufferRef = std::shared_ptr<FGpuVertexBuffer>;
-
-	class FGpuIndexBuffer;
-	using FGpuIndexBufferRef = std::shared_ptr<FGpuIndexBuffer>;
-
-	class FGpuDynamicVertexBuffer;
-	using FGpuDynamicVertexBufferRef = std::shared_ptr<FGpuDynamicVertexBuffer>;
-
-	class FGpuDynamicIndexBuffer;
-	using FGpuDynamicIndexBufferRef = std::shared_ptr<FGpuDynamicIndexBuffer>;
-
-	class FReadbackBuffer;
-	using FReadbackBufferRef = std::shared_ptr<FReadbackBuffer>;
-
 	class FRenderDevice
 	{
 	public:

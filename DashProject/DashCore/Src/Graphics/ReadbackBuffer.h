@@ -6,6 +6,7 @@ namespace Dash
 {
 	class FReadbackBuffer : public FGpuBuffer
 	{
+		friend class FRenderDevice;
 	public:
 		FReadbackBuffer();
 		virtual ~FReadbackBuffer();

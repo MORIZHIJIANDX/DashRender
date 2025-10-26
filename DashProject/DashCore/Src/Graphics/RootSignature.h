@@ -5,9 +5,6 @@
 
 namespace Dash
 {
-	class FRootSignature;
-	using FRootSignatureRef = std::shared_ptr<FRootSignature>;
-
 	class FRootParameter
 	{
 		friend class FRootSignature;

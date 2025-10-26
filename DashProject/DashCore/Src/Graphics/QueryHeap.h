@@ -1,12 +1,10 @@
 #pragma once
 
 #include "Utility/RefCounting.h"
+#include "Utility/ThreadSafeCounter.h"
 
 namespace Dash
 {
-	class FQueryHeap;
-	using FQueryHeapRef = std::shared_ptr<FQueryHeap>;
-
 	enum class EGpuQueryType : uint8
 	{
 		Occlusion,
@@ -24,7 +22,7 @@ namespace Dash
 		EGpuQueryType type;
 	};
 
-	class FQueryHeap
+	class FQueryHeap : public FRefCount
 	{
 	public:
 		FQueryHeap(const FQueryHeapDesc& desc);

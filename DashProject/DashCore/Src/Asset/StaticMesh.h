@@ -3,6 +3,7 @@
 #include "Graphics/RenderDevice.h"
 #include "Material.h"
 #include "MeshLoader/MeshLoaderHelper.h"
+#include "Graphics/GpuBuffer.h"
 
 namespace Dash
 {

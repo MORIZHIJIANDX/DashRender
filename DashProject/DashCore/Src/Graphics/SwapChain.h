@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GraphicTypesFwd.h"
 #include "ColorBuffer.h"
 #include "DepthBuffer.h"
 #include "TextureBuffer.h"

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GraphicTypesFwd.h"
 #include "GpuResource.h"
 #include "CommandQueue.h"
 

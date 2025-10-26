@@ -24,19 +24,25 @@ namespace Dash
     #if defined(DASH_DEBUG)
         FORCEINLINE void SetD3D12DebugName(ID3D12Object* pObject, LPCWSTR name)
         {
-            pObject->SetName(name);
+            if (pObject)
+            {
+                pObject->SetName(name);
+            }  
         }
 
 		FORCEINLINE void SetD3D12DebugName(ID3D12Object* pObject, const std::string& name)
 		{
-            std::wstring wName = FStringUtility::UTF8ToWideString(name);
-            pObject->SetName(wName.c_str());
+            if (pObject)
+            {
+                std::wstring wName = FStringUtility::UTF8ToWideString(name);
+                pObject->SetName(wName.c_str());
+            }
 		}
 
         FORCEINLINE void SetD3D12DebugNameIndexed(ID3D12Object* pObject, LPCWSTR name, UINT index)
         {
             WCHAR _DebugName[MAX_PATH] = {};
-            if (SUCCEEDED(StringCchPrintfW(_DebugName, _countof(_DebugName), L"%s[%u]", name, index)))
+            if (pObject && SUCCEEDED(StringCchPrintfW(_DebugName, _countof(_DebugName), L"%s[%u]", name, index)))
             {
                 pObject->SetName(_DebugName);
             }
@@ -44,8 +50,11 @@ namespace Dash
 
 		FORCEINLINE void SetD3D12DebugNameIndexed(ID3D12Object* pObject, const std::string& name, UINT index)
 		{
-            std::wstring wName = FStringUtility::UTF8ToWideString(name + "[" + FStringUtility::ToString(index) + "]");
-            pObject->SetName(wName.c_str());
+            if (pObject)
+            {
+                std::wstring wName = FStringUtility::UTF8ToWideString(name + "[" + FStringUtility::ToString(index) + "]");
+                pObject->SetName(wName.c_str());
+            }
         }   
     #else
         FORCEINLINE void SetD3D12DebugName(ID3D12Object*, LPCWSTR)
@@ -70,7 +79,7 @@ namespace Dash
         FORCEINLINE void SetDXGIDebugName(IDXGIObject* pObject, LPCWSTR name)
         {
             size_t szLen = 0;
-            if (SUCCEEDED(StringCchLengthW(name, 50, &szLen)))
+            if (pObject && SUCCEEDED(StringCchLengthW(name, 50, &szLen)))
             {
                 pObject->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(szLen - 1), name);
             }          
@@ -79,7 +88,7 @@ namespace Dash
         {
             size_t szLen = 0;
             WCHAR _DebugName[MAX_PATH] = {};
-            if (SUCCEEDED(StringCchPrintfW(_DebugName, _countof(_DebugName), L"%s[%u]", name, index)))
+            if (pObject && SUCCEEDED(StringCchPrintfW(_DebugName, _countof(_DebugName), L"%s[%u]", name, index)))
             {
                 if (SUCCEEDED(StringCchLengthW(_DebugName, _countof(_DebugName), &szLen)))
                 {

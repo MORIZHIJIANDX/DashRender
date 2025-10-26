@@ -1,13 +1,11 @@
 #pragma once
 
+#include "GraphicTypesFwd.h"
 #include "ShaderPass.h"
 
 namespace Dash
 {
-	class FShaderTechnique;
-	using FShaderTechniqueRef = std::shared_ptr<FShaderTechnique>;
-
-	class FShaderTechnique
+	class FShaderTechnique : public FRefCount
 	{
 	public:
 

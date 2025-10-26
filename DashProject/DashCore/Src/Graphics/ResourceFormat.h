@@ -117,6 +117,10 @@ namespace Dash
 	size_t BytesPerPixel(DXGI_FORMAT format);
 	size_t BytesPerPixel(EResourceFormat format);
 
+	DXGI_FORMAT FindDepthStencilParentDXGIFormat(DXGI_FORMAT InFormat);
+
+	uint8 GetFormatPlaneCount(DXGI_FORMAT Format);
+
 	struct FResourceMagnitude
 	{
 		FResourceMagnitude(uint32 width, uint32 height, uint32 depth);

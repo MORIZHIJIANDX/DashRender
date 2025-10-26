@@ -2,6 +2,7 @@
 
 #include "Graphics/RenderDevice.h"
 #include "TextureLoader/TextureLoaderManager.h"
+#include "Graphics/TextureBuffer.h"
 
 namespace Dash
 {

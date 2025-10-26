@@ -60,4 +60,42 @@ namespace Dash
 
 		std::atomic<int32> mCounter;
 	};
+
+	class FRefCount
+	{
+	public:
+		FRefCount() {}
+		virtual ~FRefCount()
+		{
+			ASSERT(mNumRefs.GetValue() == 0);
+		}
+
+		uint32 AddRef() const
+		{
+			int32 newValue = mNumRefs.Increment();
+			ASSERT(newValue > 0);
+			return uint32(newValue);
+		}
+
+		uint32 Release() const
+		{
+			int32 newValue = mNumRefs.Decrement();
+			if (newValue == 0)
+			{
+				delete this;
+			}
+			ASSERT(newValue >= 0);
+			return uint32(newValue);
+		}
+
+		uint32 RefCount() const
+		{
+			int32 currentValue = mNumRefs.GetValue();
+			ASSERT(currentValue >= 0);
+			return uint32(currentValue);
+		}
+
+	private:
+		mutable FThreadSafeCounter mNumRefs;
+	};
 }

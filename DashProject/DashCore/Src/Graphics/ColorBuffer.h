@@ -8,6 +8,7 @@ namespace Dash
 {
 	class FColorBuffer : public FPixelBuffer
 	{
+		friend class FRenderDevice;
 	public:
 		FColorBuffer(const FLinearColor& clearColor = FLinearColor{})
 		{

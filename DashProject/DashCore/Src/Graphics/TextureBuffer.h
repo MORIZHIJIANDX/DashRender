@@ -7,6 +7,7 @@ namespace Dash
 {
 	class FTextureBuffer : public FPixelBuffer
 	{
+		friend class FRenderDevice;
 	public:
 		virtual ~FTextureBuffer() {};
 
