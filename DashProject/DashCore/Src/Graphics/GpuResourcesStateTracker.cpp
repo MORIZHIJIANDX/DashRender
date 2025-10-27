@@ -93,7 +93,7 @@ namespace Dash
 	{
 		if (resource->GetResource())
 		{
-			ResourceBarrier(CD3DX12_RESOURCE_BARRIER::Transition(resource->GetResource(), D3D12_RESOURCE_STATE_COMMON, stateAfter, subResource));
+			ResourceBarrier(CD3DX12_RESOURCE_BARRIER::Transition(resource->GetResource()->GetResource(), D3D12_RESOURCE_STATE_COMMON, stateAfter, subResource));
 		}
 	}
 
@@ -106,7 +106,7 @@ namespace Dash
 	{
 		if (resource->GetResource())
 		{
-			ResourceBarrier(CD3DX12_RESOURCE_BARRIER::UAV(resource->GetResource()));
+			ResourceBarrier(CD3DX12_RESOURCE_BARRIER::UAV(resource->GetResource()->GetResource()));
 		}
 	}
 
@@ -119,7 +119,7 @@ namespace Dash
 	{
 		if (resourceBefore->GetResource() && resourceAfter->GetResource())
 		{
-			ResourceBarrier(CD3DX12_RESOURCE_BARRIER::Aliasing(resourceBefore->GetResource(), resourceAfter->GetResource()));
+			ResourceBarrier(CD3DX12_RESOURCE_BARRIER::Aliasing(resourceBefore->GetResource()->GetResource(), resourceAfter->GetResource()->GetResource()));
 		}
 	}
 
@@ -280,13 +280,13 @@ namespace Dash
 		IsLocked = false;
 	}
 
-	void FGpuResourcesStateTracker::AddGlobalResourceState(ID3D12Resource* resource, D3D12_RESOURCE_STATES state)
+	void FGpuResourcesStateTracker::AddGlobalResourceState(FD3D12Resource* resource, D3D12_RESOURCE_STATES state)
 	{
 		if (resource)
 		{
 			std::lock_guard<std::mutex> lock(GlobalMutex);
 
-			GlobalResourceStates[resource].SetSubResourceState(D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, state);
+			GlobalResourceStates[resource->GetResource()].SetSubResourceState(D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, state);
 		}
 	}
 
@@ -296,17 +296,17 @@ namespace Dash
 		{
 			std::lock_guard<std::mutex> lock(GlobalMutex);
 
-			GlobalResourceStates[resource->GetResource()].SetSubResourceState(D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, state);
+			GlobalResourceStates[resource->GetResource()->GetResource()].SetSubResourceState(D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, state);
 		}
 	}
 
-	void FGpuResourcesStateTracker::RemoveGlobalResourceState(ID3D12Resource* resource)
+	void FGpuResourcesStateTracker::RemoveGlobalResourceState(FD3D12Resource* resource)
 	{
 		if (resource)
 		{
 			std::lock_guard<std::mutex> lock(GlobalMutex);
 
-			GlobalResourceStates.erase(resource);
+			GlobalResourceStates.erase(resource->GetResource());
 		}
 	}
 
@@ -316,7 +316,7 @@ namespace Dash
 		{
 			std::lock_guard<std::mutex> lock(GlobalMutex);
 
-			GlobalResourceStates.erase(resource->GetResource());
+			GlobalResourceStates.erase(resource->GetResource()->GetResource());
 		}
 	}
 

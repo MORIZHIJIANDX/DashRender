@@ -9,10 +9,6 @@ namespace Dash
 	{
 		friend class FRenderDevice;
 	public:
-		FDepthBuffer(float clearDepth = 1.0f, uint8 clearStencil = 0)
-		{
-			mDesc.ClearValue = FDepthStencilClearValue{ clearDepth, clearStencil};
-		}
 		virtual ~FDepthBuffer(){}
 
 		virtual uint32 GetWidth() const { return mDesc.Magnitude.Width; }
@@ -29,6 +25,11 @@ namespace Dash
 		const FDepthBufferDescription& GetDesc() const { return mDesc; }
 
 	protected:
+		FDepthBuffer(float clearDepth = 1.0f, uint8 clearStencil = 0)
+		{
+			mDesc.ClearValue = FDepthStencilClearValue{ clearDepth, clearStencil };
+		}
+
 		void Create(const std::string& name, const FDepthBufferDescription& desc);
 		void Create(const std::string& name, uint32 width, uint32 height, EResourceFormat format);
 		void Create(const std::string& name, uint32 width, uint32 height, uint32 sampleCount, uint32 sampleQuality, EResourceFormat format);

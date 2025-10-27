@@ -1,8 +1,10 @@
 #pragma once
 
 #include "DX12Helper.h"
+#include "GraphicTypesFwd.h"
 #include "ResourceFormat.h"
 #include "ResourceDescription.h"
+#include "D3D12Resource.h"
 #include "Utility/ThreadSafeCounter.h"
 
 namespace Dash
@@ -17,22 +19,22 @@ namespace Dash
 
 		virtual void Destroy();
 
-		ID3D12Resource* operator->() { return mResource.GetReference(); }
-		const ID3D12Resource* operator->() const { return mResource.GetReference(); }
+		FD3D12Resource* operator->() { return mResource.GetReference(); }
+		const FD3D12Resource* operator->() const { return mResource.GetReference(); }
 
-		ID3D12Resource* GetResource() { return mResource.GetReference(); }
-		const ID3D12Resource* GetResource() const { return mResource.GetReference(); }
+		FD3D12Resource* GetResource() { return mResource.GetReference(); }
+		const FD3D12Resource* GetResource() const { return mResource.GetReference(); }
 
-		TRefCountPtr<ID3D12Resource> GetResourceRefPtr() const { return mResource; }
+		TRefCountPtr<FD3D12Resource> GetResourceRefPtr() const { return mResource; }
 
-		D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress();
+		D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress() const;
 
 		uint32 GetVersionID() const { return mVersionID; }
 
 		void SetName(const std::string& name) 
 		{  
 			mResourceName = name;
-			SetD3D12DebugName(mResource.GetReference(), name);
+			mResource->SetName(name);
 		}
 
 		const std::string& GetName() const { return mResourceName; }
@@ -42,19 +44,13 @@ namespace Dash
 		{
 		}
 
-		FGpuResource(TRefCountPtr<ID3D12Resource> resource)
+		FGpuResource(const TRefCountPtr<FD3D12Resource>& resource)
 			: mResource(resource)
 		{
-			if (mResource)
-			{
-				mGpuVirtualAddress = mResource->GetGPUVirtualAddress();
-			}
 		}
 
 	protected:
-
-		TRefCountPtr<ID3D12Resource> mResource = nullptr;
-		D3D12_GPU_VIRTUAL_ADDRESS mGpuVirtualAddress = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
+		TRefCountPtr<FD3D12Resource> mResource = nullptr;
 
 		std::string mResourceName;
 		uint32 mVersionID = 0;

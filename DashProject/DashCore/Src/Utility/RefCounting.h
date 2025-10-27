@@ -8,6 +8,8 @@ namespace Dash
 	class TRefCountPtr
 	{
 		typedef ReferencedType* ReferencePtr;
+		// 允许不同实例互相访问私有成员（以便移动时直接窃取指针）
+		template<typename> friend class TRefCountPtr;
 	public:
 		TRefCountPtr()
 			: mReference(nullptr)
@@ -35,6 +37,25 @@ namespace Dash
 		{
 			mReference = Copy.mReference;
 			Copy.mReference = nullptr;
+		}
+
+		// 模板化的转换构造（允许从 TRefCountPtr<Other> 到 TRefCountPtr<ReferencedType> 的转换）
+		template<typename OtherType, typename = typename std::enable_if<std::is_convertible<OtherType*, ReferencedType*>::value>::type>
+		TRefCountPtr(const TRefCountPtr<OtherType>& Other)
+		{
+			mReference = Other.mReference;
+			if (mReference)
+			{
+				mReference->AddRef();
+			}
+		}
+
+		// 模板化的移动构造（窃取指针）
+		template<typename OtherType, typename = typename std::enable_if<std::is_convertible<OtherType*, ReferencedType*>::value>::type>
+		TRefCountPtr(TRefCountPtr<OtherType>&& Other)
+		{
+			mReference = Other.mReference;
+			Other.mReference = nullptr;
 		}
 
 		~TRefCountPtr()
@@ -76,6 +97,30 @@ namespace Dash
 				ReferencedType* OldReference = mReference;
 				mReference = InPtr.mReference;
 				InPtr.mReference = nullptr;
+				if (OldReference)
+				{
+					OldReference->Release();
+				}
+			}
+			return *this;
+		}
+
+		// 模板化的转换赋值（copy）
+		template<typename OtherType, typename = typename std::enable_if<std::is_convertible<OtherType*, ReferencedType*>::value>::type>
+		TRefCountPtr& operator=(const TRefCountPtr<OtherType>& Other)
+		{
+			return *this = Other.mReference;
+		}
+
+		// 模板化的转换赋值（move）
+		template<typename OtherType, typename = typename std::enable_if<std::is_convertible<OtherType*, ReferencedType*>::value>::type>
+		TRefCountPtr& operator=(TRefCountPtr<OtherType>&& Other)
+		{
+			if (mReference != Other.mReference)
+			{
+				ReferencedType* OldReference = mReference;
+				mReference = Other.mReference;
+				Other.mReference = nullptr;
 				if (OldReference)
 				{
 					OldReference->Release();
@@ -168,5 +213,11 @@ namespace Dash
 	bool operator==(ReferencedType* A, const TRefCountPtr<ReferencedType>& B)
 	{
 		return A == B.GetReference();
+	}
+
+	template<typename T, typename... Args>
+	TRefCountPtr<T> MakeRefCounted(Args&&... args)
+	{
+		return TRefCountPtr<T>(new T(std::forward<Args>(args)...), true);
 	}
 }

@@ -7,7 +7,6 @@ namespace Dash
 	class FPixelBuffer : public FGpuResource
 	{
 	public:
-		FPixelBuffer() {}
 		virtual ~FPixelBuffer() {}
 
 		virtual uint32 GetWidth() const = 0;
@@ -16,8 +15,9 @@ namespace Dash
 		virtual const EResourceFormat& GetFormat() const = 0;
 
 	protected:
+		FPixelBuffer() {}
 
-		void AssociateWithResource(ID3D12Resource* resource, EResourceState currentState, const std::string& name = "");
+		void AssociateWithResource(const TRefCountPtr<FD3D12Resource>& resource, EResourceState currentState, const std::string& name = "");
 		void CreateTextureResource(const D3D12_RESOURCE_DESC& resourceDesc, D3D12_CLEAR_VALUE clearValue, const std::string& name = "", EResourceState initState = EResourceState::Common);
 	};
 }

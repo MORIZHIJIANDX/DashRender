@@ -19,7 +19,7 @@ namespace Dash
 	{
 		if (mMappedData == nullptr)
 		{
-			DX_CALL(mResource->Map(0, nullptr, &mMappedData));
+			mMappedData = mResource->Map();
 		}
 
 		return mMappedData;
@@ -29,7 +29,7 @@ namespace Dash
 	{
 		if (mMappedData)
 		{
-			mResource->Unmap(0, nullptr);
+			mResource->Unmap();
 			mMappedData = nullptr;
 		}
 	}
@@ -49,11 +49,12 @@ namespace Dash
 		HeapProps.VisibleNodeMask = 1;
 
 		D3D12_RESOURCE_DESC desc = mDesc.D3DResourceDescription();
-		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&HeapProps, D3D12_HEAP_FLAG_NONE, &desc,
-			D3DResourceState(mDesc.InitialStateMask), nullptr, mResource));
 
-		mGpuVirtualAddress = mResource->GetGPUVirtualAddress();
+		TRefCountPtr<ID3D12Resource> d3d12Resource = FGraphicsCore::Device->CreateCommittedResource(&HeapProps, D3D12_HEAP_FLAG_NONE, &desc,
+			D3DResourceState(mDesc.InitialStateMask), nullptr);
 
-		SetD3D12DebugName(mResource.GetReference(), name.c_str());
+		mResource = MakeRefCounted<FD3D12Resource>(d3d12Resource, desc);
+
+		SetName(name);
 	}
 }

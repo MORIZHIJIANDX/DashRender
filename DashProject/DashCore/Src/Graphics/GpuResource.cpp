@@ -9,14 +9,13 @@ namespace Dash
 		FGpuResourcesStateTracker::RemoveGlobalResourceState(this->mResource.GetReference());
 
 		mResource = nullptr;
-		mGpuVirtualAddress = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
 
 		++mVersionID;
 	}
 
-	D3D12_GPU_VIRTUAL_ADDRESS Dash::FGpuResource::GetGpuVirtualAddress()
+	D3D12_GPU_VIRTUAL_ADDRESS FGpuResource::GetGpuVirtualAddress() const
 	{
-		return mGpuVirtualAddress;
+		return mResource->GetGPUVirtualAddress();
 	}
 }
 

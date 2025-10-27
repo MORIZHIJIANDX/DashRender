@@ -45,7 +45,6 @@ namespace Dash
 	{
 		friend class FRenderDevice;
 	public:
-		FGpuConstantBuffer() { mCpuAccess = true; }
 		virtual ~FGpuConstantBuffer();
 		D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress(size_t offset = 0) const;
 		
@@ -53,6 +52,7 @@ namespace Dash
 		void Unmap();
 
 	protected:
+		FGpuConstantBuffer() { mCpuAccess = true; }
 		virtual void CreateViews() override;
 	
 	private:
@@ -98,15 +98,15 @@ namespace Dash
 	{
 		friend class FRenderDevice;
 	public:
-		FTypedBuffer(EResourceFormat format)
-			: mFormat(format)
-		{}
-
 		virtual ~FTypedBuffer() {}
 
 		EResourceFormat GetFormat() const { return mFormat; };
 
 	protected:
+		FTypedBuffer(EResourceFormat format)
+			: mFormat(format)
+		{
+		}
 		virtual void CreateViews() override;
 
 	protected:

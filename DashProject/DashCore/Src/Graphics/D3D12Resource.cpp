@@ -17,17 +17,22 @@ namespace Dash
 		SetD3D12DebugName(mHeap.GetReference(), name);
 	}
 
-	FD3D12Resource::FD3D12Resource(ID3D12Resource* resource, const D3D12_RESOURCE_DESC& desc, FD3D12Heap* heap, D3D12_HEAP_TYPE heapType)
+	FD3D12Resource::FD3D12Resource(const TRefCountPtr<ID3D12Resource>& resource, const D3D12_RESOURCE_DESC& desc, FD3D12Heap* heap, D3D12_HEAP_TYPE heapType)
 		: mResource(resource)
 		, mResourceDesc(desc)
 		, mHeap(heap)
 		, mHeapType(heapType)
-		, mGPUVirtualAddress(D3D12_GPU_VIRTUAL_ADDRESS_UNKNOWN)
+		, mGPUVirtualAddress(D3D12_GPU_VIRTUAL_ADDRESS_NULL)
 		, mMappedAddress(nullptr)
 		, mPlaneCount(GetFormatPlaneCount(desc.Format))
+		, mSubresourceCount(0)
 		, mIsDepthStencil(IsDepthStencilFormat(desc.Format))
 	{
-		
+		mSubresourceCount = GetMipLevels() * GetArraySize() * GetPlaneCount();
+		if (mResource && mResourceDesc.Dimension == D3D12_RESOURCE_DIMENSION::D3D12_RESOURCE_DIMENSION_BUFFER)
+		{
+			mGPUVirtualAddress = mResource->GetGPUVirtualAddress();
+		}
 	}
 
 	FD3D12Resource::~FD3D12Resource()
@@ -39,7 +44,7 @@ namespace Dash
 		if (mNumMapCalls == 0)
 		{
 			ASSERT(mResource);
-			ASSERT(mMappedAddress != nullptr);
+			ASSERT(mMappedAddress == nullptr);
 			DX_CALL(mResource->Map(0, readRange, &mMappedAddress));
 		}
 		else

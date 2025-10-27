@@ -22,22 +22,22 @@ namespace Dash
 
 		int32 Increment()
 		{
-			return mCounter.fetch_add(1);
+			return mCounter.fetch_add(1) + 1;
 		}
 
 		int32 Add(int32 Amount)
 		{
-			return mCounter.fetch_add(Amount);
+			return mCounter.fetch_add(Amount) + Amount;
 		}
 
 		int32 Decrement()
 		{
-			return mCounter.fetch_sub(1);
+			return mCounter.fetch_sub(1) - 1;
 		}
 
 		int32 Subtract(int32 Amount)
 		{
-			return mCounter.fetch_sub(Amount);
+			return mCounter.fetch_sub(Amount) - Amount;
 		}
 
 		int32 Set(int32 Value)

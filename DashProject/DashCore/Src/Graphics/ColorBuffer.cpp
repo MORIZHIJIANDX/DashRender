@@ -7,7 +7,7 @@
 
 namespace Dash
 {
-	void FColorBuffer::Create(const std::string& name, ID3D12Resource* resource, EResourceState initStates)
+	void FColorBuffer::Create(const std::string& name, const TRefCountPtr<ID3D12Resource>& resource, EResourceState initStates)
     {
         ASSERT(resource != nullptr);
 
@@ -32,7 +32,9 @@ namespace Dash
         mDesc = FColorBufferDescription::Create(ResourceFormatFromD3DFormat(desc.Format), dimension, FResourceMagnitude(static_cast<uint32>(desc.Width), static_cast<uint32>(desc.Height), static_cast<uint32>(desc.DepthOrArraySize)), mDesc.ClearValue,
             desc.MipLevels, initStates, desc.SampleDesc.Count, desc.SampleDesc.Quality);
 
-        AssociateWithResource(resource, initStates, name);
+        TRefCountPtr<FD3D12Resource> resourceRef = MakeRefCounted<FD3D12Resource>(resource, desc);
+
+        AssociateWithResource(resourceRef, initStates, name);
         CreateViews();
     }
 

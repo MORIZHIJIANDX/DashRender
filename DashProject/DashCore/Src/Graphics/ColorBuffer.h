@@ -10,11 +10,6 @@ namespace Dash
 	{
 		friend class FRenderDevice;
 	public:
-		FColorBuffer(const FLinearColor& clearColor = FLinearColor{})
-		{
-			mDesc.ClearValue = clearColor;
-		}
-
 		virtual ~FColorBuffer() {}
 
 		virtual uint32 GetWidth() const { return mDesc.Magnitude.Width; }
@@ -36,7 +31,12 @@ namespace Dash
 		const FColorBufferDescription& GetDesc() const { return mDesc; }
 
 	protected:
-		void Create(const std::string& name, ID3D12Resource* resource, EResourceState initStates = EResourceState::Common);
+		FColorBuffer(const FLinearColor& clearColor = FLinearColor{})
+		{
+			mDesc.ClearValue = clearColor;
+		}
+
+		void Create(const std::string& name, const TRefCountPtr<ID3D12Resource>& resource, EResourceState initStates = EResourceState::Common);
 		void Create(const std::string& name, const FColorBufferDescription& desc);
 		void Create(const std::string& name, uint32 width, uint32 height, uint32 numMips, EResourceFormat format);
 		void CreateArray(const std::string& name, uint32 width, uint32 height, uint32 arrayCount, uint32 numMips, EResourceFormat format);

@@ -27,7 +27,7 @@ namespace Dash
 	class FMakeColorBuffer : public FColorBuffer
 	{
 	public:
-		FMakeColorBuffer(const std::string& name, ID3D12Resource* resource, EResourceState initStates = EResourceState::Common)
+		FMakeColorBuffer(const std::string& name, const TRefCountPtr<ID3D12Resource>& resource, EResourceState initStates = EResourceState::Common)
 		{	
 			Create(name, resource, initStates);
 		}
@@ -526,9 +526,11 @@ namespace Dash
 		return mDevice->CreateCommandSignature(pDesc, pRootSignature, IID_PPV_ARGS(pvCommandSignature.GetInitReference()));
 	}
 
-	HRESULT FRenderDevice::CreateCommittedResource(const D3D12_HEAP_PROPERTIES* pHeapProperties, D3D12_HEAP_FLAGS heapFlags, const D3D12_RESOURCE_DESC* pDesc, D3D12_RESOURCE_STATES initialResourceState, const D3D12_CLEAR_VALUE* pOptimizedClearValue, TRefCountPtr<ID3D12Resource>& pvResource)
+	TRefCountPtr<ID3D12Resource> FRenderDevice::CreateCommittedResource(const D3D12_HEAP_PROPERTIES* pHeapProperties, D3D12_HEAP_FLAGS heapFlags, const D3D12_RESOURCE_DESC* pDesc, D3D12_RESOURCE_STATES initialResourceState, const D3D12_CLEAR_VALUE* pOptimizedClearValue)
 	{
-		return mDevice->CreateCommittedResource(pHeapProperties, heapFlags, pDesc, initialResourceState, pOptimizedClearValue, IID_PPV_ARGS(pvResource.GetInitReference()));
+		TRefCountPtr<ID3D12Resource> d3d12Resource;
+		DX_CALL(mDevice->CreateCommittedResource(pHeapProperties, heapFlags, pDesc, initialResourceState, pOptimizedClearValue, IID_PPV_ARGS(d3d12Resource.GetInitReference())));
+		return d3d12Resource;
 	}
 
 	void FRenderDevice::CreateConstantBufferView(const D3D12_CONSTANT_BUFFER_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor)
@@ -536,9 +538,10 @@ namespace Dash
 		mDevice->CreateConstantBufferView(pDesc, destDescriptor);
 	}
 
-	void FRenderDevice::CreateDepthStencilView(ID3D12Resource* pResource, const D3D12_DEPTH_STENCIL_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor)
+	void FRenderDevice::CreateDepthStencilView(FD3D12Resource* pResource, const D3D12_DEPTH_STENCIL_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor)
 	{
-		mDevice->CreateDepthStencilView(pResource, pDesc, destDescriptor);
+		ASSERT(pResource != nullptr);
+		mDevice->CreateDepthStencilView(pResource->GetResource(), pDesc, destDescriptor);
 	}
 
 	HRESULT FRenderDevice::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC* pDescriptorHeapDesc, TRefCountPtr<ID3D12DescriptorHeap>& ppvHeap)
@@ -571,9 +574,10 @@ namespace Dash
 		return mDevice->CreateQueryHeap(pDesc, IID_PPV_ARGS(ppvHeap.GetInitReference()));
 	}
 
-	void FRenderDevice::CreateRenderTargetView(ID3D12Resource* pResource, const D3D12_RENDER_TARGET_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor)
+	void FRenderDevice::CreateRenderTargetView(FD3D12Resource* pResource, const D3D12_RENDER_TARGET_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor)
 	{
-		mDevice->CreateRenderTargetView(pResource, pDesc, destDescriptor);
+		ASSERT(pResource != nullptr);
+		mDevice->CreateRenderTargetView(pResource->GetResource(), pDesc, destDescriptor);
 	}
 
 	HRESULT FRenderDevice::CreateReservedResource(const D3D12_RESOURCE_DESC* pDesc, D3D12_RESOURCE_STATES initialState, const D3D12_CLEAR_VALUE* pOptimizedClearValue, TRefCountPtr<ID3D12Resource>& pvResource)
@@ -591,9 +595,10 @@ namespace Dash
 		mDevice->CreateSampler(pDesc, destDescriptor);
 	}
 
-	void FRenderDevice::CreateShaderResourceView(ID3D12Resource* pResource, const D3D12_SHADER_RESOURCE_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor)
+	void FRenderDevice::CreateShaderResourceView(FD3D12Resource* pResource, const D3D12_SHADER_RESOURCE_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor)
 	{
-		mDevice->CreateShaderResourceView(pResource, pDesc, destDescriptor);
+		ASSERT(pResource != nullptr);
+		mDevice->CreateShaderResourceView(pResource->GetResource(), pDesc, destDescriptor);
 	}
 
 	HRESULT FRenderDevice::CreateSharedHandle(ID3D12DeviceChild* pObject, const SECURITY_ATTRIBUTES* pAttributes, DWORD access, LPCWSTR name, HANDLE* pHandle)
@@ -601,9 +606,10 @@ namespace Dash
 		return mDevice->CreateSharedHandle(pObject, pAttributes, access, name, pHandle);
 	}
 
-	void FRenderDevice::CreateUnorderedAccessView(ID3D12Resource* pResource, ID3D12Resource* pCounterResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor)
+	void FRenderDevice::CreateUnorderedAccessView(FD3D12Resource* pResource, FD3D12Resource* pCounterResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor)
 	{
-		mDevice->CreateUnorderedAccessView(pResource, pCounterResource, pDesc, destDescriptor);
+		ASSERT(pResource != nullptr);
+		mDevice->CreateUnorderedAccessView(pResource->GetResource(), pCounterResource ? pCounterResource->GetResource() : nullptr, pDesc, destDescriptor);
 	}
 
 	HRESULT FRenderDevice::Evict(UINT numObjects, ID3D12Pageable* const* ppObjects)
@@ -661,7 +667,7 @@ namespace Dash
 		return mDevice->SetStablePowerState(enable);
 	}
 
-	FColorBufferRef FRenderDevice::CreateColorBuffer(const std::string& name, ID3D12Resource* resource, EResourceState initStates /*= EResourceState::Common*/)
+	FColorBufferRef FRenderDevice::CreateColorBuffer(const std::string& name, const TRefCountPtr<ID3D12Resource>& resource, EResourceState initStates /*= EResourceState::Common*/)
 	{
 		std::shared_ptr<FMakeColorBuffer> bufferRef = std::make_shared<FMakeColorBuffer>(name, resource, initStates);
 		return bufferRef;

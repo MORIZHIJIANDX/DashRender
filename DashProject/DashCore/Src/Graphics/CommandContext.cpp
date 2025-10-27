@@ -135,7 +135,7 @@ namespace Dash
 		TransitionBarrier(dest, EResourceState::CopyDestination, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 
 		D3D12_QUERY_TYPE queryType = D3DQueryType(queryHeap->GetDesc().type);
-		mD3DCommandList->ResolveQueryData(queryHeap->D3DQueryHeap(), queryType, startIndex, numQueries, dest->GetResource(), destOffset);
+		mD3DCommandList->ResolveQueryData(queryHeap->D3DQueryHeap(), queryType, startIndex, numQueries, dest->GetResource()->GetResource(), destOffset);
 	}
 
 	uint64 FCopyCommandContextBase::Flush(bool waitForCompletion /*= false*/)
@@ -235,7 +235,7 @@ namespace Dash
 		memcpy(alloc.CpuAddress, bufferData, numBytes);
 
 		context.TransitionBarrier(dest, EResourceState::CopyDestination, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
-		context.mD3DCommandList->CopyBufferRegion(dest->GetResource(), offset, alloc.Resource.GetResource(), alloc.Offset, numBytes);
+		context.mD3DCommandList->CopyBufferRegion(dest->GetResource()->GetResource(), offset, alloc.Resource.GetResource()->GetResource(), alloc.Offset, numBytes);
 		context.TransitionBarrier(dest, EResourceState::Common, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 
 		context.Finish(true);
@@ -247,7 +247,7 @@ namespace Dash
 
 		FCopyCommandContext& context = FCopyCommandContext::Begin("UpdateTextureBuffer");
 
-		UINT64 requiredSize = GetRequiredIntermediateSize(dest->GetResource(), firstSubresource, numSubresources);
+		UINT64 requiredSize = GetRequiredIntermediateSize(dest->GetResource()->GetResource(), firstSubresource, numSubresources);
 		FGpuLinearAllocator::FAllocation alloc = context.mLinearAllocator.Allocate(requiredSize);
 
 		std::vector<D3D12_SUBRESOURCE_DATA> d3dSubResources;
@@ -258,7 +258,7 @@ namespace Dash
 
 		// Resource must be in the copy-destination state.
 		context.TransitionBarrier(dest, EResourceState::CopyDestination, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
-		UpdateSubresources(context.GetD3DCommandList(), dest->GetResource(), alloc.Resource.GetResource(), alloc.Offset, firstSubresource, numSubresources, d3dSubResources.data());
+		UpdateSubresources(context.GetD3DCommandList(), dest->GetResource()->GetResource(), alloc.Resource.GetResource()->GetResource(), alloc.Offset, firstSubresource, numSubresources, d3dSubResources.data());
 		context.Finish(true);
 	}
 
@@ -490,7 +490,7 @@ namespace Dash
 
 		D3D12_GPU_DESCRIPTOR_HANDLE handle = mDynamicViewDescriptor.CopyAndSetDescriptor(*this, target->GetUnorderedAccessView());
 		const UINT clearColor[4] = {};
-		mD3DCommandList->ClearUnorderedAccessViewUint(handle, target->GetUnorderedAccessView(), target->GetResource(), clearColor, 0, nullptr);
+		mD3DCommandList->ClearUnorderedAccessViewUint(handle, target->GetUnorderedAccessView(), target->GetResource()->GetResource(), clearColor, 0, nullptr);
 
 		TrackResource(target);
 	}
@@ -501,7 +501,7 @@ namespace Dash
 
 		D3D12_GPU_DESCRIPTOR_HANDLE handle = mDynamicViewDescriptor.CopyAndSetDescriptor(*this, target->GetUnorderedAccessView());
 		CD3DX12_RECT clearRect{0, 0, static_cast<LONG>(target->GetWidth()), static_cast<LONG>(target->GetHeight()) };
-		mD3DCommandList->ClearUnorderedAccessViewFloat(handle, target->GetUnorderedAccessView(), target->GetResource(), target->GetClearColor().Data, 1, &clearRect);
+		mD3DCommandList->ClearUnorderedAccessViewFloat(handle, target->GetUnorderedAccessView(), target->GetResource()->GetResource(), target->GetClearColor().Data, 1, &clearRect);
 
 		TrackResource(target);
 	}

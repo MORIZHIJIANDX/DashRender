@@ -11,6 +11,9 @@ namespace Dash
 
 	class FQueryHeap;
 
+	class FD3D12Heap;
+	class FD3D12Resource;
+
 	class FGpuResource;
 	class FColorBuffer;
 	class FDepthBuffer;

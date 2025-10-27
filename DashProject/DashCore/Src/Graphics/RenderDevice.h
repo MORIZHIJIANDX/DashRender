@@ -72,15 +72,13 @@ namespace Dash
 			ID3D12RootSignature* pRootSignature,
 			TRefCountPtr<ID3D12CommandSignature>& pvCommandSignature
 		);
-		
-		// Creates both a resource and an implicit heap, such that the heap is big enough to contain the entire resource, and the resource is mapped to the heap.
-		HRESULT CreateCommittedResource(
+
+		TRefCountPtr<ID3D12Resource> CreateCommittedResource(
 			const D3D12_HEAP_PROPERTIES* pHeapProperties,
 			D3D12_HEAP_FLAGS            heapFlags,
 			const D3D12_RESOURCE_DESC* pDesc,
 			D3D12_RESOURCE_STATES       initialResourceState,
-			const D3D12_CLEAR_VALUE* pOptimizedClearValue,
-			TRefCountPtr<ID3D12Resource>& pvResource
+			const D3D12_CLEAR_VALUE* pOptimizedClearValue
 		);
 
 		// Creates a constant-buffer view for accessing resource data.
@@ -91,7 +89,7 @@ namespace Dash
 
 		// Creates a depth-stencil view for accessing resource data.
 		void CreateDepthStencilView(
-			ID3D12Resource* pResource,
+			FD3D12Resource* pResource,
 			const D3D12_DEPTH_STENCIL_VIEW_DESC* pDesc,
 			D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor
 		);
@@ -139,7 +137,7 @@ namespace Dash
 
 		// Creates a render-target view for accessing resource data. (ID3D12Device.CreateRenderTargetView)
 		void CreateRenderTargetView(
-			ID3D12Resource* pResource,
+			FD3D12Resource* pResource,
 			const D3D12_RENDER_TARGET_VIEW_DESC* pDesc,
 			D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor
 		);
@@ -168,7 +166,7 @@ namespace Dash
 
 		// Creates a shader-resource view for accessing data in a resource. (ID3D12Device.CreateShaderResourceView)
 		void CreateShaderResourceView(
-			ID3D12Resource* pResource,
+			FD3D12Resource* pResource,
 			const D3D12_SHADER_RESOURCE_VIEW_DESC* pDesc,
 			D3D12_CPU_DESCRIPTOR_HANDLE           destDescriptor
 		);
@@ -184,8 +182,8 @@ namespace Dash
 
 		// Creates a view for unordered accessing.
 		void CreateUnorderedAccessView(
-			ID3D12Resource* pResource,
-			ID3D12Resource* pCounterResource,
+			FD3D12Resource* pResource,
+			FD3D12Resource* pCounterResource,
 			const D3D12_UNORDERED_ACCESS_VIEW_DESC* pDesc,
 			D3D12_CPU_DESCRIPTOR_HANDLE  destDescriptor
 		);
@@ -257,7 +255,7 @@ namespace Dash
 			BOOL enable
 		);
 
-		FColorBufferRef CreateColorBuffer(const std::string& name, ID3D12Resource* resource, EResourceState initStates = EResourceState::Common);
+		FColorBufferRef CreateColorBuffer(const std::string& name, const TRefCountPtr<ID3D12Resource>& resource, EResourceState initStates = EResourceState::Common);
 		FColorBufferRef CreateColorBuffer(const std::string& name, const FColorBufferDescription& desc);
 		FColorBufferRef CreateColorBuffer(const std::string& name, uint32 width, uint32 height, uint32 numMips, EResourceFormat format);
 		FColorBufferRef CreateColorBufferArray(const std::string& name, uint32 width, uint32 height, uint32 arrayCount, uint32 numMips, EResourceFormat format);

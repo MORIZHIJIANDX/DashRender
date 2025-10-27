@@ -52,7 +52,6 @@ namespace Dash
 		CreateViews();
 
 		SetName(name);
-		SetD3D12DebugName(mResource.GetReference(), name.c_str());
 	}
 
 	void FGpuBuffer::CreateBufferResource(const D3D12_RESOURCE_DESC& desc)
@@ -61,12 +60,15 @@ namespace Dash
 		CD3DX12_HEAP_PROPERTIES heapProps(mCpuAccess ? D3D12_HEAP_TYPE_UPLOAD : D3D12_HEAP_TYPE_DEFAULT);
 		D3D12_RESOURCE_STATES initD3DState = mCpuAccess ? D3D12_RESOURCE_STATE_GENERIC_READ : D3DResourceState(mDesc.InitialStateMask);
 		// D3D12_RESOURCE_STATE_COMMON 不可直接作为 SRV 和 UAV，需要转换为 D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER (D3D12_RESOURCE_STATE_GENERIC_READ) 状态
-		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &desc, initD3DState, nullptr, mResource));
+		TRefCountPtr<ID3D12Resource> d3d12Resource = FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &desc, initD3DState, nullptr);
+
+		mResource = MakeRefCounted<FD3D12Resource>(d3d12Resource, desc, nullptr, heapProps.Type);
 
 		FGpuResourcesStateTracker::AddGlobalResourceState(this->GetResource(), initD3DState);
 
 		//GetGPUVirtualAddress is only useful for buffer resources, it will return zero for all texture resources.
-		mGpuVirtualAddress = mResource->GetGPUVirtualAddress();
+
+		ASSERT(GetGpuVirtualAddress() != D3D12_GPU_VIRTUAL_ADDRESS_UNKNOWN && GetGpuVirtualAddress() != D3D12_GPU_VIRTUAL_ADDRESS_NULL);
 	}
 
 	FGpuConstantBuffer::~FGpuConstantBuffer()
@@ -76,14 +78,14 @@ namespace Dash
 
 	D3D12_GPU_VIRTUAL_ADDRESS FGpuConstantBuffer::GetGpuVirtualAddress(size_t offset /*= 0*/) const
 	{
-		return mGpuVirtualAddress + mDesc.Stride * offset;
+		return FGpuBuffer::GetGpuVirtualAddress() + mDesc.Stride * offset;
 	}
 
 	void* FGpuConstantBuffer::Map()
 	{
 		if (mMappedData == nullptr)
 		{
-			DX_CALL(mResource->Map(0, nullptr, &mMappedData));
+			mMappedData = mResource->Map();
 		}
 		
 		return mMappedData;
@@ -93,7 +95,7 @@ namespace Dash
 	{
 		if (mMappedData)
 		{
-			mResource->Unmap(0, nullptr);
+			mResource->Unmap();
 			mMappedData = nullptr;
 		}
 	}
@@ -204,7 +206,7 @@ namespace Dash
 	D3D12_VERTEX_BUFFER_VIEW FGpuVertexBuffer::GetVertexBufferView(uint32 offset, uint32 size, uint32 stride) const
 	{
 		D3D12_VERTEX_BUFFER_VIEW view{};
-		view.BufferLocation = mGpuVirtualAddress + offset;
+		view.BufferLocation = GetGpuVirtualAddress() + offset;
 		view.SizeInBytes = size - offset;
 		view.StrideInBytes = stride;
 		return view;
@@ -213,7 +215,7 @@ namespace Dash
 	D3D12_INDEX_BUFFER_VIEW FGpuIndexBuffer::GetIndexBufferView(uint32 offset, uint32 size, bool is32Bit /*= false*/) const
 	{
 		D3D12_INDEX_BUFFER_VIEW view{};
-		view.BufferLocation = mGpuVirtualAddress + offset;
+		view.BufferLocation = GetGpuVirtualAddress() + offset;
 		view.SizeInBytes = size - offset;
 		view.Format = is32Bit ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT;
 		return view;
@@ -223,7 +225,7 @@ namespace Dash
 	{
 		if (mMappedData == nullptr)
 		{
-			DX_CALL(mResource->Map(0, nullptr, &mMappedData));
+			mMappedData = mResource->Map();
 		}
 
 		return mMappedData;
@@ -233,7 +235,7 @@ namespace Dash
 	{
 		if (mMappedData)
 		{
-			mResource->Unmap(0, nullptr);
+			mResource->Unmap();
 			mMappedData = nullptr;
 		}
 	}
@@ -254,7 +256,7 @@ namespace Dash
 	{
 		if (mMappedData == nullptr)
 		{
-			DX_CALL(mResource->Map(0, nullptr, &mMappedData));
+			mMappedData = mResource->Map();
 		}
 
 		return mMappedData;
@@ -264,7 +266,7 @@ namespace Dash
 	{
 		if (mMappedData)
 		{
-			mResource->Unmap(0, nullptr);
+			mResource->Unmap();
 			mMappedData = nullptr;
 		}
 	}

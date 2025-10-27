@@ -25,7 +25,7 @@ namespace Dash
 	class FD3D12Resource : public FRefCount
 	{
 	public:
-		FD3D12Resource(ID3D12Resource* resource, const D3D12_RESOURCE_DESC& desc, FD3D12Heap* heap = nullptr, D3D12_HEAP_TYPE heaptype = D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_DEFAULT);
+		FD3D12Resource(const TRefCountPtr<ID3D12Resource>& resource, const D3D12_RESOURCE_DESC& desc, FD3D12Heap* heap = nullptr, D3D12_HEAP_TYPE heaptype = D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_DEFAULT);
 		virtual ~FD3D12Resource();
 
 		operator ID3D12Resource&() { return *mResource; }

@@ -7,7 +7,7 @@
 
 namespace Dash
 {	
-	void FPixelBuffer::AssociateWithResource(ID3D12Resource* resource, EResourceState currentState, const std::string& name)
+	void FPixelBuffer::AssociateWithResource(const TRefCountPtr<FD3D12Resource>& resource, EResourceState currentState, const std::string& name)
 	{
 		ASSERT(resource != nullptr);
 		
@@ -27,12 +27,12 @@ namespace Dash
 		CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_DEFAULT);
 		D3D12_RESOURCE_STATES initD3DState = D3DResourceState(initState);
 		const D3D12_CLEAR_VALUE* clearValuePtr = resourceDesc.Flags & (D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET | D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL) ? &clearValue : nullptr;
-		DX_CALL(FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, initD3DState, clearValuePtr, mResource));
+
+		TRefCountPtr<ID3D12Resource> d3d12Resource = FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, initD3DState, clearValuePtr);
+		mResource = MakeRefCounted<FD3D12Resource>(d3d12Resource, resourceDesc);
 
 		SetName(name);
 
 		FGpuResourcesStateTracker::AddGlobalResourceState(this->GetResource(), initD3DState);
-
-		mGpuVirtualAddress = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
 	}
 }
