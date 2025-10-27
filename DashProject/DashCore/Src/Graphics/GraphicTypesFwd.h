@@ -33,11 +33,6 @@ namespace Dash
 
 	// declaration types ref
 
-	using FRootSignatureRef = std::shared_ptr<FRootSignature>;
-	using FPipelineStateObjectRef = std::shared_ptr<FPipelineStateObject>;
-	using FGraphicsPSORef = std::shared_ptr<FGraphicsPSO>;
-	using FComputePSORef = std::shared_ptr<FComputePSO>;
-
 	using FQueryHeapRef = std::shared_ptr<FQueryHeap>;
 
 	using FGpuResourceRef = std::shared_ptr<FGpuResource>;

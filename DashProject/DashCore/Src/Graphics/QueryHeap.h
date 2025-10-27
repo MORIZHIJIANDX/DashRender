@@ -26,7 +26,7 @@ namespace Dash
 	{
 	public:
 		FQueryHeap(const FQueryHeapDesc& desc);
-		~FQueryHeap();
+		virtual ~FQueryHeap();
 
 		ID3D12QueryHeap* D3DQueryHeap();
 		const ID3D12QueryHeap* D3DQueryHeap() const;

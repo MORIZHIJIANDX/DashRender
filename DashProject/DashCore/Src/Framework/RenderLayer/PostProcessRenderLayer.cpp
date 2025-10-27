@@ -7,10 +7,7 @@
 
 namespace Dash
 {
-	//FGraphicsPSORef PostProcessPSO = FGraphicsPSO::MakeGraphicsPSO("PostProcessPSO");
 	FShaderPassRef PostProcessPass = nullptr;
-
-	//FComputePSORef ComputeGrayscalePSO = FComputePSO::MakeComputePSO("ComputeGrayscalePSO");
 	FShaderPassRef ComputeGrayscalePass = nullptr;
 
 	FPostProcessRenderLayer::FPostProcessRenderLayer()
