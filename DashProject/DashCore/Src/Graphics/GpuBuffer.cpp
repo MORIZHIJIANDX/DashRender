@@ -83,21 +83,12 @@ namespace Dash
 
 	void* FGpuConstantBuffer::Map()
 	{
-		if (mMappedData == nullptr)
-		{
-			mMappedData = mResource->Map();
-		}
-		
-		return mMappedData;
+		return mResource->Map();
 	}
 
 	void FGpuConstantBuffer::Unmap()
 	{
-		if (mMappedData)
-		{
-			mResource->Unmap();
-			mMappedData = nullptr;
-		}
+		mResource->Unmap();
 	}
 
 	void FGpuConstantBuffer::CreateViews()
@@ -223,21 +214,12 @@ namespace Dash
 
 	void* FGpuDynamicVertexBuffer::Map()
 	{
-		if (mMappedData == nullptr)
-		{
-			mMappedData = mResource->Map();
-		}
-
-		return mMappedData;
+		return mResource->Map();;
 	}
 
 	void FGpuDynamicVertexBuffer::Unmap()
 	{
-		if (mMappedData)
-		{
-			mResource->Unmap();
-			mMappedData = nullptr;
-		}
+		mResource->Unmap();
 	}
 
 	void FGpuDynamicVertexBuffer::UpdateData(void* data, size_t size)
@@ -247,28 +229,19 @@ namespace Dash
 
 		Map();
 
-		memcpy(mMappedData, data, size);
+		memcpy(mResource->GetMappedAddress(), data, size);
 
 		Unmap();
 	}
 
 	void* FGpuDynamicIndexBuffer::Map()
 	{
-		if (mMappedData == nullptr)
-		{
-			mMappedData = mResource->Map();
-		}
-
-		return mMappedData;
+		return mResource->Map();
 	}
 
 	void FGpuDynamicIndexBuffer::Unmap()
 	{
-		if (mMappedData)
-		{
-			mResource->Unmap();
-			mMappedData = nullptr;
-		}
+		mResource->Unmap();
 	}
 
 	void FGpuDynamicIndexBuffer::UpdateData(void* data, size_t size)
@@ -278,7 +251,7 @@ namespace Dash
 
 		Map();
 
-		memcpy(mMappedData, data, size);
+		memcpy(mResource->GetMappedAddress(), data, size);
 
 		Unmap();
 	}

@@ -54,9 +54,6 @@ namespace Dash
 	protected:
 		FGpuConstantBuffer() { mCpuAccess = true; }
 		virtual void CreateViews() override;
-	
-	private:
-		void* mMappedData = nullptr;
 	};
 
 	class FByteAddressBuffer : public FGpuBuffer
@@ -179,8 +176,5 @@ namespace Dash
 		void Unmap();
 
 		void UpdateData(void* data, size_t size);
-
-	private:
-		void* mMappedData = nullptr;
 	};
 }

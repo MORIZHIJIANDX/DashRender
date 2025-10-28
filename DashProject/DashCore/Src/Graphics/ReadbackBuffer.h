@@ -18,8 +18,5 @@ namespace Dash
 
 		void CreateReadbackBuffer(const std::string& name, uint32 numElements, uint32 elementSize);
 		virtual void CreateViews() {};
-
-	protected:
-		void* mMappedData = nullptr;
 	};
 }

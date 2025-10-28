@@ -118,19 +118,19 @@ namespace Dash
 		return newContext;
 	}
 
-	void FCopyCommandContextBase::BeginQuery(FQueryHeapRef queryHeap, uint32 queryIndex)
+	void FCopyCommandContextBase::BeginQuery(const FQueryHeapRef& queryHeap, uint32 queryIndex)
 	{
 		D3D12_QUERY_TYPE queryType = D3DQueryType(queryHeap->GetDesc().type);
 		mD3DCommandList->BeginQuery(queryHeap->D3DQueryHeap(), queryType, queryIndex);
 	}
 
-	void FCopyCommandContextBase::EndQuery(FQueryHeapRef queryHeap, uint32 queryIndex)
+	void FCopyCommandContextBase::EndQuery(const FQueryHeapRef& queryHeap, uint32 queryIndex)
 	{
 		D3D12_QUERY_TYPE queryType = D3DQueryType(queryHeap->GetDesc().type);
 		mD3DCommandList->EndQuery(queryHeap->D3DQueryHeap(), queryType, queryIndex);
 	}
 
-	void FCopyCommandContextBase::ResolveQueryData(FQueryHeapRef queryHeap, uint32 startIndex, uint32 numQueries, FGpuBufferRef dest, uint32 destOffset)
+	void FCopyCommandContextBase::ResolveQueryData(const FQueryHeapRef& queryHeap, uint32 startIndex, uint32 numQueries, FGpuBufferRef dest, uint32 destOffset)
 	{
 		TransitionBarrier(dest, EResourceState::CopyDestination, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 

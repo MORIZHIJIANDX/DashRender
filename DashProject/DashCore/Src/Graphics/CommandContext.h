@@ -118,9 +118,9 @@ namespace Dash
 	public:
 		using FCommandContext::FCommandContext;
 
-		void BeginQuery(FQueryHeapRef queryHeap, uint32 queryIndex);
-		void EndQuery(FQueryHeapRef queryHeap, uint32 queryIndex);
-		void ResolveQueryData(FQueryHeapRef queryHeap, uint32 startIndex, uint32 numQueries, FGpuBufferRef dest, uint32 destOffset);
+		void BeginQuery(const FQueryHeapRef& queryHeap, uint32 queryIndex);
+		void EndQuery(const FQueryHeapRef& queryHeap, uint32 queryIndex);
+		void ResolveQueryData(const FQueryHeapRef& queryHeap, uint32 startIndex, uint32 numQueries, FGpuBufferRef dest, uint32 destOffset);
 
 		void TransitionBarrier(FGpuResourceRef resource, EResourceState newState, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, bool flushImmediate = false);
 		void UAVBarrier(FGpuResourceRef resource, bool flushImmediate = false);

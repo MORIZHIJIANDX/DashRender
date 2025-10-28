@@ -17,21 +17,12 @@ namespace Dash
 
 	void* FReadbackBuffer::Map()
 	{
-		if (mMappedData == nullptr)
-		{
-			mMappedData = mResource->Map();
-		}
-
-		return mMappedData;
+		return mResource->Map();;
 	}
 
 	void FReadbackBuffer::Unmap()
 	{
-		if (mMappedData)
-		{
-			mResource->Unmap();
-			mMappedData = nullptr;
-		}
+		mResource->Unmap();
 	}
 
 	void FReadbackBuffer::CreateReadbackBuffer(const std::string& name, uint32 numElements, uint32 elementSize)

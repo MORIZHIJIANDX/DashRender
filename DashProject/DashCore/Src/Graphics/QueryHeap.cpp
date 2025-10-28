@@ -15,12 +15,7 @@ namespace Dash
 		mQueryHeap = nullptr;
 	}
 
-	ID3D12QueryHeap* FQueryHeap::D3DQueryHeap()
-	{
-		return mQueryHeap.GetReference();
-	}
-
-	const ID3D12QueryHeap* FQueryHeap::D3DQueryHeap() const
+	ID3D12QueryHeap* FQueryHeap::D3DQueryHeap() const
 	{
 		return mQueryHeap.GetReference();
 	}

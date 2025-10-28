@@ -34,14 +34,14 @@ namespace Dash
 		FQueryHeapDesc heapDesc;
 		heapDesc.count = MaxProfiles * 2;
 		heapDesc.type = EGpuQueryType::Timestamp;
-		mQueryHeap = std::make_shared<FQueryHeap>(heapDesc);
+		mQueryHeap = MakeRefCounted<FQueryHeap>(heapDesc);
 
 		mReadbackBuffer = FGraphicsCore::Device->CreateReadbackBuffer("QueryReadbackBuffer", MaxProfiles * 2 * FGraphicsCore::BackBufferCount, sizeof(uint64));
 	}
 
 	void FGPUProfiler::Destroy()
 	{
-		mQueryHeap.reset();
+		mQueryHeap.SafeRelease();
 		mReadbackBuffer = nullptr;
 	}
 

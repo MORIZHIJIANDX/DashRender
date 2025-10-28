@@ -33,7 +33,7 @@ namespace Dash
 
 	// declaration types ref
 
-	using FQueryHeapRef = std::shared_ptr<FQueryHeap>;
+	using FQueryHeapRef = TRefCountPtr<FQueryHeap>;
 
 	using FGpuResourceRef = std::shared_ptr<FGpuResource>;
 	using FColorBufferRef = std::shared_ptr<FColorBuffer>;

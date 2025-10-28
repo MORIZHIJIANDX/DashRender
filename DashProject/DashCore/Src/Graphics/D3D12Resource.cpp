@@ -83,6 +83,12 @@ namespace Dash
 		}
 	}
 
+	void* FD3D12Resource::GetMappedAddress() const
+	{
+		ASSERT(mMappedAddress != nullptr && mNumMapCalls > 0);
+		return mMappedAddress;
+	}
+
 	void FD3D12Resource::SetName(const std::string_view& name)
 	{
 		mResourceName = name;

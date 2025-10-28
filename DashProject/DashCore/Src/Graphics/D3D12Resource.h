@@ -39,7 +39,7 @@ namespace Dash
 		D3D12_HEAP_TYPE GetHeapType() const { return mHeapType; }
 		D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const { return mGPUVirtualAddress; }
 		void SetGPUVirtualAddress(D3D12_GPU_VIRTUAL_ADDRESS address) { mGPUVirtualAddress = address; }
-		void* GetMappedAddress() const { return mMappedAddress; }
+		void* GetMappedAddress() const;
 
 		uint16 GetMipLevels() const { return mResourceDesc.MipLevels; }
 		uint16 GetArraySize() const { return (mResourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE3D) ? 1 : mResourceDesc.DepthOrArraySize; }
