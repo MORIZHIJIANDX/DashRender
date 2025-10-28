@@ -48,7 +48,7 @@ namespace Dash
 	using FGpuDynamicIndexBufferRef = std::shared_ptr<FGpuDynamicIndexBuffer>;
 	using FReadbackBufferRef = std::shared_ptr<FReadbackBuffer>;
 
-	using FShaderResourceRef = std::shared_ptr<FShaderResource>;
-	using FShaderPassRef = std::shared_ptr<FShaderPass>;
-	using FShaderTechniqueRef = std::shared_ptr<FShaderTechnique>;
+	using FShaderResourceRef = TRefCountPtr<FShaderResource>;
+	using FShaderPassRef = TRefCountPtr<FShaderPass>;
+	using FShaderTechniqueRef = TRefCountPtr<FShaderTechnique>;
 }

@@ -13,7 +13,7 @@ namespace Dash
 		void Init();
 		void Shutdown(); 
 
-		FMaterialRef MakeMaterial(const std::string& name, FShaderTechniqueRef shaderTechnique);
+		FMaterialRef MakeMaterial(const std::string& name, const FShaderTechniqueRef& shaderTechnique);
 
 		FStaticMeshRef MakeStaticMesh(const std::string& texturePath);
 

@@ -39,7 +39,7 @@ namespace Dash
 		void SetRenderTargetFormats(UINT numRTVs, const EResourceFormat* renderTargetFormats, EResourceFormat depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
 		void SetInputLayout(const FInputAssemblerLayout& layout);
 		void SetPrimitiveRestart(D3D12_INDEX_BUFFER_STRIP_CUT_VALUE indexBufferProps);
-		void SetShaderPass(FShaderPassRef shaderPass);
+		void SetShaderPass(const FShaderPassRef& shaderPass);
 
 		void Finalize();
 
@@ -56,7 +56,7 @@ namespace Dash
 		void SetHullShader(const void* binaryCode, size_t size) { PipelineStateStream.HS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
 		void SetDomainShader(const void* binaryCode, size_t size) { PipelineStateStream.DS = CD3DX12_SHADER_BYTECODE(binaryCode, size); }
 
-		void SetShader(FShaderResourceRef shader);
+		void SetShader(const FShaderResourceRef& shader);
 	};
 
 	struct FComputePipelineStateInitializer
@@ -67,7 +67,7 @@ namespace Dash
 			, PipelineStateStream()
 		{}
 
-		void SetShaderPass(FShaderPassRef shaderPass);
+		void SetShaderPass(const FShaderPassRef& shaderPass);
 
 		void Finalize();
 

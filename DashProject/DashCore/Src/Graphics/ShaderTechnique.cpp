@@ -5,7 +5,7 @@ namespace Dash
 {
     FShaderTechniqueRef FShaderTechnique::MakeShaderTechnique(const std::string& techniqueName)
     {
-        FShaderTechniqueRef newTechnique = std::make_shared<FShaderTechnique>();
+        FShaderTechniqueRef newTechnique = MakeRefCounted<FShaderTechnique>();
         newTechnique->mName = techniqueName;
 
         return newTechnique;

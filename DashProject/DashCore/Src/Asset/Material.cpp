@@ -5,7 +5,7 @@
 
 namespace Dash
 {
-	FMaterial::FMaterial(const std::string& name, FShaderTechniqueRef shaderTechnique)
+	FMaterial::FMaterial(const std::string& name, const FShaderTechniqueRef& shaderTechnique)
 		: mName(name)
 		, mShaderTechnique(shaderTechnique)
 	{

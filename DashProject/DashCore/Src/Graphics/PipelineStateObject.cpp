@@ -78,7 +78,7 @@ namespace Dash
 		PipelineStateStream.IBStripCutValue = indexBufferProps;
 	}
 
-	void FGraphicsPipelineStateInitializer::SetShaderPass(FShaderPassRef shaderPass)
+	void FGraphicsPipelineStateInitializer::SetShaderPass(const FShaderPassRef& shaderPass)
 	{
 		ASSERT(shaderPass != nullptr);
 
@@ -101,7 +101,7 @@ namespace Dash
 		SetInputLayout(shaderPass->GetInputLayout());
 	}
 
-	void FGraphicsPipelineStateInitializer::SetShader(FShaderResourceRef shader)
+	void FGraphicsPipelineStateInitializer::SetShader(const FShaderResourceRef& shader)
 	{
 		ASSERT(shader && shader->GetShaderStage() != EShaderStage::Compute);
 
@@ -137,7 +137,7 @@ namespace Dash
 		HashCode = HashState(InputLayoutDesc.pInputElementDescs, InputLayoutDesc.NumElements, HashCode);
 	}
 
-	void FComputePipelineStateInitializer::SetShaderPass(FShaderPassRef shaderPass)
+	void FComputePipelineStateInitializer::SetShaderPass(const FShaderPassRef& shaderPass)
 	{
 		ASSERT(shaderPass != nullptr);
 		ASSERT(shaderPass->GetShaders().contains(EShaderStage::Compute));

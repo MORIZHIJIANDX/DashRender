@@ -16,7 +16,7 @@ namespace Dash
 		};
 
 	public:
-		FMaterial(const std::string& name, FShaderTechniqueRef shaderTechnique);
+		FMaterial(const std::string& name, const FShaderTechniqueRef& shaderTechnique);
 		~FMaterial();
 
 		bool SetTextureParameter(const std::string& parameterName, const FTextureRef& texture);

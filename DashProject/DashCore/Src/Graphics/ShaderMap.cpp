@@ -26,7 +26,7 @@ namespace Dash
 		size_t shaderHash = info.GetShaderHash();
 		if (!globalShaderMap.mShaderResourceMap.contains(shaderHash))
 		{
-			FShaderResourceRef shaderResourceref = std::make_shared<FShaderResource>();
+			FShaderResourceRef shaderResourceref = MakeRefCounted<FShaderResource>();
 			FDX12CompiledShader compiledShader = globalShaderMap.mCompilers[0].CompileShader(info);
 			if (compiledShader.IsValid())
 			{	

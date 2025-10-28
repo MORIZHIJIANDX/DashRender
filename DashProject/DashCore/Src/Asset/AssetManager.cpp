@@ -23,7 +23,7 @@ namespace Dash
 		mTextureResourceMap.clear();
 	}
 
-	FMaterialRef FAssetManager::MakeMaterial(const std::string& name, FShaderTechniqueRef shaderTechnique)
+	FMaterialRef FAssetManager::MakeMaterial(const std::string& name, const FShaderTechniqueRef& shaderTechnique)
 	{
 		FMaterialRef material = nullptr;
 
