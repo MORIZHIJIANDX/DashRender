@@ -30,9 +30,9 @@ namespace Dash
 			mDesc.ClearValue = FDepthStencilClearValue{ clearDepth, clearStencil };
 		}
 
-		void Create(const std::string& name, const FDepthBufferDescription& desc);
-		void Create(const std::string& name, uint32 width, uint32 height, EResourceFormat format);
-		void Create(const std::string& name, uint32 width, uint32 height, uint32 sampleCount, uint32 sampleQuality, EResourceFormat format);
+		void InitResource(const std::string& name, const FDepthBufferDescription& desc);
+		void InitResource(const std::string& name, uint32 width, uint32 height, EResourceFormat format);
+		void InitResource(const std::string& name, uint32 width, uint32 height, uint32 sampleCount, uint32 sampleQuality, EResourceFormat format);
 		
 		void CreateBuffer(const std::string& name);
 

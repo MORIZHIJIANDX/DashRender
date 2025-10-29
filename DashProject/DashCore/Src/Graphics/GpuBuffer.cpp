@@ -38,7 +38,7 @@ namespace Dash
 		return mUnorderedAccessView.GetDescriptorHandle();
 	}
 
-	void FGpuBuffer::Create(const std::string& name, uint32 numElements, uint32 elementSize, D3D12_RESOURCE_FLAGS flags /*D3D12_RESOURCE_FLAG_NONE*/)
+	void FGpuBuffer::InitResource(const std::string& name, uint32 numElements, uint32 elementSize, D3D12_RESOURCE_FLAGS flags /*D3D12_RESOURCE_FLAG_NONE*/)
 	{
 		Destroy();
 
@@ -166,7 +166,7 @@ namespace Dash
 		uavDesc.Buffer.CounterOffsetInBytes = 0;
 		uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
 
-		mCounterBuffer.Create("FStructuredBuffer::CounterBuffer", 1, 4);
+		mCounterBuffer.InitResource("FStructuredBuffer::CounterBuffer", 1, 4);
 
 		mUnorderedAccessView = FGraphicsCore::DescriptorAllocator->AllocateUAVDescriptor();
 		FGraphicsCore::Device->CreateUnorderedAccessView(mResource.GetReference(), mCounterBuffer.GetResource(), &uavDesc, mUnorderedAccessView.GetDescriptorHandle());
@@ -203,13 +203,21 @@ namespace Dash
 		return view;
 	}
 
-	D3D12_INDEX_BUFFER_VIEW FGpuIndexBuffer::GetIndexBufferView(uint32 offset, uint32 size, bool is32Bit /*= false*/) const
+	D3D12_INDEX_BUFFER_VIEW FGpuIndexBuffer::GetIndexBufferView(uint32 offset, uint32 size) const
 	{
+		ASSERT((mDesc.Stride == 4 && mIs32Bit) || (mDesc.Stride == 2 && !mIs32Bit));
+
 		D3D12_INDEX_BUFFER_VIEW view{};
 		view.BufferLocation = GetGpuVirtualAddress() + offset;
 		view.SizeInBytes = size - offset;
-		view.Format = is32Bit ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT;
+		view.Format = mIs32Bit ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT;
 		return view;
+	}
+
+	void FGpuIndexBuffer::InitResource(const std::string& name, uint32 numElements, bool is32Bit)
+	{
+		FGpuBuffer::InitResource(name, numElements, is32Bit ? sizeof(uint32) : sizeof(uint16));
+		mIs32Bit = is32Bit;
 	}
 
 	void* FGpuDynamicVertexBuffer::Map()

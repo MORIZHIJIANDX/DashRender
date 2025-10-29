@@ -7,7 +7,7 @@
 
 namespace Dash
 {
-	void FColorBuffer::Create(const std::string& name, const TRefCountPtr<ID3D12Resource>& resource, EResourceState initStates)
+	void FColorBuffer::InitResource(const std::string& name, const TRefCountPtr<ID3D12Resource>& resource, EResourceState initStates)
     {
         ASSERT(resource != nullptr);
 
@@ -38,14 +38,14 @@ namespace Dash
         CreateViews();
     }
 
-    void FColorBuffer::Create(const std::string& name, const FColorBufferDescription& desc)
+    void FColorBuffer::InitResource(const std::string& name, const FColorBufferDescription& desc)
     {
         mDesc = desc;
 
         CreateBuffer(name);
     }
 
-    void FColorBuffer::Create(const std::string& name, uint32 width, uint32 height, uint32 numMips, EResourceFormat format)
+    void FColorBuffer::InitResource(const std::string& name, uint32 width, uint32 height, uint32 numMips, EResourceFormat format)
     {
         ASSERT(IsColorFormat(format));
 
@@ -54,7 +54,7 @@ namespace Dash
         CreateBuffer(name);
     }
 
-    void FColorBuffer::CreateArray(const std::string& name, uint32 width, uint32 height, uint32 arrayCount, uint32 numMips, EResourceFormat format)
+    void FColorBuffer::InitResource(const std::string& name, uint32 width, uint32 height, uint32 arrayCount, uint32 numMips, EResourceFormat format)
     {
         ASSERT(IsColorFormat(format));
 

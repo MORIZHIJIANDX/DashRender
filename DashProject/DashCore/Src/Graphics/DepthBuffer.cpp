@@ -6,19 +6,19 @@
 
 namespace Dash
 {
-	void FDepthBuffer::Create(const std::string& name, const FDepthBufferDescription& desc)
+	void FDepthBuffer::InitResource(const std::string& name, const FDepthBufferDescription& desc)
 	{
         mDesc = desc;
 
         CreateBuffer(name);
 	}
 
-    void FDepthBuffer::Create(const std::string& name, uint32 width, uint32 height, EResourceFormat format)
+    void FDepthBuffer::InitResource(const std::string& name, uint32 width, uint32 height, EResourceFormat format)
     {
-        Create(name, width, height, 1, 0, format);
+        InitResource(name, width, height, 1, 0, format);
     }
 
-    void FDepthBuffer::Create(const std::string& name, uint32 width, uint32 height, uint32 sampleCount, uint32 sampleQuality, EResourceFormat format)
+    void FDepthBuffer::InitResource(const std::string& name, uint32 width, uint32 height, uint32 sampleCount, uint32 sampleQuality, EResourceFormat format)
     {
         ASSERT(IsDepthStencilFormat(format));
 

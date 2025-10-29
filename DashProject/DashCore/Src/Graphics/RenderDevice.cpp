@@ -24,154 +24,6 @@ namespace Dash
 	static const uint32 VendorID_AMD = 0x1002;
 	static const uint32 VendorID_Intel = 0x8086;
 
-	class FMakeColorBuffer : public FColorBuffer
-	{
-	public:
-		FMakeColorBuffer(const std::string& name, const TRefCountPtr<ID3D12Resource>& resource, EResourceState initStates = EResourceState::Common)
-		{	
-			Create(name, resource, initStates);
-		}
-
-		FMakeColorBuffer(const std::string& name, const FColorBufferDescription& desc)
-			: FColorBuffer(desc.ClearValue)
-		{
-			Create(name, desc);
-		}
-
-		FMakeColorBuffer(const std::string& name, uint32 width, uint32 height, uint32 numMips, EResourceFormat format)
-		{
-			Create(name, width, height, numMips, format);
-		}
-
-		FMakeColorBuffer(const std::string& name, uint32 width, uint32 height, uint32 arrayCount, uint32 numMips, EResourceFormat format)
-		{
-			CreateArray(name, width, height, arrayCount, numMips, format);
-		}
-
-		virtual ~FMakeColorBuffer() {}
-	};
-
-	class FMakeDepthBuffer : public FDepthBuffer
-	{
-	public:
-		FMakeDepthBuffer(const std::string& name, const FDepthBufferDescription& desc)
-		{
-			Create(name, desc);
-		}
-
-		FMakeDepthBuffer(const std::string& name, uint32 width, uint32 height, EResourceFormat format)
-		{
-			Create(name, width, height, 1, 0, format);
-		}
-
-		FMakeDepthBuffer(const std::string& name, uint32 width, uint32 height, uint32 sampleCount, uint32 sampleQuality, EResourceFormat format)
-		{
-			Create(name, width, height, sampleCount, sampleQuality, format);
-		}
-
-		virtual ~FMakeDepthBuffer() {}
-	};
-
-	class FMakeTextureBuffer : public FTextureBuffer
-	{
-	public:
-		FMakeTextureBuffer(const std::string& name, const FTextureBufferDescription& desc)
-		{
-			Create(name, desc);
-		}
-
-		FMakeTextureBuffer(const std::string& name, uint32 width, uint32 height, uint32 numMips, EResourceFormat format)
-		{
-			Create(name, width, height, numMips, format);
-		}
-
-		FMakeTextureBuffer(const std::string& name, uint32 width, uint32 height, uint32 arrayCount, uint32 numMips, EResourceFormat format)
-		{
-			Create(name, width, height, arrayCount, numMips, format);
-		}
-
-		virtual ~FMakeTextureBuffer() {}
-	};
-
-	class FMakeVertexBuffer : public FGpuVertexBuffer
-	{
-	public:
-		FMakeVertexBuffer(const std::string& name, uint32 numElements, uint32 elementSize)
-		{
-			Create(name, numElements, elementSize);
-		}
-
-		virtual ~FMakeVertexBuffer() {}
-	};
-
-	class FMakeIndexBuffer : public FGpuIndexBuffer
-	{
-	public:
-		FMakeIndexBuffer(const std::string& name, uint32 numElements, bool is32Bit = false)
-		{
-			Create(name, numElements, is32Bit ? sizeof(uint32) : sizeof(uint16));
-			mIs32Bit = is32Bit;
-		}
-
-		virtual ~FMakeIndexBuffer() {}
-	};
-
-	class FMakeDynamicVertexBuffer : public FGpuDynamicVertexBuffer
-	{
-	public:
-		FMakeDynamicVertexBuffer(const std::string& name, uint32 numElements, uint32 elementSize)
-		{
-			Create(name, numElements, elementSize);
-		}
-
-		virtual ~FMakeDynamicVertexBuffer() {}
-	};
-
-	class FMakeDynamicIndexBuffer : public FGpuDynamicIndexBuffer
-	{
-	public:
-		FMakeDynamicIndexBuffer(const std::string& name, uint32 numElements, bool is32Bit = false)
-		{
-			Create(name, numElements, is32Bit ? sizeof(uint32) : sizeof(uint16));
-			mIs32Bit = is32Bit;
-		}
-
-		virtual ~FMakeDynamicIndexBuffer() {}
-	};
-
-	class FMakeConstantBuffer : public FGpuConstantBuffer
-	{
-	public:
-		FMakeConstantBuffer(const std::string& name, uint32 sizeInBytes)
-		{
-			Create(name, 1, sizeInBytes);
-		}
-
-		virtual ~FMakeConstantBuffer() {}
-	};
-
-	class FMakeStructuredBuffer : public FStructuredBuffer
-	{
-	public:
-		FMakeStructuredBuffer(const std::string& name, uint32 numElements, uint32 elementSize)
-		{
-			Create(name, numElements, elementSize);
-		}
-
-		virtual ~FMakeStructuredBuffer() {}
-	};
-
-	class FMakeReadbackBuffer : public FReadbackBuffer
-	{
-	public:
-		FMakeReadbackBuffer(const std::string& name, uint32 numElements, uint32 elementSize)
-		{
-			CreateReadbackBuffer(name, numElements, elementSize);
-		}
-
-		virtual ~FMakeReadbackBuffer() {}
-	};
-
 	FRenderDevice::FRenderDevice()
 	{
 		if(mDevice == nullptr)
@@ -669,49 +521,57 @@ namespace Dash
 
 	FColorBufferRef FRenderDevice::CreateColorBuffer(const std::string& name, const TRefCountPtr<ID3D12Resource>& resource, EResourceState initStates /*= EResourceState::Common*/)
 	{
-		std::shared_ptr<FMakeColorBuffer> bufferRef = std::make_shared<FMakeColorBuffer>(name, resource, initStates);
+		FColorBufferRef bufferRef{ new FColorBuffer() } ;
+		bufferRef->InitResource(name, resource, initStates);
 		return bufferRef;
 	}
 
 	FColorBufferRef FRenderDevice::CreateColorBuffer(const std::string& name, const FColorBufferDescription& desc)
 	{
-		std::shared_ptr<FMakeColorBuffer> bufferRef = std::make_shared<FMakeColorBuffer>(name, desc);
+		FColorBufferRef bufferRef{ new FColorBuffer() };
+		bufferRef->InitResource(name, desc);
 		return bufferRef;
 	}
 
 	FColorBufferRef FRenderDevice::CreateColorBuffer(const std::string& name, uint32 width, uint32 height, uint32 numMips, EResourceFormat format)
 	{
-		std::shared_ptr<FMakeColorBuffer> bufferRef = std::make_shared<FMakeColorBuffer>(name, width, height, numMips, format);
+		FColorBufferRef bufferRef{ new FColorBuffer() };
+		bufferRef->InitResource(name, width, height, numMips, format);
 		return bufferRef;
 	}
 
 	FColorBufferRef FRenderDevice::CreateColorBufferArray(const std::string& name, uint32 width, uint32 height, uint32 arrayCount, uint32 numMips, EResourceFormat format)
 	{
-		std::shared_ptr<FMakeColorBuffer> bufferRef = std::make_shared<FMakeColorBuffer>(name, width, height, arrayCount, numMips, format);
+		FColorBufferRef bufferRef{ new FColorBuffer() };
+		bufferRef->InitResource(name, width, height, arrayCount, numMips, format);
 		return bufferRef;
 	}
 
 	FDepthBufferRef FRenderDevice::CreateDepthBuffer(const std::string& name, const FDepthBufferDescription& desc)
 	{
-		std::shared_ptr<FMakeDepthBuffer> bufferRef = std::make_shared<FMakeDepthBuffer>(name, desc);
+		FDepthBufferRef bufferRef{ new FDepthBuffer() };
+		bufferRef->InitResource(name, desc);
 		return bufferRef;
 	}
 
 	FDepthBufferRef FRenderDevice::CreateDepthBuffer(const std::string& name, uint32 width, uint32 height, EResourceFormat format)
 	{
-		std::shared_ptr<FMakeDepthBuffer> bufferRef = std::make_shared<FMakeDepthBuffer>(name, width, height, format);
+		FDepthBufferRef bufferRef{ new FDepthBuffer() };
+		bufferRef->InitResource(name, width, height, format);
 		return bufferRef;
 	}
 
 	FDepthBufferRef FRenderDevice::CreateDepthBuffer(const std::string& name, uint32 width, uint32 height, uint32 sampleCount, uint32 sampleQuality, EResourceFormat format)
 	{
-		std::shared_ptr<FMakeDepthBuffer> bufferRef = std::make_shared<FMakeDepthBuffer>(name, width, height, sampleCount, sampleQuality, format);
+		FDepthBufferRef bufferRef{ new FDepthBuffer() };
+		bufferRef->InitResource(name, width, height, sampleCount, sampleQuality, format);
 		return bufferRef;
 	}
 
 	FTextureBufferRef FRenderDevice::CreateTextureBufferFromMemory(const std::string& name, const FTextureBufferDescription& desc, const std::vector<const void*>& initialMipsData)
 	{
-		std::shared_ptr<FTextureBuffer> bufferRef = std::make_shared<FMakeTextureBuffer>(name, desc);
+		FTextureBufferRef bufferRef{ new FTextureBuffer() };
+		bufferRef->InitResource(name, desc);
 
 		ASSERT(desc.MipCount == initialMipsData.size());
 
@@ -743,7 +603,8 @@ namespace Dash
 
 			if (loadSucceed)
 			{
-				std::shared_ptr<FTextureBuffer> bufferRef = std::make_shared<FMakeTextureBuffer>(name, textureData.TextureDescription);
+				FTextureBufferRef bufferRef{ new FTextureBuffer() };
+				bufferRef->InitResource(name, textureData.TextureDescription);
 
 				FCopyCommandContext::UpdateTextureBuffer(bufferRef, 0, static_cast<uint32>(textureData.SubResource.size()), textureData.SubResource.data());
 
@@ -758,7 +619,8 @@ namespace Dash
 
 	FGpuVertexBufferRef FRenderDevice::CreateVertexBuffer(const std::string& name, uint32 numElements, uint32 elementSize, const void* initData)
 	{
-		std::shared_ptr<FMakeVertexBuffer> bufferRef = std::make_shared<FMakeVertexBuffer>(name, numElements, elementSize);
+		FGpuVertexBufferRef bufferRef{ new FGpuVertexBuffer() };
+		bufferRef->InitResource(name, numElements, elementSize);
 		if (initData != nullptr)
 		{
 			FCopyCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
@@ -768,7 +630,8 @@ namespace Dash
 
 	FGpuIndexBufferRef FRenderDevice::CreateIndexBuffer(const std::string& name, uint32 numElements, const void* initData, bool is32Bit)
 	{
-		std::shared_ptr<FMakeIndexBuffer> bufferRef = std::make_shared<FMakeIndexBuffer>(name, numElements, is32Bit);
+		FGpuIndexBufferRef bufferRef{ new FGpuIndexBuffer()};
+		bufferRef->InitResource(name, numElements, is32Bit);
 		if (initData != nullptr)
 		{
 			FCopyCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
@@ -778,19 +641,22 @@ namespace Dash
 
 	FGpuDynamicVertexBufferRef FRenderDevice::CreateDynamicVertexBuffer(const std::string& name, uint32 numElements, uint32 elementSize)
 	{
-		std::shared_ptr<FMakeDynamicVertexBuffer> bufferRef = std::make_shared<FMakeDynamicVertexBuffer>(name, numElements, elementSize);
+		FGpuDynamicVertexBufferRef bufferRef{ new FGpuDynamicVertexBuffer() };
+		bufferRef->InitResource(name, numElements, elementSize);
 		return bufferRef;
 	}
 
 	FGpuDynamicIndexBufferRef FRenderDevice::CreateDynamicIndexBuffer(const std::string& name, uint32 numElements, bool is32Bit)
 	{
-		std::shared_ptr<FMakeDynamicIndexBuffer> bufferRef = std::make_shared<FMakeDynamicIndexBuffer>(name, numElements, is32Bit);
+		FGpuDynamicIndexBufferRef bufferRef{ new FGpuDynamicIndexBuffer() };
+		bufferRef->InitResource(name, numElements, is32Bit);
 		return bufferRef;
 	}
 
 	FGpuConstantBufferRef FRenderDevice::CreateConstantBuffer(const std::string& name, uint32 dataSize, const void* initData)
 	{
-		std::shared_ptr<FMakeConstantBuffer> bufferRef = std::make_shared<FMakeConstantBuffer>(name, dataSize);
+		FGpuConstantBufferRef bufferRef{ new FGpuConstantBuffer() };
+		bufferRef->InitResource(name, 1, dataSize);
 		if (initData != nullptr)
 		{
 			FCopyCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
@@ -800,7 +666,8 @@ namespace Dash
 
 	FStructuredBufferRef FRenderDevice::CreateStructuredBuffer(const std::string& name, uint32 numElements, uint32 elementSize, const void* initData)
 	{
-		std::shared_ptr<FStructuredBuffer> bufferRef = std::make_shared<FMakeStructuredBuffer>(name, numElements, elementSize);
+		FStructuredBufferRef bufferRef{ new FStructuredBuffer() };
+		bufferRef->InitResource(name, numElements, elementSize);
 		if (initData != nullptr)
 		{
 			FCopyCommandContext::InitializeBuffer(bufferRef, initData, bufferRef->GetBufferSize());
@@ -810,7 +677,8 @@ namespace Dash
 
 	FReadbackBufferRef FRenderDevice::CreateReadbackBuffer(const std::string& name, uint32 numElements, uint32 elementSize)
 	{
-		std::shared_ptr<FReadbackBuffer> bufferRef = std::make_shared<FMakeReadbackBuffer>(name, numElements, elementSize);
+		FReadbackBufferRef bufferRef{ new FReadbackBuffer() };
+		bufferRef->CreateReadbackBuffer(name, numElements, elementSize);
 		return bufferRef;
 	}
 

@@ -6,6 +6,7 @@ namespace Dash
 {
 	class FPixelBuffer : public FGpuResource
 	{
+		friend class FRenderDevice;
 	public:
 		virtual ~FPixelBuffer() {}
 

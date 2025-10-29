@@ -120,14 +120,14 @@ namespace Dash
 
 		void BeginQuery(const FQueryHeapRef& queryHeap, uint32 queryIndex);
 		void EndQuery(const FQueryHeapRef& queryHeap, uint32 queryIndex);
-		void ResolveQueryData(const FQueryHeapRef& queryHeap, uint32 startIndex, uint32 numQueries, FGpuBufferRef dest, uint32 destOffset);
+		void ResolveQueryData(const FQueryHeapRef& queryHeap, uint32 startIndex, uint32 numQueries, const FGpuBufferRef& dest, uint32 destOffset);
 
 		void TransitionBarrier(FGpuResourceRef resource, EResourceState newState, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, bool flushImmediate = false);
 		void UAVBarrier(FGpuResourceRef resource, bool flushImmediate = false);
 		void AliasingBarrier(FGpuResourceRef resourceBefore, FGpuResourceRef resourceAfter, bool flushImmediate = false);
 		void FlushResourceBarriers();
 
-		static void InitializeBuffer(FGpuBufferRef dest, const void* bufferData, size_t numBytes, size_t offset = 0);
+		static void InitializeBuffer(const FGpuBufferRef& dest, const void* bufferData, size_t numBytes, size_t offset = 0);
 		static void UpdateTextureBuffer(FTextureBufferRef dest, uint32 firstSubresource, uint32 numSubresources, const FSubResourceData* subresourceData);
 
 		// Flush existing commands to the GPU but keep the context alive
@@ -162,7 +162,7 @@ namespace Dash
 
 		void SetUnorderAccessView(const std::string& uavName, FColorBufferRef buffer, EResourceState stateAfter = EResourceState::UnorderedAccess, UINT firstSubResource = 0, UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 
-		void ClearUAV(FGpuBufferRef target);
+		void ClearUAV(const FGpuBufferRef& target);
 		void ClearUAV(FColorBufferRef target);
 
 		void Dispatch(uint32 groupCountX, uint32 groupCountY, uint32 groupCountZ);

@@ -13,14 +13,14 @@ namespace Dash
 		return mShaderResourceView.GetDescriptorHandle();
 	}
 
-	void FTextureBuffer::Create(const std::string& name, const FTextureBufferDescription& desc)
+	void FTextureBuffer::InitResource(const std::string& name, const FTextureBufferDescription& desc)
 	{
 		mDesc = desc;
 
 		CreateBuffer(name);
 	}
 
-	void FTextureBuffer::Create(const std::string& name, uint32 width, uint32 height, uint32 numMips, EResourceFormat format)
+	void FTextureBuffer::InitResource(const std::string& name, uint32 width, uint32 height, uint32 numMips, EResourceFormat format)
 	{
 		ASSERT(IsColorFormat(format));
 
@@ -29,7 +29,7 @@ namespace Dash
 		CreateBuffer(name);
 	}
 
-	void FTextureBuffer::Create(const std::string& name, uint32 width, uint32 height, uint32 arrayCount, uint32 numMips, EResourceFormat format)
+	void FTextureBuffer::InitResource(const std::string& name, uint32 width, uint32 height, uint32 arrayCount, uint32 numMips, EResourceFormat format)
 	{
 		ASSERT(IsColorFormat(format));
 

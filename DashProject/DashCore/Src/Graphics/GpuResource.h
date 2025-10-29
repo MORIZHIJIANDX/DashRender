@@ -11,6 +11,7 @@ namespace Dash
 {
 	class FGpuResource : public FRefCount
 	{
+		friend class FRenderDevice;
 	public:
 		virtual ~FGpuResource()
 		{

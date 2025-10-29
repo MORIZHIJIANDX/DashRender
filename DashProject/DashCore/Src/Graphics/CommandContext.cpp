@@ -130,7 +130,7 @@ namespace Dash
 		mD3DCommandList->EndQuery(queryHeap->D3DQueryHeap(), queryType, queryIndex);
 	}
 
-	void FCopyCommandContextBase::ResolveQueryData(const FQueryHeapRef& queryHeap, uint32 startIndex, uint32 numQueries, FGpuBufferRef dest, uint32 destOffset)
+	void FCopyCommandContextBase::ResolveQueryData(const FQueryHeapRef& queryHeap, uint32 startIndex, uint32 numQueries, const FGpuBufferRef& dest, uint32 destOffset)
 	{
 		TransitionBarrier(dest, EResourceState::CopyDestination, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 
@@ -227,7 +227,7 @@ namespace Dash
 		mResourceStateTracker.FlushResourceBarriers(mCommandList);
 	}
 
-	void FCopyCommandContextBase::InitializeBuffer(FGpuBufferRef dest, const void* bufferData, size_t numBytes, size_t offset /*= 0*/)
+	void FCopyCommandContextBase::InitializeBuffer(const FGpuBufferRef& dest, const void* bufferData, size_t numBytes, size_t offset /*= 0*/)
 	{
 		FCopyCommandContext& context = FCopyCommandContext::Begin("InitializeBufferContext");
 
@@ -479,7 +479,7 @@ namespace Dash
 		mD3DCommandList = nullptr;
 	}
 
-	void FComputeCommandContextBase::ClearUAV(FGpuBufferRef target)
+	void FComputeCommandContextBase::ClearUAV(const FGpuBufferRef& target)
 	{
 		if (!target->SupportUnorderedAccessView())
 		{

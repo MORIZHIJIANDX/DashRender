@@ -35,18 +35,18 @@ namespace Dash
 
 	using FQueryHeapRef = TRefCountPtr<FQueryHeap>;
 
-	using FGpuResourceRef = std::shared_ptr<FGpuResource>;
-	using FColorBufferRef = std::shared_ptr<FColorBuffer>;
-	using FDepthBufferRef = std::shared_ptr<FDepthBuffer>;
-	using FTextureBufferRef = std::shared_ptr<FTextureBuffer>;
-	using FGpuBufferRef = std::shared_ptr<FGpuBuffer>;
-	using FGpuConstantBufferRef = std::shared_ptr<FGpuConstantBuffer>;
-	using FStructuredBufferRef = std::shared_ptr<FStructuredBuffer>;
-	using FGpuVertexBufferRef = std::shared_ptr<FGpuVertexBuffer>;
-	using FGpuIndexBufferRef = std::shared_ptr<FGpuIndexBuffer>;
-	using FGpuDynamicVertexBufferRef = std::shared_ptr<FGpuDynamicVertexBuffer>;
-	using FGpuDynamicIndexBufferRef = std::shared_ptr<FGpuDynamicIndexBuffer>;
-	using FReadbackBufferRef = std::shared_ptr<FReadbackBuffer>;
+	using FGpuResourceRef = TRefCountPtr<FGpuResource>;
+	using FColorBufferRef = TRefCountPtr<FColorBuffer>;
+	using FDepthBufferRef = TRefCountPtr<FDepthBuffer>;
+	using FTextureBufferRef = TRefCountPtr<FTextureBuffer>;
+	using FGpuBufferRef = TRefCountPtr<FGpuBuffer>;
+	using FGpuConstantBufferRef = TRefCountPtr<FGpuConstantBuffer>;
+	using FStructuredBufferRef = TRefCountPtr<FStructuredBuffer>;
+	using FGpuVertexBufferRef = TRefCountPtr<FGpuVertexBuffer>;
+	using FGpuIndexBufferRef = TRefCountPtr<FGpuIndexBuffer>;
+	using FGpuDynamicVertexBufferRef = TRefCountPtr<FGpuDynamicVertexBuffer>;
+	using FGpuDynamicIndexBufferRef = TRefCountPtr<FGpuDynamicIndexBuffer>;
+	using FReadbackBufferRef = TRefCountPtr<FReadbackBuffer>;
 
 	using FShaderResourceRef = TRefCountPtr<FShaderResource>;
 	using FShaderPassRef = TRefCountPtr<FShaderPass>;

@@ -25,7 +25,7 @@ namespace Dash
 		FGpuBuffer() {}
 		virtual ~FGpuBuffer() {}
 
-		void Create(const std::string& name, uint32 numElements, uint32 elementSize, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
+		void InitResource(const std::string& name, uint32 numElements, uint32 elementSize, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
 		void CreateBufferResource(const D3D12_RESOURCE_DESC& desc);
 		virtual void CreateViews() = 0;
 
@@ -53,6 +53,7 @@ namespace Dash
 
 	protected:
 		FGpuConstantBuffer() { mCpuAccess = true; }
+
 		virtual void CreateViews() override;
 	};
 
@@ -134,15 +135,16 @@ namespace Dash
 	public:
 		virtual ~FGpuIndexBuffer() {}
 
-		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView(uint32 offset, uint32 size, bool is32Bit = false) const;
+		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView(uint32 offset, uint32 size) const;
 		D3D12_INDEX_BUFFER_VIEW GetIndexBufferView(uint32 startIndex = 0) const
 		{
 			ASSERT(startIndex < mDesc.Count);
 			uint32 offset = startIndex * mDesc.Stride;
-			return GetIndexBufferView(offset, static_cast<uint32>(mDesc.Size - offset), mDesc.Stride == 4);
+			return GetIndexBufferView(offset, static_cast<uint32>(mDesc.Size - offset));
 		}
 
 	protected:	
+		void InitResource(const std::string& name, uint32 numElements, bool is32Bit);
 		virtual void CreateViews() override {};
 	
 	protected:
