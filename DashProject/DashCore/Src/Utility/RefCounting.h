@@ -33,7 +33,7 @@ namespace Dash
 			}
 		}
 
-		TRefCountPtr(TRefCountPtr&& Copy)
+		TRefCountPtr(TRefCountPtr&& Copy) noexcept
 		{
 			mReference = Copy.mReference;
 			Copy.mReference = nullptr;

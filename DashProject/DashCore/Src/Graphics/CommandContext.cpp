@@ -192,7 +192,7 @@ namespace Dash
 		return fenceValue;
 	}
 
-	void FCopyCommandContextBase::TransitionBarrier(FGpuResourceRef resource, EResourceState newState, UINT subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/, bool flushImmediate /*= false*/)
+	void FCopyCommandContextBase::TransitionBarrier(const FGpuResourceRef& resource, EResourceState newState, UINT subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/, bool flushImmediate /*= false*/)
 	{
 		mResourceStateTracker.TransitionResource(resource, D3DResourceState(newState), subResource);
 
@@ -202,7 +202,7 @@ namespace Dash
 		}
 	}
 
-	void FCopyCommandContextBase::UAVBarrier(FGpuResourceRef resource, bool flushImmediate /*= false*/)
+	void FCopyCommandContextBase::UAVBarrier(const FGpuResourceRef& resource, bool flushImmediate /*= false*/)
 	{
 		mResourceStateTracker.UAVBarrier(resource);
 
@@ -212,7 +212,7 @@ namespace Dash
 		}
 	}
 
-	void FCopyCommandContextBase::AliasingBarrier(FGpuResourceRef resourceBefore, FGpuResourceRef resourceAfter, bool flushImmediate /*= false*/)
+	void FCopyCommandContextBase::AliasingBarrier(const FGpuResourceRef& resourceBefore, const FGpuResourceRef& resourceAfter, bool flushImmediate /*= false*/)
 	{
 		mResourceStateTracker.AliasBarrier(resourceBefore, resourceAfter);
 
@@ -241,7 +241,7 @@ namespace Dash
 		context.Finish(true);
 	}
 
-	void FCopyCommandContextBase::UpdateTextureBuffer(FTextureBufferRef dest, uint32 firstSubresource, uint32 numSubresources, const FSubResourceData* subresourceData)
+	void FCopyCommandContextBase::UpdateTextureBuffer(const FTextureBufferRef& dest, uint32 firstSubresource, uint32 numSubresources, const FSubResourceData* subresourceData)
 	{
 		ASSERT(subresourceData != nullptr);
 
@@ -367,7 +367,7 @@ namespace Dash
 		}
 	}
 
-	void FCommandContext::TrackResource(FGpuResourceRef resource)
+	void FCommandContext::TrackResource(const FGpuResourceRef& resource)
 	{
 		mTrackedObjects.emplace_back(resource);
 	}
@@ -495,7 +495,7 @@ namespace Dash
 		TrackResource(target);
 	}
 
-	void FComputeCommandContextBase::ClearUAV(FColorBufferRef target)
+	void FComputeCommandContextBase::ClearUAV(const FColorBufferRef& target)
 	{
 		UAVBarrier(target, true);
 
@@ -547,7 +547,7 @@ namespace Dash
 		}
 	}
 
-	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, FColorBufferRef buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
+	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, const FColorBufferRef& buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
 	{
 		ASSERT_MSG(mPSO != nullptr, "Pipeline State Is Not Set.");
 
@@ -569,7 +569,7 @@ namespace Dash
 		}
 	}
 
-	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, FTextureBufferRef buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
+	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, const FTextureBufferRef& buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
 	{
 		ASSERT_MSG(mPSO != nullptr, "Pipeline State Is Not Set.");
 
@@ -591,7 +591,7 @@ namespace Dash
 		}
 	}
 
-	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, FStructuredBufferRef buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
+	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, const FStructuredBufferRef& buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
 	{
 		ASSERT_MSG(mPSO != nullptr, "Pipeline State Is Not Set.");
 
@@ -613,7 +613,7 @@ namespace Dash
 		}
 	}
 
-	void FComputeCommandContextBase::SetUnorderAccessView(const std::string& uavName, FColorBufferRef buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
+	void FComputeCommandContextBase::SetUnorderAccessView(const std::string& uavName, const FColorBufferRef& buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
 	{
 		FShaderPassRef shaderPass = mPSO->GetShaderPass();
 
@@ -633,7 +633,7 @@ namespace Dash
 		}
 	}
 
-	void FComputeCommandContextBase::SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FDepthBufferRef buffer, EResourceState stateAfter /*= EResourceState::AnyShaderAccess*/, UINT firstSubResource /*= 0*/, UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
+	void FComputeCommandContextBase::SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, const FDepthBufferRef& buffer, EResourceState stateAfter /*= EResourceState::AnyShaderAccess*/, UINT firstSubResource /*= 0*/, UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
 	{
 		if (numSubResources < D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES)
 		{
@@ -651,7 +651,7 @@ namespace Dash
 		TrackResource(buffer);
 	}
 
-	void FComputeCommandContextBase::SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, FGpuResourceRef resource, const D3D12_CPU_DESCRIPTOR_HANDLE& srcDescriptors,
+	void FComputeCommandContextBase::SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, const FGpuResourceRef& resource, const D3D12_CPU_DESCRIPTOR_HANDLE& srcDescriptors,
 		EResourceState stateAfter /*= EResourceState::AnyShaderAccess*/, UINT firstSubResource /*= 0*/,
 		UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
 	{
@@ -671,7 +671,7 @@ namespace Dash
 		TrackResource(resource);
 	}
 
-	void FComputeCommandContextBase::SetUnorderAccessView(UINT rootIndex, UINT descriptorOffset, FColorBufferRef buffer, EResourceState stateAfter /*= EResourceState::UnorderedAccess*/, UINT firstSubResource /*= 0*/, UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
+	void FComputeCommandContextBase::SetUnorderAccessView(UINT rootIndex, UINT descriptorOffset, const FColorBufferRef& buffer, EResourceState stateAfter /*= EResourceState::UnorderedAccess*/, UINT firstSubResource /*= 0*/, UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
 	{
 		if (numSubResources < D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES)
 		{
@@ -689,7 +689,7 @@ namespace Dash
 		TrackResource(buffer);
 	}
 
-	void FGraphicsCommandContextBase::ClearColor(FColorBufferRef target, D3D12_RECT* rect /*= nullptr*/)
+	void FGraphicsCommandContextBase::ClearColor(const FColorBufferRef& target, D3D12_RECT* rect /*= nullptr*/)
 	{
 		TransitionBarrier(target, EResourceState::RenderTarget, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 		mD3DCommandList->ClearRenderTargetView(target->GetRenderTargetView(), target->GetClearColor().Data, (rect == nullptr) ? 0 : 1, rect);
@@ -697,7 +697,7 @@ namespace Dash
 		TrackResource(target);
 	}
 
-	void FGraphicsCommandContextBase::ClearColor(FColorBufferRef target, const FLinearColor& color, D3D12_RECT* rect /*= nullptr*/)
+	void FGraphicsCommandContextBase::ClearColor(const FColorBufferRef& target, const FLinearColor& color, D3D12_RECT* rect /*= nullptr*/)
 	{
 		TransitionBarrier(target, EResourceState::RenderTarget, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 		mD3DCommandList->ClearRenderTargetView(target->GetRenderTargetView(), color.Data, (rect == nullptr) ? 0 : 1, rect);
@@ -705,7 +705,7 @@ namespace Dash
 		TrackResource(target);
 	}
 
-	void FGraphicsCommandContextBase::ClearDepth(FDepthBufferRef target)
+	void FGraphicsCommandContextBase::ClearDepth(const FDepthBufferRef& target)
 	{
 		TransitionBarrier(target, EResourceState::DepthWrite, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 		mD3DCommandList->ClearDepthStencilView(target->GetDepthStencilView(), D3D12_CLEAR_FLAG_DEPTH, target->GetClearDepth(), target->GetClearStencil(), 0, nullptr);
@@ -713,7 +713,7 @@ namespace Dash
 		TrackResource(target);
 	}
 
-	void FGraphicsCommandContextBase::ClearStencil(FDepthBufferRef target)
+	void FGraphicsCommandContextBase::ClearStencil(const FDepthBufferRef& target)
 	{
 		TransitionBarrier(target, EResourceState::DepthWrite, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 		mD3DCommandList->ClearDepthStencilView(target->GetDepthStencilView(), D3D12_CLEAR_FLAG_STENCIL, target->GetClearDepth(), target->GetClearStencil(), 0, nullptr);
@@ -721,7 +721,7 @@ namespace Dash
 		TrackResource(target);
 	}
 
-	void FGraphicsCommandContextBase::ClearDepthAndStencil(FDepthBufferRef target)
+	void FGraphicsCommandContextBase::ClearDepthAndStencil(const FDepthBufferRef& target)
 	{
 		TransitionBarrier(target, EResourceState::DepthWrite, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 		mD3DCommandList->ClearDepthStencilView(target->GetDepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, target->GetClearDepth(), target->GetClearStencil(), 0, nullptr);
@@ -765,7 +765,7 @@ namespace Dash
 		mDynamicSamplerDescriptor.ParseRootSignature(*rootSignature);
 	}
 
-	void FGraphicsCommandContextBase::SetRenderTargets(UINT numRTVs, FColorBufferRef* rtvs)
+	void FGraphicsCommandContextBase::SetRenderTargets(UINT numRTVs, const FColorBufferRef* rtvs)
 	{
 		std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> rtvHandels;
 		
@@ -779,7 +779,7 @@ namespace Dash
 		mD3DCommandList->OMSetRenderTargets(numRTVs, rtvHandels.data(), false, nullptr);
 	}
 
-	void FGraphicsCommandContextBase::SetRenderTargets(UINT numRTVs, FColorBufferRef* rtvs, FDepthBufferRef depthBuffer)
+	void FGraphicsCommandContextBase::SetRenderTargets(UINT numRTVs, const FColorBufferRef* rtvs, const FDepthBufferRef& depthBuffer)
 	{
 		std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> rtvHandels;
 
@@ -861,7 +861,7 @@ namespace Dash
 		}
 	}
 
-	void FGraphicsCommandContextBase::SetIndexBuffer(FGpuIndexBufferRef indexBuffer)
+	void FGraphicsCommandContextBase::SetIndexBuffer(const FGpuIndexBufferRef& indexBuffer)
 	{
 		std::vector<D3D12_INDEX_BUFFER_VIEW> indexBufferViews = { indexBuffer->GetIndexBufferView() };
 		TrackResource(indexBuffer);
@@ -869,7 +869,7 @@ namespace Dash
 		mD3DCommandList->IASetIndexBuffer(indexBufferViews.data());
 	}
 
-	void FGraphicsCommandContextBase::SetVertexBuffer(UINT slot, FGpuVertexBufferRef vertexBuffer)
+	void FGraphicsCommandContextBase::SetVertexBuffer(UINT slot, const FGpuVertexBufferRef& vertexBuffer)
 	{
 		SetVertexBuffers(slot, 1, &vertexBuffer);
 	}

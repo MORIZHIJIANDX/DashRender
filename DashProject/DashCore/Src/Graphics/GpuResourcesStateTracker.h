@@ -30,7 +30,7 @@ namespace Dash
 		 * which indicates that all subresources should be transitioned to the same state.
 		 */
 		void TransitionResource(ID3D12Resource* resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
-		void TransitionResource(FGpuResourceRef resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+		void TransitionResource(const FGpuResourceRef& resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 
 		/**
 		 * Push a UAV resource barrier for the given resource.
@@ -39,7 +39,7 @@ namespace Dash
 		 * indicates that any UAV access could require the barrier.
 		 */
 		void UAVBarrier(ID3D12Resource* resource = nullptr);
-		void UAVBarrier(FGpuResourceRef resource);
+		void UAVBarrier(const FGpuResourceRef& resource);
 
 		/**
 		 * Push an aliasing barrier for the given resource.
@@ -51,7 +51,7 @@ namespace Dash
 		 * indicates that any placed or reserved resource could cause aliasing.
 		 */
 		void AliasBarrier(ID3D12Resource* resourceBefore = nullptr, ID3D12Resource* resourceAfter = nullptr);
-		void AliasBarrier(FGpuResourceRef resourceBefore, FGpuResourceRef resourceAfter);
+		void AliasBarrier(const FGpuResourceRef& resourceBefore, const FGpuResourceRef& resourceAfter);
 
 		/**
 		 * Flush any pending resource barriers to the command list.
@@ -96,14 +96,14 @@ namespace Dash
 		 * This should be done when the resource is created for the first time.
 		 */
 		static void AddGlobalResourceState(FD3D12Resource* resource, D3D12_RESOURCE_STATES state);
-		static void AddGlobalResourceState(FGpuResourceRef resource, D3D12_RESOURCE_STATES state);
+		static void AddGlobalResourceState(const FGpuResourceRef& resource, D3D12_RESOURCE_STATES state);
 
 		/**
 		 * Remove a resource from the global resource state array (map).
 		 * This should only be done when the resource is destroyed.
 		 */
 		static void RemoveGlobalResourceState(FD3D12Resource* resource);
-		static void RemoveGlobalResourceState(FGpuResourceRef resource);
+		static void RemoveGlobalResourceState(const FGpuResourceRef& resource);
 
 	protected:
 		// An array (vector) of resource barriers.
