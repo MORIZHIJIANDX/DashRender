@@ -11,13 +11,11 @@ namespace Dash
 		uint32 GetBufferSize() const { return mDesc.Size; }
 		uint32 GetElementCount() const { return mDesc.Count; }
 		uint32 GetElementSize() const { return mDesc.Stride; }
-		bool GetCpuAccess() const { return mCpuAccess; }
+		bool GetCpuAccess() const { return mDesiredHeapType == D3D12_HEAP_TYPE_UPLOAD || mDesiredHeapType == D3D12_HEAP_TYPE_READBACK; }
 
-		bool SupportConstantBufferView() const;
 		bool SupportShaderResourceView() const;
 		bool SupportUnorderedAccessView() const;
 
-		D3D12_CPU_DESCRIPTOR_HANDLE GetConstantBufferView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE GetShaderResourceView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE GetUnorderedAccessView() const;
 
@@ -25,18 +23,18 @@ namespace Dash
 		FGpuBuffer() {}
 		virtual ~FGpuBuffer() {}
 
-		void InitResource(const std::string& name, uint32 numElements, uint32 elementSize, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
+		void InitResource(const std::string& name, uint32 numElements, uint32 elementSize, uint32 elementAlignment = 1, EResourceState initialStateMask = EResourceState::Common);
 		void CreateBufferResource(const D3D12_RESOURCE_DESC& desc);
 		virtual void CreateViews() = 0;
 
 	protected:
 		FBufferDescription mDesc;
 
-		FCpuDescriptorAllocation mConstantBufferView;
 		FCpuDescriptorAllocation mShaderResourceView;
 		FCpuDescriptorAllocation mUnorderedAccessView;
-
-		bool mCpuAccess = false;
+		
+		bool mNeedUnorderedAccess = false;
+		D3D12_HEAP_TYPE mDesiredHeapType = D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_DEFAULT;
 	};
 
 	// 大部分情况下不需要使用 CreateConstantBufferView 来创建 constant buffer view ，且 constant buffer 更新需要对 resource 进行 map 和 unmap 或者是 CopyBuffer. 
@@ -51,8 +49,13 @@ namespace Dash
 		void* Map();
 		void Unmap();
 
+		bool SupportConstantBufferView() const;
+		D3D12_CPU_DESCRIPTOR_HANDLE GetConstantBufferView() const;
+
 	protected:
-		FGpuConstantBuffer() { mCpuAccess = true; }
+		FGpuConstantBuffer() { mDesiredHeapType = D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_UPLOAD; }
+
+		FCpuDescriptorAllocation mConstantBufferView;
 
 		virtual void CreateViews() override;
 	};
@@ -65,6 +68,7 @@ namespace Dash
 		virtual ~FByteAddressBuffer() {}
 
 	protected:
+		FByteAddressBuffer() { mNeedUnorderedAccess = true; }
 		virtual void CreateViews() override;
 	};
 
@@ -86,6 +90,7 @@ namespace Dash
 		D3D12_CPU_DESCRIPTOR_HANDLE GetCounterBufferUnorderedAccessView() const;
 
 	protected:
+		FStructuredBuffer() { mNeedUnorderedAccess = true; }
 		virtual void CreateViews() override;
 
 	protected:
@@ -104,6 +109,7 @@ namespace Dash
 		FTypedBuffer(EResourceFormat format)
 			: mFormat(format)
 		{
+			mNeedUnorderedAccess = true;
 		}
 		virtual void CreateViews() override;
 
@@ -155,7 +161,7 @@ namespace Dash
 	{
 		friend class FRenderDevice;
 	public:
-		FGpuDynamicVertexBuffer() { mCpuAccess = true; }
+		FGpuDynamicVertexBuffer() { mDesiredHeapType = D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_UPLOAD; }
 		virtual ~FGpuDynamicVertexBuffer() {}
 
 		void* Map();
@@ -171,7 +177,7 @@ namespace Dash
 	{
 		friend class FRenderDevice;
 	public:
-		FGpuDynamicIndexBuffer() { mCpuAccess = true; }
+		FGpuDynamicIndexBuffer() { mDesiredHeapType = D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_UPLOAD; }
 		virtual ~FGpuDynamicIndexBuffer() {}
 
 		void* Map();

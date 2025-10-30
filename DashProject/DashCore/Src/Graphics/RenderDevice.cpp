@@ -678,7 +678,7 @@ namespace Dash
 	FReadbackBufferRef FRenderDevice::CreateReadbackBuffer(const std::string& name, uint32 numElements, uint32 elementSize)
 	{
 		FReadbackBufferRef bufferRef{ new FReadbackBuffer() };
-		bufferRef->CreateReadbackBuffer(name, numElements, elementSize);
+		bufferRef->InitResource(name, numElements, elementSize, 1, EResourceState::CopyDestination);
 		return bufferRef;
 	}
 

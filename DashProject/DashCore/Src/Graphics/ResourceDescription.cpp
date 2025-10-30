@@ -146,7 +146,7 @@ namespace Dash
 		return desc;
 	}
 
-	FBufferDescription FBufferDescription::Create(uint32 elementSize, uint32 elementCount, bool cpuAccess, uint32 elementAlignment /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
+	FBufferDescription FBufferDescription::Create(uint32 elementSize, uint32 elementCount, bool unorderedAccess, uint32 elementAlignment /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
 	{
 		ASSERT(elementSize > 0);
 
@@ -156,7 +156,7 @@ namespace Dash
 		desc.Size = desc.Stride * elementCount;
 		desc.InitialStateMask = initialStateMask;
 
-		desc.ResolveResourceDimensionData(!cpuAccess, false);
+		desc.ResolveResourceDimensionData(unorderedAccess, false);
 
 		return desc;
 	}

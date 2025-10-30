@@ -8,11 +8,6 @@
 
 namespace Dash
 {
-	bool FGpuBuffer::SupportConstantBufferView() const
-	{
-		return mConstantBufferView.IsValid();
-	}
-
 	bool FGpuBuffer::SupportShaderResourceView() const
 	{
 		return mShaderResourceView.IsValid();
@@ -23,29 +18,25 @@ namespace Dash
 		return mUnorderedAccessView.IsValid();
 	}
 
-	D3D12_CPU_DESCRIPTOR_HANDLE FGpuBuffer::GetConstantBufferView() const
-	{
-		return mConstantBufferView.GetDescriptorHandle();
-	}
-
 	D3D12_CPU_DESCRIPTOR_HANDLE FGpuBuffer::GetShaderResourceView() const
 	{
+		ASSERT(mShaderResourceView.IsValid());
 		return mShaderResourceView.GetDescriptorHandle();
 	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE FGpuBuffer::GetUnorderedAccessView() const
 	{
+		ASSERT(mNeedUnorderedAccess && mUnorderedAccessView.IsValid());
 		return mUnorderedAccessView.GetDescriptorHandle();
 	}
 
-	void FGpuBuffer::InitResource(const std::string& name, uint32 numElements, uint32 elementSize, D3D12_RESOURCE_FLAGS flags /*D3D12_RESOURCE_FLAG_NONE*/)
+	void FGpuBuffer::InitResource(const std::string& name, uint32 numElements, uint32 elementSize, uint32 elementAlignment, EResourceState initialStateMask)
 	{
 		Destroy();
 
-		mDesc = FBufferDescription::Create(elementSize, numElements, mCpuAccess);
+		mDesc = FBufferDescription::Create(elementSize, numElements, mNeedUnorderedAccess, elementAlignment, initialStateMask);
 
 		D3D12_RESOURCE_DESC resourceDesc = mDesc.D3DResourceDescription();
-		resourceDesc.Flags |= flags;
 
 		CreateBufferResource(resourceDesc);
 
@@ -57,8 +48,10 @@ namespace Dash
 	void FGpuBuffer::CreateBufferResource(const D3D12_RESOURCE_DESC& desc)
 	{
 		// D3D12_HEAP_TYPE_DEFAULT can not be accessed by CPU
-		CD3DX12_HEAP_PROPERTIES heapProps(mCpuAccess ? D3D12_HEAP_TYPE_UPLOAD : D3D12_HEAP_TYPE_DEFAULT);
-		D3D12_RESOURCE_STATES initD3DState = mCpuAccess ? D3D12_RESOURCE_STATE_GENERIC_READ : D3DResourceState(mDesc.InitialStateMask);
+		CD3DX12_HEAP_PROPERTIES heapProps(mDesiredHeapType);
+		// Certain resources are restricted to certain D3D12_RESOURCE_STATES states, and cannot be changed. Resources on D3D12_HEAP_TYPE_UPLOAD heaps requires D3D12_RESOURCE_STATE_GENERIC_READ. 
+		// Reserved buffers used exclusively for texture placement requires D3D12_RESOURCE_STATE_COMMON.
+		D3D12_RESOURCE_STATES initD3DState = mDesiredHeapType == D3D12_HEAP_TYPE::D3D12_HEAP_TYPE_UPLOAD ? D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ : D3DResourceState(mDesc.InitialStateMask);
 		// D3D12_RESOURCE_STATE_COMMON 不可直接作为 SRV 和 UAV，需要转换为 D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER (D3D12_RESOURCE_STATE_GENERIC_READ) 状态
 		TRefCountPtr<ID3D12Resource> d3d12Resource = FGraphicsCore::Device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &desc, initD3DState, nullptr);
 
@@ -89,6 +82,17 @@ namespace Dash
 	void FGpuConstantBuffer::Unmap()
 	{
 		mResource->Unmap();
+	}
+
+	bool FGpuConstantBuffer::SupportConstantBufferView() const
+	{
+		return mConstantBufferView.IsValid();
+	}
+
+	D3D12_CPU_DESCRIPTOR_HANDLE FGpuConstantBuffer::GetConstantBufferView() const
+	{
+		ASSERT(mConstantBufferView.IsValid());
+		return mConstantBufferView.GetDescriptorHandle();
 	}
 
 	void FGpuConstantBuffer::CreateViews()
