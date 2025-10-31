@@ -103,7 +103,7 @@ namespace Dash
 		while (!mStaleDescriptorQueue.empty())
 		{
 			FStaleDescriptorInfo& info = mStaleDescriptorQueue.front();	
-			AddNewBlock(info.Offset, info.Size);
+			FreeBlock(info.Offset, info.Size);
 			mStaleDescriptorQueue.pop();
 		}
 	}
