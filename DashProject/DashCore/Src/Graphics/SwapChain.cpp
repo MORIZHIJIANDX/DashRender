@@ -270,7 +270,7 @@ namespace Dash
 		return FMath::Min(0, FMath::Min(ax2, bx2) - FMath::Max(ax1, bx1)) * FMath::Max(0, FMath::Min(ay2, by2) - FMath::Max(ay1, by1));
 	}
 
-	void Dash::FSwapChain::CheckDisplayHDRSupport()
+	void FSwapChain::CheckDisplayHDRSupport()
 	{
 		// If the display's advanced color state has changed (e.g. HDR display plug/unplug, or OS HDR setting on/off), 
 		// then this app's DXGI factory is invalidated and must be created anew in order to retrieve up-to-date display information. 
@@ -334,15 +334,18 @@ namespace Dash
 			}
 		}
 
-		// Having determined the output (display) upon which the app is primarily being 
-		// rendered, retrieve the HDR capabilities of that display by checking the color space.
-		TRefCountPtr<IDXGIOutput6> output6;
-		DX_CALL(bestOutput->QueryInterface(output6.GetInitReference()));
+		if (bestOutput)
+		{
+			// Having determined the output (display) upon which the app is primarily being 
+			// rendered, retrieve the HDR capabilities of that display by checking the color space.
+			TRefCountPtr<IDXGIOutput6> output6;
+			DX_CALL(bestOutput->QueryInterface(output6.GetInitReference()));
 
-		DXGI_OUTPUT_DESC1 desc1;
-		DX_CALL(output6->GetDesc1(&desc1));
+			DXGI_OUTPUT_DESC1 desc1;
+			DX_CALL(output6->GetDesc1(&desc1));
 
-		mHDRSupport = (desc1.ColorSpace == DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020);
+			mHDRSupport = (desc1.ColorSpace == DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020);
+		}
 	}
 
 	void FSwapChain::EnsureSwapChainColorSpace(ESwapChainBitDepth swapChainBitDepth, bool enableST2084)
