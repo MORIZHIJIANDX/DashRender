@@ -9,7 +9,7 @@ namespace Dash
 	public:
 		struct FBindlessResource
 		{
-			std::string ResourceType;	// SRV, UAV, SAMPLER
+			std::string ParameterType;	// SRV, UAV, SAMPLER
 			std::string DataType;		// Texture2D, RWTexture2D<float>, etc.
 			std::string ResourceName;	// DepthTexture, etc.
 			std::string SourceFile;		// 来源文件，用于调试
@@ -172,7 +172,7 @@ namespace Dash
 				if (std::regex_match(line, match, bindlessRegex))
 				{
 					FBindlessResource resource;
-					resource.ResourceType = match[1].str();
+					resource.ParameterType = match[1].str();
 					resource.DataType = FStringUtility::TrimCopy(match[2].str());
 					resource.ResourceName = match[3].str();
 					resource.SourceFile = filePath;
@@ -499,7 +499,7 @@ namespace Dash
 		void OutputResourcesByType(std::ostream& out, const std::string& type, const std::string& comment) {
 			std::vector<const FBindlessResource*> resources;
 			for (const auto& res : mBindlessResources) {
-				if (res.ResourceType == type) {
+				if (res.ParameterType == type) {
 					resources.push_back(&res);
 				}
 			}
@@ -510,7 +510,7 @@ namespace Dash
 				}
 
 				for (const auto* res : resources) {
-					out << "    uint Bindless" << res->ResourceType << "_" << res->ResourceName << ";";
+					out << "    uint Bindless" << res->ParameterType << "_" << res->ResourceName << ";";
 
 					if (mConfig.GenerateComments && mProcessdFiles.size() > 1) {
 						out << " // " << res->DataType << " from " << res->SourceFile;

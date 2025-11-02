@@ -1,10 +1,45 @@
 #pragma once
 
 #include "SamplerDesc.h"
+#include "GraphicsDefines.h"
 #include "Utility/RefCounting.h"
 
 namespace Dash
 {
+	struct FShaderRegisterCounts
+	{
+		uint8 SamplerCount;
+		uint8 ConstantBufferCount;
+		uint8 ShaderResourceCount;
+		uint8 UnorderedAccessCount;
+
+		inline bool operator==(const FShaderRegisterCounts& RHS) const
+		{
+			return SamplerCount == RHS.SamplerCount &&
+				ConstantBufferCount == RHS.ConstantBufferCount &&
+				ShaderResourceCount == RHS.ShaderResourceCount &&
+				UnorderedAccessCount == RHS.UnorderedAccessCount;
+		}
+	};
+
+	struct FQuantizedBoundShaderState
+	{
+		FShaderRegisterCounts RegisterCounts[GShaderStageCount];
+		EShaderPassType RootSignatureType;
+		uint32 NumRootParameters;
+		uint32 NumStaticSamplers;
+
+		inline bool operator==(const FQuantizedBoundShaderState& RHS) const
+		{
+			return RegisterCounts == RHS.RegisterCounts &&
+				RootSignatureType == RHS.RootSignatureType &&
+				NumRootParameters == RHS.NumRootParameters &&
+				NumStaticSamplers == RHS.NumStaticSamplers;
+		}
+
+		size_t GetTypeHash() const;
+	};
+
 	class FRootParameter
 	{
 		friend class FRootSignature;
@@ -79,10 +114,10 @@ namespace Dash
 			mRootParameter.DescriptorTable.pDescriptorRanges = new D3D12_DESCRIPTOR_RANGE1[rangeCount];
 		}
 
-		void SetTableRange(UINT rangeIndex, D3D12_DESCRIPTOR_RANGE_TYPE type, UINT shaderRegister, UINT count, UINT space = 0)
+		void SetTableRange(UINT rangeIndex, D3D12_DESCRIPTOR_RANGE_TYPE type, UINT baseShaderRegister, UINT count, UINT space = 0)
 		{
 			D3D12_DESCRIPTOR_RANGE1* range = const_cast<D3D12_DESCRIPTOR_RANGE1*>(mRootParameter.DescriptorTable.pDescriptorRanges + rangeIndex);
-			range->BaseShaderRegister = shaderRegister;
+			range->BaseShaderRegister = baseShaderRegister;
 			range->NumDescriptors = count;
 			range->RangeType = type;
 			range->RegisterSpace = space;
@@ -99,33 +134,32 @@ namespace Dash
 	struct FBoundShaderState
 	{
 	public:
-		FBoundShaderState(UINT numRootParameters = 0, UINT numStaticSamplers = 0)
-			: NumParameters(numRootParameters)
-			, NumStaticSamplers(numStaticSamplers)
+		FBoundShaderState(const FQuantizedBoundShaderState& boundShaderState)
+			: NumParameters(boundShaderState.NumRootParameters)
+			, NumStaticSamplers(boundShaderState.NumStaticSamplers)
 			, NumInitializedStaticSamplers(0)
 			, NumDescriptorsPerTable{ 0 }
 		{
-			if (numRootParameters > 0)
+			if (NumParameters > 0)
 			{
-				ParameterArray.reset(new FRootParameter[numRootParameters]);
+				ParameterArray.reset(new FRootParameter[NumParameters]);
 			}
 			else
 			{
 				ParameterArray = nullptr;
 			}
 
-			if (numStaticSamplers > 0)
+			if (NumStaticSamplers > 0)
 			{
-				SamplerArray.reset(new D3D12_STATIC_SAMPLER_DESC[numStaticSamplers]);
+				SamplerArray.reset(new D3D12_STATIC_SAMPLER_DESC[NumStaticSamplers]);
 			}
 			else
 			{
 				SamplerArray = nullptr;
 			}
 
-			NumParameters = numRootParameters;
-			NumStaticSamplers = numStaticSamplers;
 			NumInitializedStaticSamplers = 0;
+			HashCode = boundShaderState.GetTypeHash();
 		}
 
 		~FBoundShaderState() {};

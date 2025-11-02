@@ -7,6 +7,18 @@
 
 namespace Dash
 {
+	size_t FQuantizedBoundShaderState::GetTypeHash() const
+	{
+		size_t hashCode = HashState(&RootSignatureType);
+		hashCode = HashState(&NumRootParameters, 1, hashCode);
+		hashCode = HashState(&NumStaticSamplers, 1, hashCode);
+		for (int32 i = 0; i < GShaderStageCount; i++)
+		{
+			hashCode = HashState(&RegisterCounts[i], 1, hashCode);
+		}
+		return hashCode;
+	}
+
 	uint32 FRootSignature::GetDescriptorTableBitMask(D3D12_DESCRIPTOR_HEAP_TYPE type) const
 	{
 		if (type == D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
@@ -103,40 +115,6 @@ namespace Dash
 
 		DescriptorTableMask = 0;
 		SamplerTableMask = 0;
-
-		HashCode = HashState(&RootSignatureDesc);
-		HashCode = HashState(RootSignatureDesc.pStaticSamplers, NumStaticSamplers, HashCode);
-
-		for (UINT paramIndex = 0; paramIndex < NumParameters; paramIndex++)
-		{
-			const D3D12_ROOT_PARAMETER1& rootParameter = RootSignatureDesc.pParameters[paramIndex];
-			NumDescriptorsPerTable[paramIndex] = 0;
-
-			if (rootParameter.ParameterType == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE)
-			{
-				ASSERT(rootParameter.DescriptorTable.pDescriptorRanges != nullptr);
-
-				HashCode = HashState(rootParameter.DescriptorTable.pDescriptorRanges, rootParameter.DescriptorTable.NumDescriptorRanges, HashCode);
-
-				if (rootParameter.DescriptorTable.pDescriptorRanges->RangeType == D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER)
-				{
-					SamplerTableMask |= (1 << paramIndex);
-				}
-				else
-				{
-					DescriptorTableMask |= (1 << paramIndex);
-				}
-
-				for (UINT rangeIndex = 0; rangeIndex < rootParameter.DescriptorTable.NumDescriptorRanges; rangeIndex++)
-				{
-					NumDescriptorsPerTable[paramIndex] += rootParameter.DescriptorTable.pDescriptorRanges[rangeIndex].NumDescriptors;
-				}
-			}
-			else
-			{
-				HashCode = HashState(&rootParameter, 1, HashCode);
-			}
-		}
 	}
 
 	void FRootSignatureManager::Destroy()

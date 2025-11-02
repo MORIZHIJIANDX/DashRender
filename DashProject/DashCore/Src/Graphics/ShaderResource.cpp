@@ -17,6 +17,71 @@ namespace Dash
 
 	#define SHADER_BLOB_PATH "ShaderBlob"
 
+	static constexpr const char* kBindlessSRVPrefix = TEXT("BindlessSRV_");
+	static constexpr const char* kBindlessUAVPrefix = TEXT("BindlessUAV_");
+	static constexpr const char* kBindlessSamplerPrefix = TEXT("BindlessSampler_");
+
+	EShaderResourceBindingType D3DBindDescToShaderCodeResourceBinding(const D3D12_SHADER_INPUT_BIND_DESC& Binding)
+	{
+		switch (Binding.Type)
+		{
+		case D3D_SIT_SAMPLER:
+			return EShaderResourceBindingType::SamplerState;
+		case D3D_SIT_TBUFFER:
+		case D3D_SIT_CBUFFER:
+			return EShaderResourceBindingType::Buffer;
+		case D3D_SIT_TEXTURE:
+			switch (Binding.Dimension)
+			{
+			case D3D_SRV_DIMENSION_BUFFER:			return EShaderResourceBindingType::Buffer;
+			case D3D_SRV_DIMENSION_TEXTURE2D:		return EShaderResourceBindingType::Texture2D;
+			case D3D_SRV_DIMENSION_TEXTURE2DARRAY:	return EShaderResourceBindingType::Texture2DArray;
+			case D3D_SRV_DIMENSION_TEXTURE2DMS:		return EShaderResourceBindingType::Texture2DMS;
+			case D3D_SRV_DIMENSION_TEXTURE3D:		return EShaderResourceBindingType::Texture3D;
+			case D3D_SRV_DIMENSION_TEXTURECUBE:		return EShaderResourceBindingType::TextureCube;
+			default:
+				return EShaderResourceBindingType::Invalid;
+			}
+		case D3D_SIT_UAV_RWTYPED:
+			switch (Binding.Dimension)
+			{
+			case D3D_SRV_DIMENSION_BUFFER:			return EShaderResourceBindingType::RWBuffer;
+			case D3D_SRV_DIMENSION_TEXTURE2D:		return EShaderResourceBindingType::RWTexture2D;
+			case D3D_SRV_DIMENSION_TEXTURE2DARRAY:	return EShaderResourceBindingType::RWTexture2DArray;
+			case D3D_SRV_DIMENSION_TEXTURE3D:		return EShaderResourceBindingType::RWTexture3D;
+			case D3D_SRV_DIMENSION_TEXTURECUBE:		return EShaderResourceBindingType::RWTextureCube;
+			default:
+				return EShaderResourceBindingType::Invalid;
+			}
+		case D3D_SIT_STRUCTURED:		return EShaderResourceBindingType::StructuredBuffer;
+		case D3D_SIT_UAV_RWSTRUCTURED:	return EShaderResourceBindingType::RWStructuredBuffer;
+		case D3D_SIT_BYTEADDRESS:		return EShaderResourceBindingType::ByteAddressBuffer;
+		case D3D_SIT_UAV_RWBYTEADDRESS:	return EShaderResourceBindingType::RWByteAddressBuffer;
+		default:
+			return EShaderResourceBindingType::Invalid;
+		}
+	}
+
+	EShaderParameterType ParseAndRemoveBindlessParameterPrefix(std::string& memberName)
+	{
+		if (FStringUtility::ReplaceFirst(memberName, kBindlessSRVPrefix, ""))
+		{
+			return EShaderParameterType::BindlessSRV;
+		}
+
+		if (FStringUtility::ReplaceFirst(memberName, kBindlessUAVPrefix, ""))
+		{
+			return EShaderParameterType::BindlessUAV;
+		}
+		
+		if (FStringUtility::ReplaceFirst(memberName, kBindlessSamplerPrefix, ""))
+		{
+			return EShaderParameterType::BindlessSampler;
+		}
+
+		return EShaderParameterType::LooseData;
+	}
+
 	void FShaderCreationInfo::Finalize()
 	{
 		std::string blobFileName = FFileUtility::CombinePath(FFileUtility::CombinePath(FFileUtility::GetParentPath(FileName), SHADER_BLOB_PATH), FFileUtility::GetFileName(FileName));
@@ -111,33 +176,6 @@ namespace Dash
 		DASH_LOG(LogTemp, Info, "Num ConstantBuffers {} ", shaderDesc.ConstantBuffers);
 		DASH_LOG(LogTemp, Info, "Num BoundResources {} ", shaderDesc.BoundResources);
 
-		std::map<std::string, UINT> bufferSizeMap;
-		std::map<std::string, std::vector<FConstantBufferVariable>> bufferVariableMap;
-		for (UINT constantBufferIndex = 0; constantBufferIndex < shaderDesc.ConstantBuffers; ++constantBufferIndex)
-		{
-			ID3D12ShaderReflectionConstantBuffer* shaderReflectionConstantBuffer = reflector->GetConstantBufferByIndex(constantBufferIndex);
-
-			D3D12_SHADER_BUFFER_DESC bufferDesc;
-			shaderReflectionConstantBuffer->GetDesc(&bufferDesc);
-
-			bufferSizeMap.emplace(bufferDesc.Name, bufferDesc.Size);
-
-			for (UINT variableIndex = 0; variableIndex < bufferDesc.Variables; variableIndex++)
-			{
-				ID3D12ShaderReflectionVariable* shaderReflectionVariable = shaderReflectionConstantBuffer->GetVariableByIndex(variableIndex);
-
-				D3D12_SHADER_VARIABLE_DESC variableDesc;
-				shaderReflectionVariable->GetDesc(&variableDesc);
-
-				FConstantBufferVariable bufferVariable;
-				bufferVariable.VariableName = variableDesc.Name;
-				bufferVariable.Size = variableDesc.Size;
-				bufferVariable.StartOffset = variableDesc.StartOffset;
-
-				bufferVariableMap[bufferDesc.Name].push_back(bufferVariable);	
-			}
-		}
-
 		for (UINT resourceIndex = 0; resourceIndex < shaderDesc.BoundResources; ++resourceIndex)
 		{
 			D3D12_SHADER_INPUT_BIND_DESC resourceDesc;
@@ -148,302 +186,377 @@ namespace Dash
 			resourceParameter.ShaderStage = mCreationInfo.Stage;
 			resourceParameter.BindPoint = resourceDesc.BindPoint;
 			resourceParameter.RegisterSpace = resourceDesc.Space;
-			resourceParameter.ResourceType = resourceDesc.Type;
+			resourceParameter.ShaderInputType = resourceDesc.Type;
+			resourceParameter.BindingType = D3DBindDescToShaderCodeResourceBinding(resourceDesc);
 			resourceParameter.ResourceDimension = resourceDesc.Dimension;
 			resourceParameter.BindCount = resourceDesc.BindCount;
 
-			if ((resourceDesc.Type == D3D_SIT_CBUFFER || resourceDesc.Type == D3D_SIT_TBUFFER) && bufferSizeMap.contains(resourceParameter.Name))
+			if (resourceDesc.Type == D3D_SIT_CBUFFER || resourceDesc.Type == D3D_SIT_TBUFFER)
 			{
-				resourceParameter.Size = bufferSizeMap[resourceParameter.Name];
-				resourceParameter.ConstantBufferVariables = bufferVariableMap[resourceParameter.Name];
-
-				DASH_LOG(LogTemp, Info, "Found CBuffer {} BindPoint {} Register Space {}", resourceParameter.Name, resourceParameter.BindPoint, resourceParameter.RegisterSpace);
+				ASSERT_MSG(resourceDesc.Type != D3D_SIT_TBUFFER, "TBuffer Not Supported!");
+				ReflectCBVParamter(resourceParameter, resourceDesc, reflector);
 			}
-
-			mParameters.push_back(resourceParameter);
+			else if (resourceDesc.Type == D3D_SIT_TEXTURE || resourceDesc.Type == D3D_SIT_STRUCTURED || resourceDesc.Type == D3D_SIT_BYTEADDRESS || resourceDesc.Type == D3D_SIT_RTACCELERATIONSTRUCTURE)
+			{
+				ASSERT(resourceDesc.BindCount == 1);
+				ReflectSRVParamter(resourceParameter, resourceDesc, reflector);
+			}
+			else if (resourceDesc.Type == D3D_SIT_UAV_RWTYPED || resourceDesc.Type == D3D_SIT_UAV_RWSTRUCTURED ||
+				resourceDesc.Type == D3D_SIT_UAV_RWBYTEADDRESS || resourceDesc.Type == D3D_SIT_UAV_RWSTRUCTURED_WITH_COUNTER ||
+				resourceDesc.Type == D3D_SIT_UAV_APPEND_STRUCTURED)
+			{
+				ASSERT(resourceDesc.BindCount == 1);
+				ReflectUAVParamter(resourceParameter, resourceDesc, reflector);
+			}
+			else if (resourceDesc.Type == D3D_SIT_SAMPLER)
+			{
+				ReflectSamplerParamter(resourceParameter, resourceDesc, reflector);
+			}
+			else
+			{
+				ASSERT_MSG(false, "Invalid Shader Resource Type!");
+			}
 		}
 
-		if (EnumMaskEquals(mCreationInfo.Stage, EShaderStage::Vertex))
+		if (mCreationInfo.Stage == EShaderStage::Vertex)
 		{
-			uint32 currentInputSlot = 0;
-			std::string prevSemanticName{};
-			uint32 prevSemanticIndex = 0;
+			ReflectInputLayout(shaderDesc, reflector);
+		}
+	}
 
-			int32 systemValueStart = INDEX_NONE;
-			int32 noSystemValueEnd = INDEX_NONE;
+	void FShaderResource::ReflectCBVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector)
+	{
+		ID3D12ShaderReflectionConstantBuffer* shaderReflectionConstantBuffer = reflector->GetConstantBufferByName(resourceDesc.Name);
+
+		D3D12_SHADER_BUFFER_DESC bufferDesc;
+		shaderReflectionConstantBuffer->GetDesc(&bufferDesc);
+
+		for (UINT variableIndex = 0; variableIndex < bufferDesc.Variables; variableIndex++)
+		{
+			ID3D12ShaderReflectionVariable* shaderReflectionVariable = shaderReflectionConstantBuffer->GetVariableByIndex(variableIndex);
+
+			D3D12_SHADER_VARIABLE_DESC variableDesc;
+			shaderReflectionVariable->GetDesc(&variableDesc);
+
+			FConstantBufferVariable bufferVariable;
+			bufferVariable.ParamterType = ParseAndRemoveBindlessParameterPrefix(bufferVariable.VariableName);
+			bufferVariable.VariableName = variableDesc.Name;
+			bufferVariable.Size = variableDesc.Size;
+			bufferVariable.StartOffset = variableDesc.StartOffset;
 			
-			for (UINT parameterIndex = 0; parameterIndex < shaderDesc.InputParameters; ++parameterIndex)
+			parameter.ConstantBufferVariables.push_back(bufferVariable);	
+		}
+
+		parameter.ParameterType = EShaderParameterType::UniformBuffer;
+		parameter.Size = bufferDesc.Size;
+
+		mCBVParameters.push_back(parameter);
+
+		DASH_LOG(LogTemp, Info, "Found CBuffer {} BindPoint {} Register Space {}", parameter.Name, parameter.BindPoint, parameter.RegisterSpace);
+	}
+
+	void FShaderResource::ReflectSRVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector)
+	{
+		if (resourceDesc.Type == D3D_SIT_STRUCTURED)
+		{
+			parameter.Stride = resourceDesc.NumSamples;
+		}
+		parameter.ParameterType = EShaderParameterType::SRV;
+		mSRVParameters.push_back(parameter);
+	}
+
+	void FShaderResource::ReflectUAVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector)
+	{
+		parameter.ParameterType = EShaderParameterType::UAV;
+		mUAVParameters.push_back(parameter);
+	}
+
+	void FShaderResource::ReflectSamplerParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector)
+	{
+		parameter.ParameterType = EShaderParameterType::Sampler;
+		mSamplerParameters.push_back(parameter);
+	}
+
+	void FShaderResource::ReflectInputLayout(const D3D12_SHADER_DESC& shaderDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector)
+	{
+		uint32 currentInputSlot = 0;
+		std::string prevSemanticName{};
+		uint32 prevSemanticIndex = 0;
+
+		int32 systemValueStart = INDEX_NONE;
+		int32 noSystemValueEnd = INDEX_NONE;
+
+		for (UINT parameterIndex = 0; parameterIndex < shaderDesc.InputParameters; ++parameterIndex)
+		{
+			D3D12_SIGNATURE_PARAMETER_DESC inputSignatureParameterDesc;
+			reflector->GetInputParameterDesc(parameterIndex, &inputSignatureParameterDesc);
+
+			EVSInputType inputType = EVSInputType::Float;
+			EResourceFormat parameterFormat = EResourceFormat::Unknown;
+
+			std::string currentSemanticName{ inputSignatureParameterDesc.SemanticName };
+			bool isIstanceSemantic = FStringUtility::Contains(FStringUtility::ToLower(currentSemanticName), "instance");
+			bool isSystemGeneratedValue = IsSystemGeneratedValues(currentSemanticName);
+
+			if (isSystemGeneratedValue)
 			{
-				D3D12_SIGNATURE_PARAMETER_DESC inputSignatureParameterDesc;
-				reflector->GetInputParameterDesc(parameterIndex, &inputSignatureParameterDesc);
-
-				EVSInputType inputType = EVSInputType::Float;
-				EResourceFormat parameterFormat = EResourceFormat::Unknown;
-
-				std::string currentSemanticName{inputSignatureParameterDesc.SemanticName};
-				bool isIstanceSemantic = FStringUtility::Contains(FStringUtility::ToLower(currentSemanticName), "instance");
-				bool isSystemGeneratedValue = IsSystemGeneratedValues(currentSemanticName);
-
-				if (isSystemGeneratedValue)
+				if (systemValueStart == INDEX_NONE)
 				{
-					if (systemValueStart == INDEX_NONE)
-					{
-						systemValueStart = parameterIndex;
-					}
-					continue;
+					systemValueStart = parameterIndex;
 				}
-				else
-				{
-					noSystemValueEnd = parameterIndex;
-				}
-				
-				if (FStringUtility::Contains(currentSemanticName, "Half"))
-				{
-					inputType = EVSInputType::Half;
-				}
-				else if (FStringUtility::Contains(currentSemanticName, "Short"))
-				{
-					inputType = EVSInputType::Short;
-				}
-
-				if (inputSignatureParameterDesc.Mask == 1)
-				{
-					if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
-					{
-						switch (inputType)
-						{
-						case EVSInputType::Float:
-							parameterFormat = EResourceFormat::R32_Unsigned;
-							break;
-						case EVSInputType::Half:
-							parameterFormat = EResourceFormat::R16_Unsigned;
-							break;
-						case EVSInputType::Short:
-							parameterFormat = EResourceFormat::R8_Unsigned;
-							break;
-						default:
-							break;
-						}
-					}
-					else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
-					{
-						switch (inputType)
-						{
-						case EVSInputType::Float:
-							parameterFormat = EResourceFormat::R32_Signed;
-							break;
-						case EVSInputType::Half:
-							parameterFormat = EResourceFormat::R16_Signed;
-							break;
-						case EVSInputType::Short:
-							parameterFormat = EResourceFormat::R8_Signed;
-							break;
-						default:
-							break;
-						}
-					}
-					else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
-					{
-						switch (inputType)
-						{
-						case EVSInputType::Float:
-							parameterFormat = EResourceFormat::R32_Float;
-							break;
-						case EVSInputType::Half:
-							parameterFormat = EResourceFormat::R16_Float;
-							break;
-						case EVSInputType::Short:
-							parameterFormat = EResourceFormat::R8_Unsigned_Norm;
-							break;
-						default:
-							break;
-						}
-					}
-				}
-				else if (inputSignatureParameterDesc.Mask <= 3)
-				{
-					if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
-					{
-						switch (inputType)
-						{
-						case EVSInputType::Float:
-							parameterFormat = EResourceFormat::RG32_Unsigned;
-							break;
-						case EVSInputType::Half:
-							parameterFormat = EResourceFormat::RG16_Unsigned;
-							break;
-						case EVSInputType::Short:
-							parameterFormat = EResourceFormat::RG8_Unsigned;
-							break;
-						default:
-							break;
-						}
-					}
-					else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
-					{
-						switch (inputType)
-						{
-						case EVSInputType::Float:
-							parameterFormat = EResourceFormat::RG32_Signed;
-							break;
-						case EVSInputType::Half:
-							parameterFormat = EResourceFormat::RG16_Signed;
-							break;
-						case EVSInputType::Short:
-							parameterFormat = EResourceFormat::RG8_Signed;
-							break;
-						default:
-							break;
-						}
-					}
-					else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
-					{
-						switch (inputType)
-						{
-						case EVSInputType::Float:
-							parameterFormat = EResourceFormat::RG32_Float;
-							break;
-						case EVSInputType::Half:
-							parameterFormat = EResourceFormat::RG16_Float;
-							break;
-						case EVSInputType::Short:
-							parameterFormat = EResourceFormat::RG8_Usigned_Norm;
-							break;
-						default:
-							break;
-						}
-					}
-				}
-				else if (inputSignatureParameterDesc.Mask <= 7)
-				{
-					if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
-					{
-						switch (inputType)
-						{
-						case EVSInputType::Float:
-							parameterFormat = EResourceFormat::RGB32_Unsigned;
-							break;
-						case EVSInputType::Half:
-						case EVSInputType::Short:
-							ASSERT_MSG(false, "Not Supported Format!");
-							break;
-						default:
-							break;
-						}
-					}
-					else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
-					{
-						switch (inputType)
-						{
-						case EVSInputType::Float:
-							parameterFormat = EResourceFormat::RGB32_Signed;
-							break;
-						case EVSInputType::Half:
-						case EVSInputType::Short:
-							ASSERT_MSG(false, "Not Supported Format!");
-							break;
-						default:
-							break;
-						}
-					}
-					else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
-					{
-						switch (inputType)
-						{
-						case EVSInputType::Float:
-							parameterFormat = EResourceFormat::RGB32_Float;
-							break;
-						case EVSInputType::Half:
-						case EVSInputType::Short:
-							ASSERT_MSG(false, "Not Supported Format!");
-							break;
-						default:
-							break;
-						}
-					}
-				}
-				else if (inputSignatureParameterDesc.Mask <= 15)
-				{
-					if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
-					{
-						switch (inputType)
-						{
-						case EVSInputType::Float:
-							parameterFormat = EResourceFormat::RGBA32_Unsigned;
-							break;
-						case EVSInputType::Half:
-							parameterFormat = EResourceFormat::RGBA16_Unsigned;
-							break;
-						case EVSInputType::Short:
-							parameterFormat = EResourceFormat::RGBA8_Unsigned;
-							break;
-						default:
-							break;
-						}
-					}
-					else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
-					{
-						switch (inputType)
-						{
-						case EVSInputType::Float:
-							parameterFormat = EResourceFormat::RGBA32_Signed;
-							break;
-						case EVSInputType::Half:
-							parameterFormat = EResourceFormat::RGBA16_Signed;
-							break;
-						case EVSInputType::Short:
-							parameterFormat = EResourceFormat::RGBA8_Signed;
-							break;
-						default:
-							break;
-						}
-					}
-					else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
-					{
-						switch (inputType)
-						{
-						case EVSInputType::Float:
-							parameterFormat = EResourceFormat::RGBA32_Float;
-							break;
-						case EVSInputType::Half:
-							parameterFormat = EResourceFormat::RGBA16_Float;
-							break;
-						case EVSInputType::Short:
-							parameterFormat = EResourceFormat::RGBA8_Unsigned_Norm;
-							break;
-						default:
-							break;
-						}
-					}
-				}
-
-				if (!prevSemanticName.empty())
-				{
-					if (currentSemanticName != prevSemanticName && (prevSemanticIndex + 1) != inputSignatureParameterDesc.SemanticIndex)
-					{
-						++currentInputSlot;
-					}
-				}
-
-				if (isIstanceSemantic)
-				{
-					mInputLayout.AddPerInstanceLayoutElement(inputSignatureParameterDesc.SemanticName, inputSignatureParameterDesc.SemanticIndex, parameterFormat, currentInputSlot);
-				}
-				else
-				{
-					mInputLayout.AddPerVertexLayoutElement(inputSignatureParameterDesc.SemanticName, inputSignatureParameterDesc.SemanticIndex, parameterFormat, currentInputSlot);
-				}
-				
-				prevSemanticName = std::string(inputSignatureParameterDesc.SemanticName);
-				prevSemanticIndex = inputSignatureParameterDesc.SemanticIndex;
-
-				DASH_LOG(LogTemp, Info, " =================================================== ");
+				continue;
+			}
+			else
+			{
+				noSystemValueEnd = parameterIndex;
 			}
 
-			if ((systemValueStart != INDEX_NONE) && (noSystemValueEnd != INDEX_NONE) && (systemValueStart < noSystemValueEnd))
+			if (FStringUtility::Contains(currentSemanticName, "Half"))
 			{
-				ASSERT_MSG(false, "System values should be placed after all non-system values.");
+				inputType = EVSInputType::Half;
 			}
+			else if (FStringUtility::Contains(currentSemanticName, "Short"))
+			{
+				inputType = EVSInputType::Short;
+			}
+
+			if (inputSignatureParameterDesc.Mask == 1)
+			{
+				if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
+				{
+					switch (inputType)
+					{
+					case EVSInputType::Float:
+						parameterFormat = EResourceFormat::R32_Unsigned;
+						break;
+					case EVSInputType::Half:
+						parameterFormat = EResourceFormat::R16_Unsigned;
+						break;
+					case EVSInputType::Short:
+						parameterFormat = EResourceFormat::R8_Unsigned;
+						break;
+					default:
+						break;
+					}
+				}
+				else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
+				{
+					switch (inputType)
+					{
+					case EVSInputType::Float:
+						parameterFormat = EResourceFormat::R32_Signed;
+						break;
+					case EVSInputType::Half:
+						parameterFormat = EResourceFormat::R16_Signed;
+						break;
+					case EVSInputType::Short:
+						parameterFormat = EResourceFormat::R8_Signed;
+						break;
+					default:
+						break;
+					}
+				}
+				else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
+				{
+					switch (inputType)
+					{
+					case EVSInputType::Float:
+						parameterFormat = EResourceFormat::R32_Float;
+						break;
+					case EVSInputType::Half:
+						parameterFormat = EResourceFormat::R16_Float;
+						break;
+					case EVSInputType::Short:
+						parameterFormat = EResourceFormat::R8_Unsigned_Norm;
+						break;
+					default:
+						break;
+					}
+				}
+			}
+			else if (inputSignatureParameterDesc.Mask <= 3)
+			{
+				if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
+				{
+					switch (inputType)
+					{
+					case EVSInputType::Float:
+						parameterFormat = EResourceFormat::RG32_Unsigned;
+						break;
+					case EVSInputType::Half:
+						parameterFormat = EResourceFormat::RG16_Unsigned;
+						break;
+					case EVSInputType::Short:
+						parameterFormat = EResourceFormat::RG8_Unsigned;
+						break;
+					default:
+						break;
+					}
+				}
+				else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
+				{
+					switch (inputType)
+					{
+					case EVSInputType::Float:
+						parameterFormat = EResourceFormat::RG32_Signed;
+						break;
+					case EVSInputType::Half:
+						parameterFormat = EResourceFormat::RG16_Signed;
+						break;
+					case EVSInputType::Short:
+						parameterFormat = EResourceFormat::RG8_Signed;
+						break;
+					default:
+						break;
+					}
+				}
+				else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
+				{
+					switch (inputType)
+					{
+					case EVSInputType::Float:
+						parameterFormat = EResourceFormat::RG32_Float;
+						break;
+					case EVSInputType::Half:
+						parameterFormat = EResourceFormat::RG16_Float;
+						break;
+					case EVSInputType::Short:
+						parameterFormat = EResourceFormat::RG8_Usigned_Norm;
+						break;
+					default:
+						break;
+					}
+				}
+			}
+			else if (inputSignatureParameterDesc.Mask <= 7)
+			{
+				if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
+				{
+					switch (inputType)
+					{
+					case EVSInputType::Float:
+						parameterFormat = EResourceFormat::RGB32_Unsigned;
+						break;
+					case EVSInputType::Half:
+					case EVSInputType::Short:
+						ASSERT_MSG(false, "Not Supported Format!");
+						break;
+					default:
+						break;
+					}
+				}
+				else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
+				{
+					switch (inputType)
+					{
+					case EVSInputType::Float:
+						parameterFormat = EResourceFormat::RGB32_Signed;
+						break;
+					case EVSInputType::Half:
+					case EVSInputType::Short:
+						ASSERT_MSG(false, "Not Supported Format!");
+						break;
+					default:
+						break;
+					}
+				}
+				else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
+				{
+					switch (inputType)
+					{
+					case EVSInputType::Float:
+						parameterFormat = EResourceFormat::RGB32_Float;
+						break;
+					case EVSInputType::Half:
+					case EVSInputType::Short:
+						ASSERT_MSG(false, "Not Supported Format!");
+						break;
+					default:
+						break;
+					}
+				}
+			}
+			else if (inputSignatureParameterDesc.Mask <= 15)
+			{
+				if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
+				{
+					switch (inputType)
+					{
+					case EVSInputType::Float:
+						parameterFormat = EResourceFormat::RGBA32_Unsigned;
+						break;
+					case EVSInputType::Half:
+						parameterFormat = EResourceFormat::RGBA16_Unsigned;
+						break;
+					case EVSInputType::Short:
+						parameterFormat = EResourceFormat::RGBA8_Unsigned;
+						break;
+					default:
+						break;
+					}
+				}
+				else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
+				{
+					switch (inputType)
+					{
+					case EVSInputType::Float:
+						parameterFormat = EResourceFormat::RGBA32_Signed;
+						break;
+					case EVSInputType::Half:
+						parameterFormat = EResourceFormat::RGBA16_Signed;
+						break;
+					case EVSInputType::Short:
+						parameterFormat = EResourceFormat::RGBA8_Signed;
+						break;
+					default:
+						break;
+					}
+				}
+				else if (inputSignatureParameterDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
+				{
+					switch (inputType)
+					{
+					case EVSInputType::Float:
+						parameterFormat = EResourceFormat::RGBA32_Float;
+						break;
+					case EVSInputType::Half:
+						parameterFormat = EResourceFormat::RGBA16_Float;
+						break;
+					case EVSInputType::Short:
+						parameterFormat = EResourceFormat::RGBA8_Unsigned_Norm;
+						break;
+					default:
+						break;
+					}
+				}
+			}
+
+			if (!prevSemanticName.empty())
+			{
+				if (currentSemanticName != prevSemanticName && (prevSemanticIndex + 1) != inputSignatureParameterDesc.SemanticIndex)
+				{
+					++currentInputSlot;
+				}
+			}
+
+			if (isIstanceSemantic)
+			{
+				mInputLayout.AddPerInstanceLayoutElement(inputSignatureParameterDesc.SemanticName, inputSignatureParameterDesc.SemanticIndex, parameterFormat, currentInputSlot);
+			}
+			else
+			{
+				mInputLayout.AddPerVertexLayoutElement(inputSignatureParameterDesc.SemanticName, inputSignatureParameterDesc.SemanticIndex, parameterFormat, currentInputSlot);
+			}
+
+			prevSemanticName = std::string(inputSignatureParameterDesc.SemanticName);
+			prevSemanticIndex = inputSignatureParameterDesc.SemanticIndex;
+
+			DASH_LOG(LogTemp, Info, " =================================================== ");
+		}
+
+		if ((systemValueStart != INDEX_NONE) && (noSystemValueEnd != INDEX_NONE) && (systemValueStart < noSystemValueEnd))
+		{
+			ASSERT_MSG(false, "System values should be placed after all non-system values.");
 		}
 	}
 
@@ -458,5 +571,25 @@ namespace Dash
 		}
 
 		return false;
+	}
+
+	void FShaderResource::SortParameters()
+	{
+	}
+
+	void FShaderResource::SortParameter(std::vector<FShaderParameter>& parameters)
+	{
+		std::sort(parameters.begin(), parameters.end(), [](const FShaderParameter& paramA, const FShaderParameter& paramB)
+			{
+				if (paramA.RegisterSpace == paramB.RegisterSpace)
+				{
+					return paramA.BindPoint < paramB.BindPoint;
+				}
+				else
+				{
+					return paramA.RegisterSpace < paramB.RegisterSpace;
+				}
+			}
+		);
 	}
 }

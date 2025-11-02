@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Utility/BitwiseEnum.h"
+#include "GraphicsDefines.h"
 #include <wtypes.h>
 #include <Unknwn.h>
 #include "InputAssemblerLayout.h"
@@ -11,21 +11,6 @@
 
 namespace Dash
 {
-	#define SHADER_BLOB_FILE_EXTENSION ".cso"
-	#define REFLECTION_BLOB_FILE_EXTENSION ".refect"
-	#define PDB_BLOB_FILE_EXTENSION ".pdb"
-
-	enum class EShaderStage : uint16
-	{
-		Vertex = 1 << 1,
-		Hull = 1 << 2,
-		Domain = 1 << 3,
-		Geometry = 1 << 4,
-		Pixel = 1 << 5,
-		Compute = 1 << 6,
-	};
-	ENABLE_BITMASK_OPERATORS(EShaderStage);
-
 	struct FShaderCreationInfo
 	{
 	public:
@@ -83,6 +68,7 @@ namespace Dash
 	struct FConstantBufferVariable
 	{
 		std::string VariableName;
+		EShaderParameterType ParamterType = EShaderParameterType::Invalid;
 		UINT StartOffset;
 		UINT Size;
 	};
@@ -91,12 +77,15 @@ namespace Dash
 	{
 		std::string Name;
 		EShaderStage ShaderStage = EShaderStage::Vertex;
-		D3D_SHADER_INPUT_TYPE ResourceType = D3D_SHADER_INPUT_TYPE::D3D_SIT_CBUFFER;
+		D3D_SHADER_INPUT_TYPE ShaderInputType = D3D_SHADER_INPUT_TYPE::D3D_SIT_CBUFFER;
+		EShaderResourceBindingType BindingType = EShaderResourceBindingType::Invalid;
+		EShaderParameterType ParameterType = EShaderParameterType::Invalid;
 		D3D_SRV_DIMENSION ResourceDimension = D3D_SRV_DIMENSION::D3D_SRV_DIMENSION_BUFFER;
 		UINT BindPoint = 0;
 		UINT RegisterSpace = 0;
 		UINT Size = 0;
 		UINT BindCount = 0;
+		UINT Stride = 0;
 		UINT RootParameterIndex = 0;
 		UINT DescriptorOffset = 0;
 		std::vector<FConstantBufferVariable> ConstantBufferVariables;
@@ -113,18 +102,34 @@ namespace Dash
 		std::string GetHashedFileName() const { return mCreationInfo.GetHashedFileName(); }
 		EShaderStage GetShaderStage() const { return mCreationInfo.Stage; }
 		size_t GetShaderHash() const { return mCreationInfo.GetShaderHash(); }
-		const std::vector<FShaderParameter>& GetShaderParameters() const { return mParameters; }
+		const std::vector<FShaderParameter>& GetCBVParameters() const { return mCBVParameters; }
+		const std::vector<FShaderParameter>& GetSRVParameters() const { return mSRVParameters; }
+		const std::vector<FShaderParameter>& GetUAVParameters() const { return mUAVParameters; }
+		const std::vector<FShaderParameter>& GetSamplerParameters() const { return mSamplerParameters; }
 		const FInputAssemblerLayout& GetInputLayout() const { return mInputLayout; }
 
 	protected:
 		void Init(TRefCountPtr<IDxcBlob>& compiledShaderBlob, TRefCountPtr<ID3D12ShaderReflection>& reflector, const FShaderCreationInfo& creationInfo);
 		void ReflectShaderParameter(TRefCountPtr<ID3D12ShaderReflection>& reflector);
+		void ReflectInputLayout(const D3D12_SHADER_DESC& shaderDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector);
+		void ReflectCBVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector);
+		void ReflectSRVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector);
+		void ReflectUAVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector);
+		void ReflectSamplerParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector);
 		bool IsSystemGeneratedValues(const std::string& semantic) const;
+
+		void SortParameters();
+		void SortParameter(std::vector<FShaderParameter>& parameters);
 
 		FShaderCreationInfo mCreationInfo;
 		TRefCountPtr<IDxcBlob> mCompiledShaderBlob;
 		FCompiledBinary mShaderBinary;
-		std::vector<FShaderParameter> mParameters;
+		
+		std::vector<FShaderParameter> mCBVParameters;
+		std::vector<FShaderParameter> mSRVParameters;
+		std::vector<FShaderParameter> mUAVParameters;
+		std::vector<FShaderParameter> mSamplerParameters;
+
 		FInputAssemblerLayout mInputLayout;
 	}; 
 }

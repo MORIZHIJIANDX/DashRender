@@ -58,14 +58,14 @@ namespace Dash
 
 	struct FParameterKey
 	{
-		D3D_SHADER_INPUT_TYPE ResourceType;
+		D3D_SHADER_INPUT_TYPE ShaderInputType;
 		UINT BindPoint = 0;
 		UINT RegisterSpace = 0;
 		D3D_SRV_DIMENSION ResourceDimension;
 
 		bool operator<(const FParameterKey& src)const
 		{
-			if (ResourceType == src.ResourceType)
+			if (ShaderInputType == src.ShaderInputType)
 			{
 				if (BindPoint == src.BindPoint)
 				{
@@ -82,41 +82,84 @@ namespace Dash
 				}
 			}
 			
-			return ResourceType < src.ResourceType;
+			return ShaderInputType < src.ShaderInputType;
 		}
 	};
 
 	void FShaderPass::Finalize(bool createStaticSamplers)
 	{
 		mPassType = mShaders.contains(EShaderStage::Compute) ? EShaderPassType::Compute : EShaderPassType::Raster;
-
-		std::map<FParameterKey, FShaderParameter> parameterMap;
 		
+		FQuantizedBoundShaderState quantizedBoundShaderState;
+		quantizedBoundShaderState.RootSignatureType = mPassType;
+		quantizedBoundShaderState.NumStaticSamplers = createStaticSamplers ? 8 : 0;
+
 		std::vector<FShaderResourceRef> SortedShaders;
 		for (auto& pair : mShaders)
 		{
+			EShaderStage shaderStage = pair.first;
 			FShaderResourceRef shaderRef = pair.second;
 
-			const std::vector<FShaderParameter>& shaderParameters = shaderRef->GetShaderParameters();
-			for (UINT parameterIndex = 0; parameterIndex < shaderParameters.size(); ++parameterIndex)
+			uint32 shaderStageIndex = static_cast<uint32>(shaderStage);
+
+			mCBVParameters[shaderStageIndex] = shaderRef->GetCBVParameters();
+			mSRVParameters[shaderStageIndex] = shaderRef->GetSRVParameters();
+			mUAVParameters[shaderStageIndex] = shaderRef->GetUAVParameters();
+			mSamplerParameters[shaderStageIndex] = shaderRef->GetSamplerParameters();
+
+			quantizedBoundShaderState.RegisterCounts[shaderStageIndex].ConstantBufferCount = mCBVParameters[shaderStageIndex].size();
+			quantizedBoundShaderState.RegisterCounts[shaderStageIndex].ShaderResourceCount = mSRVParameters[shaderStageIndex].size();
+			quantizedBoundShaderState.RegisterCounts[shaderStageIndex].UnorderedAccessCount = mUAVParameters[shaderStageIndex].size();
+			quantizedBoundShaderState.RegisterCounts[shaderStageIndex].SamplerCount = mSamplerParameters[shaderStageIndex].size();
+
+			quantizedBoundShaderState.NumRootParameters += mCBVParameters[shaderStageIndex].size();
+			quantizedBoundShaderState.NumRootParameters += mSRVParameters[shaderStageIndex].empty() ? 0 : 1;
+			quantizedBoundShaderState.NumRootParameters += mUAVParameters[shaderStageIndex].empty() ? 0 : 1;
+			quantizedBoundShaderState.NumRootParameters += mSamplerParameters[shaderStageIndex].empty() ? 0 : 1;
+
+			for (int32 cbvIndex = 0; cbvIndex < mCBVParameters[shaderStageIndex].size(); cbvIndex++)
 			{
-				const FShaderParameter& shaderParameter = shaderParameters[parameterIndex];
+				const FShaderParameter& constantBufferParameter = mCBVParameters[shaderStageIndex][cbvIndex];
 
-				FParameterKey key{ shaderParameter.ResourceType, shaderParameter.BindPoint, shaderParameter.RegisterSpace };
+				for (int32 cvbMemberIndex = 0; cvbMemberIndex < constantBufferParameter.ConstantBufferVariables.size(); cvbMemberIndex++)
+				{
+					const FConstantBufferVariable& variable = constantBufferParameter.ConstantBufferVariables[cvbMemberIndex];
 
-				if (parameterMap.contains(key))
-				{
-					ASSERT(parameterMap[key].Name == shaderParameter.Name);
-					ASSERT(parameterMap[key].Size == shaderParameter.Size);
-					parameterMap[key].ShaderStage |= shaderParameter.ShaderStage;
-				}
-				else
-				{
-					parameterMap[key] = shaderParameter;
+					if (variable.ParamterType == EShaderParameterType::LooseData)
+					{
+						mConstantVariables[shaderStageIndex].push_back(variable);
+					}
+					else if (variable.ParamterType == EShaderParameterType::BindlessSRV)
+					{
+						mBindlessSRVVariables[shaderStageIndex].push_back(variable);
+					}
+					else if (variable.ParamterType == EShaderParameterType::BindlessUAV)
+					{
+						mBindlessUAVVariables[shaderStageIndex].push_back(variable);
+					}
+					else if (variable.ParamterType == EShaderParameterType::BindlessSampler)
+					{
+						mBindlessSamplerVariables[shaderStageIndex].push_back(variable);
+					}
+					else
+					{
+						ASSERT_MSG(false, "Invalid Shader Parameter Type!");
+					}
 				}
 			}
 
 			SortedShaders.push_back(shaderRef);
+
+			DASH_LOG(LogTemp, Info, "ShaderType : {}", ShaderStageToString(shaderStage));
+			DASH_LOG(LogTemp, Info, "Num Constant Buffer Parameters : {}", mCBVParameters[shaderStageIndex].size());
+			DASH_LOG(LogTemp, Info, "Num Shader Resource View Parameters : {}", mSRVParameters[shaderStageIndex].size());
+			DASH_LOG(LogTemp, Info, "Num Unordered Access View Parameters : {}", mUAVParameters[shaderStageIndex].size());
+			DASH_LOG(LogTemp, Info, "Num Sampler Parameters : {}", mSamplerParameters[shaderStageIndex].size());
+
+			DASH_LOG(LogTemp, Info, "Num Constant Variables (LooseData) : {}", mConstantVariables[shaderStageIndex].size());
+			DASH_LOG(LogTemp, Info, "Num Bindless Shader Resource View Variables : {}", mBindlessSRVVariables[shaderStageIndex].size());
+			DASH_LOG(LogTemp, Info, "Num Bindless Unordered Access View Variables : {}", mBindlessUAVVariables[shaderStageIndex].size());
+			DASH_LOG(LogTemp, Info, "Num Bindless Sampler Variables : {}", mBindlessSamplerVariables[shaderStageIndex].size());
 		}
 
 		std::sort(SortedShaders.begin(), SortedShaders.end(), [](const FShaderResourceRef& a, const FShaderResourceRef& b){
@@ -130,57 +173,7 @@ namespace Dash
 		}
 		ShadersHash = std::hash<std::string>{}(HashedShaderFileName);
 
-		DASH_LOG(LogTemp, Info, "Num Pass Parameters : {}", parameterMap.size());
-
-		for (auto& pair : parameterMap)
-		{
-			D3D_SHADER_INPUT_TYPE resourceType = pair.second.ResourceType;
-
-			switch (resourceType)
-			{
-			case D3D_SHADER_INPUT_TYPE::D3D10_SIT_CBUFFER:
-			{
-				mCBVParameters.push_back(pair.second);
-				DASH_LOG(LogTemp, Info, "Add CBV Pass Parameter : {}", pair.second.Name);
-				break;
-			}
-			case D3D_SHADER_INPUT_TYPE::D3D_SIT_TBUFFER:
-			case D3D_SHADER_INPUT_TYPE::D3D_SIT_TEXTURE:
-			case D3D_SHADER_INPUT_TYPE::D3D_SIT_STRUCTURED:
-			case D3D_SHADER_INPUT_TYPE::D3D_SIT_BYTEADDRESS:
-			{
-				mSRVParameters.push_back(pair.second);
-				DASH_LOG(LogTemp, Info, "Add SRV Pass Parameter : {}", pair.second.Name);
-				break;
-			}
-			case D3D_SHADER_INPUT_TYPE::D3D_SIT_UAV_RWTYPED:
-			case D3D_SHADER_INPUT_TYPE::D3D_SIT_UAV_RWSTRUCTURED:
-			case D3D_SHADER_INPUT_TYPE::D3D_SIT_UAV_RWBYTEADDRESS:
-			case D3D_SHADER_INPUT_TYPE::D3D_SIT_UAV_APPEND_STRUCTURED:
-			case D3D_SHADER_INPUT_TYPE::D3D_SIT_UAV_CONSUME_STRUCTURED:
-			case D3D_SHADER_INPUT_TYPE::D3D_SIT_UAV_RWSTRUCTURED_WITH_COUNTER:
-			case D3D_SHADER_INPUT_TYPE::D3D_SIT_UAV_FEEDBACKTEXTURE:
-			{
-				mUAVParameters.push_back(pair.second);
-				DASH_LOG(LogTemp, Info, "Add UAV Pass Parameter : {}", pair.second.Name);
-				break;
-			}
-			case D3D_SHADER_INPUT_TYPE::D3D_SIT_SAMPLER:
-			{
-				if (!FStringUtility::Contains(pair.second.Name, "_Static"))
-				{
-					mSamplerParameters.push_back(pair.second);
-					DASH_LOG(LogTemp, Info, "Add Sampler Pass Parameter : {}", pair.second.Name);
-				}
-				break;
-			}
-			default:
-				ASSERT_MSG(false, "Invalid shader resource type!");
-				break;
-			}
-		}
-
-		CreateRootSignature(createStaticSamplers);
+		CreateRootSignature(quantizedBoundShaderState);
 	}
 
 	int32 FShaderPass::FindCBVParameterByName(const std::string& parameterName) const
@@ -203,45 +196,23 @@ namespace Dash
 		return FindParameterByName(mSamplerParameters, parameterName);
 	}
 
-	void FShaderPass::CreateRootSignature(bool createStaticSamplers)
+	void FShaderPass::CreateRootSignature(const FQuantizedBoundShaderState& quantizedBoundShaderState)
 	{
-		UINT numConstantParameters = static_cast<UINT>(mCBVParameters.size());
-		UINT numSRVParameters = static_cast<UINT>(mSRVParameters.size());
-		UINT numUAVParameters = static_cast<UINT>(mUAVParameters.size());
-		UINT numDynamicSamplerParameters = static_cast<UINT>(mSamplerParameters.size());
-
-		bool hasConstantParameters = numConstantParameters > 0;
-		bool hasSRVParameters = numSRVParameters > 0;
-		bool hasUAVParameters = numUAVParameters > 0;
-		bool hasDynamicSamplerParameters = numDynamicSamplerParameters > 0;
-
-		UINT numRootParameters = numConstantParameters + (hasSRVParameters ? UINT(1) : UINT(0)) + (hasUAVParameters ? UINT(1) : UINT(0)) + (hasDynamicSamplerParameters ? UINT(1) : UINT(0));
-
-		FBoundShaderState boundShaderState(numRootParameters, createStaticSamplers ? 8 : 0);
+		FBoundShaderState boundShaderState(quantizedBoundShaderState);
 		
 		uint32 rootParameterIndex = 0;
-		if (hasConstantParameters)
+
+		for (auto& pair : mShaders)
 		{
-			std::sort(mCBVParameters.begin(), mCBVParameters.end(), [](const FShaderParameter& paramA, const FShaderParameter& paramB)
-				{
-					return paramA.BindPoint < paramB.BindPoint;
-				}
-			);
+			EShaderStage shaderStage = pair.first;
+			FShaderResourceRef shaderRef = pair.second;
 
-			for (size_t i = 0; i < numConstantParameters; i++)
-			{
-				FShaderParameter& cbv = mCBVParameters[i];
-				cbv.RootParameterIndex = rootParameterIndex;
-				boundShaderState[rootParameterIndex].InitAsRootConstantBufferView(cbv.BindPoint, GetShaderVisibility(cbv.ShaderStage), cbv.RegisterSpace);
-				++rootParameterIndex;
-			}
+			uint32 shaderStageIndex = static_cast<uint32>(shaderStage);
+
+			InitShaderRootParamters(shaderStage, boundShaderState, rootParameterIndex);
 		}
-
-		InitDescriptorRanges(boundShaderState, mSRVParameters, rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
-		InitDescriptorRanges(boundShaderState, mUAVParameters, rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_UAV);
-		InitDescriptorRanges(boundShaderState, mSamplerParameters, rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER);
 		 
-		if (createStaticSamplers)
+		if (quantizedBoundShaderState.NumStaticSamplers > 0)
 		{
 			std::vector<FSamplerDesc> staticSamplers = CreateStaticSamplers();
 
@@ -254,6 +225,35 @@ namespace Dash
 		boundShaderState.Finalize(D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 		mRootSignature = FGraphicsCore::RootSignatureManager->GetRootSignature(boundShaderState, mPassName + "_RootSignature");
+	}
+
+	void FShaderPass::InitShaderRootParamters(EShaderStage stage, FBoundShaderState& boundShaderState, uint32 currentParameterIndex)
+	{
+		uint32 shaderStageIndex = static_cast<uint32>(stage);
+		
+		for (uint32 cbvIndex = 0; cbvIndex < mCBVParameters[shaderStageIndex].size(); cbvIndex++)
+		{
+			FShaderParameter& constantBufferParameter = mCBVParameters[shaderStageIndex][cbvIndex];
+
+			constantBufferParameter.RootParameterIndex = currentParameterIndex;
+			boundShaderState[currentParameterIndex].InitAsRootConstantBufferView(constantBufferParameter.BindPoint, GetShaderVisibility(stage), constantBufferParameter.RegisterSpace);
+			currentParameterIndex++;
+		}
+
+		if (!mSRVParameters[shaderStageIndex].empty())
+		{
+			InitDescriptorRanges(boundShaderState, mSRVParameters[shaderStageIndex], currentParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SRV, stage);
+		}
+		
+		if (!mUAVParameters[shaderStageIndex].empty())
+		{
+			InitDescriptorRanges(boundShaderState, mUAVParameters[shaderStageIndex], currentParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_UAV, stage);
+		}
+
+		if (!mSamplerParameters[shaderStageIndex].empty())
+		{
+			InitDescriptorRanges(boundShaderState, mSamplerParameters[shaderStageIndex], currentParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, stage);
+		}
 	}
 
 	D3D12_SHADER_VISIBILITY FShaderPass::GetShaderVisibility(EShaderStage stage)
@@ -325,67 +325,22 @@ namespace Dash
 		return names;
 	}
 
-	void FShaderPass::InitDescriptorRanges(FBoundShaderState& boundShaderState, std::vector<FShaderParameter>& parameters, UINT& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType)
+	void FShaderPass::InitDescriptorRanges(FBoundShaderState& boundShaderState, std::vector<FShaderParameter>& parameters, UINT& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, EShaderStage stage)
 	{
-		size_t parametersCount = parameters.size();
+		uint32 parametersCount = parameters.size();
 		if (parametersCount > 0)
 		{
-			std::sort(parameters.begin(), parameters.end(), [](const FShaderParameter& paramA, const FShaderParameter& paramB)
-				{
-					return paramA.BindPoint < paramB.BindPoint;
-				}
-			);
-
-			std::vector<std::pair<size_t, size_t>> ranges;
-
-			EShaderStage shaderStages = parameters[0].ShaderStage;
-			size_t startParameterIndex = 0;
-			while (startParameterIndex < parametersCount)
+			for (uint32 parameterIndex = 0; parameterIndex < parametersCount; parameterIndex++)
 			{
-				for (size_t parameterIndex = startParameterIndex; parameterIndex < parametersCount; parameterIndex++)
-				{
-					if (parameterIndex + 1 < parametersCount)
-					{
-						if ((parameters[parameterIndex + 1].BindPoint != (parameters[parameterIndex].BindPoint + 1)) ||
-							(parameters[parameterIndex + 1].RegisterSpace != parameters[parameterIndex].RegisterSpace))
-						{
-							ranges.push_back(std::pair(startParameterIndex, parameterIndex));
-							startParameterIndex = parameterIndex + 1;
-						}
-					}
-					else
-					{
-						ranges.push_back(std::pair(startParameterIndex, parameterIndex));
-						startParameterIndex = parameterIndex + 1;
-					}
-					shaderStages |= parameters[parameterIndex].ShaderStage;
-				}
-			}
+				parameters[parameterIndex].RootParameterIndex = rootParameterIndex;
+				parameters[parameterIndex].DescriptorOffset = parameterIndex;	//offset in parameter
 
-			UINT rangeCount = static_cast<UINT>(ranges.size());
-			if (rangeCount > 0)
-			{
-				boundShaderState[rootParameterIndex].InitAsDescriptorTable(rangeCount, GetShaderVisibility(shaderStages));
-
-				UINT parameterDescriptorOffset = 0;
-				for (size_t rangeIndex = 0; rangeIndex < rangeCount; rangeIndex++)
-				{
-					size_t startShaderParameterIndex = ranges[rangeIndex].first;
-					size_t endShaderParameterIndex = ranges[rangeIndex].second;
-					UINT baseShaderRegister = parameters[startShaderParameterIndex].BindPoint;
-					UINT registerSpace = parameters[startShaderParameterIndex].RegisterSpace;
-					UINT descriptorCountInRange = 0;
-					for (size_t parameterIndex = startShaderParameterIndex; parameterIndex <= endShaderParameterIndex; parameterIndex++)
-					{
-						parameters[parameterIndex].RootParameterIndex = rootParameterIndex;
-						parameters[parameterIndex].DescriptorOffset = parameterDescriptorOffset;	//offset in parameter
-						descriptorCountInRange += parameters[parameterIndex].BindCount;
-						parameterDescriptorOffset += parameters[parameterIndex].BindCount;
-					}
-					boundShaderState[rootParameterIndex].SetTableRange(static_cast<UINT>(rangeIndex), rangeType, baseShaderRegister, descriptorCountInRange, registerSpace);
-				}
-				++rootParameterIndex;
+				ASSERT(parameters[parameterIndex].RegisterSpace == 0);
 			}
+			boundShaderState[rootParameterIndex].InitAsDescriptorTable(1, GetShaderVisibility(stage));
+			// 不同 Shader 间的 register 相互独立，都是从 Bind Point 0 开始
+			boundShaderState[rootParameterIndex].SetTableRange(0, rangeType, 0, parametersCount, 0);
+			rootParameterIndex++;
 		}
 	}
 }
