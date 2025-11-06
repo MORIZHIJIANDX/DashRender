@@ -13,7 +13,7 @@ namespace Dash
 		PipelineStateStream.BlendState = blendDesc.D3DBlendState();
 	}
 
-	void FGraphicsPipelineStateInitializer::SetSamplerMask(UINT samperMask)
+	void FGraphicsPipelineStateInitializer::SetSamplerMask(uint32 samperMask)
 	{
 		PipelineStateStream.SampleMask = samperMask;
 	}
@@ -34,30 +34,30 @@ namespace Dash
 		PipelineStateStream.PrimitiveTopologyType = D3DPrimitiveTopologyType(primitiveTopologyType);
 	}
 
-	void FGraphicsPipelineStateInitializer::SetDepthTargetFormat(EResourceFormat depthTargetFormat, UINT msaaCount, UINT msaaQuality)
+	void FGraphicsPipelineStateInitializer::SetDepthTargetFormat(EResourceFormat depthTargetFormat, uint32 msaaCount, uint32 msaaQuality)
 	{
 		SetRenderTargetFormats(0, nullptr, depthTargetFormat, msaaCount, msaaQuality);
 	}
 
-	void FGraphicsPipelineStateInitializer::SetRenderTargetFormat(EResourceFormat renderTargetFormat, EResourceFormat depthTargetFormat, UINT msaaCount, UINT msaaQuality)
+	void FGraphicsPipelineStateInitializer::SetRenderTargetFormat(EResourceFormat renderTargetFormat, EResourceFormat depthTargetFormat, uint32 msaaCount, uint32 msaaQuality)
 	{
 		SetRenderTargetFormats(1, &renderTargetFormat, depthTargetFormat, msaaCount, msaaQuality);
 	}
 
-	void FGraphicsPipelineStateInitializer::SetRenderTargetFormats(UINT numRTVs, const EResourceFormat* renderTargetFormats, EResourceFormat depthTargetFormat, UINT msaaCount, UINT msaaQuality)
+	void FGraphicsPipelineStateInitializer::SetRenderTargetFormats(uint32 numRTVs, const EResourceFormat* renderTargetFormats, EResourceFormat depthTargetFormat, uint32 msaaCount, uint32 msaaQuality)
 	{
 		ASSERT_MSG(numRTVs == 0 || renderTargetFormats != nullptr, "Null format array conflicts with non-zero length");
 
 		D3D12_RT_FORMAT_ARRAY RTFormatArray = {};
 		RTFormatArray.NumRenderTargets = numRTVs;
 
-		for (UINT i = 0; i < numRTVs; ++i)
+		for (uint32 i = 0; i < numRTVs; ++i)
 		{
 			DXGI_FORMAT format = D3DFormat(renderTargetFormats[i]);
 			ASSERT(format != DXGI_FORMAT_UNKNOWN);
 			RTFormatArray.RTFormats[i] = format;
 		}
-		for (UINT i = numRTVs; i < (sizeof(RTFormatArray.RTFormats) / sizeof(RTFormatArray.RTFormats[0])); ++i)
+		for (uint32 i = numRTVs; i < (sizeof(RTFormatArray.RTFormats) / sizeof(RTFormatArray.RTFormats[0])); ++i)
 		{
 			RTFormatArray.RTFormats[i] = DXGI_FORMAT_UNKNOWN;
 		}

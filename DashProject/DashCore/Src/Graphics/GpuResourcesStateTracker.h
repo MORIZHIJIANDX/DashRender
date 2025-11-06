@@ -29,8 +29,8 @@ namespace Dash
 		 * @param subResource The subresource to transition. By default, this is D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES
 		 * which indicates that all subresources should be transitioned to the same state.
 		 */
-		void TransitionResource(ID3D12Resource* resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
-		void TransitionResource(const FGpuResourceRef& resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+		void TransitionResource(ID3D12Resource* resource, D3D12_RESOURCE_STATES stateAfter, uint32 subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+		void TransitionResource(const FGpuResourceRef& resource, D3D12_RESOURCE_STATES stateAfter, uint32 subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 
 		/**
 		 * Push a UAV resource barrier for the given resource.
@@ -131,7 +131,7 @@ namespace Dash
 			{}
 
 			// Set a subresource to a particular state.
-			void SetSubResourceState(UINT subResource, D3D12_RESOURCE_STATES state)
+			void SetSubResourceState(uint32 subResource, D3D12_RESOURCE_STATES state)
 			{
 				if (subResource == D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES)
 				{
@@ -148,7 +148,7 @@ namespace Dash
 			// If the specified subresource is not found in the SubresourceState array (map)
 			// then the state of the resource (D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES) is
 			// returned.
-			D3D12_RESOURCE_STATES GetSubResourceState(UINT subResource) const
+			D3D12_RESOURCE_STATES GetSubResourceState(uint32 subResource) const
 			{
 				D3D12_RESOURCE_STATES state = State;
 				const auto iter = mSubResourceStates.find(subResource);
@@ -162,7 +162,7 @@ namespace Dash
 			// If the SubresourceState array (map) is empty, then the State variable defines
 			// the state of all of the subresources.
 			D3D12_RESOURCE_STATES State;
-			std::map<UINT, D3D12_RESOURCE_STATES> mSubResourceStates;
+			std::map<uint32, D3D12_RESOURCE_STATES> mSubResourceStates;
 		};
 
 		using ResourceStateMap = std::unordered_map<ID3D12Resource*, ResourceState>;

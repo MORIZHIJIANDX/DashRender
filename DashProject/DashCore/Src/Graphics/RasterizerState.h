@@ -24,7 +24,7 @@ namespace Dash
 		void SetDepthProperties(int32 depthBias = 0, float depthBiasClamp = 0.0f, float slopeScaledDepthBias = 0.0f, bool depthClipEnable = true);
 		void SetMultisampleEnable(bool enable);
 		void SetAntialiasedLineEnable(bool enable);
-		void SetForcedSampleCount(UINT count);
+		void SetForcedSampleCount(uint32 count);
 		void SetConservativeRasterEnable(bool enable);
 
 		const CD3DX12_RASTERIZER_DESC& D3DRasterizerState() const { return mDesc; };

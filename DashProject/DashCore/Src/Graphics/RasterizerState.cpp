@@ -52,7 +52,7 @@ namespace Dash
 		mDesc.AntialiasedLineEnable = enable;
 	}
 
-	void FRasterizerState::SetForcedSampleCount(UINT count)
+	void FRasterizerState::SetForcedSampleCount(uint32 count)
 	{
 		mDesc.ForcedSampleCount = count;
 	}

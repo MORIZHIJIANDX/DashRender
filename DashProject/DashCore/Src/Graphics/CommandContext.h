@@ -125,7 +125,7 @@ namespace Dash
 		void EndQuery(const FQueryHeapRef& queryHeap, uint32 queryIndex);
 		void ResolveQueryData(const FQueryHeapRef& queryHeap, uint32 startIndex, uint32 numQueries, const FGpuBufferRef& dest, uint32 destOffset);
 
-		void TransitionBarrier(const FGpuResourceRef& resource, EResourceState newState, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, bool flushImmediate = false);
+		void TransitionBarrier(const FGpuResourceRef& resource, EResourceState newState, uint32 subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, bool flushImmediate = false);
 		void UAVBarrier(const FGpuResourceRef& resource, bool flushImmediate = false);
 		void AliasingBarrier(const FGpuResourceRef& resourceBefore, const FGpuResourceRef& resourceAfter, bool flushImmediate = false);
 		void FlushResourceBarriers();
@@ -146,7 +146,7 @@ namespace Dash
 		using FCopyCommandContextBase::FCopyCommandContextBase;
 
 		void SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type, ID3D12DescriptorHeap* heap);
-		void SetDescriptorHeaps(UINT count, D3D12_DESCRIPTOR_HEAP_TYPE types[], ID3D12DescriptorHeap* heaps[]);
+		void SetDescriptorHeaps(uint32 count, D3D12_DESCRIPTOR_HEAP_TYPE types[], ID3D12DescriptorHeap* heaps[]);
 
 		void SetComputePipelineState(FComputePSO* pso);
 		
@@ -159,11 +159,11 @@ namespace Dash
 		}
 
 		// Set descriptor table parameters
-		void SetShaderResourceView(const std::string& srvrName, const FColorBufferRef& buffer, EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0, UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
-		void SetShaderResourceView(const std::string& srvrName, const FTextureBufferRef& buffer, EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0, UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
-		void SetShaderResourceView(const std::string& srvrName, const FStructuredBufferRef& buffer, EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0, UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+		void SetShaderResourceView(const std::string& srvrName, const FColorBufferRef& buffer, EResourceState stateAfter = EResourceState::AnyShaderAccess, uint32 firstSubResource = 0, uint32 numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+		void SetShaderResourceView(const std::string& srvrName, const FTextureBufferRef& buffer, EResourceState stateAfter = EResourceState::AnyShaderAccess, uint32 firstSubResource = 0, uint32 numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+		void SetShaderResourceView(const std::string& srvrName, const FStructuredBufferRef& buffer, EResourceState stateAfter = EResourceState::AnyShaderAccess, uint32 firstSubResource = 0, uint32 numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 
-		void SetUnorderAccessView(const std::string& uavName, const FColorBufferRef& buffer, EResourceState stateAfter = EResourceState::UnorderedAccess, UINT firstSubResource = 0, UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+		void SetUnorderAccessView(const std::string& uavName, const FColorBufferRef& buffer, EResourceState stateAfter = EResourceState::UnorderedAccess, uint32 firstSubResource = 0, uint32 numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 
 		void ClearUAV(const FGpuBufferRef& target);
 		void ClearUAV(const FColorBufferRef& target);
@@ -178,11 +178,11 @@ namespace Dash
 
 		void SetShaderResourceView(const std::string& srvrName, const FGpuResourceRef& resource, const D3D12_CPU_DESCRIPTOR_HANDLE& srcDescriptors,
 			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0,
-			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+			uint32 numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 
 		void SetUnorderAccessView(const std::string& srvrName, const FGpuResourceRef& resource, const D3D12_CPU_DESCRIPTOR_HANDLE& uavDescriptors,
 			EResourceState stateAfter = EResourceState::UnorderedAccess, UINT firstSubResource = 0,
-			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+			uint32 numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 	};
 
 	class FGraphicsCommandContextBase : public FComputeCommandContextBase
@@ -198,8 +198,8 @@ namespace Dash
 
 		void SetGraphicsPipelineState(FGraphicsPSO* pso);
 
-		void SetRenderTargets(UINT numRTVs, const FColorBufferRef* rtvs);
-		void SetRenderTargets(UINT numRTVs, const FColorBufferRef* rtvs, const FDepthBufferRef& depthBuffer);
+		void SetRenderTargets(uint32 numRTVs, const FColorBufferRef* rtvs);
+		void SetRenderTargets(uint32 numRTVs, const FColorBufferRef* rtvs, const FDepthBufferRef& depthBuffer);
 		void SetRenderTarget(const FColorBufferRef& colorBuffer) { SetRenderTargets(1, &colorBuffer); }
 		void SetRenderTarget(const FColorBufferRef& colorBuffer, const FDepthBufferRef& depthBuffer) { SetRenderTargets(1, &colorBuffer, depthBuffer); }
 		void SetDepthStencilTarget(const FDepthBufferRef& depthBuffer) { SetRenderTargets(1, nullptr, depthBuffer); }
@@ -207,21 +207,21 @@ namespace Dash
 		void SetViewport(const FViewport& vp);
 		void SetViewport(Scalar x, Scalar y, Scalar w, Scalar h, Scalar minDepth = 0.0f, Scalar maxDepth = 1.0f);
 		void SetScissor(const D3D12_RECT& rect);
-		void SetScissor(UINT left, UINT top, UINT right, UINT bottom);
-		void SetViewportAndScissor(UINT x, UINT y, UINT width, UINT height);
-		void SetStencilRef(UINT stencilRef);
+		void SetScissor(uint32 left, uint32 top, uint32 right, uint32 bottom);
+		void SetViewportAndScissor(uint32 x, uint32 y, uint32 width, uint32 height);
+		void SetStencilRef(uint32 stencilRef);
 		void SetBlendFactor(const FLinearColor& color);
 		void SetPrimitiveTopology(EPrimitiveTopology primitiveTopology);
 
-		void SetDynamicSampler(UINT rootIndex, UINT descriptorOffset, D3D12_CPU_DESCRIPTOR_HANDLE handle);
-		void SetDynamicSamplers(UINT rootIndex, UINT descriptorOffset, UINT count, D3D12_CPU_DESCRIPTOR_HANDLE handles[]);
+		void SetDynamicSampler(uint32 rootIndex, uint32 descriptorOffset, D3D12_CPU_DESCRIPTOR_HANDLE handle);
+		void SetDynamicSamplers(uint32 rootIndex, uint32 descriptorOffset, uint32 count, D3D12_CPU_DESCRIPTOR_HANDLE handles[]);
 
 		void SetIndexBuffer(const FGpuIndexBufferRef& indexBuffer);
-		void SetVertexBuffer(UINT slot, const FGpuVertexBufferRef& vertexBuffer);
-		void SetVertexBuffers(UINT startSlot, UINT count, const FGpuVertexBufferRef* vertexBuffer);
+		void SetVertexBuffer(uint32 slot, const FGpuVertexBufferRef& vertexBuffer);
+		void SetVertexBuffers(uint32 startSlot, uint32 count, const FGpuVertexBufferRef* vertexBuffer);
 
-		void SetDynamicIndexBuffer(size_t indexCount, const uint16* data);
-		void SetDynamicVertexBuffer(UINT slot, size_t vertexCount, size_t vertexStride, const void* data);
+		void SetDynamicIndexBuffer(uint32 indexCount, const uint16* data);
+		void SetDynamicVertexBuffer(uint32 slot, uint32 vertexCount, uint32 vertexStride, const void* data);
 
 		void SetDepthBounds(float min, float max);
 
@@ -262,9 +262,9 @@ namespace Dash
 
 		static FGraphicsCommandContext& Begin(const std::string& id = "");
 
-		void Draw(UINT vertexCount, UINT vertexStartOffset = 0);
-		void DrawIndexed(UINT indexCount, UINT startIndexLocation = 0, UINT baseVertexLocation = 0);
-		void DrawInstanced(UINT vertexCountPerInstance, UINT instanceCount, UINT startVertexLocation = 0, UINT startInstanceLocation = 0);
-		void DrawIndexedInstanced(UINT indexCountPerInstance, UINT instanceCount, UINT startIndexLocation, INT baseVertexLocation, UINT startInstanceLocation);
+		void Draw(uint32 vertexCount, uint32 vertexStartOffset = 0);
+		void DrawIndexed(uint32 indexCount, uint32 startIndexLocation = 0, uint32 baseVertexLocation = 0);
+		void DrawInstanced(uint32 vertexCountPerInstance, uint32 instanceCount, uint32 startVertexLocation = 0, uint32 startInstanceLocation = 0);
+		void DrawIndexedInstanced(uint32 indexCountPerInstance, uint32 instanceCount, uint32 startIndexLocation, int32 baseVertexLocation, uint32 startInstanceLocation);
 	};
 }

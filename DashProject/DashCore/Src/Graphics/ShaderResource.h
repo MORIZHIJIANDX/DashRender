@@ -69,8 +69,8 @@ namespace Dash
 	{
 		std::string VariableName;
 		EShaderParameterType ParamterType = EShaderParameterType::Invalid;
-		UINT StartOffset;
-		UINT Size;
+		uint32 StartOffset;
+		uint32 Size;
 	};
 
 	struct FShaderParameter
@@ -81,13 +81,13 @@ namespace Dash
 		EShaderResourceBindingType BindingType = EShaderResourceBindingType::Invalid;
 		EShaderParameterType ParameterType = EShaderParameterType::Invalid;
 		D3D_SRV_DIMENSION ResourceDimension = D3D_SRV_DIMENSION::D3D_SRV_DIMENSION_BUFFER;
-		UINT BindPoint = 0;
-		UINT RegisterSpace = 0;
-		UINT Size = 0;
-		UINT BindCount = 0;
-		UINT Stride = 0;
-		UINT RootParameterIndex = 0;
-		UINT DescriptorOffset = 0;
+		uint32 BindPoint = 0;
+		uint32 RegisterSpace = 0;
+		uint32 Size = 0;
+		uint32 BindCount = 0;
+		uint32 Stride = 0;
+		uint32 RootParameterIndex = 0;
+		uint32 DescriptorOffset = 0;
 		std::vector<FConstantBufferVariable> ConstantBufferVariables;
 	};
 

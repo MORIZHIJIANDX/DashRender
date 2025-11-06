@@ -192,7 +192,7 @@ namespace Dash
 		return fenceValue;
 	}
 
-	void FCopyCommandContextBase::TransitionBarrier(const FGpuResourceRef& resource, EResourceState newState, UINT subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/, bool flushImmediate /*= false*/)
+	void FCopyCommandContextBase::TransitionBarrier(const FGpuResourceRef& resource, EResourceState newState, uint32 subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/, bool flushImmediate /*= false*/)
 	{
 		mResourceStateTracker.TransitionResource(resource, D3DResourceState(newState), subResource);
 
@@ -271,11 +271,11 @@ namespace Dash
 		}
 	}
 
-	void FComputeCommandContextBase::SetDescriptorHeaps(UINT count, D3D12_DESCRIPTOR_HEAP_TYPE types[], ID3D12DescriptorHeap* heaps[])
+	void FComputeCommandContextBase::SetDescriptorHeaps(uint32 count, D3D12_DESCRIPTOR_HEAP_TYPE types[], ID3D12DescriptorHeap* heaps[])
 	{
 		bool anyChanged = false;
 
-		for (UINT index = 0; index < count; ++index)
+		for (uint32 index = 0; index < count; ++index)
 		{
 			if (mDescriptorHeaps[types[index]] != heaps[index])
 			{
@@ -348,9 +348,9 @@ namespace Dash
 
 	void FCommandContext::BindDescriptorHeaps()
 	{
-		UINT nonNullHeaps = 0;
+		uint32 nonNullHeaps = 0;
 		ID3D12DescriptorHeap* heapsToBind[D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES];
-		for (UINT index = 0; index < D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES; ++index)
+		for (uint32 index = 0; index < D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES; ++index)
 		{
 			ID3D12DescriptorHeap* heapPtr = mDescriptorHeaps[index];
 			if (heapPtr != nullptr)
@@ -512,7 +512,7 @@ namespace Dash
 		UAVBarrier(target, true);
 
 		D3D12_GPU_DESCRIPTOR_HANDLE handle = mDynamicViewDescriptor.CopyAndSetDescriptor(*this, target->GetUnorderedAccessView());
-		const UINT clearColor[4] = {};
+		const uint32 clearColor[4] = {};
 		mD3DCommandList->ClearUnorderedAccessViewUint(handle, target->GetUnorderedAccessView(), target->GetResource()->GetResource(), clearColor, 0, nullptr);
 
 		TrackResource(target);
@@ -578,35 +578,35 @@ namespace Dash
 		}
 	}
 
-	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, const FColorBufferRef& buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
+	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, const FColorBufferRef& buffer, EResourceState stateAfter, uint32 firstSubResource, uint32 numSubResources)
 	{
 		ASSERT_MSG(mPSO != nullptr, "Pipeline State Is Not Set.");
 
 		SetShaderResourceView(srvrName, buffer, buffer->GetShaderResourceView(), stateAfter, firstSubResource, numSubResources);
 	}
 
-	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, const FTextureBufferRef& buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
+	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, const FTextureBufferRef& buffer, EResourceState stateAfter, uint32 firstSubResource, uint32 numSubResources)
 	{
 		ASSERT_MSG(mPSO != nullptr, "Pipeline State Is Not Set.");
 
 		SetShaderResourceView(srvrName, buffer, buffer->GetShaderResourceView(), stateAfter, firstSubResource, numSubResources);
 	}
 
-	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, const FStructuredBufferRef& buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
+	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, const FStructuredBufferRef& buffer, EResourceState stateAfter, uint32 firstSubResource, uint32 numSubResources)
 	{
 		ASSERT_MSG(mPSO != nullptr, "Pipeline State Is Not Set.");
 
 		SetShaderResourceView(srvrName, buffer, buffer->GetShaderResourceView(), stateAfter, firstSubResource, numSubResources);
 	}
 
-	void FComputeCommandContextBase::SetUnorderAccessView(const std::string& uavName, const FColorBufferRef& buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
+	void FComputeCommandContextBase::SetUnorderAccessView(const std::string& uavName, const FColorBufferRef& buffer, EResourceState stateAfter, uint32 firstSubResource, uint32 numSubResources)
 	{
 		SetUnorderAccessView(uavName, buffer, buffer->GetUnorderedAccessView(), stateAfter, firstSubResource, numSubResources);
 	}
 
 	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, const FGpuResourceRef& resource, const D3D12_CPU_DESCRIPTOR_HANDLE& srcDescriptors,
-		EResourceState stateAfter /*= EResourceState::AnyShaderAccess*/, UINT firstSubResource /*= 0*/,
-		UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
+		EResourceState stateAfter /*= EResourceState::AnyShaderAccess*/, uint32 firstSubResource /*= 0*/,
+		uint32 numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
 	{
 		FShaderPassRef shaderPass = mPSO->GetShaderPass();
 
@@ -623,7 +623,7 @@ namespace Dash
 				{
 					if (numSubResources < D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES)
 					{
-						for (UINT index = firstSubResource; index < (firstSubResource + numSubResources); ++index)
+						for (uint32 index = firstSubResource; index < (firstSubResource + numSubResources); ++index)
 						{
 							TransitionBarrier(resource, stateAfter, index);
 						}
@@ -650,7 +650,7 @@ namespace Dash
 	}
 
 	void FComputeCommandContextBase::SetUnorderAccessView(const std::string& srvrName, const FGpuResourceRef& resource, const D3D12_CPU_DESCRIPTOR_HANDLE& uavDescriptors,
-		EResourceState stateAfter /*= EResourceState::UnorderedAccess*/, UINT firstSubResource /*= 0*/, UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
+		EResourceState stateAfter /*= EResourceState::UnorderedAccess*/, uint32 firstSubResource /*= 0*/, uint32 numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
 	{
 		FShaderPassRef shaderPass = mPSO->GetShaderPass();
 
@@ -667,7 +667,7 @@ namespace Dash
 				{
 					if (numSubResources < D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES)
 					{
-						for (UINT index = firstSubResource; index < (firstSubResource + numSubResources); ++index)
+						for (uint32 index = firstSubResource; index < (firstSubResource + numSubResources); ++index)
 						{
 							TransitionBarrier(resource, stateAfter, index);
 						}
@@ -767,11 +767,11 @@ namespace Dash
 		mDynamicSamplerDescriptor.ParseRootSignature(*rootSignature);
 	}
 
-	void FGraphicsCommandContextBase::SetRenderTargets(UINT numRTVs, const FColorBufferRef* rtvs)
+	void FGraphicsCommandContextBase::SetRenderTargets(uint32 numRTVs, const FColorBufferRef* rtvs)
 	{
 		std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> rtvHandels;
 		
-		for (UINT index = 0; index < numRTVs; ++index)
+		for (uint32 index = 0; index < numRTVs; ++index)
 		{
 			rtvHandels.push_back(rtvs[index]->GetRenderTargetView());
 			TrackResource(rtvs[index]);
@@ -781,11 +781,11 @@ namespace Dash
 		mD3DCommandList->OMSetRenderTargets(numRTVs, rtvHandels.data(), false, nullptr);
 	}
 
-	void FGraphicsCommandContextBase::SetRenderTargets(UINT numRTVs, const FColorBufferRef* rtvs, const FDepthBufferRef& depthBuffer)
+	void FGraphicsCommandContextBase::SetRenderTargets(uint32 numRTVs, const FColorBufferRef* rtvs, const FDepthBufferRef& depthBuffer)
 	{
 		std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> rtvHandels;
 
-		for (UINT index = 0; index < numRTVs; ++index)
+		for (uint32 index = 0; index < numRTVs; ++index)
 		{
 			rtvHandels.push_back(rtvs[index]->GetRenderTargetView());
 			TrackResource(rtvs[index]);
@@ -823,19 +823,19 @@ namespace Dash
 		mD3DCommandList->RSSetScissorRects(1, &rect);
 	}
 
-	void FGraphicsCommandContextBase::SetScissor(UINT left, UINT top, UINT right, UINT bottom)
+	void FGraphicsCommandContextBase::SetScissor(uint32 left, uint32 top, uint32 right, uint32 bottom)
 	{
 		CD3DX12_RECT rect{ static_cast<LONG>(left), static_cast<LONG>(top), static_cast<LONG>(right), static_cast<LONG>(bottom) };
 		mD3DCommandList->RSSetScissorRects(1, &rect);
 	}
 
-	void FGraphicsCommandContextBase::SetViewportAndScissor(UINT x, UINT y, UINT width, UINT height)
+	void FGraphicsCommandContextBase::SetViewportAndScissor(uint32 x, uint32 y, uint32 width, uint32 height)
 	{
 		SetViewport(static_cast<float>(x), static_cast<float>(y), static_cast<float>(width), static_cast<float>(height));
 		SetScissor(x, y, x + width, y + height);
 	}
 
-	void FGraphicsCommandContextBase::SetStencilRef(UINT stencilRef)
+	void FGraphicsCommandContextBase::SetStencilRef(uint32 stencilRef)
 	{
 		mD3DCommandList->OMSetStencilRef(stencilRef);
 	}
@@ -850,14 +850,14 @@ namespace Dash
 		mD3DCommandList->IASetPrimitiveTopology(D3DPrimitiveTopology(primitiveTopology));
 	}
 
-	void FGraphicsCommandContextBase::SetDynamicSampler(UINT rootIndex, UINT descriptorOffset, D3D12_CPU_DESCRIPTOR_HANDLE handle)
+	void FGraphicsCommandContextBase::SetDynamicSampler(uint32 rootIndex, uint32 descriptorOffset, D3D12_CPU_DESCRIPTOR_HANDLE handle)
 	{
 		mDynamicSamplerDescriptor.StageDescriptors(rootIndex, descriptorOffset, 1, handle);
 	}
 
-	void FGraphicsCommandContextBase::SetDynamicSamplers(UINT rootIndex, UINT descriptorOffset, UINT count, D3D12_CPU_DESCRIPTOR_HANDLE handles[])
+	void FGraphicsCommandContextBase::SetDynamicSamplers(uint32 rootIndex, uint32 descriptorOffset, uint32 count, D3D12_CPU_DESCRIPTOR_HANDLE handles[])
 	{
-		for (UINT index = 0; index < count; ++index)
+		for (uint32 index = 0; index < count; ++index)
 		{
 			mDynamicSamplerDescriptor.StageDescriptors(rootIndex, descriptorOffset + index, 1, handles[index]);	
 		}
@@ -871,24 +871,24 @@ namespace Dash
 		mD3DCommandList->IASetIndexBuffer(indexBufferViews.data());
 	}
 
-	void FGraphicsCommandContextBase::SetVertexBuffer(UINT slot, const FGpuVertexBufferRef& vertexBuffer)
+	void FGraphicsCommandContextBase::SetVertexBuffer(uint32 slot, const FGpuVertexBufferRef& vertexBuffer)
 	{
 		SetVertexBuffers(slot, 1, &vertexBuffer);
 	}
 
-	void FGraphicsCommandContextBase::SetVertexBuffers(UINT startSlot, UINT count, const FGpuVertexBufferRef* vertexBuffer)
+	void FGraphicsCommandContextBase::SetVertexBuffers(uint32 startSlot, uint32 count, const FGpuVertexBufferRef* vertexBuffer)
 	{
 		std::vector<D3D12_VERTEX_BUFFER_VIEW> vetexBufferViews;
-		for (UINT index = 0; index < count; ++index)
+		for (uint32 index = 0; index < count; ++index)
 		{
 			vetexBufferViews.emplace_back(vertexBuffer[index]->GetVertexBufferView());
 			TrackResource(vertexBuffer[index]);
 			TransitionBarrier(vertexBuffer[index], vertexBuffer[index]->GetCpuAccess() ? EResourceState::GenericRead : EResourceState::VertexBuffer);
 		}
-		mD3DCommandList->IASetVertexBuffers(startSlot, static_cast<UINT>(vetexBufferViews.size()), vetexBufferViews.data());
+		mD3DCommandList->IASetVertexBuffers(startSlot, static_cast<uint32>(vetexBufferViews.size()), vetexBufferViews.data());
 	}
 
-	void FGraphicsCommandContextBase::SetDynamicIndexBuffer(size_t indexCount, const uint16* data)
+	void FGraphicsCommandContextBase::SetDynamicIndexBuffer(uint32 indexCount, const uint16* data)
 	{
 		size_t dataSize = indexCount * sizeof(uint16);
 		FGpuLinearAllocator::FAllocation alloc = mLinearAllocator.Allocate(dataSize);
@@ -897,12 +897,12 @@ namespace Dash
 		D3D12_INDEX_BUFFER_VIEW view = {};
 		view.BufferLocation = alloc.GpuAddress;
 		view.Format = DXGI_FORMAT_R16_UINT;
-		view.SizeInBytes = static_cast<UINT>(dataSize);
+		view.SizeInBytes = static_cast<uint32>(dataSize);
 
 		mD3DCommandList->IASetIndexBuffer(&view);
 	}
 
-	void FGraphicsCommandContextBase::SetDynamicVertexBuffer(UINT slot, size_t vertexCount, size_t vertexStride, const void* data)
+	void FGraphicsCommandContextBase::SetDynamicVertexBuffer(uint32 slot, uint32 vertexCount, uint32 vertexStride, const void* data)
 	{
 		size_t dataSize = vertexCount * vertexStride;
 		FGpuLinearAllocator::FAllocation alloc = mLinearAllocator.Allocate(dataSize);
@@ -910,8 +910,8 @@ namespace Dash
 
 		D3D12_VERTEX_BUFFER_VIEW view = {};
 		view.BufferLocation = alloc.GpuAddress;
-		view.SizeInBytes = static_cast<UINT>(dataSize);
-		view.StrideInBytes = static_cast<UINT>(vertexStride);
+		view.SizeInBytes = static_cast<uint32>(dataSize);
+		view.StrideInBytes = static_cast<uint32>(vertexStride);
 
 		mD3DCommandList->IASetVertexBuffers(slot, 1, &view);
 	}
@@ -939,17 +939,17 @@ namespace Dash
 		return *newContext;
 	}
 
-	void FGraphicsCommandContext::Draw(UINT vertexCount, UINT vertexStartOffset /*= 0*/)
+	void FGraphicsCommandContext::Draw(uint32 vertexCount, uint32 vertexStartOffset /*= 0*/)
 	{
 		DrawInstanced(vertexCount, 1, vertexStartOffset, 0);
 	}
 
-	void FGraphicsCommandContext::DrawIndexed(UINT indexCount, UINT startIndexLocation /*= 0*/, UINT baseVertexLocation /*= 0*/)
+	void FGraphicsCommandContext::DrawIndexed(uint32 indexCount, uint32 startIndexLocation /*= 0*/, uint32 baseVertexLocation /*= 0*/)
 	{
 		DrawIndexedInstanced(indexCount, 1, startIndexLocation, baseVertexLocation, 0);
 	}
 
-	void FGraphicsCommandContext::DrawInstanced(UINT vertexCountPerInstance, UINT instanceCount, UINT startVertexLocation /*= 0*/, UINT startInstanceLocation /*= 0*/)
+	void FGraphicsCommandContext::DrawInstanced(uint32 vertexCountPerInstance, uint32 instanceCount, uint32 startVertexLocation /*= 0*/, uint32 startInstanceLocation /*= 0*/)
 	{
 		CheckUnboundShaderParameters();
 
@@ -959,7 +959,7 @@ namespace Dash
 		mD3DCommandList->DrawInstanced(vertexCountPerInstance, instanceCount, startVertexLocation, startInstanceLocation);
 	}
 
-	void FGraphicsCommandContext::DrawIndexedInstanced(UINT indexCountPerInstance, UINT instanceCount, UINT startIndexLocation, INT baseVertexLocation, UINT startInstanceLocation)
+	void FGraphicsCommandContext::DrawIndexedInstanced(uint32 indexCountPerInstance, uint32 instanceCount, uint32 startIndexLocation, int32 baseVertexLocation, uint32 startInstanceLocation)
 	{
 		CheckUnboundShaderParameters();
 

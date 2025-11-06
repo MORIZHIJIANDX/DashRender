@@ -16,7 +16,7 @@ namespace Dash
 		mInputElements.push_back(desc);
 		mElementSemanticNames.push_back(semanticName);
 		
-		mDesc.NumElements = static_cast<UINT>(mInputElements.size());
+		mDesc.NumElements = static_cast<uint32>(mInputElements.size());
 		mDesc.pInputElementDescs = &mInputElements[0];
 
 		SetSemanticNames();
@@ -37,7 +37,7 @@ namespace Dash
 		mInputElements.push_back(desc);
 		mElementSemanticNames.push_back(semanticName);
 
-		mDesc.NumElements = static_cast<UINT>(mInputElements.size());
+		mDesc.NumElements = static_cast<uint32>(mInputElements.size());
 		mDesc.pInputElementDescs = &mInputElements[0];
 
 		SetSemanticNames();

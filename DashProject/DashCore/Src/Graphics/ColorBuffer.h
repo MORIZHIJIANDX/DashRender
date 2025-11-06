@@ -50,7 +50,7 @@ namespace Dash
 			return highBit + 1;
 		}
 
-		D3D12_UNORDERED_ACCESS_VIEW_DESC GetUAVDesc(const D3D12_RESOURCE_DESC& resourceDesc, UINT mipSlice, UINT arraySlice = 0, UINT planeSlice = 0) const;
+		D3D12_UNORDERED_ACCESS_VIEW_DESC GetUAVDesc(const D3D12_RESOURCE_DESC& resourceDesc, uint32 mipSlice, uint32 arraySlice = 0, uint32 planeSlice = 0) const;
 
 		void CreateViews();
 

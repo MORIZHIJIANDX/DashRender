@@ -64,7 +64,7 @@ namespace Dash
 			mRootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE(0xFFFFFFFF);
 		}
 
-		void InitAsRootConstants(UINT shaderRegister, UINT numDwords, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, UINT space = 0)
+		void InitAsRootConstants(uint32 shaderRegister, uint32 numDwords, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, uint32 space = 0)
 		{
 			mRootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
 			mRootParameter.ShaderVisibility = visibility;
@@ -73,7 +73,7 @@ namespace Dash
 			mRootParameter.Constants.RegisterSpace = space;
 		}
 
-		void InitAsRootConstantBufferView(UINT shaderRegister, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, UINT space = 0)
+		void InitAsRootConstantBufferView(uint32 shaderRegister, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, uint32 space = 0)
 		{
 			mRootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 			mRootParameter.ShaderVisibility = visibility;
@@ -82,7 +82,7 @@ namespace Dash
 			mRootParameter.Descriptor.Flags = D3D12_ROOT_DESCRIPTOR_FLAG_NONE;
 		}
 
-		void InitAsRootShaderResourceView(UINT shaderRegister, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, UINT space = 0)
+		void InitAsRootShaderResourceView(uint32 shaderRegister, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, uint32 space = 0)
 		{
 			mRootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_SRV;
 			mRootParameter.ShaderVisibility = visibility;
@@ -91,7 +91,7 @@ namespace Dash
 			mRootParameter.Descriptor.Flags = D3D12_ROOT_DESCRIPTOR_FLAG_NONE;
 		}
 
-		void InitAsRootUnorderAccessView(UINT shaderRegister, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, UINT space = 0)
+		void InitAsRootUnorderAccessView(uint32 shaderRegister, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, uint32 space = 0)
 		{
 			mRootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_UAV;
 			mRootParameter.ShaderVisibility = visibility;
@@ -100,13 +100,13 @@ namespace Dash
 			mRootParameter.Descriptor.Flags = D3D12_ROOT_DESCRIPTOR_FLAG_NONE;
 		}
 
-		void InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE type, UINT shaderRegister, UINT count, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, UINT space = 0)
+		void InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE type, uint32 shaderRegister, uint32 count, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, uint32 space = 0)
 		{
 			InitAsDescriptorTable(1, visibility);
 			SetTableRange(0, type, shaderRegister, count, space);
 		}
 
-		void InitAsDescriptorTable(UINT rangeCount, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL)
+		void InitAsDescriptorTable(uint32 rangeCount, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL)
 		{
 			mRootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 			mRootParameter.ShaderVisibility = visibility;
@@ -114,7 +114,7 @@ namespace Dash
 			mRootParameter.DescriptorTable.pDescriptorRanges = new D3D12_DESCRIPTOR_RANGE1[rangeCount];
 		}
 
-		void SetTableRange(UINT rangeIndex, D3D12_DESCRIPTOR_RANGE_TYPE type, UINT baseShaderRegister, UINT count, UINT space = 0)
+		void SetTableRange(uint32 rangeIndex, D3D12_DESCRIPTOR_RANGE_TYPE type, uint32 baseShaderRegister, uint32 count, uint32 space = 0)
 		{
 			D3D12_DESCRIPTOR_RANGE1* range = const_cast<D3D12_DESCRIPTOR_RANGE1*>(mRootParameter.DescriptorTable.pDescriptorRanges + rangeIndex);
 			range->BaseShaderRegister = baseShaderRegister;
@@ -176,13 +176,13 @@ namespace Dash
 			return ParameterArray.get()[parameterIndex];
 		}
 		
-		void InitStaticSampler(UINT shaderRegister, const FSamplerDesc& desc, D3D12_SHADER_VISIBILITY visibility, UINT space = 0);
+		void InitStaticSampler(uint32 shaderRegister, const FSamplerDesc& desc, D3D12_SHADER_VISIBILITY visibility, uint32 space = 0);
 
 		void Finalize(D3D12_ROOT_SIGNATURE_FLAGS flag = D3D12_ROOT_SIGNATURE_FLAG_NONE);
 
-		UINT NumParameters;
-		UINT NumStaticSamplers;
-		UINT NumInitializedStaticSamplers;
+		uint32 NumParameters;
+		uint32 NumStaticSamplers;
+		uint32 NumInitializedStaticSamplers;
 
 		uint32 SamplerTableMask;
 		uint32 DescriptorTableMask;
@@ -221,7 +221,7 @@ namespace Dash
 
 	protected:
 		std::string mName;
-		UINT mNumParameters;
+		uint32 mNumParameters;
 		uint32 mSamplerTableMask;
 		uint32 mDescriptorTableMask;
 		uint32 mNumDescriptorsPerTable[32];

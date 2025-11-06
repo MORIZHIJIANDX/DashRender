@@ -176,7 +176,7 @@ namespace Dash
 		DASH_LOG(LogTemp, Info, "Num ConstantBuffers {} ", shaderDesc.ConstantBuffers);
 		DASH_LOG(LogTemp, Info, "Num BoundResources {} ", shaderDesc.BoundResources);
 
-		for (UINT resourceIndex = 0; resourceIndex < shaderDesc.BoundResources; ++resourceIndex)
+		for (uint32 resourceIndex = 0; resourceIndex < shaderDesc.BoundResources; ++resourceIndex)
 		{
 			D3D12_SHADER_INPUT_BIND_DESC resourceDesc;
 			reflector->GetResourceBindingDesc(resourceIndex, &resourceDesc);
@@ -231,7 +231,7 @@ namespace Dash
 		D3D12_SHADER_BUFFER_DESC bufferDesc;
 		shaderReflectionConstantBuffer->GetDesc(&bufferDesc);
 
-		for (UINT variableIndex = 0; variableIndex < bufferDesc.Variables; variableIndex++)
+		for (uint32 variableIndex = 0; variableIndex < bufferDesc.Variables; variableIndex++)
 		{
 			ID3D12ShaderReflectionVariable* shaderReflectionVariable = shaderReflectionConstantBuffer->GetVariableByIndex(variableIndex);
 
@@ -286,7 +286,7 @@ namespace Dash
 		int32 systemValueStart = INDEX_NONE;
 		int32 noSystemValueEnd = INDEX_NONE;
 
-		for (UINT parameterIndex = 0; parameterIndex < shaderDesc.InputParameters; ++parameterIndex)
+		for (uint32 parameterIndex = 0; parameterIndex < shaderDesc.InputParameters; ++parameterIndex)
 		{
 			D3D12_SIGNATURE_PARAMETER_DESC inputSignatureParameterDesc;
 			reflector->GetInputParameterDesc(parameterIndex, &inputSignatureParameterDesc);

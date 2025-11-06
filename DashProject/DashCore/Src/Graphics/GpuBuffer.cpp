@@ -102,8 +102,8 @@ namespace Dash
 		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 		srvDesc.Buffer.FirstElement = 0;
-		srvDesc.Buffer.NumElements = static_cast<UINT>(mDesc.Count);
-		srvDesc.Buffer.StructureByteStride = static_cast<UINT>(mDesc.Stride);
+		srvDesc.Buffer.NumElements = static_cast<uint32>(mDesc.Count);
+		srvDesc.Buffer.StructureByteStride = static_cast<uint32>(mDesc.Stride);
 		srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_RAW;
 
 		mShaderResourceView = FGraphicsCore::DescriptorAllocator->AllocateSRVDescriptor();
@@ -111,7 +111,7 @@ namespace Dash
 
 		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc{};
 		cbvDesc.BufferLocation = mResource->GetGPUVirtualAddress();
-		cbvDesc.SizeInBytes = static_cast<UINT>(mDesc.Size);
+		cbvDesc.SizeInBytes = static_cast<uint32>(mDesc.Size);
 
 		mConstantBufferView = FGraphicsCore::DescriptorAllocator->AllocateCBVDescriptor();
 		FGraphicsCore::Device->CreateConstantBufferView(&cbvDesc, mConstantBufferView.GetDescriptorHandle());
@@ -123,7 +123,7 @@ namespace Dash
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 		srvDesc.Format = DXGI_FORMAT_R32_TYPELESS;
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc.Buffer.NumElements = static_cast<UINT>(mDesc.Size / 4);
+		srvDesc.Buffer.NumElements = static_cast<uint32>(mDesc.Size / 4);
 		srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_RAW;
 
 		mShaderResourceView = FGraphicsCore::DescriptorAllocator->AllocateSRVDescriptor();
@@ -132,7 +132,7 @@ namespace Dash
 		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
 		uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
 		uavDesc.Format = DXGI_FORMAT_R32_TYPELESS;
-		uavDesc.Buffer.NumElements = static_cast<UINT>(mDesc.Size / 4);
+		uavDesc.Buffer.NumElements = static_cast<uint32>(mDesc.Size / 4);
 		uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_RAW;
 
 		mUnorderedAccessView = FGraphicsCore::DescriptorAllocator->AllocateUAVDescriptor();
@@ -155,8 +155,8 @@ namespace Dash
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc.Buffer.NumElements = static_cast<UINT>(mDesc.Count);
-		srvDesc.Buffer.StructureByteStride = static_cast<UINT>(mDesc.Stride);
+		srvDesc.Buffer.NumElements = static_cast<uint32>(mDesc.Count);
+		srvDesc.Buffer.StructureByteStride = static_cast<uint32>(mDesc.Stride);
 		srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 
 		mShaderResourceView = FGraphicsCore::DescriptorAllocator->AllocateSRVDescriptor();
@@ -165,8 +165,8 @@ namespace Dash
 		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
 		uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
 		uavDesc.Format = DXGI_FORMAT_UNKNOWN;
-		uavDesc.Buffer.NumElements = static_cast<UINT>(mDesc.Count);
-		uavDesc.Buffer.StructureByteStride = static_cast<UINT>(mDesc.Stride);
+		uavDesc.Buffer.NumElements = static_cast<uint32>(mDesc.Count);
+		uavDesc.Buffer.StructureByteStride = static_cast<uint32>(mDesc.Stride);
 		uavDesc.Buffer.CounterOffsetInBytes = 0;
 		uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
 
@@ -182,7 +182,7 @@ namespace Dash
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 		srvDesc.Format = D3DFormat(mFormat);
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc.Buffer.NumElements = static_cast<UINT>(mDesc.Count);
+		srvDesc.Buffer.NumElements = static_cast<uint32>(mDesc.Count);
 		srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 
 		mShaderResourceView = FGraphicsCore::DescriptorAllocator->AllocateSRVDescriptor();
@@ -191,7 +191,7 @@ namespace Dash
 		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
 		uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
 		uavDesc.Format = D3DFormat(mFormat);
-		uavDesc.Buffer.NumElements = static_cast<UINT>(mDesc.Count);
+		uavDesc.Buffer.NumElements = static_cast<uint32>(mDesc.Count);
 		uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
 
 		mUnorderedAccessView = FGraphicsCore::DescriptorAllocator->AllocateUAVDescriptor();

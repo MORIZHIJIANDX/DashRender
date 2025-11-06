@@ -1,5 +1,7 @@
+#include "StaticSamplerState.hlsli"
+
 Texture2D ColorBuffer;
-SamplerState Sampler_Static : register(s3);
+//SamplerState Sampler_Static : register(s3);
 
 float LinearToSRGB(float value)
 {
@@ -30,7 +32,7 @@ void VS_Main(
 
 float4 PS_Main(float4 position : SV_Position, float2 uv : TexCoord0) : SV_Target0
 {
-    float4 Color = ColorBuffer.Sample(Sampler_Static, uv);
+    float4 Color = ColorBuffer.Sample(LinearClampStaticSampler, uv);
     //Color.rgb = CalcLuminance(Color.rgb);
     Color.rgb = LinearToSRGB(Color.rgb);
 

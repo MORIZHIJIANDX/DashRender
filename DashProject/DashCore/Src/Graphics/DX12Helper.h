@@ -39,7 +39,7 @@ namespace Dash
             }
 		}
 
-        FORCEINLINE void SetD3D12DebugNameIndexed(ID3D12Object* pObject, LPCWSTR name, UINT index)
+        FORCEINLINE void SetD3D12DebugNameIndexed(ID3D12Object* pObject, LPCWSTR name, uint32 index)
         {
             WCHAR _DebugName[MAX_PATH] = {};
             if (pObject && SUCCEEDED(StringCchPrintfW(_DebugName, _countof(_DebugName), L"%s[%u]", name, index)))
@@ -48,7 +48,7 @@ namespace Dash
             }
         }
 
-		FORCEINLINE void SetD3D12DebugNameIndexed(ID3D12Object* pObject, const std::string& name, UINT index)
+		FORCEINLINE void SetD3D12DebugNameIndexed(ID3D12Object* pObject, const std::string& name, uint32 index)
 		{
             if (pObject)
             {
@@ -63,10 +63,10 @@ namespace Dash
 		FORCEINLINE void SetD3D12DebugName(ID3D12Object*, const std::string&)
 		{
 		}
-        FORCEINLINE void SetD3D12DebugNameIndexed(ID3D12Object*, LPCWSTR, UINT)
+        FORCEINLINE void SetD3D12DebugNameIndexed(ID3D12Object*, LPCWSTR, uint32)
         {
         }
-		FORCEINLINE void SetD3D12DebugNameIndexed(ID3D12Object*, const std::string&, UINT)
+		FORCEINLINE void SetD3D12DebugNameIndexed(ID3D12Object*, const std::string&, uint32)
 		{
 		}
     #endif
@@ -81,10 +81,10 @@ namespace Dash
             size_t szLen = 0;
             if (pObject && SUCCEEDED(StringCchLengthW(name, 50, &szLen)))
             {
-                pObject->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(szLen - 1), name);
+                pObject->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<uint32>(szLen - 1), name);
             }          
         }
-        FORCEINLINE void SetDXGIDebugNameIndexed(IDXGIObject* pObject, LPCWSTR name, UINT index)
+        FORCEINLINE void SetDXGIDebugNameIndexed(IDXGIObject* pObject, LPCWSTR name, uint32 index)
         {
             size_t szLen = 0;
             WCHAR _DebugName[MAX_PATH] = {};
@@ -92,7 +92,7 @@ namespace Dash
             {
                 if (SUCCEEDED(StringCchLengthW(_DebugName, _countof(_DebugName), &szLen)))
                 {
-                    pObject->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(szLen), _DebugName);
+                    pObject->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<uint32>(szLen), _DebugName);
                 }                   
             }
         }
@@ -100,7 +100,7 @@ namespace Dash
         FORCEINLINE void SetDXGIDebugName(ID3D12Object*, LPCWSTR)
         {
         }
-        FORCEINLINE void SetDXGIDebugNameIndexed(ID3D12Object*, LPCWSTR, UINT)
+        FORCEINLINE void SetDXGIDebugNameIndexed(ID3D12Object*, LPCWSTR, uint32)
         {
         }
     #endif

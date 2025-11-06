@@ -348,12 +348,12 @@ namespace Dash
 		return mDevice->CheckFeatureSupport(feature, pFeatureSupportData, featureSupportDataSize);
 	}
 
-	void FRenderDevice::CopyDescriptors(UINT numDestDescriptorRanges, const D3D12_CPU_DESCRIPTOR_HANDLE* pDestDescriptorRangeStarts, const UINT* pDestDescriptorRangeSizes, UINT numSrcDescriptorRanges, const D3D12_CPU_DESCRIPTOR_HANDLE* pSrcDescriptorRangeStarts, const UINT* pSrcDescriptorRangeSizes, D3D12_DESCRIPTOR_HEAP_TYPE descriptorHeapsType)
+	void FRenderDevice::CopyDescriptors(uint32 numDestDescriptorRanges, const D3D12_CPU_DESCRIPTOR_HANDLE* pDestDescriptorRangeStarts, const uint32* pDestDescriptorRangeSizes, uint32 numSrcDescriptorRanges, const D3D12_CPU_DESCRIPTOR_HANDLE* pSrcDescriptorRangeStarts, const uint32* pSrcDescriptorRangeSizes, D3D12_DESCRIPTOR_HEAP_TYPE descriptorHeapsType)
 	{
 		mDevice->CopyDescriptors(numDestDescriptorRanges, pDestDescriptorRangeStarts, pDestDescriptorRangeSizes, numSrcDescriptorRanges, pSrcDescriptorRangeStarts, pSrcDescriptorRangeSizes, descriptorHeapsType);
 	}
 
-	void FRenderDevice::CopyDescriptorsSimple(UINT numDescriptors, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptorRangeStart, D3D12_CPU_DESCRIPTOR_HANDLE srcDescriptorRangeStart, D3D12_DESCRIPTOR_HEAP_TYPE descriptorHeapsType)
+	void FRenderDevice::CopyDescriptorsSimple(uint32 numDescriptors, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptorRangeStart, D3D12_CPU_DESCRIPTOR_HANDLE srcDescriptorRangeStart, D3D12_DESCRIPTOR_HEAP_TYPE descriptorHeapsType)
 	{
 		mDevice->CopyDescriptorsSimple(numDescriptors, destDescriptorRangeStart, srcDescriptorRangeStart, descriptorHeapsType);
 	}
@@ -363,7 +363,7 @@ namespace Dash
 		return mDevice->CreateCommandAllocator(type, IID_PPV_ARGS(pCommandAllocator.GetInitReference()));
 	}
 
-	HRESULT FRenderDevice::CreateCommandList(UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, ID3D12CommandAllocator* pCommandAllocator, ID3D12PipelineState* pInitialState, TRefCountPtr<ID3D12GraphicsCommandList4>& pCommandList)
+	HRESULT FRenderDevice::CreateCommandList(uint32 nodeMask, D3D12_COMMAND_LIST_TYPE type, ID3D12CommandAllocator* pCommandAllocator, ID3D12PipelineState* pInitialState, TRefCountPtr<ID3D12GraphicsCommandList4>& pCommandList)
 	{
 		return mDevice->CreateCommandList(nodeMask, type, pCommandAllocator, pInitialState, IID_PPV_ARGS(pCommandList.GetInitReference()));
 	}
@@ -437,7 +437,7 @@ namespace Dash
 		return mDevice->CreateReservedResource(pDesc, initialState, pOptimizedClearValue, IID_PPV_ARGS(pvResource.GetInitReference()));
 	}
 
-	HRESULT FRenderDevice::CreateRootSignature(UINT nodeMask, const void* pBlobWithRootSignature, SIZE_T blobLengthInBytes, TRefCountPtr<ID3D12RootSignature>& pvRootSignature)
+	HRESULT FRenderDevice::CreateRootSignature(uint32 nodeMask, const void* pBlobWithRootSignature, SIZE_T blobLengthInBytes, TRefCountPtr<ID3D12RootSignature>& pvRootSignature)
 	{
 		return mDevice->CreateRootSignature(nodeMask, pBlobWithRootSignature, blobLengthInBytes, IID_PPV_ARGS(pvRootSignature.GetInitReference()));
 	}
@@ -474,12 +474,12 @@ namespace Dash
 		return mDevice->GetAdapterLuid();
 	}
 
-	void FRenderDevice::GetCopyableFootprints(const D3D12_RESOURCE_DESC* pResourceDesc, UINT firstSubresource, UINT numSubresources, UINT64 baseOffset, D3D12_PLACED_SUBRESOURCE_FOOTPRINT* pLayouts, UINT* pNumRows, UINT64* pRowSizeInBytes, UINT64* pTotalBytes)
+	void FRenderDevice::GetCopyableFootprints(const D3D12_RESOURCE_DESC* pResourceDesc, uint32 firstSubresource, uint32 numSubresources, uint64 baseOffset, D3D12_PLACED_SUBRESOURCE_FOOTPRINT* pLayouts, uint32* pNumRows, uint64* pRowSizeInBytes, uint64* pTotalBytes)
 	{
 		mDevice->GetCopyableFootprints(pResourceDesc, firstSubresource, numSubresources, baseOffset, pLayouts, pNumRows, pRowSizeInBytes, pTotalBytes);
 	}
 
-	D3D12_HEAP_PROPERTIES FRenderDevice::GetCustomHeapProperties(UINT nodeMask, D3D12_HEAP_TYPE heapType)
+	D3D12_HEAP_PROPERTIES FRenderDevice::GetCustomHeapProperties(uint32 nodeMask, D3D12_HEAP_TYPE heapType)
 	{
 		return mDevice->GetCustomHeapProperties(nodeMask, heapType);
 	}
@@ -499,17 +499,17 @@ namespace Dash
 		return mDevice->GetNodeCount();
 	}
 
-	D3D12_RESOURCE_ALLOCATION_INFO FRenderDevice::GetResourceAllocationInfo(UINT visibleMask, UINT numResourceDescs, const D3D12_RESOURCE_DESC* pResourceDescs)
+	D3D12_RESOURCE_ALLOCATION_INFO FRenderDevice::GetResourceAllocationInfo(uint32 visibleMask, uint32 numResourceDescs, const D3D12_RESOURCE_DESC* pResourceDescs)
 	{
 		return mDevice->GetResourceAllocationInfo(visibleMask, numResourceDescs, pResourceDescs);
 	}
 
-	void FRenderDevice::GetResourceTiling(ID3D12Resource* pTiledResource, UINT* pNumTilesForEntireResource, D3D12_PACKED_MIP_INFO* pPackedMipDesc, D3D12_TILE_SHAPE* pStandardTileShapeForNonPackedMips, UINT* pNumSubresourceTilings, UINT firstSubresourceTilingToGet, D3D12_SUBRESOURCE_TILING* pSubresourceTilingsForNonPackedMips)
+	void FRenderDevice::GetResourceTiling(ID3D12Resource* pTiledResource, uint32* pNumTilesForEntireResource, D3D12_PACKED_MIP_INFO* pPackedMipDesc, D3D12_TILE_SHAPE* pStandardTileShapeForNonPackedMips, uint32* pNumSubresourceTilings, uint32 firstSubresourceTilingToGet, D3D12_SUBRESOURCE_TILING* pSubresourceTilingsForNonPackedMips)
 	{
 		mDevice->GetResourceTiling(pTiledResource, pNumTilesForEntireResource, pPackedMipDesc, pStandardTileShapeForNonPackedMips, pNumSubresourceTilings, firstSubresourceTilingToGet, pSubresourceTilingsForNonPackedMips);
 	}
 
-	HRESULT FRenderDevice::MakeResident(UINT NumObjects, ID3D12Pageable* const* ppObjects)
+	HRESULT FRenderDevice::MakeResident(uint32 NumObjects, ID3D12Pageable* const* ppObjects)
 	{
 		return mDevice->MakeResident(NumObjects, ppObjects);
 	}

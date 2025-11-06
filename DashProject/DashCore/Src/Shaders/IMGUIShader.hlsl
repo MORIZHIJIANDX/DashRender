@@ -1,3 +1,5 @@
+#include "StaticSamplerState.hlsli"
+
 cbuffer constantBuffer
 {
     float4x4 ProjectionMatrix; 
@@ -26,11 +28,10 @@ PS_INPUT VS_Main(VS_INPUT input)
     return output;
 }
 
-SamplerState Sampler_Static : register(s3);
 Texture2D texture0; 
 
 float4 PS_Main(PS_INPUT input) : SV_Target
 {
-    float4 out_col = input.col * texture0.Sample(Sampler_Static, input.uv);
+    float4 out_col = input.col * texture0.Sample(LinearClampStaticSampler, input.uv);
     return out_col; 
 }

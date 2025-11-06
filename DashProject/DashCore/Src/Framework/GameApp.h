@@ -14,7 +14,7 @@ namespace Dash
     friend void CreateApplicationWindow(IGameApp* app, HINSTANCE hInstance);
 
 	public:
-        IGameApp(UINT width = 1080, UINT height = 720, const std::string& title = "Sample", const std::string& winClassName = "DashGameApp");
+        IGameApp(uint32 width = 1080, uint32 height = 720, const std::string& title = "Sample", const std::string& winClassName = "DashGameApp");
         virtual ~IGameApp() {};
 
         static IGameApp* GetInstance() { return  mAppInstance; }

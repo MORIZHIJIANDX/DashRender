@@ -70,7 +70,7 @@ namespace Dash
 		std::vector<FSamplerDesc> CreateStaticSamplers();
 		int32 FindParameterByName(const std::vector<FShaderParameter>& parameterArray, const std::string& parameterName) const;
 		std::vector<std::string> GetParameterNames(const std::vector<FShaderParameter>& parameterArray) const;
-		void InitDescriptorRanges(FBoundShaderState& boundShaderState, std::vector<FShaderParameter>& parameters, UINT& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, EShaderStage stage);
+		void InitDescriptorRanges(FBoundShaderState& boundShaderState, std::vector<FShaderParameter>& parameters, uint32& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, EShaderStage stage);
 
 		void AddVariables(std::map<std::string, FShaderVariable>& variableMaps, const std::vector<FShaderParameter>& inParameters);
 		 

@@ -91,8 +91,8 @@ namespace Dash
 				graphicsContext.SetUnorderAccessView("OutputTexture", mTempRT);
 				graphicsContext.SetShaderResourceView("InputTexture", FGraphicsCore::SwapChain->GetColorBuffer());
 
-				UINT numGroupsX = (UINT)ceilf(mTempRT->GetWidth() / 16.0f);
-				UINT numGroupsY = (UINT)ceilf(mTempRT->GetHeight() / 16.0f);
+				uint32 numGroupsX = (uint32)ceilf(mTempRT->GetWidth() / 16.0f);
+				uint32 numGroupsY = (uint32)ceilf(mTempRT->GetHeight() / 16.0f);
 				graphicsContext.Dispatch(numGroupsX, numGroupsY, 1);
 			}
 

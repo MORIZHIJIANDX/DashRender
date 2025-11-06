@@ -32,7 +32,7 @@ namespace Dash
         mD3DSampler.MaxLOD = D3D12_FLOAT32_MAX;
     }
 
-    FSamplerDesc::FSamplerDesc(ESamplerFilter filter, ESamplerAddressMode addressMode, ESamplerComparisonFunc comparisonFunc, const FLinearColor& borderColor, float lodBias, UINT maxAnisotropy, float minLod, float maxLod)
+    FSamplerDesc::FSamplerDesc(ESamplerFilter filter, ESamplerAddressMode addressMode, ESamplerComparisonFunc comparisonFunc, const FLinearColor& borderColor, float lodBias, uint32 maxAnisotropy, float minLod, float maxLod)
     {
         mD3DSampler.Filter = GetD3DFilter(filter);
         mD3DSampler.AddressU = GetD3DAddressMode(addressMode);

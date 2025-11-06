@@ -197,7 +197,7 @@ namespace Dash
 
 					//graphicsContext.SetVertexBuffers(0, static_cast<UINT>(drawCommand.VertexBuffers.size()), drawCommand.VertexBuffers.data());
 
-					graphicsContext.SetVertexBuffers(0, static_cast<UINT>(RealVertexBuffer.size()), RealVertexBuffer.data());
+					graphicsContext.SetVertexBuffers(0, static_cast<uint32>(RealVertexBuffer.size()), RealVertexBuffer.data());
 
 					graphicsContext.SetIndexBuffer(drawCommand.IndexBuffer);
 

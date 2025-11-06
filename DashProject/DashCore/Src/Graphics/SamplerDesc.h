@@ -23,7 +23,7 @@ namespace Dash
 		FSamplerDesc();
 
 		FSamplerDesc(ESamplerFilter filter, ESamplerAddressMode addressMode, ESamplerComparisonFunc comparisonFunc, const FLinearColor& borderColor = FLinearColor::Black, 
-			float lodBias = 0.0f, UINT maxAnisotropy = 16, float minLod = 0.0f, float maxLod = D3D12_FLOAT32_MAX);
+			float lodBias = 0.0f, uint32 maxAnisotropy = 16, float minLod = 0.0f, float maxLod = D3D12_FLOAT32_MAX);
 
 		void SetFilter(ESamplerFilter filter);
 		void SetAddressMode(ESamplerAddressMode addressMode);

@@ -34,8 +34,8 @@ namespace Dash
 		struct FConstantBufferVariableInfo
 		{
 			std::string BufferName;
-			UINT StartOffset;
-			UINT Size;
+			uint32 StartOffset;
+			uint32 Size;
 		};
 
 		template<typename ParameterType>

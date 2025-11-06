@@ -86,8 +86,8 @@ namespace Dash
 	struct FParameterKey
 	{
 		D3D_SHADER_INPUT_TYPE ShaderInputType;
-		UINT BindPoint = 0;
-		UINT RegisterSpace = 0;
+		uint32 BindPoint = 0;
+		uint32 RegisterSpace = 0;
 		D3D_SRV_DIMENSION ResourceDimension;
 
 		bool operator<(const FParameterKey& src)const
@@ -140,7 +140,7 @@ namespace Dash
 
 			for (auto& samplerParameter : shaderRef->GetSamplerParameters())
 			{
-				if (FStringUtility::Contains(samplerParameter.Name, "_Static"))
+				if (FStringUtility::Contains(samplerParameter.Name, "StaticSampler"))
 				{
 					createStaticSamplers = true;
 				}
@@ -208,6 +208,7 @@ namespace Dash
 	{
 		FBoundShaderState boundShaderState(quantizedBoundShaderState);
 		
+		const uint32 staticSamplerRegisterSpace = 100;
 		uint32 rootParameterIndex = 0;
 
 		for (auto& pair : mShaders)
@@ -220,14 +221,14 @@ namespace Dash
 			InitShaderRootParamters(shaderStage, boundShaderState, rootParameterIndex, inCBVParameters[shaderStageIndex], inSRVParameters[shaderStageIndex],
 				inUAVParameters[shaderStageIndex], inSamplerParameters[shaderStageIndex]);
 		}
-		 
+		
 		if (quantizedBoundShaderState.NumStaticSamplers > 0)
 		{
 			std::vector<FSamplerDesc> staticSamplers = CreateStaticSamplers();
 
-			for (UINT index = 0; index < staticSamplers.size(); index++)
+			for (uint32 index = 0; index < staticSamplers.size(); index++)
 			{
-				boundShaderState.InitStaticSampler(index, staticSamplers[index], D3D12_SHADER_VISIBILITY_ALL);
+				boundShaderState.InitStaticSampler(index, staticSamplers[index], D3D12_SHADER_VISIBILITY_ALL, staticSamplerRegisterSpace);
 			}
 		}
 		
@@ -338,7 +339,7 @@ namespace Dash
 		return names;
 	}
 
-	void FShaderPass::InitDescriptorRanges(FBoundShaderState& boundShaderState, std::vector<FShaderParameter>& parameters, UINT& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, EShaderStage stage)
+	void FShaderPass::InitDescriptorRanges(FBoundShaderState& boundShaderState, std::vector<FShaderParameter>& parameters, uint32& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, EShaderStage stage)
 	{
 		uint32 parametersCount = static_cast<uint32>(parameters.size());
 		if (parametersCount > 0)

@@ -56,7 +56,7 @@ namespace Dash
 		SetD3D12DebugName(mRootSignature.GetReference(), mName.c_str());
 	}
 
-	void FBoundShaderState::InitStaticSampler(UINT shaderRegister, const FSamplerDesc& desc, D3D12_SHADER_VISIBILITY visibility, UINT space /* = 0 */)
+	void FBoundShaderState::InitStaticSampler(uint32 shaderRegister, const FSamplerDesc& desc, D3D12_SHADER_VISIBILITY visibility, uint32 space /* = 0 */)
 	{
 		ASSERT(NumInitializedStaticSamplers < NumStaticSamplers);
 		const D3D12_SAMPLER_DESC& samplerDesc = desc.D3DSamplerDesc();
@@ -116,7 +116,7 @@ namespace Dash
 		DescriptorTableMask = 0;
 		SamplerTableMask = 0;
 
-		for (UINT paramIndex = 0; paramIndex < NumParameters; paramIndex++)
+		for (uint32 paramIndex = 0; paramIndex < NumParameters; paramIndex++)
 		{
 			const D3D12_ROOT_PARAMETER1& rootParameter = RootSignatureDesc.pParameters[paramIndex];
 			NumDescriptorsPerTable[paramIndex] = 0;
@@ -134,7 +134,7 @@ namespace Dash
 					DescriptorTableMask |= (1 << paramIndex);
 				}
 
-				for (UINT rangeIndex = 0; rangeIndex < rootParameter.DescriptorTable.NumDescriptorRanges; rangeIndex++)
+				for (uint32 rangeIndex = 0; rangeIndex < rootParameter.DescriptorTable.NumDescriptorRanges; rangeIndex++)
 				{
 					NumDescriptorsPerTable[paramIndex] += rootParameter.DescriptorTable.pDescriptorRanges[rangeIndex].NumDescriptors;
 				}

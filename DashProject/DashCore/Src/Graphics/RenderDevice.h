@@ -28,18 +28,18 @@ namespace Dash
 
 		// Copies descriptors from a source to a destination. (ID3D12Device.CopyDescriptors)
 		void CopyDescriptors(
-			UINT numDestDescriptorRanges, 
+			uint32 numDestDescriptorRanges,
 			const D3D12_CPU_DESCRIPTOR_HANDLE* pDestDescriptorRangeStarts, 
-			const UINT* pDestDescriptorRangeSizes, 
-			UINT numSrcDescriptorRanges, 
+			const uint32* pDestDescriptorRangeSizes,
+			uint32 numSrcDescriptorRanges,
 			const D3D12_CPU_DESCRIPTOR_HANDLE* pSrcDescriptorRangeStarts,
-			const UINT* pSrcDescriptorRangeSizes,
+			const uint32* pSrcDescriptorRangeSizes,
 			D3D12_DESCRIPTOR_HEAP_TYPE descriptorHeapsType
 		);
 
 		// Copies descriptors from a source to a destination. (ID3D12Device.CopyDescriptorsSimple)
 		void CopyDescriptorsSimple(
-			UINT numDescriptors,
+			uint32 numDescriptors,
 			D3D12_CPU_DESCRIPTOR_HANDLE destDescriptorRangeStart,
 			D3D12_CPU_DESCRIPTOR_HANDLE srcDescriptorRangeStart,
 			D3D12_DESCRIPTOR_HEAP_TYPE  descriptorHeapsType
@@ -53,7 +53,7 @@ namespace Dash
 
 		// Creates a command list.
 		HRESULT CreateCommandList(
-			UINT nodeMask,
+			uint32 nodeMask,
 			D3D12_COMMAND_LIST_TYPE type,
 			ID3D12CommandAllocator* pCommandAllocator,
 			ID3D12PipelineState* pInitialState,
@@ -152,7 +152,7 @@ namespace Dash
 
 		// Creates a root signature layout.
 		HRESULT CreateRootSignature(
-			 UINT       nodeMask,
+			uint32       nodeMask,
 			const void* pBlobWithRootSignature,
 			SIZE_T     blobLengthInBytes,
 			TRefCountPtr<ID3D12RootSignature>& pvRootSignature
@@ -190,7 +190,7 @@ namespace Dash
 
 		// Enables the page-out of data, which precludes GPU access of that data.
 		HRESULT Evict(
-			UINT numObjects,
+			uint32 numObjects,
 			ID3D12Pageable* const* ppObjects
 		);
 
@@ -200,18 +200,18 @@ namespace Dash
 		// Gets a resource layout that can be copied. Helps the app fill-in D3D12_PLACED_SUBRESOURCE_FOOTPRINT and D3D12_SUBRESOURCE_FOOTPRINT when suballocating space in upload heaps.
 		void GetCopyableFootprints(
 			const D3D12_RESOURCE_DESC* pResourceDesc,
-			UINT  firstSubresource,
-			UINT  numSubresources,
-			UINT64 baseOffset,
+			uint32  firstSubresource,
+			uint32  numSubresources,
+			uint64 baseOffset,
 			D3D12_PLACED_SUBRESOURCE_FOOTPRINT* pLayouts,
-			UINT* pNumRows,
-			UINT64* pRowSizeInBytes,
-			UINT64* pTotalBytes
+			uint32* pNumRows,
+			uint64* pRowSizeInBytes,
+			uint64* pTotalBytes
 		);
 
 		// Divulges the equivalent custom heap properties that are used for non-custom heap types, based on the adapter's architectural properties.
 		D3D12_HEAP_PROPERTIES GetCustomHeapProperties(
-			UINT            nodeMask,
+			uint32            nodeMask,
 			D3D12_HEAP_TYPE heapType
 		);
 
@@ -228,25 +228,25 @@ namespace Dash
 
 		// Gets the size and alignment of memory required for a collection of resources on this adapter.
 		D3D12_RESOURCE_ALLOCATION_INFO GetResourceAllocationInfo(
-			UINT                      visibleMask,
-			UINT                      numResourceDescs,
+			uint32                      visibleMask,
+			uint32                      numResourceDescs,
 			const D3D12_RESOURCE_DESC* pResourceDescs
 		);
 
 		// Gets info about how a tiled resource is broken into tiles.
 		void GetResourceTiling(
 			ID3D12Resource* pTiledResource,
-			UINT* pNumTilesForEntireResource,
+			uint32* pNumTilesForEntireResource,
 			D3D12_PACKED_MIP_INFO* pPackedMipDesc,
 			D3D12_TILE_SHAPE* pStandardTileShapeForNonPackedMips,
-			UINT* pNumSubresourceTilings,
-			UINT  firstSubresourceTilingToGet,
+			uint32* pNumSubresourceTilings,
+			uint32  firstSubresourceTilingToGet,
 			D3D12_SUBRESOURCE_TILING* pSubresourceTilingsForNonPackedMips
 		);
 
 		// Makes objects resident for the device.
 		HRESULT MakeResident(
-			UINT NumObjects,
+			uint32 NumObjects,
 			ID3D12Pageable* const* ppObjects
 		);
 

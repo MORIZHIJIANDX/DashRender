@@ -80,7 +80,7 @@ namespace Dash
 		}
 	}
 
-	void FGpuResourcesStateTracker::TransitionResource(ID3D12Resource* resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
+	void FGpuResourcesStateTracker::TransitionResource(ID3D12Resource* resource, D3D12_RESOURCE_STATES stateAfter, uint32 subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
 	{
 		if (resource)
 		{
@@ -89,7 +89,7 @@ namespace Dash
 	}
 
 
-	void FGpuResourcesStateTracker::TransitionResource(const FGpuResourceRef& resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
+	void FGpuResourcesStateTracker::TransitionResource(const FGpuResourceRef& resource, D3D12_RESOURCE_STATES stateAfter, uint32 subResource /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
 	{
 		if (resource->GetResource())
 		{

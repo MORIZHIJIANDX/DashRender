@@ -1,5 +1,6 @@
+#include "StaticSamplerState.hlsli"
+
 Texture2D DisplayTexture;
-SamplerState Sampler_Static : register(s3);
 
 void VS_Main(
 	in uint VertID : SV_VertexID,
@@ -13,6 +14,6 @@ void VS_Main(
 
 float4 PS_Main(float4 position : SV_Position, float2 uv : TexCoord0) : SV_Target0
 {
-    return DisplayTexture.Sample(Sampler_Static, uv);
+    return DisplayTexture.Sample(LinearClampStaticSampler, uv);
 }
  

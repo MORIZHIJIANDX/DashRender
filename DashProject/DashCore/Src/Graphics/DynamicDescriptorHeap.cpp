@@ -49,7 +49,7 @@ namespace Dash
 
 		D3D12_CPU_DESCRIPTOR_HANDLE* descriptorHandlePtr = mRootSignatureDescriptorTableCache[rootParameterIndex].BaseDescriptor + offset;
 
-		for (UINT index = 0; index < numDescriptors; ++index)
+		for (uint32 index = 0; index < numDescriptors; ++index)
 		{
 			descriptorHandlePtr[index] = CD3DX12_CPU_DESCRIPTOR_HANDLE(srcDescriptors, index, mDescriptorHandleIncrementSize);
 		}
@@ -256,10 +256,10 @@ namespace Dash
 			DWORD rootParameterIndex;
 			while (_BitScanForward(&rootParameterIndex, mStaleDescriptorTableBitMask))
 			{
-				UINT srcNumDescriptors = mRootSignatureDescriptorTableCache[rootParameterIndex].NumDescriptors;
+				uint32 srcNumDescriptors = mRootSignatureDescriptorTableCache[rootParameterIndex].NumDescriptors;
 				D3D12_CPU_DESCRIPTOR_HANDLE* srcDescriptorHandlePtr = mRootSignatureDescriptorTableCache[rootParameterIndex].BaseDescriptor;
 
-				UINT destDescriptorRanges[] = { srcNumDescriptors };
+				uint32 destDescriptorRanges[] = { srcNumDescriptors };
 				D3D12_CPU_DESCRIPTOR_HANDLE destDescriptorHandles[] = { mCurrentCpuDescriptorHandle };
 
 				ASSERT_MSG(srcDescriptorHandlePtr[0].ptr != SIZE_T(-1), "Src descriptor has not been staged.");

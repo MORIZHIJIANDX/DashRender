@@ -167,7 +167,7 @@ namespace Dash
 			d3dCommandLists.push_back(List->GetCommandList());
 		}
 
-		mCommandQueue->ExecuteCommandLists(static_cast<UINT>(d3dCommandLists.size()), d3dCommandLists.data());
+		mCommandQueue->ExecuteCommandLists(static_cast<uint32>(d3dCommandLists.size()), d3dCommandLists.data());
 
 		return Signal();
 	}

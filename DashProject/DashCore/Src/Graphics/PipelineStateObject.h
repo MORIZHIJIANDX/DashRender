@@ -30,13 +30,13 @@ namespace Dash
 		}
 
 		void SetBlendState(const FBlendState& blendDesc);
-		void SetSamplerMask(UINT samperMask);
+		void SetSamplerMask(uint32 samperMask);
 		void SetRasterizerState(const FRasterizerState& rasterDesc);
 		void SetDepthStencilState(const FDepthStencilState& depthStencilDesc);
 		void SetPrimitiveTopologyType(EPrimitiveTopology primitiveTopologyType);
-		void SetDepthTargetFormat(EResourceFormat depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
-		void SetRenderTargetFormat(EResourceFormat renderTargetFormat, EResourceFormat depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
-		void SetRenderTargetFormats(UINT numRTVs, const EResourceFormat* renderTargetFormats, EResourceFormat depthTargetFormat, UINT msaaCount = 1, UINT msaaQuality = 0);
+		void SetDepthTargetFormat(EResourceFormat depthTargetFormat, uint32 msaaCount = 1, uint32 msaaQuality = 0);
+		void SetRenderTargetFormat(EResourceFormat renderTargetFormat, EResourceFormat depthTargetFormat, uint32 msaaCount = 1, uint32 msaaQuality = 0);
+		void SetRenderTargetFormats(uint32 numRTVs, const EResourceFormat* renderTargetFormats, EResourceFormat depthTargetFormat, uint32 msaaCount = 1, uint32 msaaQuality = 0);
 		void SetInputLayout(const FInputAssemblerLayout& layout);
 		void SetPrimitiveRestart(D3D12_INDEX_BUFFER_STRIP_CUT_VALUE indexBufferProps);
 		void SetShaderPass(const FShaderPassRef& shaderPass);
