@@ -1,4 +1,4 @@
-cbuffer constantBuffer : register(b0)
+cbuffer constantBuffer
 {
     float4x4 ProjectionMatrix; 
 };
@@ -27,7 +27,7 @@ PS_INPUT VS_Main(VS_INPUT input)
 }
 
 SamplerState Sampler_Static : register(s3);
-Texture2D texture0 : register(t0); 
+Texture2D texture0; 
 
 float4 PS_Main(PS_INPUT input) : SV_Target
 {

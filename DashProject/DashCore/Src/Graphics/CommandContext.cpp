@@ -307,9 +307,7 @@ namespace Dash
 		mD3DCommandList->SetPipelineState(pipelineState);
 		mCurrentPipelineState = pipelineState;
 
-		mPSO = pso;
-
-		InitParameterBindState();
+		SetPipelineStateInternal(pso);
 	}
 
 	void FComputeCommandContextBase::SetComputeRootSignature(FRootSignature* rootSignature)
@@ -409,6 +407,20 @@ namespace Dash
 		}
 	}
 
+	void FCommandContext::SetPipelineStateInternal(FPipelineStateObject* inPSO)
+	{
+		mPSO = inPSO;
+		mValidShaderStages.clear();
+
+		FShaderPassRef shaderPass = mPSO->GetShaderPass();
+		for (auto& iter : shaderPass->GetShaders())
+		{
+			mValidShaderStages.push_back(iter.first);
+		}	
+
+		InitParameterBindState();
+	}
+
 	void FCommandContext::InitParameterBindState()
 	{
 		if (mPSO == nullptr)
@@ -420,10 +432,15 @@ namespace Dash
 
 		FShaderPassRef shaderPass = mPSO->GetShaderPass();
 
-		InitStateForParameter(shaderPass->GetCBVParameterNum(), mConstantBufferBindState);
-		InitStateForParameter(shaderPass->GetSRVParameterNum(), mShaderResourceViewBindState);
-		InitStateForParameter(shaderPass->GetUAVParameterNum(), mUnorderAccessViewBindState);
-		InitStateForParameter(shaderPass->GetSamplerParameterNum(), mSamplerBindState);
+		for (EShaderStage stage : mValidShaderStages)
+		{
+			uint32 shaderStageIndex = static_cast<uint32>(stage);
+
+			InitStateForParameter(shaderPass->GetCBVParameterNum(stage), mConstantBufferBindState[shaderStageIndex]);
+			InitStateForParameter(shaderPass->GetSRVParameterNum(stage), mShaderResourceViewBindState[shaderStageIndex]);
+			InitStateForParameter(shaderPass->GetUAVParameterNum(stage), mUnorderAccessViewBindState[shaderStageIndex]);
+			InitStateForParameter(shaderPass->GetSamplerParameterNum(stage), mSamplerBindState[shaderStageIndex]);
+		}
 	}
 
 	void FCommandContext::InitStateForParameter(size_t parameterNum, std::vector<bool>& bindStateMap)
@@ -437,21 +454,27 @@ namespace Dash
 
 	void FCommandContext::CheckUnboundShaderParameters()
 	{
-		auto checkUnboundParameterFunc = [](const std::vector<bool>& bindStateMap, const std::vector<FShaderParameter>& parameters, const std::string& type)
+		auto checkUnboundParameterFunc = [](const std::vector<bool>& bindStateMap, const FShaderPassRef& shaderPass, EShaderStage stage, EShaderParameterType type, const std::string& typeStr)
 		{
-			for (size_t parameterIndex = 0; parameterIndex < bindStateMap.size(); ++parameterIndex)
+			for (uint32 baseIndex = 0; baseIndex < bindStateMap.size(); ++baseIndex)
 			{
-				if (bindStateMap[parameterIndex] == false)
+				if (bindStateMap[baseIndex] == false)
 				{
-					DASH_LOG(LogTemp, Warning, "Shader Parameter : {}, Type : {}, Is Not Bounded!", parameters[parameterIndex].Name, type);
+					DASH_LOG(LogTemp, Warning, "Shader Parameter : {}, Base Index {}, Type : {}, Shader Stage {}, Is Not Bounded!", 
+						shaderPass->FindShaderVariable(type, baseIndex, stage).Name, baseIndex, typeStr, static_cast<uint32>(stage));
 				}
 			}
 		};
 
-		checkUnboundParameterFunc(mConstantBufferBindState, mPSO->GetShaderPass()->GetCBVParameters(), "Constant Buffer");
-		checkUnboundParameterFunc(mShaderResourceViewBindState, mPSO->GetShaderPass()->GetSRVParameters(), "Shader Resource View");
-		checkUnboundParameterFunc(mUnorderAccessViewBindState, mPSO->GetShaderPass()->GetUAVParameters(), "Unorder Access View");
-		checkUnboundParameterFunc(mSamplerBindState, mPSO->GetShaderPass()->GetCBVParameters(), "Sampler");
+		for (EShaderStage stage : mValidShaderStages)
+		{
+			uint32 shaderStageIndex = static_cast<uint32>(stage);
+
+			checkUnboundParameterFunc(mConstantBufferBindState[shaderStageIndex], mPSO->GetShaderPass(), stage, EShaderParameterType::UniformBuffer, "Constant Buffer");
+			checkUnboundParameterFunc(mShaderResourceViewBindState[shaderStageIndex], mPSO->GetShaderPass(), stage, EShaderParameterType::SRV, "Shader Resource View");
+			checkUnboundParameterFunc(mUnorderAccessViewBindState[shaderStageIndex], mPSO->GetShaderPass(), stage, EShaderParameterType::UAV, "Unorder Access View");
+			checkUnboundParameterFunc(mSamplerBindState[shaderStageIndex], mPSO->GetShaderPass(), stage, EShaderParameterType::Sampler, "Sampler");
+		}
 	}
 
 	void FCommandContext::Initialize()
@@ -530,20 +553,28 @@ namespace Dash
 
 		FShaderPassRef shaderPass = mPSO->GetShaderPass();
 
+		bool bParameterValid = false;
+
 		if (shaderPass)
 		{
-			int32 shaderParameterIndex = shaderPass->FindCBVParameterByName(bufferName);
-			if (shaderParameterIndex != INDEX_NONE)
+			for (EShaderStage stage : mValidShaderStages)
 			{
-				const std::vector<FShaderParameter>& parameters = shaderPass->GetCBVParameters();
-				ASSERT(sizeInBytes == parameters[shaderParameterIndex].Size);
-				SetRootConstantBufferView(parameters[shaderParameterIndex].RootParameterIndex, sizeInBytes, constants);
-				mConstantBufferBindState[shaderParameterIndex] = true;
+				uint32 shaderStageIndex = static_cast<uint32>(stage);
+
+				const FShaderVariable& variable = shaderPass->FindShaderVariable(bufferName, stage);
+				if (variable.ParamterType == EShaderParameterType::UniformBuffer)
+				{
+					ASSERT(sizeInBytes == variable.Size);
+					SetRootConstantBufferView(variable.RootParameterIndex, sizeInBytes, constants);
+					mConstantBufferBindState[shaderStageIndex][variable.BaseIndex] = true;
+					bParameterValid = true;
+				}
 			}
-			else
-			{
-				DASH_LOG(LogTemp, Warning, "Can't Find Constant Buffer Parameter : {}", bufferName);
-			}
+		}
+
+		if (!bParameterValid)
+		{
+			DASH_LOG(LogTemp, Warning, "Can't Find Constant Buffer Parameter : {}", bufferName);
 		}
 	}
 
@@ -551,142 +582,115 @@ namespace Dash
 	{
 		ASSERT_MSG(mPSO != nullptr, "Pipeline State Is Not Set.");
 
-		FShaderPassRef shaderPass = mPSO->GetShaderPass();
-
-		if (shaderPass)
-		{
-			int32 shaderParameterIndex = shaderPass->FindSRVParameterByName(srvrName);
-			if (shaderParameterIndex != INDEX_NONE)
-			{
-				const std::vector<FShaderParameter>& parameters = shaderPass->GetSRVParameters();
-				SetShaderResourceView(parameters[shaderParameterIndex].RootParameterIndex, parameters[shaderParameterIndex].DescriptorOffset, buffer, buffer->GetShaderResourceView(), stateAfter, firstSubResource, numSubResources);
-				mShaderResourceViewBindState[shaderParameterIndex] = true;
-			}
-			else
-			{
-				DASH_LOG(LogTemp, Warning, "Can't Find Shader Resource Parameter : {}", srvrName);
-			}
-		}
+		SetShaderResourceView(srvrName, buffer, buffer->GetShaderResourceView(), stateAfter, firstSubResource, numSubResources);
 	}
 
 	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, const FTextureBufferRef& buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
 	{
 		ASSERT_MSG(mPSO != nullptr, "Pipeline State Is Not Set.");
 
-		FShaderPassRef shaderPass = mPSO->GetShaderPass();
-
-		if (shaderPass)
-		{
-			int32 shaderParameterIndex = shaderPass->FindSRVParameterByName(srvrName);
-			if (shaderParameterIndex != INDEX_NONE)
-			{
-				const std::vector<FShaderParameter>& parameters = shaderPass->GetSRVParameters();
-				SetShaderResourceView(parameters[shaderParameterIndex].RootParameterIndex, parameters[shaderParameterIndex].DescriptorOffset, buffer, buffer->GetShaderResourceView(), stateAfter, firstSubResource, numSubResources);
-				mShaderResourceViewBindState[shaderParameterIndex] = true;
-			}
-			else
-			{
-				DASH_LOG(LogTemp, Warning, "Can't Find Shader Resource Parameter : {}", srvrName);
-			}
-		}
+		SetShaderResourceView(srvrName, buffer, buffer->GetShaderResourceView(), stateAfter, firstSubResource, numSubResources);
 	}
 
 	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, const FStructuredBufferRef& buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
 	{
 		ASSERT_MSG(mPSO != nullptr, "Pipeline State Is Not Set.");
 
-		FShaderPassRef shaderPass = mPSO->GetShaderPass();
-
-		if (shaderPass)
-		{
-			int32 shaderParameterIndex = shaderPass->FindSRVParameterByName(srvrName);
-			if (shaderParameterIndex != INDEX_NONE)
-			{
-				const std::vector<FShaderParameter>& parameters = shaderPass->GetSRVParameters();
-				SetShaderResourceView(parameters[shaderParameterIndex].RootParameterIndex, parameters[shaderParameterIndex].DescriptorOffset, buffer, buffer->GetShaderResourceView(), stateAfter, firstSubResource, numSubResources);
-				mShaderResourceViewBindState[shaderParameterIndex] = true;
-			}
-			else
-			{
-				DASH_LOG(LogTemp, Warning, "Can't Find Shader Resource Parameter : {}", srvrName);
-			}
-		}
+		SetShaderResourceView(srvrName, buffer, buffer->GetShaderResourceView(), stateAfter, firstSubResource, numSubResources);
 	}
 
 	void FComputeCommandContextBase::SetUnorderAccessView(const std::string& uavName, const FColorBufferRef& buffer, EResourceState stateAfter, UINT firstSubResource, UINT numSubResources)
 	{
-		FShaderPassRef shaderPass = mPSO->GetShaderPass();
-
-		if (shaderPass)
-		{
-			int32 shaderParameterIndex = shaderPass->FindUAVParameterByName(uavName);
-			if (shaderParameterIndex != INDEX_NONE)
-			{
-				const std::vector<FShaderParameter>& parameters = shaderPass->GetUAVParameters();
-				SetUnorderAccessView(parameters[shaderParameterIndex].RootParameterIndex, parameters[shaderParameterIndex].DescriptorOffset, buffer, stateAfter, firstSubResource, numSubResources);
-				mUnorderAccessViewBindState[shaderParameterIndex] = true;
-			}
-			else
-			{
-				DASH_LOG(LogTemp, Warning, "Can't Find Unorder Access Parameter : {}", uavName);
-			}
-		}
+		SetUnorderAccessView(uavName, buffer, buffer->GetUnorderedAccessView(), stateAfter, firstSubResource, numSubResources);
 	}
 
-	void FComputeCommandContextBase::SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, const FDepthBufferRef& buffer, EResourceState stateAfter /*= EResourceState::AnyShaderAccess*/, UINT firstSubResource /*= 0*/, UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
-	{
-		if (numSubResources < D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES)
-		{
-			for (UINT index = firstSubResource; index < (firstSubResource + numSubResources); ++index)
-			{
-				TransitionBarrier(buffer, stateAfter, index);
-			}
-		}
-		else
-		{
-			TransitionBarrier(buffer, stateAfter);
-		}
-
-		mDynamicViewDescriptor.StageDescriptors(rootIndex, descriptorOffset, 1, buffer->GetShaderResourceView());
-		TrackResource(buffer);
-	}
-
-	void FComputeCommandContextBase::SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, const FGpuResourceRef& resource, const D3D12_CPU_DESCRIPTOR_HANDLE& srcDescriptors,
+	void FComputeCommandContextBase::SetShaderResourceView(const std::string& srvrName, const FGpuResourceRef& resource, const D3D12_CPU_DESCRIPTOR_HANDLE& srcDescriptors,
 		EResourceState stateAfter /*= EResourceState::AnyShaderAccess*/, UINT firstSubResource /*= 0*/,
 		UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
 	{
-		if (numSubResources < D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES)
+		FShaderPassRef shaderPass = mPSO->GetShaderPass();
+
+		bool bParameterValid = false;
+
+		if (shaderPass)
 		{
-			for (UINT index = firstSubResource; index < (firstSubResource + numSubResources); ++index)
+			for (EShaderStage stage : mValidShaderStages)
 			{
-				TransitionBarrier(resource, stateAfter, index);
+				uint32 shaderStageIndex = static_cast<uint32>(stage);
+
+				const FShaderVariable& variable = shaderPass->FindShaderVariable(srvrName, stage);
+				if (variable.ParamterType == EShaderParameterType::SRV)
+				{
+					if (numSubResources < D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES)
+					{
+						for (UINT index = firstSubResource; index < (firstSubResource + numSubResources); ++index)
+						{
+							TransitionBarrier(resource, stateAfter, index);
+						}
+					}
+					else
+					{
+						TransitionBarrier(resource, stateAfter);
+					}
+
+					mDynamicViewDescriptor.StageDescriptors(variable.RootParameterIndex, variable.DescriptorOffset, 1, srcDescriptors);
+					TrackResource(resource);
+
+					mShaderResourceViewBindState[shaderStageIndex][variable.BaseIndex] = true;
+
+					bParameterValid = true;
+				}
 			}
 		}
-		else
-		{
-			TransitionBarrier(resource, stateAfter);
-		}
 
-		mDynamicViewDescriptor.StageDescriptors(rootIndex, descriptorOffset, 1, srcDescriptors);
-		TrackResource(resource);
+		if (!bParameterValid)
+		{
+			DASH_LOG(LogTemp, Warning, "Can't Find Shader Resource Parameter : {}", srvrName);
+		}
 	}
 
-	void FComputeCommandContextBase::SetUnorderAccessView(UINT rootIndex, UINT descriptorOffset, const FColorBufferRef& buffer, EResourceState stateAfter /*= EResourceState::UnorderedAccess*/, UINT firstSubResource /*= 0*/, UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
+	void FComputeCommandContextBase::SetUnorderAccessView(const std::string& srvrName, const FGpuResourceRef& resource, const D3D12_CPU_DESCRIPTOR_HANDLE& uavDescriptors,
+		EResourceState stateAfter /*= EResourceState::UnorderedAccess*/, UINT firstSubResource /*= 0*/, UINT numSubResources /*= D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES*/)
 	{
-		if (numSubResources < D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES)
+		FShaderPassRef shaderPass = mPSO->GetShaderPass();
+
+		bool bParameterValid = false;
+
+		if (shaderPass)
 		{
-			for (UINT index = firstSubResource; index < (firstSubResource + numSubResources); ++index)
+			for (EShaderStage stage : mValidShaderStages)
 			{
-				TransitionBarrier(buffer, stateAfter, index);
+				uint32 shaderStageIndex = static_cast<uint32>(stage);
+
+				const FShaderVariable& variable = shaderPass->FindShaderVariable(srvrName, stage);
+				if (variable.ParamterType == EShaderParameterType::UAV)
+				{
+					if (numSubResources < D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES)
+					{
+						for (UINT index = firstSubResource; index < (firstSubResource + numSubResources); ++index)
+						{
+							TransitionBarrier(resource, stateAfter, index);
+						}
+					}
+					else
+					{
+						TransitionBarrier(resource, stateAfter);
+					}
+
+					mDynamicViewDescriptor.StageDescriptors(variable.RootParameterIndex, variable.DescriptorOffset, 1, uavDescriptors);
+					TrackResource(resource);
+
+					mUnorderAccessViewBindState[shaderStageIndex][variable.BaseIndex] = true;
+
+					bParameterValid = true;
+				}
 			}
 		}
-		else
-		{
-			TransitionBarrier(buffer, stateAfter);
-		}
 
-		mDynamicViewDescriptor.StageDescriptors(rootIndex, descriptorOffset, 1, buffer->GetUnorderedAccessView());
-		TrackResource(buffer);
+		if (!bParameterValid)
+		{
+			DASH_LOG(LogTemp, Warning, "Can't Find Unordered Access Parameter : {}", srvrName);
+		}
 	}
 
 	void FGraphicsCommandContextBase::ClearColor(const FColorBufferRef& target, D3D12_RECT* rect /*= nullptr*/)
@@ -745,9 +749,7 @@ namespace Dash
 		SetPrimitiveTopology(pso->GetPrimitiveTopology());
 		mCurrentPipelineState = pipelineState;
 
-		mPSO = pso;
-
-		InitParameterBindState();
+		SetPipelineStateInternal(pso);
 	}
 
 	void FGraphicsCommandContextBase::SetGraphicsRootSignature(FRootSignature* rootSignature)

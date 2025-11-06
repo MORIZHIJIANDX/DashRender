@@ -1,4 +1,4 @@
-Texture2D ColorBuffer : register(t0);
+Texture2D ColorBuffer;
 SamplerState Sampler_Static : register(s3);
 
 float LinearToSRGB(float value)

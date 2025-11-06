@@ -8,10 +8,10 @@ namespace Dash
 {
 	struct FShaderRegisterCounts
 	{
-		uint8 SamplerCount;
-		uint8 ConstantBufferCount;
-		uint8 ShaderResourceCount;
-		uint8 UnorderedAccessCount;
+		uint8 SamplerCount = 0;
+		uint8 ConstantBufferCount = 0;
+		uint8 ShaderResourceCount = 0;
+		uint8 UnorderedAccessCount = 0;
 
 		inline bool operator==(const FShaderRegisterCounts& RHS) const
 		{
@@ -24,10 +24,10 @@ namespace Dash
 
 	struct FQuantizedBoundShaderState
 	{
-		FShaderRegisterCounts RegisterCounts[GShaderStageCount];
-		EShaderPassType RootSignatureType;
-		uint32 NumRootParameters;
-		uint32 NumStaticSamplers;
+		std::array<FShaderRegisterCounts, GShaderStageCount> RegisterCounts;
+		EShaderPassType RootSignatureType = EShaderPassType::Raster;
+		uint32 NumRootParameters = 0;
+		uint32 NumStaticSamplers = 0;
 
 		inline bool operator==(const FQuantizedBoundShaderState& RHS) const
 		{

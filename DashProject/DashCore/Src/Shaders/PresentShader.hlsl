@@ -1,4 +1,4 @@
-Texture2D DisplayTexture : register(t0);
+Texture2D DisplayTexture;
 SamplerState Sampler_Static : register(s3);
 
 void VS_Main(

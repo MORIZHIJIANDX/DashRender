@@ -16,53 +16,63 @@ namespace Dash
 			FShaderPassParameter& PassParameter = mShaderPassParametersMap[passName];
 			PassParameter.ShaderPass = pass;
 
-			const std::vector<FShaderParameter>& cbvParameters = pass->GetCBVParameters();
-			for (auto& parameter : cbvParameters)
+			for (auto& pair : PassParameter.ShaderPass->GetShaders())
 			{
-				if (!FStringUtility::Contains(parameter.Name, "MaterialConstantBuffer"))
+				EShaderStage stage = pair.first;
+				const std::map<std::string, FShaderVariable>& shaderVariables = pass->GetShaderVariableMap(stage);
+
+				for (auto& shaderVarPair : shaderVariables)
 				{
-					continue;
+					const FShaderVariable& shaderVariable = shaderVarPair.second;
+
+					if (shaderVariable.ParamterType == EShaderParameterType::UniformBuffer)
+					{
+						if (!FStringUtility::Contains(shaderVariable.Name, "MaterialConstantBuffer"))
+						{
+							continue;
+						}
+
+						PassParameter.ConstantBufferMap[shaderVariable.Name].resize(shaderVariable.Size);
+					}
+					else if (shaderVariable.ParamterType == EShaderParameterType::SRV)
+					{
+						PassParameter.TextureBufferMap.emplace(shaderVariable.Name, nullptr);
+						mTextureParameterMap[shaderVariable.Name].RelevantPasses.push_back(passName);
+					}
+					else if (shaderVariable.ParamterType == EShaderParameterType::LooseData)
+					{
+						FConstantBufferVariableInfo uniformVariableInfo;
+						uniformVariableInfo.BufferName = pass->FindShaderVariable(EShaderParameterType::UniformBuffer, shaderVariable.BaseIndex, stage).Name;
+						uniformVariableInfo.Size = shaderVariable.Size;
+						uniformVariableInfo.StartOffset = shaderVariable.StartOffset;
+
+						if (!FStringUtility::Contains(uniformVariableInfo.BufferName, "MaterialConstantBuffer"))
+						{
+							continue;
+						}
+
+						if (uniformVariableInfo.Size == sizeof(Scalar))
+						{
+							mScalarParameterMap[shaderVariable.Name].ConstantBufferVariableMap.emplace(passName, uniformVariableInfo);
+						}
+						else if (uniformVariableInfo.Size == sizeof(FVector2f))
+						{
+							mVector2ParameterMap[shaderVariable.Name].ConstantBufferVariableMap.emplace(passName, uniformVariableInfo);
+						}
+						else if (uniformVariableInfo.Size == sizeof(FVector3f))
+						{
+							mVector3ParameterMap[shaderVariable.Name].ConstantBufferVariableMap.emplace(passName, uniformVariableInfo);
+						}
+						else if (uniformVariableInfo.Size == sizeof(FVector4f))
+						{
+							mVector4ParameterMap[shaderVariable.Name].ConstantBufferVariableMap.emplace(passName, uniformVariableInfo);
+						}
+						else
+						{
+							ASSERT_FAIL("Invalid Constant Variable Type!");
+						}
+					}
 				}
-
-				PassParameter.ConstantBufferMap[parameter.Name].resize(parameter.Size);
-
-				for (size_t variableIndex = 0; variableIndex < parameter.ConstantBufferVariables.size(); variableIndex++)
-				{
-					const FConstantBufferVariable& constantVariable = parameter.ConstantBufferVariables[variableIndex];
-
-					FConstantBufferVariableInfo variableInfo;
-					variableInfo.BufferName = parameter.Name;
-					variableInfo.Size = constantVariable.Size;
-					variableInfo.StartOffset = constantVariable.StartOffset;
-
-					if (constantVariable.Size == sizeof(Scalar))
-					{
-						mScalarParameterMap[constantVariable.VariableName].ConstantBufferVariableMap.emplace(passName, variableInfo);
-					}
-					else if (constantVariable.Size == sizeof(FVector2f))
-					{
-						mVector2ParameterMap[constantVariable.VariableName].ConstantBufferVariableMap.emplace(passName, variableInfo);
-					}
-					else if (constantVariable.Size == sizeof(FVector3f))
-					{
-						mVector3ParameterMap[constantVariable.VariableName].ConstantBufferVariableMap.emplace(passName, variableInfo);
-					}
-					else if (constantVariable.Size == sizeof(FVector4f))
-					{
-						mVector4ParameterMap[constantVariable.VariableName].ConstantBufferVariableMap.emplace(passName, variableInfo);
-					}
-					else
-					{
-						ASSERT_FAIL("Invalid Constant Variable Type!");
-					}
-				}
-			}
-
-			const std::vector<FShaderParameter>& srvParameters = pass->GetSRVParameters();
-			for (auto& parameter : srvParameters)
-			{
-				PassParameter.TextureBufferMap.emplace(parameter.Name, nullptr);
-				mTextureParameterMap[parameter.Name].RelevantPasses.push_back(passName);
 			}
 		}
 

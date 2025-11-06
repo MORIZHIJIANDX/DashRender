@@ -1,5 +1,5 @@
-Texture2D InputTexture : register(t0);
-RWTexture2D<float4> OutputTexture : register(u0);
+Texture2D InputTexture;
+RWTexture2D<float4> OutputTexture;
 
 float CalcLuminance(float3 color)
 {

@@ -4,19 +4,19 @@ struct InstanceDataType
     float4x4 InstanceModelMatrix;
 };
 
-StructuredBuffer<InstanceDataType> InstanceData : register(t1);
+StructuredBuffer<InstanceDataType> InstanceData;
 
-cbuffer FrameConstantBuffer : register(b0)
+cbuffer FrameConstantBuffer
 {
     float4x4 ViewProjectionMatrix;
 };
 
-cbuffer ObjectConstantBuffer : register(b1)
+cbuffer ObjectConstantBuffer
 {
     float4x4 ModelMatrix;
 };
 
-cbuffer MaterialConstantBuffer : register(b2)
+cbuffer MaterialConstantBuffer
 {
     float4 Color;
 };
@@ -50,8 +50,8 @@ PS_INPUT VS_Main(VS_INPUT input)
     return output;
 }
 
-SamplerState Sampler_Static : register(s3);
-Texture2D BaseColorTexture : register(t0);
+SamplerState Sampler_Static;
+Texture2D BaseColorTexture;
 
 float4 PS_Main(PS_INPUT input) : SV_Target
 {

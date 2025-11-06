@@ -12,6 +12,18 @@
 
 namespace Dash
 {
+	struct FShaderVariable
+	{
+		std::string Name;
+		uint32 BaseIndex = 0;	// BaseIndex In CVB, SRV, UAV, Sampler ParamterArray
+		uint32 Size = 0;
+		uint32 StartOffset = 0;
+		uint32 Stride = 0;
+		uint32 RootParameterIndex = 0;
+		uint32 DescriptorOffset = 0;
+		EShaderParameterType ParamterType = EShaderParameterType::Invalid;
+	};
+
 	class FShaderPass : public FRefCount
 	{
 	public:
@@ -26,20 +38,15 @@ namespace Dash
 		const std::map<EShaderStage, FShaderResourceRef>& GetShaders() const { return mShaders; }
 		size_t GetShadersHash() const { return ShadersHash; }
 
-		int32 FindCBVParameterByName(const std::string& parameterName, EShaderStage stage) const;
-		int32 FindSRVParameterByName(const std::string& parameterName, EShaderStage stage) const;
-		int32 FindUAVParameterByName(const std::string& parameterName, EShaderStage stage) const;
-		int32 FindSamplerParameterByName(const std::string& parameterName, EShaderStage stage) const;
+		const std::map<std::string, FShaderVariable>& GetShaderVariableMap(EShaderStage stage) { return mShaderVariableMaps[static_cast<uint32>(stage)]; }
 
-		size_t GetCBVParameterNum(EShaderStage stage) const { return mCBVParameters.size(); }
-		size_t GetSRVParameterNum(EShaderStage stage) const { return mSRVParameters.size(); }
-		size_t GetUAVParameterNum(EShaderStage stage) const { return mUAVParameters.size(); }
-		size_t GetSamplerParameterNum(EShaderStage stage) const { return mSamplerParameters.size(); }
+		FShaderVariable FindShaderVariable(const std::string& parameterName, EShaderStage stage);
+		FShaderVariable FindShaderVariable(EShaderParameterType type, uint32 baseIndex, EShaderStage stage);
 
-		const std::vector<FShaderParameter>& GetCBVParameters(EShaderStage stage) const { return mCBVParameters; }
-		const std::vector<FShaderParameter>& GetSRVParameters(EShaderStage stage) const { return mSRVParameters; }
-		const std::vector<FShaderParameter>& GetUAVParameters(EShaderStage stage) const { return mUAVParameters; }
-		const std::vector<FShaderParameter>& GetSamplerParameters(EShaderStage stage) const { return mSamplerParameters; }
+		uint32 GetCBVParameterNum(EShaderStage stage) const { return mNumCBVParameters[static_cast<uint32>(stage)]; }
+		uint32 GetSRVParameterNum(EShaderStage stage) const { return mNumSRVParameters[static_cast<uint32>(stage)]; }
+		uint32 GetUAVParameterNum(EShaderStage stage) const { return mNumUAVParameters[static_cast<uint32>(stage)]; }
+		uint32 GetSamplerParameterNum(EShaderStage stage) const { return mNumSamplerParameters[static_cast<uint32>(stage)]; }
 
 		const FBlendState& GetBlendState() const { return mBlendState; }
 		const FRasterizerState& GetRasterizerState() const { return mRasterizerState; }
@@ -53,28 +60,29 @@ namespace Dash
 		void SetRasterizerState(const FRasterizerState& rasterizerState) { mRasterizerState = rasterizerState; }
 		void SetDepthStencilState(const FDepthStencilState& depthStencilState) { mDepthStencilState = depthStencilState; }
 
-		void Finalize(bool createStaticSamplers = true);
+		void Finalize();
 
-		void CreateRootSignature(const FQuantizedBoundShaderState& quantizedBoundShaderState);
-		void InitShaderRootParamters(EShaderStage stage, FBoundShaderState& boundShaderState, uint32 currentParameterIndex);
+		void CreateRootSignature(const FQuantizedBoundShaderState& quantizedBoundShaderState, std::vector<FShaderParameter>* inCBVParameters,
+			std::vector<FShaderParameter>* inSRVParameters, std::vector<FShaderParameter>* inUAVParameters, std::vector<FShaderParameter>* inSamplerParameters);
+		void InitShaderRootParamters(EShaderStage stage, FBoundShaderState& boundShaderState, uint32& currentParameterIndex, std::vector<FShaderParameter>& inCBVParameters,
+			std::vector<FShaderParameter>& inSRVParameters, std::vector<FShaderParameter>& inUAVParameters, std::vector<FShaderParameter>& inSamplerParameters);
 		D3D12_SHADER_VISIBILITY GetShaderVisibility(EShaderStage stage);
 		std::vector<FSamplerDesc> CreateStaticSamplers();
 		int32 FindParameterByName(const std::vector<FShaderParameter>& parameterArray, const std::string& parameterName) const;
 		std::vector<std::string> GetParameterNames(const std::vector<FShaderParameter>& parameterArray) const;
 		void InitDescriptorRanges(FBoundShaderState& boundShaderState, std::vector<FShaderParameter>& parameters, UINT& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, EShaderStage stage);
+
+		void AddVariables(std::map<std::string, FShaderVariable>& variableMaps, const std::vector<FShaderParameter>& inParameters);
 		 
 	private:
 		std::map<EShaderStage, FShaderResourceRef> mShaders;
 
-		std::vector<FConstantBufferVariable> mConstantVariables[GShaderStageCount];
-		std::vector<FConstantBufferVariable> mBindlessSRVVariables[GShaderStageCount];
-		std::vector<FConstantBufferVariable> mBindlessUAVVariables[GShaderStageCount];
-		std::vector<FConstantBufferVariable> mBindlessSamplerVariables[GShaderStageCount];
+		std::map<std::string, FShaderVariable> mShaderVariableMaps[GShaderStageCount];
 
-		std::vector<FShaderParameter> mCBVParameters[GShaderStageCount];
-		std::vector<FShaderParameter> mSRVParameters[GShaderStageCount];
-		std::vector<FShaderParameter> mUAVParameters[GShaderStageCount];
-		std::vector<FShaderParameter> mSamplerParameters[GShaderStageCount];
+		uint32 mNumCBVParameters[GShaderStageCount];
+		uint32 mNumSRVParameters[GShaderStageCount];
+		uint32 mNumUAVParameters[GShaderStageCount];
+		uint32 mNumSamplerParameters[GShaderStageCount];
 
 		FBlendState mBlendState{};
 		FRasterizerState mRasterizerState{};

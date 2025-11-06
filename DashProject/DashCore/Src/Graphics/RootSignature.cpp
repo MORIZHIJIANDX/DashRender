@@ -115,6 +115,62 @@ namespace Dash
 
 		DescriptorTableMask = 0;
 		SamplerTableMask = 0;
+
+		for (UINT paramIndex = 0; paramIndex < NumParameters; paramIndex++)
+		{
+			const D3D12_ROOT_PARAMETER1& rootParameter = RootSignatureDesc.pParameters[paramIndex];
+			NumDescriptorsPerTable[paramIndex] = 0;
+
+			if (rootParameter.ParameterType == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE)
+			{
+				ASSERT(rootParameter.DescriptorTable.pDescriptorRanges != nullptr);
+
+				if (rootParameter.DescriptorTable.pDescriptorRanges->RangeType == D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER)
+				{
+					SamplerTableMask |= (1 << paramIndex);
+				}
+				else
+				{
+					DescriptorTableMask |= (1 << paramIndex);
+				}
+
+				for (UINT rangeIndex = 0; rangeIndex < rootParameter.DescriptorTable.NumDescriptorRanges; rangeIndex++)
+				{
+					NumDescriptorsPerTable[paramIndex] += rootParameter.DescriptorTable.pDescriptorRanges[rangeIndex].NumDescriptors;
+				}
+			}
+		}
+
+		for (uint32 i = 0; i < RootSignatureDesc.NumParameters; i++)
+		{
+			const D3D12_ROOT_PARAMETER1* paramter = &RootSignatureDesc.pParameters[i];
+			if (paramter->ParameterType == D3D12_ROOT_PARAMETER_TYPE::D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS)
+			{
+				DASH_LOG(LogTemp, Info, "Parameter Index {}, Type 32BIT_CONSTANTS, Visibility {}, Num32BitValues {}, ShaderRegister {}, RegisterSpace {}", i, (uint32)paramter->ShaderVisibility, paramter->Constants.Num32BitValues, paramter->Constants.ShaderRegister, paramter->Constants.RegisterSpace);
+			}
+			else if (paramter->ParameterType == D3D12_ROOT_PARAMETER_TYPE::D3D12_ROOT_PARAMETER_TYPE_CBV)
+			{
+				DASH_LOG(LogTemp, Info, "Parameter Index {}, Type Root_CBV, Visibility {}, Flags {}, ShaderRegister {}, RegisterSpace {}", i, (uint32)paramter->ShaderVisibility, (uint32)paramter->Descriptor.Flags, paramter->Descriptor.ShaderRegister, paramter->Descriptor.RegisterSpace);
+			}
+			else if (paramter->ParameterType == D3D12_ROOT_PARAMETER_TYPE::D3D12_ROOT_PARAMETER_TYPE_SRV)
+			{
+				DASH_LOG(LogTemp, Info, "Parameter Index {}, Type Root_SRV, Visibility {}, Flags {}, ShaderRegister {}, RegisterSpace {}", i, (uint32)paramter->ShaderVisibility, (uint32)paramter->Descriptor.Flags, paramter->Descriptor.ShaderRegister, paramter->Descriptor.RegisterSpace);
+			}
+			else if (paramter->ParameterType == D3D12_ROOT_PARAMETER_TYPE::D3D12_ROOT_PARAMETER_TYPE_UAV)
+			{
+				DASH_LOG(LogTemp, Info, "Parameter Index {}, Type Root_UAV, Visibility {}, Flags {}, ShaderRegister {}, RegisterSpace {}", i, (uint32)paramter->ShaderVisibility, (uint32)paramter->Descriptor.Flags, paramter->Descriptor.ShaderRegister, paramter->Descriptor.RegisterSpace);
+			}
+			else if (paramter->ParameterType == D3D12_ROOT_PARAMETER_TYPE::D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE)
+			{
+				DASH_LOG(LogTemp, Info, "Parameter Index {}, Type DescriptorTable, Visibility {}, NumDescriptorRanges {}", i, (uint32)paramter->ShaderVisibility, paramter->DescriptorTable.NumDescriptorRanges);
+				for (uint32 rangeIndex = 0; rangeIndex < paramter->DescriptorTable.NumDescriptorRanges; rangeIndex++)
+				{
+					const D3D12_DESCRIPTOR_RANGE1* range = &paramter->DescriptorTable.pDescriptorRanges[rangeIndex];
+					DASH_LOG(LogTemp, Info, "\tRange Index {}, Type DescriptorRange, Flags {}, NumDescriptorRanges {}, RangeType {}, BaseShaderRegister {}, RegisterSpace {}, OffsetInDescriptorsFromTableStart {}", rangeIndex, (uint32)range->Flags,
+						range->NumDescriptors, (uint32)range->RangeType, range->BaseShaderRegister, range->RegisterSpace, range->OffsetInDescriptorsFromTableStart);
+				}
+			}
+		}
 	}
 
 	void FRootSignatureManager::Destroy()

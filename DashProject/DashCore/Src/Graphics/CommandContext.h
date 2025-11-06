@@ -14,6 +14,7 @@
 #include "ShaderPass.h"
 #include "GpuResourcesStateTracker.h"
 #include "RenderDevice.h"
+#include "GraphicsDefines.h"
 
 namespace Dash
 {
@@ -78,6 +79,7 @@ namespace Dash
 		void ReleaseTrackedObjects();
 		uint64 Execute();
 
+		void SetPipelineStateInternal(FPipelineStateObject* inPSO);
 		void InitParameterBindState();
 		void InitStateForParameter(size_t parameterNum, std::vector<bool>& bindStateMap);
 		void CheckUnboundShaderParameters();
@@ -106,11 +108,12 @@ namespace Dash
 		ID3D12PipelineState* mCurrentPipelineState = nullptr;
 
 		FPipelineStateObject* mPSO;
+		std::vector<EShaderStage> mValidShaderStages;
 
-		std::vector<bool> mConstantBufferBindState;
-		std::vector<bool> mShaderResourceViewBindState;
-		std::vector<bool> mUnorderAccessViewBindState;
-		std::vector<bool> mSamplerBindState;
+		std::vector<bool> mConstantBufferBindState[GShaderStageCount];
+		std::vector<bool> mShaderResourceViewBindState[GShaderStageCount];
+		std::vector<bool> mUnorderAccessViewBindState[GShaderStageCount];
+		std::vector<bool> mSamplerBindState[GShaderStageCount];
 	};
 
 	class FCopyCommandContextBase : public FCommandContext
@@ -173,16 +176,12 @@ namespace Dash
 
 		void SetRootConstantBufferView(UINT rootIndex, size_t sizeInBytes, const void* constants);
 
-		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, const FGpuResourceRef& resource, const D3D12_CPU_DESCRIPTOR_HANDLE& srcDescriptors,
+		void SetShaderResourceView(const std::string& srvrName, const FGpuResourceRef& resource, const D3D12_CPU_DESCRIPTOR_HANDLE& srcDescriptors,
 			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0,
 			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 
-		void SetUnorderAccessView(UINT rootIndex, UINT descriptorOffset, const FColorBufferRef& buffer,
+		void SetUnorderAccessView(const std::string& srvrName, const FGpuResourceRef& resource, const D3D12_CPU_DESCRIPTOR_HANDLE& uavDescriptors,
 			EResourceState stateAfter = EResourceState::UnorderedAccess, UINT firstSubResource = 0,
-			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
-
-		void SetShaderResourceView(UINT rootIndex, UINT descriptorOffset, const FDepthBufferRef& buffer,
-			EResourceState stateAfter = EResourceState::AnyShaderAccess, UINT firstSubResource = 0,
 			UINT numSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 	};
 
