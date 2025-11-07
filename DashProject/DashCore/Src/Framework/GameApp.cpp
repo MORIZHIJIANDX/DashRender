@@ -34,7 +34,7 @@ namespace Dash
 	void IGameApp::Startup()
 	{
 		{
-			std::string result = FShaderPreprocesser::Process(FFileUtility::GetEngineShaderDir("TestBindlessPS.hlsl"));
+			FShaderPreprocessdResult result = FShaderPreprocesser::Process(FFileUtility::GetEngineShaderDir("TestBindlessPS.hlsl"));
 
 			std::string processedShaderPass = FFileUtility::GetEngineShaderDir("TestBindlessPSAfter.hlsl");
 
@@ -50,7 +50,7 @@ namespace Dash
 				ASSERT(false);
 			}
 
-			file << result;
+			file << result.ShaderCode;
 			file.close();
 		}
 

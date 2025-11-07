@@ -12,7 +12,7 @@
     #endif
 #endif	
 
-#define UB_CB_PREFIXED_MEMBER_ACCESS(Prefix, MemberName) Prefix##_##MemberName
+#define UB_CB_PREFIXED_MEMBER_ACCESS(Prefix, MemberName) Prefix##MemberName
 
 #if PLATFORM_SUPPORTS_BINDLESS
     #define BINDLESS_SRV(Type, Name) \

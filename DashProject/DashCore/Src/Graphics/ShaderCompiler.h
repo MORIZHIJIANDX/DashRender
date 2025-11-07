@@ -22,7 +22,8 @@ namespace Dash
 		FDX12CompiledShader LoadShaderBlob(const FShaderCreationInfo& info);
 		TRefCountPtr<IDxcBlobEncoding> LoadBlobFromFile(const std::string& fileName);
 
-		std::string PreprocessShaderFile(const FShaderCreationInfo& info);
+		bool SavePreprocessInfo(const FShaderCreationInfo& info, const FDX12CompiledShader& compiledShader);
+		bool LoadPreprocessInfo(const FShaderCreationInfo& info, FDX12CompiledShader& compiledShader);
 		
 	protected:
 		TRefCountPtr<IDxcUtils> mUtils;

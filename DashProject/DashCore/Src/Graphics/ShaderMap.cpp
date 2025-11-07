@@ -30,7 +30,7 @@ namespace Dash
 			FDX12CompiledShader compiledShader = globalShaderMap.mCompilers[0].CompileShader(info);
 			if (compiledShader.IsValid())
 			{	
-				shaderResourceref->Init(compiledShader.CompiledShaderBlob, compiledShader.ShaderReflector, info);
+				shaderResourceref->Init(compiledShader, info);
 
 				globalShaderMap.mShaderResourceMap[shaderHash] = shaderResourceref;
 			}

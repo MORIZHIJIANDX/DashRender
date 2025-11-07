@@ -1,10 +1,14 @@
 #pragma once
 
+#include <d3d12.h>
+#include <d3d12shader.h>
+
 namespace Dash
 {
 	#define SHADER_BLOB_FILE_EXTENSION ".cso"
 	#define REFLECTION_BLOB_FILE_EXTENSION ".refect"
 	#define PDB_BLOB_FILE_EXTENSION ".pdb"
+	#define SHADER_PREPROCESS_FILE_EXTENSION ".preprocess"
 
 	enum class EShaderStage : uint16
 	{
@@ -27,13 +31,13 @@ namespace Dash
 
 		SamplerState,
 
-		// Texture1D: not used in the renderer.
-		// Texture1DArray: not used in the renderer.
+		Texture1D,
+		Texture1DArray,
 		Texture2D,
 		Texture2DArray,
 		Texture2DMS,
 		Texture3D,
-		// Texture3DArray: not used in the renderer.
+		Texture3DArray,
 		TextureCube,
 		TextureCubeArray,
 		TextureMetadata,
@@ -43,14 +47,14 @@ namespace Dash
 		ByteAddressBuffer,
 		RaytracingAccelerationStructure,
 
-		// RWTexture1D: not used in the renderer.
-		// RWTexture1DArray: not used in the renderer.
+		RWTexture1D,
+		RWTexture1DArray,
 		RWTexture2D,
 		RWTexture2DArray,
 		RWTexture3D,
-		// RWTexture3DArray: not used in the renderer.
+		RWTexture3DArray,
 		RWTextureCube,
-		// RWTextureCubeArray: not used in the renderer.
+		RWTextureCubeArray,
 		RWTextureMetadata,
 
 		RWBuffer,
@@ -63,6 +67,9 @@ namespace Dash
 
 		MAX
 	};
+
+	EShaderResourceBindingType D3DBindDescToShaderCodeResourceBinding(D3D12_SHADER_INPUT_BIND_DESC binding);
+	EShaderResourceBindingType ShaderCodeResourceBindingFromString(const std::string& hlslType);
 
 	enum class EShaderParameterType : uint8
 	{

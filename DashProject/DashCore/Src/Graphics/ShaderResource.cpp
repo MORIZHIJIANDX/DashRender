@@ -21,47 +21,6 @@ namespace Dash
 	static constexpr const char* kBindlessUAVPrefix = TEXT("BindlessUAV_");
 	static constexpr const char* kBindlessSamplerPrefix = TEXT("BindlessSampler_");
 
-	EShaderResourceBindingType D3DBindDescToShaderCodeResourceBinding(const D3D12_SHADER_INPUT_BIND_DESC& Binding)
-	{
-		switch (Binding.Type)
-		{
-		case D3D_SIT_SAMPLER:
-			return EShaderResourceBindingType::SamplerState;
-		case D3D_SIT_TBUFFER:
-		case D3D_SIT_CBUFFER:
-			return EShaderResourceBindingType::Buffer;
-		case D3D_SIT_TEXTURE:
-			switch (Binding.Dimension)
-			{
-			case D3D_SRV_DIMENSION_BUFFER:			return EShaderResourceBindingType::Buffer;
-			case D3D_SRV_DIMENSION_TEXTURE2D:		return EShaderResourceBindingType::Texture2D;
-			case D3D_SRV_DIMENSION_TEXTURE2DARRAY:	return EShaderResourceBindingType::Texture2DArray;
-			case D3D_SRV_DIMENSION_TEXTURE2DMS:		return EShaderResourceBindingType::Texture2DMS;
-			case D3D_SRV_DIMENSION_TEXTURE3D:		return EShaderResourceBindingType::Texture3D;
-			case D3D_SRV_DIMENSION_TEXTURECUBE:		return EShaderResourceBindingType::TextureCube;
-			default:
-				return EShaderResourceBindingType::Invalid;
-			}
-		case D3D_SIT_UAV_RWTYPED:
-			switch (Binding.Dimension)
-			{
-			case D3D_SRV_DIMENSION_BUFFER:			return EShaderResourceBindingType::RWBuffer;
-			case D3D_SRV_DIMENSION_TEXTURE2D:		return EShaderResourceBindingType::RWTexture2D;
-			case D3D_SRV_DIMENSION_TEXTURE2DARRAY:	return EShaderResourceBindingType::RWTexture2DArray;
-			case D3D_SRV_DIMENSION_TEXTURE3D:		return EShaderResourceBindingType::RWTexture3D;
-			case D3D_SRV_DIMENSION_TEXTURECUBE:		return EShaderResourceBindingType::RWTextureCube;
-			default:
-				return EShaderResourceBindingType::Invalid;
-			}
-		case D3D_SIT_STRUCTURED:		return EShaderResourceBindingType::StructuredBuffer;
-		case D3D_SIT_UAV_RWSTRUCTURED:	return EShaderResourceBindingType::RWStructuredBuffer;
-		case D3D_SIT_BYTEADDRESS:		return EShaderResourceBindingType::ByteAddressBuffer;
-		case D3D_SIT_UAV_RWBYTEADDRESS:	return EShaderResourceBindingType::RWByteAddressBuffer;
-		default:
-			return EShaderResourceBindingType::Invalid;
-		}
-	}
-
 	EShaderParameterType ParseAndRemoveBindlessParameterPrefix(std::string& memberName)
 	{
 		if (FStringUtility::ReplaceFirst(memberName, kBindlessSRVPrefix, ""))
@@ -148,17 +107,17 @@ namespace Dash
 		ShaderTarget = FStringUtility::ToLower(splitStrs[0]) + targetLevel;
 	}
 
-	void FShaderResource::Init(TRefCountPtr<IDxcBlob>& compiledShaderBlob, TRefCountPtr<ID3D12ShaderReflection>& reflector, const FShaderCreationInfo& creationInfo)
+	void FShaderResource::Init(const FDX12CompiledShader& compiledShader, const FShaderCreationInfo& creationInfo)
 	{
-		ASSERT(compiledShaderBlob != nullptr);
+		ASSERT(compiledShader.CompiledShaderBlob != nullptr);
 
-		mCompiledShaderBlob = compiledShaderBlob;
+		mCompiledShaderBlob = compiledShader.CompiledShaderBlob;
 		mShaderBinary.Data = mCompiledShaderBlob->GetBufferPointer();
 		mShaderBinary.Size = static_cast<uint32>(mCompiledShaderBlob->GetBufferSize());
 
 		mCreationInfo = creationInfo;
 
-		ReflectShaderParameter(reflector);
+		ReflectShaderParameter(compiledShader.ShaderReflector);
 	}
 
 	enum class EVSInputType
@@ -168,7 +127,7 @@ namespace Dash
 		Short,
 	};
 
-	void FShaderResource::ReflectShaderParameter(TRefCountPtr<ID3D12ShaderReflection>& reflector)
+	void FShaderResource::ReflectShaderParameter(const TRefCountPtr<ID3D12ShaderReflection>& reflector)
 	{
 		D3D12_SHADER_DESC shaderDesc;
 		reflector->GetDesc(&shaderDesc);
@@ -224,7 +183,7 @@ namespace Dash
 		}
 	}
 
-	void FShaderResource::ReflectCBVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector)
+	void FShaderResource::ReflectCBVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, const TRefCountPtr<ID3D12ShaderReflection>& reflector)
 	{
 		ID3D12ShaderReflectionConstantBuffer* shaderReflectionConstantBuffer = reflector->GetConstantBufferByName(resourceDesc.Name);
 
@@ -255,7 +214,7 @@ namespace Dash
 		DASH_LOG(LogTemp, Info, "Found CBuffer {} BindPoint {} Register Space {}", parameter.Name, parameter.BindPoint, parameter.RegisterSpace);
 	}
 
-	void FShaderResource::ReflectSRVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector)
+	void FShaderResource::ReflectSRVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, const TRefCountPtr<ID3D12ShaderReflection>& reflector)
 	{
 		if (resourceDesc.Type == D3D_SIT_STRUCTURED)
 		{
@@ -265,19 +224,19 @@ namespace Dash
 		mSRVParameters.push_back(parameter);
 	}
 
-	void FShaderResource::ReflectUAVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector)
+	void FShaderResource::ReflectUAVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, const TRefCountPtr<ID3D12ShaderReflection>& reflector)
 	{
 		parameter.ParameterType = EShaderParameterType::UAV;
 		mUAVParameters.push_back(parameter);
 	}
 
-	void FShaderResource::ReflectSamplerParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector)
+	void FShaderResource::ReflectSamplerParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, const TRefCountPtr<ID3D12ShaderReflection>& reflector)
 	{
 		parameter.ParameterType = EShaderParameterType::Sampler;
 		mSamplerParameters.push_back(parameter);
 	}
 
-	void FShaderResource::ReflectInputLayout(const D3D12_SHADER_DESC& shaderDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector)
+	void FShaderResource::ReflectInputLayout(const D3D12_SHADER_DESC& shaderDesc, const TRefCountPtr<ID3D12ShaderReflection>& reflector)
 	{
 		uint32 currentInputSlot = 0;
 		std::string prevSemanticName{};

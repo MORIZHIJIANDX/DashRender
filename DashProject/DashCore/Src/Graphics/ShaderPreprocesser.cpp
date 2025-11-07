@@ -1,6 +1,7 @@
 #include "PCH.h"
 #include "ShaderPreprocesser.h"
 #include "Utility/FileUtility.h"
+#include "GraphicsDefines.h"
 
 namespace Dash
 {
@@ -14,14 +15,13 @@ namespace Dash
 			std::string ResourceName;	// DepthTexture, etc.
 			std::string SourceFile;		// 来源文件，用于调试
 			uint64 LineNumber;			// 在源文件中的行号
+			//EShaderResourceBindingType BindlessResourceType;
 		};
 
 		struct FCBufferInfo
 		{
 			std::string Name;
-			int32 BindPoint = INDEX_NONE;			// register(b0) 中的 0
-			int32 RegisterSpace = INDEX_NONE;		// register(b0, space1) 中的 1
-			std::string SourceFile;			// CBuffer 声明的文件
+			std::string SourceFile;					// CBuffer 声明的文件
 			uint64 LineNumber;
 		};
 
@@ -32,9 +32,6 @@ namespace Dash
 			bool Verbose = false;							// 是否输出详细处理信息
 			bool GenerateComments = true;					// 生成注释
 			std::string CBufferName = "BindlessCBuffer";	// 生成的 CBuffer 名称
-			int32 PreferredBindPoint = 0;					// 优先使用的 BindPoint
-			int32 PreferredRegisterSpace = INDEX_NONE;				// 优先使用的space，-1表示自动
-			bool AutoDetectRegister = true;					// 自动检测可用的register
 		};
 
 		struct FProcessedResult
@@ -45,8 +42,6 @@ namespace Dash
 			std::vector<std::string> ProcessedFiles;				// 处理的文件列表
 			std::vector<FCBufferInfo> ExistingCBuffers;				// 找到的现有 CBuffer 列表
 			uint64 InsertPosition;									// 生成的 CBuffer 插入位置
-			int32 AssignedBindPoint = 0;							// 分配的 BindPoint
-			int32 AssignedRegisterSpace = 0;						// 分配的 Space
 			bool Succeed = false;									// 是否生成 CBuffer
 		};
 
@@ -177,6 +172,7 @@ namespace Dash
 					resource.ResourceName = match[3].str();
 					resource.SourceFile = filePath;
 					resource.LineNumber = index + 1;
+					//resource.BindlessResourceType = ShaderCodeResourceBindingFromString(resource.DataType);
 
 					// 检查是否重复
 					auto iter = std::find_if(mBindlessResources.begin(), mBindlessResources.end(), [&resource](const FBindlessResource& r){
@@ -226,25 +222,11 @@ namespace Dash
 					cbufferInfo.SourceFile = filePath;
 					cbufferInfo.LineNumber = index;
 
-					std::smatch registerMatch;
-					if (std::regex_search(line, registerMatch, registerRegex))
-					{
-						cbufferInfo.BindPoint = std::stoi(registerMatch[1].str());
-						if (registerMatch[2].matched)
-						{
-							cbufferInfo.RegisterSpace = std::stoi(registerMatch[2].str());
-						}
-					}
-					else
-					{
-						DASH_LOG(LogTemp, Fatal, "[BindlessCBufferGenerator] CBuffer {} BindPoint Not Defined", cbufferInfo.Name);
-					}
-
 					if (cbufferInfo.Name != mConfig.CBufferName)
 					{
 						mExistingCBuffers.push_back(cbufferInfo);
 
-						DASH_LOG(LogTemp, Info, "[BindlessCBufferGenerator] Found CBuffer {} BindPoint {} Register Space {}, File {}", cbufferInfo.Name, cbufferInfo.BindPoint, cbufferInfo.RegisterSpace, cbufferInfo.SourceFile);
+						DASH_LOG(LogTemp, Info, "[BindlessCBufferGenerator] Found CBuffer {} , File {}", cbufferInfo.Name, cbufferInfo.SourceFile);
 					}
 				}
 			}
@@ -288,17 +270,10 @@ namespace Dash
 				result.ProcessedFiles.push_back(file);
 			}
 
-			auto [bindPoint, resigerSpace] = DetermineRegisterAllocation();
-
-			ASSERT(bindPoint != INDEX_NONE);
-
-			result.AssignedBindPoint = bindPoint;
-			result.AssignedRegisterSpace = resigerSpace;
-
 			if (!mBindlessResources.empty())
 			{
 				std::ostringstream cbufferStream;
-				GenerateBindlessCBuffer(cbufferStream, bindPoint, resigerSpace);
+				GenerateBindlessCBuffer(cbufferStream);
 				result.CBufferCode = cbufferStream.str();
 			}
 
@@ -328,114 +303,7 @@ namespace Dash
 			return result;
 		}
 
-		std::pair<int32, int32> DetermineRegisterAllocation()
-		{
-			const int32 MaxBindPoint = 16;		// D3D12_COMMONSHADER_CONSTANT_BUFFER_HW_SLOT_COUNT
-			const int32 MaxRegisterSpace = 16;	// D3D12_COMMONSHADER_CONSTANT_BUFFER_REGISTER_COUNT
-
-			int32 bindPoint = FMath::Min(mConfig.PreferredBindPoint, MaxBindPoint);
-			int32 resigerSpace = FMath::Min(mConfig.PreferredRegisterSpace, MaxRegisterSpace);
-
-			std::map<int32, std::set<int32>> usedBindPointPerSpace;
-
-			std::vector<uint32> spaceUndeclaredCBufferIndexs;
-			for (uint32 i = 0; i < mExistingCBuffers.size(); i++)
-			{
-				if (mExistingCBuffers[i].RegisterSpace == INDEX_NONE)
-				{
-					spaceUndeclaredCBufferIndexs.push_back(i);
-				}
-				else
-				{
-					usedBindPointPerSpace[mExistingCBuffers[i].RegisterSpace].emplace(mExistingCBuffers[i].BindPoint);
-				}
-			}
-
-			if (!spaceUndeclaredCBufferIndexs.empty())
-			{
-				while (!spaceUndeclaredCBufferIndexs.empty())
-				{
-					uint32 cbufferIndex = spaceUndeclaredCBufferIndexs.back();
-					FCBufferInfo& cbuffer = mExistingCBuffers[cbufferIndex];
-					
-					for (int32 space = 0; space < MaxRegisterSpace; space++)
-					{
-						if (usedBindPointPerSpace[space].size() < MaxBindPoint)
-						{
-							cbuffer.RegisterSpace = space;
-							usedBindPointPerSpace[space].emplace(cbuffer.BindPoint);
-							break;
-						}
-					}
-
-					spaceUndeclaredCBufferIndexs.pop_back();
-				}
-			}
-
-			// 策略1：如果指定了 register space，在该space中找可用的slot
-			if (resigerSpace != INDEX_NONE)
-			{
-				if (usedBindPointPerSpace.contains(resigerSpace))
-				{
-					const std::set<int32>& bindPoints = usedBindPointPerSpace[resigerSpace];
-					if (bindPoints.size() < MaxBindPoint)
-					{
-						if (bindPoint != INDEX_NONE &&
-							bindPoint >= 0 &&
-							bindPoint < MaxBindPoint)
-						{
-							if (bindPoints.find(bindPoint) == bindPoints.end())
-							{
-								return { bindPoint , resigerSpace };
-							}
-						}
-
-						for (int32 testBindPoint = 0; testBindPoint < MaxBindPoint; testBindPoint++)
-						{
-							if (!bindPoints.contains(testBindPoint))
-							{
-								DASH_LOG(LogTemp, Info, "[BindlessCBufferGenerator] Auto detect bind point {} register space {}", testBindPoint, resigerSpace);
-								return { testBindPoint , resigerSpace };
-							}
-						}
-					}
-				}
-			}
-
-			// 策略2：在现有space中找可用的slot
-			for (const auto& registerSpaceMap : usedBindPointPerSpace)
-			{
-				int32 testRegisterSpace = registerSpaceMap.first;
-				const std::set<int32>& bindPoints = registerSpaceMap.second;
-				if (bindPoints.size() < MaxBindPoint)
-				{
-					for (int32 testBindPoint = 0; testBindPoint < MaxBindPoint; testBindPoint++)
-					{
-						if (!bindPoints.contains(testBindPoint))
-						{
-							DASH_LOG(LogTemp, Info, "[BindlessCBufferGenerator] Auto detect bind point {} register space {}", testBindPoint, testRegisterSpace);
-							return { testBindPoint , testRegisterSpace };
-						}
-					}
-				}
-			}
-
-			// 策略3：使用没有任何cbuffer的space
-			{
-				for (int32 testRegisterSpace = 0; testRegisterSpace < MaxBindPoint; testRegisterSpace++)
-				{
-					if (!usedBindPointPerSpace.contains(testRegisterSpace))
-					{
-						DASH_LOG(LogTemp, Info, "[BindlessCBufferGenerator] Auto detect bind point {} register space {}", bindPoint, testRegisterSpace);
-						return { bindPoint , testRegisterSpace };
-					}
-				}
-			}
-
-			return { INDEX_NONE, INDEX_NONE };
-		}
-
-		void GenerateBindlessCBuffer(std::ostringstream& cbufferStream, int32 bindPoint, int32 registerSpace)
+		void GenerateBindlessCBuffer(std::ostringstream& cbufferStream)
 		{
 			cbufferStream << "// ===== Auto-generated Bindless CBuffer =====\n";
 
@@ -451,23 +319,10 @@ namespace Dash
 					// 按space分组显示
 					std::map<int, std::vector<const FCBufferInfo*>> cbuffersBySpace;
 					for (const auto& cb : mExistingCBuffers) {
-						cbuffersBySpace[cb.RegisterSpace].push_back(&cb);
-					}
-
-					for (const auto& [cbSpace, cbs] : cbuffersBySpace) {
-						cbufferStream << "//   space" << cbSpace << ": ";
-						bool first = true;
-						for (const auto* cb : cbs) {
-							if (!first) cbufferStream << ", ";
-							cbufferStream << cb->Name << "(b" << cb->BindPoint << ", " << "space" << cb->RegisterSpace << ")";
-							first = false;
-						}
+						cbufferStream << "// " << cb.Name;
 						cbufferStream << "\n";
 					}
 				}
-
-				cbufferStream << "// Assigned register: b" << bindPoint << ", space" << registerSpace << "\n";
-				cbufferStream << "// Last generated: " << std::format("{:%Y-%m-%d %H:%M:%S}", std::chrono::system_clock::now()) << "\n";
 
 				// 列出所有处理的文件
 				if (mProcessdFiles.size() > 1) {
@@ -482,7 +337,7 @@ namespace Dash
 			cbufferStream << "\n";
 
 			// 生成cbuffer声明
-			cbufferStream << "cbuffer " << mConfig.CBufferName << " : register(b" << bindPoint << ", space" << registerSpace << ")\n";
+			cbufferStream << "cbuffer " << mConfig.CBufferName << "\n";
 			cbufferStream << "{\n";
 
 			// 按类型分组输出
@@ -513,7 +368,7 @@ namespace Dash
 					out << "    uint Bindless" << res->ParameterType << "_" << res->ResourceName << ";";
 
 					if (mConfig.GenerateComments && mProcessdFiles.size() > 1) {
-						out << " // " << res->DataType << " from " << res->SourceFile;
+						out << " // " << res->DataType << " from " << FFileUtility::GetRelativePath(res->SourceFile, FFileUtility::GetEngineDir());
 					}
 
 					out << "\n";
@@ -558,7 +413,7 @@ namespace Dash
 		}
 	};
 
-	std::string FShaderPreprocesser::Process(const std::string& filePath)
+	FShaderPreprocessdResult FShaderPreprocesser::Process(const std::string& filePath)
 	{
         std::ifstream file(filePath);
         if (!file.is_open()) {
@@ -568,8 +423,16 @@ namespace Dash
 		FBindlessCBufferGenerator::FConfig bindlessGeneratorConfig;
 		FBindlessCBufferGenerator bindlessCBufferGenerator;
 		bindlessCBufferGenerator.SetConfig(bindlessGeneratorConfig);
-		FBindlessCBufferGenerator::FProcessedResult result = bindlessCBufferGenerator.Process(filePath);
+		FBindlessCBufferGenerator::FProcessedResult bindlessProcessResult = bindlessCBufferGenerator.Process(filePath);
 
-		return result.GeneratedCode;
+		FShaderPreprocessdResult result;
+
+		result.ShaderCode = bindlessProcessResult.GeneratedCode;
+		for (auto& bindlessResource : bindlessProcessResult.BindlessResources)
+		{
+			result.BindlessResourceMap.emplace(bindlessResource.ResourceName, bindlessResource.DataType);
+		}
+
+		return result;
 	}
 }

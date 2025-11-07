@@ -52,6 +52,7 @@ namespace Dash
 		TRefCountPtr<IDxcBlob> CompiledShaderBlob = nullptr;
 		TRefCountPtr<IDxcBlob> ShaderRelectionBlob = nullptr;
 		TRefCountPtr<ID3D12ShaderReflection> ShaderReflector = nullptr;
+		std::map<std::string, std::string> BindlessResourceMap;
 
 		bool IsValid() const
 		{
@@ -109,13 +110,13 @@ namespace Dash
 		const FInputAssemblerLayout& GetInputLayout() const { return mInputLayout; }
 
 	protected:
-		void Init(TRefCountPtr<IDxcBlob>& compiledShaderBlob, TRefCountPtr<ID3D12ShaderReflection>& reflector, const FShaderCreationInfo& creationInfo);
-		void ReflectShaderParameter(TRefCountPtr<ID3D12ShaderReflection>& reflector);
-		void ReflectInputLayout(const D3D12_SHADER_DESC& shaderDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector);
-		void ReflectCBVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector);
-		void ReflectSRVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector);
-		void ReflectUAVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector);
-		void ReflectSamplerParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, TRefCountPtr<ID3D12ShaderReflection>& reflector);
+		void Init(const FDX12CompiledShader& compiledShader, const FShaderCreationInfo& creationInfo);
+		void ReflectShaderParameter(const TRefCountPtr<ID3D12ShaderReflection>& reflector);
+		void ReflectInputLayout(const D3D12_SHADER_DESC& shaderDesc, const TRefCountPtr<ID3D12ShaderReflection>& reflector);
+		void ReflectCBVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, const TRefCountPtr<ID3D12ShaderReflection>& reflector);
+		void ReflectSRVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, const TRefCountPtr<ID3D12ShaderReflection>& reflector);
+		void ReflectUAVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, const TRefCountPtr<ID3D12ShaderReflection>& reflector);
+		void ReflectSamplerParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, const TRefCountPtr<ID3D12ShaderReflection>& reflector);
 		bool IsSystemGeneratedValues(const std::string& semantic) const;
 
 		void SortParameters();

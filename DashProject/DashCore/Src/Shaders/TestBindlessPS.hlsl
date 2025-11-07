@@ -1,11 +1,11 @@
 #include "BindlessCommon.hlsli"
 
-cbuffer MaterialConstantBuffer : register(b0)
+cbuffer MaterialConstantBuffer
 {
     float4 Color;
 };
 
-BINDLESS_SRV(Texture2D, SceneTexture);
+BINDLESS_SRV(Texture2D<float4>, SceneTexture);
 BINDLESS_SAMPLER(SamplerState, DepthTextureSampler);
 BINDLESS_UAV(RWTexture2D<float>, OutputTexture);
 

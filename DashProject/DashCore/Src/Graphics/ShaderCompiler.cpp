@@ -4,6 +4,7 @@
 #include "Utility/Hash.h"
 #include "DX12Helper.h"
 #include "Utility/FileUtility.h"
+#include "ShaderPreprocesser.h"
 
 namespace Dash
 {
@@ -52,7 +53,7 @@ namespace Dash
 		
 		DASH_LOG(LogTemp, Info, "Load File : {}", info.FileName);
 
-		FFileUtility::ByteArray fileContent = FFileUtility::ReadBinaryFileSync(info.FileName);
+		FShaderPreprocessdResult preprocessResult = FShaderPreprocesser::Process(info.FileName);
 
 		std::vector<LPCWSTR> args;
 
@@ -104,9 +105,9 @@ namespace Dash
 		DASH_LOG(LogTemp, Info, "Begin compile : {}, entry point : {}, defines : {}", info.FileName, info.EntryPoint, combinedStr);
 
 		DxcBuffer buffer{};
-		buffer.Encoding = DXC_CP_ACP;
-		buffer.Ptr = fileContent->data();
-		buffer.Size = fileContent->size();
+		buffer.Encoding = DXC_CP_UTF8;
+		buffer.Ptr = preprocessResult.ShaderCode.data();
+		buffer.Size = preprocessResult.ShaderCode.size();
 
 		TRefCountPtr<IDxcResult> compiledResult;
 		DX_CALL(mCompiler->Compile(&buffer, args.data(), static_cast<UINT32>(args.size()), mIncludeHandler.GetReference(), IID_PPV_ARGS(compiledResult.GetInitReference())));
@@ -172,6 +173,7 @@ namespace Dash
 		compiledShader.CompiledShaderBlob = shaderBlob;
 		compiledShader.ShaderRelectionBlob = reflectionBlob;
 		compiledShader.ShaderReflector = shaderReflector;
+		compiledShader.BindlessResourceMap = preprocessResult.BindlessResourceMap;
 
 		return compiledShader;
 	}
@@ -200,7 +202,9 @@ namespace Dash
 			DASH_LOG(LogTemp, Error, "Failed to save shader reflection blob : {}.", hasedRefectionName);
 		}
 
-		return false;
+		SavePreprocessInfo(info, compiledShader);
+
+		return true;
 	}
 
 	FDX12CompiledShader FShaderCompiler::LoadShaderBlob(const FShaderCreationInfo& info)
@@ -226,6 +230,8 @@ namespace Dash
 		compiledShader.ShaderRelectionBlob = reflectionBlob;
 		compiledShader.ShaderReflector = shaderReflector;
 
+		LoadPreprocessInfo(info, compiledShader);
+
 		return compiledShader;
 	}
 
@@ -245,8 +251,50 @@ namespace Dash
 		return blob;
 	}
 
-	std::string FShaderCompiler::PreprocessShaderFile(const FShaderCreationInfo& info)
+	bool FShaderCompiler::SavePreprocessInfo(const FShaderCreationInfo& info, const FDX12CompiledShader& compiledShader)
 	{
-		return std::string();
+		std::string preprocessdFileName = info.GetHashedFileName() + SHADER_PREPROCESS_FILE_EXTENSION;
+
+		std::ofstream file(preprocessdFileName);
+		if (!file.is_open()) {
+			return false;
+		}
+
+		for (const auto& [key, value] : compiledShader.BindlessResourceMap) {
+			// 简单格式：key=value
+			file << key << "=" << value << "\n";
+		}
+
+		file.close();
+		return true;
+	}
+
+	bool FShaderCompiler::LoadPreprocessInfo(const FShaderCreationInfo& info, FDX12CompiledShader& compiledShader)
+	{
+		std::string preprocessdFileName = info.GetHashedFileName() + SHADER_PREPROCESS_FILE_EXTENSION;
+
+		std::ifstream file(preprocessdFileName);
+		if (!file.is_open()) {
+			return false;
+		}
+
+		compiledShader.BindlessResourceMap.clear();
+		std::string line;
+
+		while (std::getline(file, line)) {
+			// 跳过空行
+			if (line.empty()) continue;
+
+			// 查找 '=' 分隔符
+			size_t pos = line.find('=');
+			if (pos != std::string::npos) {
+				std::string key = line.substr(0, pos);
+				std::string value = line.substr(pos + 1);
+				compiledShader.BindlessResourceMap[key] = value;
+			}
+		}
+
+		file.close();
+		return true;
 	}
 }
