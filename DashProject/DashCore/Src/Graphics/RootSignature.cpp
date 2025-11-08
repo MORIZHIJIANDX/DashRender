@@ -50,7 +50,13 @@ namespace Dash
 		VersionedrootSigDesc.Version = version;
 		VersionedrootSigDesc.Desc_1_1 = boundShaderState.RootSignatureDesc;
 
-		DX_CALL(D3D12SerializeVersionedRootSignature(&VersionedrootSigDesc, outBlob.GetInitReference(), errorBlob.GetInitReference()));
+		const HRESULT serializeHR = D3D12SerializeVersionedRootSignature(&VersionedrootSigDesc, outBlob.GetInitReference(), errorBlob.GetInitReference());
+		if (errorBlob.GetReference())
+		{
+			std::string errorStr = std::string( static_cast<const char*>(errorBlob->GetBufferPointer()), errorBlob->GetBufferSize());
+			DASH_LOG(LogTemp, Error, "Serialize Root Signature Failed {}", errorStr);
+		}
+		DX_CALL(serializeHR);
 		DX_CALL(FGraphicsCore::Device->CreateRootSignature(0, outBlob->GetBufferPointer(), outBlob->GetBufferSize(), mRootSignature));
 
 		SetD3D12DebugName(mRootSignature.GetReference(), mName.c_str());

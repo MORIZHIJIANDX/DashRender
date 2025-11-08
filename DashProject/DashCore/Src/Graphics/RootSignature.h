@@ -73,31 +73,31 @@ namespace Dash
 			mRootParameter.Constants.RegisterSpace = space;
 		}
 
-		void InitAsRootConstantBufferView(uint32 shaderRegister, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, uint32 space = 0)
+		void InitAsRootConstantBufferView(uint32 shaderRegister, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, uint32 space = 0, D3D12_ROOT_DESCRIPTOR_FLAGS flag = D3D12_ROOT_DESCRIPTOR_FLAG_NONE)
 		{
 			mRootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 			mRootParameter.ShaderVisibility = visibility;
 			mRootParameter.Descriptor.ShaderRegister = shaderRegister;
 			mRootParameter.Descriptor.RegisterSpace = space;
-			mRootParameter.Descriptor.Flags = D3D12_ROOT_DESCRIPTOR_FLAG_NONE;
+			mRootParameter.Descriptor.Flags = flag;
 		}
 
-		void InitAsRootShaderResourceView(uint32 shaderRegister, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, uint32 space = 0)
+		void InitAsRootShaderResourceView(uint32 shaderRegister, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, uint32 space = 0, D3D12_ROOT_DESCRIPTOR_FLAGS flag = D3D12_ROOT_DESCRIPTOR_FLAG_NONE)
 		{
 			mRootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_SRV;
 			mRootParameter.ShaderVisibility = visibility;
 			mRootParameter.Descriptor.ShaderRegister = shaderRegister;
 			mRootParameter.Descriptor.RegisterSpace = space;
-			mRootParameter.Descriptor.Flags = D3D12_ROOT_DESCRIPTOR_FLAG_NONE;
+			mRootParameter.Descriptor.Flags = flag;
 		}
 
-		void InitAsRootUnorderAccessView(uint32 shaderRegister, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, uint32 space = 0)
+		void InitAsRootUnorderAccessView(uint32 shaderRegister, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, uint32 space = 0, D3D12_ROOT_DESCRIPTOR_FLAGS flag = D3D12_ROOT_DESCRIPTOR_FLAG_NONE)
 		{
 			mRootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_UAV;
 			mRootParameter.ShaderVisibility = visibility;
 			mRootParameter.Descriptor.ShaderRegister = shaderRegister;
 			mRootParameter.Descriptor.RegisterSpace = space;
-			mRootParameter.Descriptor.Flags = D3D12_ROOT_DESCRIPTOR_FLAG_NONE;
+			mRootParameter.Descriptor.Flags = flag;
 		}
 
 		void InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE type, uint32 shaderRegister, uint32 count, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL, uint32 space = 0)
@@ -114,7 +114,7 @@ namespace Dash
 			mRootParameter.DescriptorTable.pDescriptorRanges = new D3D12_DESCRIPTOR_RANGE1[rangeCount];
 		}
 
-		void SetTableRange(uint32 rangeIndex, D3D12_DESCRIPTOR_RANGE_TYPE type, uint32 baseShaderRegister, uint32 count, uint32 space = 0)
+		void SetTableRange(uint32 rangeIndex, D3D12_DESCRIPTOR_RANGE_TYPE type, uint32 baseShaderRegister, uint32 count, uint32 space = 0, D3D12_DESCRIPTOR_RANGE_FLAGS flag = D3D12_DESCRIPTOR_RANGE_FLAG_NONE)
 		{
 			D3D12_DESCRIPTOR_RANGE1* range = const_cast<D3D12_DESCRIPTOR_RANGE1*>(mRootParameter.DescriptorTable.pDescriptorRanges + rangeIndex);
 			range->BaseShaderRegister = baseShaderRegister;
@@ -122,7 +122,7 @@ namespace Dash
 			range->RangeType = type;
 			range->RegisterSpace = space;
 			range->OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-			range->Flags = D3D12_DESCRIPTOR_RANGE_FLAG_NONE;
+			range->Flags = flag;
 		}
 
 		const D3D12_ROOT_PARAMETER1& operator() (void) const { return mRootParameter; }

@@ -33,6 +33,7 @@ namespace Dash
 
 	void IGameApp::Startup()
 	{
+		/*
 		{
 			FShaderPreprocessdResult result = FShaderPreprocesser::Process(FFileUtility::GetEngineShaderDir("TestBindlessPS.hlsl"));
 
@@ -53,6 +54,16 @@ namespace Dash
 			file << result.ShaderCode;
 			file.close();
 		}
+		
+		FShaderCreationInfo csInfo{ EShaderStage::Compute, FFileUtility::GetEngineShaderDir("TestBindlessPS.hlsl"),  "CS_Main" };
+		FShaderPassRef ComputeGrayscalePass = FShaderPass::MakeComputeShaderPass("BindlessComputeGrayScalePass", csInfo);
+
+		FComputePipelineStateInitializer ComputeGrayscalePSOInitializer;
+		ComputeGrayscalePSOInitializer.SetShaderPass(ComputeGrayscalePass);
+		ComputeGrayscalePSOInitializer.Finalize();
+
+		FComputePSO* ComputeGrayscalePSO = FGraphicsCore::PipelineStateCache->GetComputePipelineState(ComputeGrayscalePSOInitializer, "BindlessComputeGrayScale");
+		*/
 
 		AddRenderLayer(std::make_unique<FSceneRenderLayer>());
 		AddRenderLayer(std::make_unique<FPostProcessRenderLayer>());

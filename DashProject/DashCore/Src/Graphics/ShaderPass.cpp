@@ -116,6 +116,7 @@ namespace Dash
 	void FShaderPass::Finalize()
 	{
 		bool createStaticSamplers = false;
+		bool containBindlessParameter = false;
 		mPassType = mShaders.contains(EShaderStage::Compute) ? EShaderPassType::Compute : EShaderPassType::Raster;
 		
 		std::vector<FShaderParameter> cbvParameters[GShaderStageCount];
@@ -134,9 +135,15 @@ namespace Dash
 
 			uint32 shaderStageIndex = static_cast<uint32>(shaderStage);
 
+			const std::map<std::string, EShaderResourceBindingType>& bindlessParameterMap = shaderRef->GetBindlessParameterMap();
 			cbvParameters[shaderStageIndex] = shaderRef->GetCBVParameters();
 			srvParameters[shaderStageIndex] = shaderRef->GetSRVParameters();
 			uavParameters[shaderStageIndex] = shaderRef->GetUAVParameters();
+
+			if (bindlessParameterMap.size() > 0)
+			{
+				containBindlessParameter = true;
+			}
 
 			for (auto& samplerParameter : shaderRef->GetSamplerParameters())
 			{
@@ -187,7 +194,7 @@ namespace Dash
 		}
 		ShadersHash = std::hash<std::string>{}(HashedShaderFileName);
 
-		CreateRootSignature(quantizedBoundShaderState, cbvParameters, srvParameters, uavParameters, samplerParameters);
+		CreateRootSignature(quantizedBoundShaderState, cbvParameters, srvParameters, uavParameters, samplerParameters, containBindlessParameter);
 
 		for (auto& pair : mShaders)
 		{
@@ -196,15 +203,17 @@ namespace Dash
 
 			uint32 shaderStageIndex = static_cast<uint32>(shaderStage);
 
-			AddVariables(mShaderVariableMaps[shaderStageIndex], cbvParameters[shaderStageIndex]);
-			AddVariables(mShaderVariableMaps[shaderStageIndex], srvParameters[shaderStageIndex]);
-			AddVariables(mShaderVariableMaps[shaderStageIndex], uavParameters[shaderStageIndex]);
-			AddVariables(mShaderVariableMaps[shaderStageIndex], samplerParameters[shaderStageIndex]);
+			const std::map<std::string, EShaderResourceBindingType>& bindlessParameterMap = shaderRef->GetBindlessParameterMap();
+
+			AddVariables(mShaderVariableMaps[shaderStageIndex], cbvParameters[shaderStageIndex], bindlessParameterMap);
+			AddVariables(mShaderVariableMaps[shaderStageIndex], srvParameters[shaderStageIndex], bindlessParameterMap);
+			AddVariables(mShaderVariableMaps[shaderStageIndex], uavParameters[shaderStageIndex], bindlessParameterMap);
+			AddVariables(mShaderVariableMaps[shaderStageIndex], samplerParameters[shaderStageIndex], bindlessParameterMap);
 		}
 	}
 
 	void FShaderPass::CreateRootSignature(const FQuantizedBoundShaderState& quantizedBoundShaderState, std::vector<FShaderParameter>* inCBVParameters,
-		std::vector<FShaderParameter>* inSRVParameters, std::vector<FShaderParameter>* inUAVParameters, std::vector<FShaderParameter>* inSamplerParameters)
+		std::vector<FShaderParameter>* inSRVParameters, std::vector<FShaderParameter>* inUAVParameters, std::vector<FShaderParameter>* inSamplerParameters, bool containBindlessParameter)
 	{
 		FBoundShaderState boundShaderState(quantizedBoundShaderState);
 		
@@ -232,7 +241,44 @@ namespace Dash
 			}
 		}
 		
-		boundShaderState.Finalize(D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+		D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags = D3D12_ROOT_SIGNATURE_FLAGS::D3D12_ROOT_SIGNATURE_FLAG_NONE;
+		if (mShaders.contains(EShaderStage::Vertex))
+		{
+			rootSignatureFlags |= D3D12_ROOT_SIGNATURE_FLAGS::D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+		}
+		/*
+		else
+		{
+			rootSignatureFlags |= D3D12_ROOT_SIGNATURE_FLAGS::D3D12_ROOT_SIGNATURE_FLAG_DENY_VERTEX_SHADER_ROOT_ACCESS;
+		}
+
+		if (!mShaders.contains(EShaderStage::Hull))
+		{
+			rootSignatureFlags |= D3D12_ROOT_SIGNATURE_FLAGS::D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
+		}
+
+		if (!mShaders.contains(EShaderStage::Domain))
+		{
+			rootSignatureFlags |= D3D12_ROOT_SIGNATURE_FLAGS::D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS;
+		}
+
+		if (!mShaders.contains(EShaderStage::Geometry))
+		{
+			rootSignatureFlags |= D3D12_ROOT_SIGNATURE_FLAGS::D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
+		}
+
+		if (!mShaders.contains(EShaderStage::Pixel))
+		{
+			rootSignatureFlags |= D3D12_ROOT_SIGNATURE_FLAGS::D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS;
+		}
+		*/
+		if (containBindlessParameter)
+		{
+			rootSignatureFlags |= D3D12_ROOT_SIGNATURE_FLAGS::D3D12_ROOT_SIGNATURE_FLAG_CBV_SRV_UAV_HEAP_DIRECTLY_INDEXED;
+			//rootSignatureFlags |= D3D12_ROOT_SIGNATURE_FLAGS::D3D12_ROOT_SIGNATURE_FLAG_SAMPLER_HEAP_DIRECTLY_INDEXED;
+		}
+
+		boundShaderState.Finalize(rootSignatureFlags);
 
 		mRootSignature = FGraphicsCore::RootSignatureManager->GetRootSignature(boundShaderState, mPassName + "_RootSignature");
 	}
@@ -247,7 +293,7 @@ namespace Dash
 			FShaderParameter& constantBufferParameter = inCBVParameters[cbvIndex];
 
 			constantBufferParameter.RootParameterIndex = currentParameterIndex;
-			boundShaderState[currentParameterIndex].InitAsRootConstantBufferView(constantBufferParameter.BindPoint, GetShaderVisibility(stage), constantBufferParameter.RegisterSpace);
+			boundShaderState[currentParameterIndex].InitAsRootConstantBufferView(constantBufferParameter.BindPoint, GetShaderVisibility(stage), constantBufferParameter.RegisterSpace, D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC);
 			currentParameterIndex++;
 
 			DASH_LOG(LogTemp, Warning, "Shader Stage {} InitRootCBV RootParamterIndex {} Pramter Name {} BindPoint {}", shaderStageIndex, currentParameterIndex,
@@ -256,17 +302,20 @@ namespace Dash
 
 		if (!inSRVParameters.empty())
 		{
-			InitDescriptorRanges(boundShaderState, inSRVParameters, currentParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SRV, stage);
+			InitDescriptorRanges(boundShaderState, inSRVParameters, currentParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 
+				D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE | D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE, stage);
 		}
 		
 		if (!inUAVParameters.empty())
 		{
-			InitDescriptorRanges(boundShaderState, inUAVParameters, currentParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_UAV, stage);
+			InitDescriptorRanges(boundShaderState, inUAVParameters, currentParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 
+				D3D12_DESCRIPTOR_RANGE_FLAG_DATA_VOLATILE | D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE, stage);
 		}
 
 		if (!inSamplerParameters.empty())
 		{
-			InitDescriptorRanges(boundShaderState, inSamplerParameters, currentParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, stage);
+			InitDescriptorRanges(boundShaderState, inSamplerParameters, currentParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 
+				D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE, stage);
 		}
 	}
 
@@ -339,7 +388,7 @@ namespace Dash
 		return names;
 	}
 
-	void FShaderPass::InitDescriptorRanges(FBoundShaderState& boundShaderState, std::vector<FShaderParameter>& parameters, uint32& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, EShaderStage stage)
+	void FShaderPass::InitDescriptorRanges(FBoundShaderState& boundShaderState, std::vector<FShaderParameter>& parameters, uint32& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, D3D12_DESCRIPTOR_RANGE_FLAGS rangeFlags, EShaderStage stage)
 	{
 		uint32 parametersCount = static_cast<uint32>(parameters.size());
 		if (parametersCount > 0)
@@ -353,12 +402,13 @@ namespace Dash
 			}
 			boundShaderState[rootParameterIndex].InitAsDescriptorTable(1, GetShaderVisibility(stage));
 			// 不同 Shader 间的 register 相互独立，都是从 Bind Point 0 开始
-			boundShaderState[rootParameterIndex].SetTableRange(0, rangeType, 0, parametersCount, 0);
+			boundShaderState[rootParameterIndex].SetTableRange(0, rangeType, 0, parametersCount, 0, rangeFlags);
 			rootParameterIndex++;
 		}
 	}
 
-	void FShaderPass::AddVariables(std::map<std::string, FShaderVariable>& variableMaps, const std::vector<FShaderParameter>& inParameters)
+	void FShaderPass::AddVariables(std::map<std::string, FShaderVariable>& variableMaps, const std::vector<FShaderParameter>& inParameters,
+		const std::map<std::string, EShaderResourceBindingType>& bindlessPrameterMap)
 	{
 		for (uint32 parameterIndex = 0; parameterIndex < inParameters.size(); parameterIndex++)
 		{
@@ -375,6 +425,7 @@ namespace Dash
 			shaderVariable.RootParameterIndex = parameter.RootParameterIndex;
 			shaderVariable.DescriptorOffset = parameter.DescriptorOffset;
 			shaderVariable.ParamterType = parameter.ParameterType;
+			shaderVariable.BindingType = parameter.BindingType;
 
 			variableMaps.emplace(shaderVariableName, shaderVariable);
 
@@ -389,6 +440,15 @@ namespace Dash
 					shaderVariable.Size = uniformVariable.Size;
 					shaderVariable.StartOffset = uniformVariable.StartOffset;
 					shaderVariable.ParamterType = uniformVariable.ParamterType;
+					shaderVariable.BindingType = EShaderResourceBindingType::Invalid;
+
+					if (uniformVariable.ParamterType == EShaderParameterType::BindlessSampler || 
+						uniformVariable.ParamterType == EShaderParameterType::BindlessSRV || 
+						uniformVariable.ParamterType == EShaderParameterType::BindlessUAV)
+					{
+						ASSERT(bindlessPrameterMap.contains(shaderVariable.Name));
+						shaderVariable.BindingType = bindlessPrameterMap.find(shaderVariable.Name)->second;
+					}
 
 					variableMaps.emplace(shaderVariableName, shaderVariable);
 				}

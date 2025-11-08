@@ -22,6 +22,7 @@ namespace Dash
 		uint32 RootParameterIndex = 0;
 		uint32 DescriptorOffset = 0;
 		EShaderParameterType ParamterType = EShaderParameterType::Invalid;
+		EShaderResourceBindingType BindingType = EShaderResourceBindingType::Invalid;
 	};
 
 	class FShaderPass : public FRefCount
@@ -63,16 +64,17 @@ namespace Dash
 		void Finalize();
 
 		void CreateRootSignature(const FQuantizedBoundShaderState& quantizedBoundShaderState, std::vector<FShaderParameter>* inCBVParameters,
-			std::vector<FShaderParameter>* inSRVParameters, std::vector<FShaderParameter>* inUAVParameters, std::vector<FShaderParameter>* inSamplerParameters);
+			std::vector<FShaderParameter>* inSRVParameters, std::vector<FShaderParameter>* inUAVParameters, std::vector<FShaderParameter>* inSamplerParameters, bool containBindlessParameter);
 		void InitShaderRootParamters(EShaderStage stage, FBoundShaderState& boundShaderState, uint32& currentParameterIndex, std::vector<FShaderParameter>& inCBVParameters,
 			std::vector<FShaderParameter>& inSRVParameters, std::vector<FShaderParameter>& inUAVParameters, std::vector<FShaderParameter>& inSamplerParameters);
 		D3D12_SHADER_VISIBILITY GetShaderVisibility(EShaderStage stage);
 		std::vector<FSamplerDesc> CreateStaticSamplers();
 		int32 FindParameterByName(const std::vector<FShaderParameter>& parameterArray, const std::string& parameterName) const;
 		std::vector<std::string> GetParameterNames(const std::vector<FShaderParameter>& parameterArray) const;
-		void InitDescriptorRanges(FBoundShaderState& boundShaderState, std::vector<FShaderParameter>& parameters, uint32& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, EShaderStage stage);
+		void InitDescriptorRanges(FBoundShaderState& boundShaderState, std::vector<FShaderParameter>& parameters, uint32& rootParameterIndex, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, 
+			D3D12_DESCRIPTOR_RANGE_FLAGS rangeFlags, EShaderStage stage);
 
-		void AddVariables(std::map<std::string, FShaderVariable>& variableMaps, const std::vector<FShaderParameter>& inParameters);
+		void AddVariables(std::map<std::string, FShaderVariable>& variableMaps, const std::vector<FShaderParameter>& inParameters, const std::map<std::string, EShaderResourceBindingType>& bindlessPrameterMap);
 		 
 	private:
 		std::map<EShaderStage, FShaderResourceRef> mShaders;

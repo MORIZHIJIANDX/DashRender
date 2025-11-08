@@ -17,23 +17,39 @@ namespace Dash
 
 	#define SHADER_BLOB_PATH "ShaderBlob"
 
-	static constexpr const char* kBindlessSRVPrefix = TEXT("BindlessSRV_");
-	static constexpr const char* kBindlessUAVPrefix = TEXT("BindlessUAV_");
-	static constexpr const char* kBindlessSamplerPrefix = TEXT("BindlessSampler_");
-
 	EShaderParameterType ParseAndRemoveBindlessParameterPrefix(std::string& memberName)
 	{
-		if (FStringUtility::ReplaceFirst(memberName, kBindlessSRVPrefix, ""))
+		if (FStringUtility::ReplaceFirst(memberName, GBindlessSRVPrefix, ""))
 		{
 			return EShaderParameterType::BindlessSRV;
 		}
 
-		if (FStringUtility::ReplaceFirst(memberName, kBindlessUAVPrefix, ""))
+		if (FStringUtility::ReplaceFirst(memberName, GBindlessUAVPrefix, ""))
 		{
 			return EShaderParameterType::BindlessUAV;
 		}
 		
-		if (FStringUtility::ReplaceFirst(memberName, kBindlessSamplerPrefix, ""))
+		if (FStringUtility::ReplaceFirst(memberName, GBindlessSamplerPrefix, ""))
+		{
+			return EShaderParameterType::BindlessSampler;
+		}
+
+		return EShaderParameterType::LooseData;
+	}
+
+	EShaderParameterType ParseBindlessParameterType(const std::string& memberName)
+	{
+		if (FStringUtility::StartsWith(memberName, GBindlessSRVPrefix))
+		{
+			return EShaderParameterType::BindlessSRV;
+		}
+
+		if (FStringUtility::StartsWith(memberName, GBindlessUAVPrefix))
+		{
+			return EShaderParameterType::BindlessUAV;
+		}
+
+		if (FStringUtility::StartsWith(memberName, GBindlessSamplerPrefix))
 		{
 			return EShaderParameterType::BindlessSampler;
 		}
@@ -102,7 +118,7 @@ namespace Dash
 			ASSERT_MSG(false, "Invalid Shader Stage!");
 		}
 
-		static const std::string targetLevel{ "_6_4" };
+		static const std::string targetLevel{ "_6_6" };
 
 		ShaderTarget = FStringUtility::ToLower(splitStrs[0]) + targetLevel;
 	}
@@ -118,6 +134,7 @@ namespace Dash
 		mCreationInfo = creationInfo;
 
 		ReflectShaderParameter(compiledShader.ShaderReflector);
+		ReflectBindlessShaderParameter(compiledShader.BindlessResourceMap);
 	}
 
 	enum class EVSInputType
@@ -181,6 +198,8 @@ namespace Dash
 		{
 			ReflectInputLayout(shaderDesc, reflector);
 		}
+
+		SortParameters();
 	}
 
 	void FShaderResource::ReflectCBVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, const TRefCountPtr<ID3D12ShaderReflection>& reflector)
@@ -198,7 +217,7 @@ namespace Dash
 			shaderReflectionVariable->GetDesc(&variableDesc);
 
 			FConstantBufferVariable bufferVariable;
-			bufferVariable.ParamterType = ParseAndRemoveBindlessParameterPrefix(bufferVariable.VariableName);
+			bufferVariable.ParamterType = ParseBindlessParameterType(variableDesc.Name);
 			bufferVariable.VariableName = variableDesc.Name;
 			bufferVariable.Size = variableDesc.Size;
 			bufferVariable.StartOffset = variableDesc.StartOffset;
@@ -234,6 +253,29 @@ namespace Dash
 	{
 		parameter.ParameterType = EShaderParameterType::Sampler;
 		mSamplerParameters.push_back(parameter);
+	}
+
+	void FShaderResource::ReflectBindlessShaderParameter(const std::map<std::string, std::string>& bindlessParameterMap)
+	{
+		mBindlessParameterMap.clear();
+
+		for (const FShaderParameter& parameter : mCBVParameters)
+		{
+			if (parameter.Name == GBindlessCBufferName)
+			{
+				for (const FConstantBufferVariable& variable : parameter.ConstantBufferVariables)
+				{
+					for (auto& pair : bindlessParameterMap)
+					{
+						if (FStringUtility::Contains(variable.VariableName, pair.first))
+						{
+							EShaderResourceBindingType bindingType = ShaderCodeResourceBindingFromString(pair.second);
+							mBindlessParameterMap.emplace(variable.VariableName, bindingType);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	void FShaderResource::ReflectInputLayout(const D3D12_SHADER_DESC& shaderDesc, const TRefCountPtr<ID3D12ShaderReflection>& reflector)
@@ -534,6 +576,10 @@ namespace Dash
 
 	void FShaderResource::SortParameters()
 	{
+		SortParameter(mCBVParameters);
+		SortParameter(mSRVParameters);
+		SortParameter(mUAVParameters);
+		SortParameter(mSamplerParameters);
 	}
 
 	void FShaderResource::SortParameter(std::vector<FShaderParameter>& parameters)

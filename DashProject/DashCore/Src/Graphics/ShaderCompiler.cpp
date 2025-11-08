@@ -55,6 +55,28 @@ namespace Dash
 
 		FShaderPreprocessdResult preprocessResult = FShaderPreprocesser::Process(info.FileName);
 
+		bool dumpShader = true;
+		if (dumpShader)
+		{
+			std::string dumpShaderDir = FFileUtility::CombinePath(FFileUtility::GetBasePath(info.FileName), "DumpShaders");
+			std::string dumpShaderPath = FFileUtility::CombinePath(dumpShaderDir, FFileUtility::GetFileName(info.FileName));
+
+			if (!std::filesystem::exists(dumpShaderPath))
+			{
+				std::filesystem::create_directory(std::filesystem::path(dumpShaderPath).parent_path());
+			}
+
+			std::ofstream file(dumpShaderPath);
+
+			if (!file)
+			{
+				ASSERT(false);
+			}
+
+			file << preprocessResult.ShaderCode;
+			file.close();
+		}
+
 		std::vector<LPCWSTR> args;
 
 		// Optional shader source file name for error reporting

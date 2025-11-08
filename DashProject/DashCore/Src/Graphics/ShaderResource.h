@@ -103,6 +103,7 @@ namespace Dash
 		std::string GetHashedFileName() const { return mCreationInfo.GetHashedFileName(); }
 		EShaderStage GetShaderStage() const { return mCreationInfo.Stage; }
 		size_t GetShaderHash() const { return mCreationInfo.GetShaderHash(); }
+		const std::map<std::string, EShaderResourceBindingType>& GetBindlessParameterMap() const { return mBindlessParameterMap; }
 		const std::vector<FShaderParameter>& GetCBVParameters() const { return mCBVParameters; }
 		const std::vector<FShaderParameter>& GetSRVParameters() const { return mSRVParameters; }
 		const std::vector<FShaderParameter>& GetUAVParameters() const { return mUAVParameters; }
@@ -117,6 +118,7 @@ namespace Dash
 		void ReflectSRVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, const TRefCountPtr<ID3D12ShaderReflection>& reflector);
 		void ReflectUAVParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, const TRefCountPtr<ID3D12ShaderReflection>& reflector);
 		void ReflectSamplerParamter(FShaderParameter& parameter, const D3D12_SHADER_INPUT_BIND_DESC& resourceDesc, const TRefCountPtr<ID3D12ShaderReflection>& reflector);
+		void ReflectBindlessShaderParameter(const std::map<std::string, std::string>& bindlessParameterMap);
 		bool IsSystemGeneratedValues(const std::string& semantic) const;
 
 		void SortParameters();
@@ -126,6 +128,7 @@ namespace Dash
 		TRefCountPtr<IDxcBlob> mCompiledShaderBlob;
 		FCompiledBinary mShaderBinary;
 		
+		std::map<std::string, EShaderResourceBindingType> mBindlessParameterMap;
 		std::vector<FShaderParameter> mCBVParameters;
 		std::vector<FShaderParameter> mSRVParameters;
 		std::vector<FShaderParameter> mUAVParameters;

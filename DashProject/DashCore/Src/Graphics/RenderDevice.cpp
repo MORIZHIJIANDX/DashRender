@@ -250,9 +250,19 @@ namespace Dash
 				{
 					mSupportsUniversalHeaps = true;
 				}
+
+				D3D12_FEATURE_DATA_SHADER_MODEL shaderModel = { D3D_SHADER_MODEL_6_6 };
+
+				if (SUCCEEDED(mDevice->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &shaderModel, sizeof(shaderModel))))
+				{
+					if (featureDataOptions.ResourceBindingTier == D3D12_RESOURCE_BINDING_TIER::D3D12_RESOURCE_BINDING_TIER_3)
+					{
+						mSupportBindless = true;
+					}
+				}
 			}
 
-			DASH_LOG(LogTemp, Info, "SupportsUniversalHeaps {}", mSupportsUniversalHeaps);
+			DASH_LOG(LogTemp, Info, "SupportsUniversalHeaps {}, SupportBindless {}", mSupportsUniversalHeaps, mSupportBindless);
 
 			D3D12_FEATURE_DATA_D3D12_OPTIONS5 featureDataOptions5 = {};
 			if (SUCCEEDED(mDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &featureDataOptions5, sizeof(featureDataOptions5))))

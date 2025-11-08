@@ -10,6 +10,11 @@ namespace Dash
 	#define PDB_BLOB_FILE_EXTENSION ".pdb"
 	#define SHADER_PREPROCESS_FILE_EXTENSION ".preprocess"
 
+	static constexpr const char* GBindlessCBufferName = TEXT("BindlessCBuffer");
+	static constexpr const char* GBindlessSRVPrefix = TEXT("BindlessSRV_");
+	static constexpr const char* GBindlessUAVPrefix = TEXT("BindlessUAV_");
+	static constexpr const char* GBindlessSamplerPrefix = TEXT("BindlessSampler_");
+
 	enum class EShaderStage : uint16
 	{
 		Vertex = 0,

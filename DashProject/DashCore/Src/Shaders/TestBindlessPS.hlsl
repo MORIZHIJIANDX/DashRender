@@ -1,16 +1,17 @@
 #include "BindlessCommon.hlsli"
 
-cbuffer MaterialConstantBuffer
-{
-    float4 Color;
-};
+BINDLESS_SRV(Texture2D, InputTexture);
+BINDLESS_UAV(RWTexture2D<float4>, OutputTexture);
 
-BINDLESS_SRV(Texture2D<float4>, SceneTexture);
-BINDLESS_SAMPLER(SamplerState, DepthTextureSampler);
-BINDLESS_UAV(RWTexture2D<float>, OutputTexture);
-
-float4 main() : SV_TARGET
+float CalcLuminance(float3 color)
 {
-    float4 SceneColor = SceneTexture.Sample(DepthTextureSampler, float2(0.0f, 0.0f));
-    return SceneColor * Color;
+    return dot(color, float3(0.299f, 0.587f, 0.114f));
+}
+
+[numthreads(16, 16, 1)]
+void CS_Main(uint3 DTid : SV_DispatchThreadID)
+{
+    float4 Color = InputTexture[DTid.xy];
+    float Luminance = CalcLuminance(Color.rgb);
+    OutputTexture[DTid.xy] = float4(Luminance, Luminance, Luminance, Color.a);
 }

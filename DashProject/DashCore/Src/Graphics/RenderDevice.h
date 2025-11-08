@@ -322,6 +322,7 @@ namespace Dash
 		bool mTypedUAVLoadSupport_R11G11B10_FLOAT = false;
 		bool mTypedUAVLoadSupport_R16G16B16A16_FLOAT = false;
 		bool mSupportsUniversalHeaps = false;
+		bool mSupportBindless = false;
 		bool mSupportsTearing = false;
 		bool mSupportRaytracing = false;
 		bool mGPUUploadHeapSupported = false;
