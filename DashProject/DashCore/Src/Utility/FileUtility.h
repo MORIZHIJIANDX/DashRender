@@ -16,6 +16,12 @@ namespace Dash
 		static bool WriteBinaryFileSync(const std::string& fileName, unsigned char* data, size_t count);
 		static std::future<bool> WriteBinaryFileAsync(const std::string& fileName, unsigned char* data, size_t count);
 
+		static std::optional<std::string> ReadTextFileSync(const std::string& fileName);
+		static std::future<std::optional<std::string>> ReadTextFileASync(const std::string& fileName);
+
+		static bool WriteTextFileSync(const std::string& fileName, std::string_view text, std::ios_base::openmode extraMode = std::ios_base::trunc);
+		static std::future<bool> WriteTextFileASync(const std::string& fileName, std::string_view text, std::ios_base::openmode extraMode = std::ios_base::trunc);
+
 		static std::string GetBasePath(const std::string& str);
 
 		static std::string RemoveBasePath(const std::string& str);

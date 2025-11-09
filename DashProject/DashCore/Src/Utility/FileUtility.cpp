@@ -124,6 +124,75 @@ namespace Dash
 		return writeTask;
 	}
 
+	bool WriteTextFileHelper(const std::string& fileName, std::string_view text, std::ios_base::openmode extraMode)
+	{
+		if (!std::filesystem::exists(fileName))
+		{
+			std::filesystem::create_directory(std::filesystem::path(fileName).parent_path());
+		}
+
+		std::ofstream outputStream(fileName, std::ios::out | extraMode);
+		if (!outputStream.is_open()) {
+			return false;
+		}
+
+		outputStream << text;
+		if (!outputStream) {
+			return false;
+		}
+
+		outputStream.flush();
+		return static_cast<bool>(outputStream);
+	}
+
+	std::optional<std::string> ReadTextFileHelper(const std::string& fileName)
+	{
+		std::filesystem::path filePath{ fileName };
+		if (!(std::filesystem::exists(filePath) && std::filesystem::is_regular_file(filePath)))
+		{
+			return std::nullopt;
+		}
+
+		std::ifstream inputStream(filePath, std::ios::in | std::ios::binary);
+		if (!inputStream.is_open()) {
+			return std::nullopt;
+		}
+
+		std::string content;
+		inputStream.seekg(0, std::ios::end);
+		content.resize(static_cast<std::size_t>(inputStream.tellg()));
+		inputStream.seekg(0, std::ios::beg);
+		inputStream.read(content.data(), static_cast<std::streamsize>(content.size()));
+
+		if (!inputStream) {
+			return std::nullopt;
+		}
+
+		return content;
+	}
+
+	std::optional<std::string> FFileUtility::ReadTextFileSync(const std::string& fileName)
+	{
+		return ReadTextFileHelper(fileName);
+	}
+
+	std::future<std::optional<std::string>> FFileUtility::ReadTextFileASync(const std::string& fileName)
+	{
+		std::future<std::optional<std::string>> readTask = std::async(std::launch::async, ReadTextFileHelper, fileName);
+		return readTask;
+	}
+
+	bool FFileUtility::WriteTextFileSync(const std::string& fileName, std::string_view text, std::ios_base::openmode extraMode)
+	{
+		return WriteTextFileHelper(fileName, text, extraMode);
+	}
+
+	std::future<bool> FFileUtility::WriteTextFileASync(const std::string& fileName, std::string_view text, std::ios_base::openmode extraMode)
+	{
+		std::future<bool> writeTask = std::async(std::launch::async, WriteTextFileHelper, fileName, text, extraMode);
+		return writeTask;
+	}
+
 	std::string FFileUtility::GetBasePath(const std::string& str)
 	{
 		size_t lastSlash;

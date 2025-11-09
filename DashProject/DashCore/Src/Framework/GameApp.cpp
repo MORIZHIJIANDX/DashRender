@@ -33,28 +33,6 @@ namespace Dash
 
 	void IGameApp::Startup()
 	{
-		/*
-		{
-			FShaderPreprocessdResult result = FShaderPreprocesser::Process(FFileUtility::GetEngineShaderDir("TestBindlessPS.hlsl"));
-
-			std::string processedShaderPass = FFileUtility::GetEngineShaderDir("TestBindlessPSAfter.hlsl");
-
-			if (!std::filesystem::exists(processedShaderPass))
-			{
-				std::filesystem::create_directory(std::filesystem::path(processedShaderPass).parent_path());
-			}
-
-			std::ofstream file(processedShaderPass);
-
-			if (!file)
-			{
-				ASSERT(false);
-			}
-
-			file << result.ShaderCode;
-			file.close();
-		}
-		*/
 		FShaderCreationInfo csInfo{ EShaderStage::Compute, FFileUtility::GetEngineShaderDir("TestBindlessPS.hlsl"),  "CS_Main" };
 		FShaderPassRef ComputeGrayscalePass = FShaderPass::MakeComputeShaderPass("BindlessComputeGrayScalePass", csInfo);
 

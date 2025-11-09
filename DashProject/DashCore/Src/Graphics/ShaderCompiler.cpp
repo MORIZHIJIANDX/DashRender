@@ -61,20 +61,7 @@ namespace Dash
 			std::string dumpShaderDir = FFileUtility::CombinePath(FFileUtility::GetBasePath(info.FileName), "DumpShaders");
 			std::string dumpShaderPath = FFileUtility::CombinePath(dumpShaderDir, FFileUtility::GetFileName(info.FileName));
 
-			if (!std::filesystem::exists(dumpShaderPath))
-			{
-				std::filesystem::create_directory(std::filesystem::path(dumpShaderPath).parent_path());
-			}
-
-			std::ofstream file(dumpShaderPath);
-
-			if (!file)
-			{
-				ASSERT(false);
-			}
-
-			file << preprocessResult.ShaderCode;
-			file.close();
+			FFileUtility::WriteTextFileSync(dumpShaderPath, preprocessResult.ShaderCode);
 		}
 
 		std::vector<LPCWSTR> args;
@@ -277,33 +264,28 @@ namespace Dash
 	{
 		std::string preprocessdFileName = info.GetHashedFileName() + SHADER_PREPROCESS_FILE_EXTENSION;
 
-		std::ofstream file(preprocessdFileName);
-		if (!file.is_open()) {
-			return false;
-		}
-
+		std::ostringstream builder;
 		for (const auto& [key, value] : compiledShader.BindlessResourceMap) {
-			// 简单格式：key=value
-			file << key << "=" << value << "\n";
+			builder << key << '=' << value << '\n';
 		}
 
-		file.close();
-		return true;
+		return FFileUtility::WriteTextFileSync(preprocessdFileName, builder.str());
 	}
 
 	bool FShaderCompiler::LoadPreprocessInfo(const FShaderCreationInfo& info, FDX12CompiledShader& compiledShader)
 	{
 		std::string preprocessdFileName = info.GetHashedFileName() + SHADER_PREPROCESS_FILE_EXTENSION;
 
-		std::ifstream file(preprocessdFileName);
-		if (!file.is_open()) {
+		std::optional<std::string> fileText = FFileUtility::ReadTextFileSync(preprocessdFileName);
+		if (!fileText) {
 			return false;
 		}
 
 		compiledShader.BindlessResourceMap.clear();
-		std::string line;
 
-		while (std::getline(file, line)) {
+		std::string line;
+		std::istringstream input(*fileText);
+		while (std::getline(input, line)) {
 			// 跳过空行
 			if (line.empty()) continue;
 
@@ -316,7 +298,6 @@ namespace Dash
 			}
 		}
 
-		file.close();
 		return true;
 	}
 }
