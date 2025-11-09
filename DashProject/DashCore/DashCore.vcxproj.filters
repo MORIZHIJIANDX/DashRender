@@ -70,6 +70,15 @@
     <Filter Include="ThirdParty\DirectXTex">
       <UniqueIdentifier>{631DCFD8-CF89-8AD3-987D-223104A9AC3B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ThirdParty\WinPixEventRuntime">
+      <UniqueIdentifier>{8468006A-F080-E793-B92D-772D25057C2D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\WinPixEventRuntime\Include">
+      <UniqueIdentifier>{D73B5863-4300-5753-0C66-871D78E9F288}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\WinPixEventRuntime\Include\WinPixEventRuntime">
+      <UniqueIdentifier>{EBFFDF73-D7D4-2727-0084-6723ECB7353E}</UniqueIdentifier>
+    </Filter>
     <Filter Include="ThirdParty\assimp">
       <UniqueIdentifier>{2C0A5119-9820-4FAF-E197-DAD04DED1F37}</UniqueIdentifier>
     </Filter>
@@ -533,6 +542,21 @@
     </ClInclude>
     <ClInclude Include="ThirdParty\DirectXTex\scoped.h">
       <Filter>ThirdParty\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\WinPixEventRuntime\Include\WinPixEventRuntime\PIXEvents.h">
+      <Filter>ThirdParty\WinPixEventRuntime\Include\WinPixEventRuntime</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\WinPixEventRuntime\Include\WinPixEventRuntime\PIXEventsCommon.h">
+      <Filter>ThirdParty\WinPixEventRuntime\Include\WinPixEventRuntime</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\WinPixEventRuntime\Include\WinPixEventRuntime\PIXEventsLegacy.h">
+      <Filter>ThirdParty\WinPixEventRuntime\Include\WinPixEventRuntime</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\WinPixEventRuntime\Include\WinPixEventRuntime\pix3.h">
+      <Filter>ThirdParty\WinPixEventRuntime\Include\WinPixEventRuntime</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\WinPixEventRuntime\Include\WinPixEventRuntime\pix3_win.h">
+      <Filter>ThirdParty\WinPixEventRuntime\Include\WinPixEventRuntime</Filter>
     </ClInclude>
     <ClInclude Include="ThirdParty\assimp\AssertHandler.h">
       <Filter>ThirdParty\assimp</Filter>
@@ -1132,6 +1156,15 @@
     <FxCompile Include="Src\Shaders\DumpShaders\ComputeGrayscaleShader.hlsl">
       <Filter>Src\Shaders\DumpShaders</Filter>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\DumpShaders\IMGUIShader.hlsl">
+      <Filter>Src\Shaders\DumpShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\DumpShaders\MeshShader.hlsl">
+      <Filter>Src\Shaders\DumpShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\DumpShaders\PostProcessShader.hlsl">
+      <Filter>Src\Shaders\DumpShaders</Filter>
+    </FxCompile>
     <FxCompile Include="Src\Shaders\DumpShaders\TestBindlessPS.hlsl">
       <Filter>Src\Shaders\DumpShaders</Filter>
     </FxCompile>
@@ -1156,8 +1189,5 @@
     <FxCompile Include="Src\Shaders\generateMips.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>

@@ -3,7 +3,7 @@
 #include "GraphicsCore.h"
 #include "RootSignature.h"
 #include "SubResourceData.h"
-#include <pix3.h>
+#include "pix3.h"
 
 namespace Dash
 {

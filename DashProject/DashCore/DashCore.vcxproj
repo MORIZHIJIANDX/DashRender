@@ -79,7 +79,7 @@
       <WarningLevel>Level3</WarningLevel>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>ThirdParty;ThirdParty\AgilitySDK\include;ThirdParty\AgilitySDK\include\d3dx12;Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>ThirdParty;ThirdParty\AgilitySDK\include;ThirdParty\AgilitySDK\include\d3dx12;ThirdParty\WinPixEventRuntime\include\WinPixEventRuntime;Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -98,8 +98,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>dxcompiler.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>ThirdParty\dxc\lib\x64;ThirdParty\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxcompiler.lib;WinPixEventRuntime.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>ThirdParty\dxc\lib\x64;ThirdParty\WinPixEventRuntime\bin\x64;ThirdParty\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PreBuildEvent>
       <Command>powershell -ExecutionPolicy Bypass -File $(SolutionDir)/Vendor/GetDXC/GetDXC.ps1 $(SolutionDir)/$(ProjectName)/ThirdParty/dxc</Command>
@@ -111,7 +111,7 @@
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>ThirdParty;ThirdParty\AgilitySDK\include;ThirdParty\AgilitySDK\include\d3dx12;Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>ThirdParty;ThirdParty\AgilitySDK\include;ThirdParty\AgilitySDK\include\d3dx12;ThirdParty\WinPixEventRuntime\include\WinPixEventRuntime;Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -133,8 +133,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>dxcompiler.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>ThirdParty\dxc\lib\x64;ThirdParty\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxcompiler.lib;WinPixEventRuntime.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>ThirdParty\dxc\lib\x64;ThirdParty\WinPixEventRuntime\bin\x64;ThirdParty\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PreBuildEvent>
       <Command>powershell -ExecutionPolicy Bypass -File $(SolutionDir)/Vendor/GetDXC/GetDXC.ps1 $(SolutionDir)/$(ProjectName)/ThirdParty/dxc</Command>
@@ -146,7 +146,7 @@
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>ThirdParty;ThirdParty\AgilitySDK\include;ThirdParty\AgilitySDK\include\d3dx12;Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>ThirdParty;ThirdParty\AgilitySDK\include;ThirdParty\AgilitySDK\include\d3dx12;ThirdParty\WinPixEventRuntime\include\WinPixEventRuntime;Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -168,8 +168,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>dxcompiler.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>ThirdParty\dxc\lib\x64;ThirdParty\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxcompiler.lib;WinPixEventRuntime.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>ThirdParty\dxc\lib\x64;ThirdParty\WinPixEventRuntime\bin\x64;ThirdParty\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PreBuildEvent>
       <Command>powershell -ExecutionPolicy Bypass -File $(SolutionDir)/Vendor/GetDXC/GetDXC.ps1 $(SolutionDir)/$(ProjectName)/ThirdParty/dxc</Command>
@@ -319,6 +319,11 @@
     <ClInclude Include="ThirdParty\DirectXTex\DirectXTexP.h" />
     <ClInclude Include="ThirdParty\DirectXTex\filters.h" />
     <ClInclude Include="ThirdParty\DirectXTex\scoped.h" />
+    <ClInclude Include="ThirdParty\WinPixEventRuntime\Include\WinPixEventRuntime\PIXEvents.h" />
+    <ClInclude Include="ThirdParty\WinPixEventRuntime\Include\WinPixEventRuntime\PIXEventsCommon.h" />
+    <ClInclude Include="ThirdParty\WinPixEventRuntime\Include\WinPixEventRuntime\PIXEventsLegacy.h" />
+    <ClInclude Include="ThirdParty\WinPixEventRuntime\Include\WinPixEventRuntime\pix3.h" />
+    <ClInclude Include="ThirdParty\WinPixEventRuntime\Include\WinPixEventRuntime\pix3_win.h" />
     <ClInclude Include="ThirdParty\assimp\AssertHandler.h" />
     <ClInclude Include="ThirdParty\assimp\BaseImporter.h" />
     <ClInclude Include="ThirdParty\assimp\Bitmap.h" />
@@ -527,6 +532,15 @@
     <FxCompile Include="Src\Shaders\DumpShaders\ComputeGrayscaleShader.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\DumpShaders\IMGUIShader.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\DumpShaders\MeshShader.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\DumpShaders\PostProcessShader.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Src\Shaders\DumpShaders\TestBindlessPS.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
@@ -552,17 +566,7 @@
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\WinPixEventRuntime.1.0.231030001\build\WinPixEventRuntime.targets" Condition="Exists('..\packages\WinPixEventRuntime.1.0.231030001\build\WinPixEventRuntime.targets')" />
   </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\WinPixEventRuntime.1.0.231030001\build\WinPixEventRuntime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinPixEventRuntime.1.0.231030001\build\WinPixEventRuntime.targets'))" />
-  </Target>
 </Project>

@@ -81,7 +81,7 @@
       <WarningLevel>Level3</WarningLevel>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;PROJECT_PATH="H:/MyProject/DashRender/DashProject/DashProject";DASH_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\DashCore\ThirdParty;..\DashCore\ThirdParty\AgilitySDK\include;..\DashCore\ThirdParty\AgilitySDK\include\d3dx12;..\DashCore\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\DashCore\ThirdParty;..\DashCore\ThirdParty\AgilitySDK\include;..\DashCore\ThirdParty\AgilitySDK\include\d3dx12;..\DashCore\ThirdParty\AgilitySDK\include\WinPixEventRuntime;..\DashCore\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -100,6 +100,7 @@
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\dxc\bin\x64\dxil.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Debug\assimp-vc143-mtd.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Release\assimp-vc143-mt.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\
+xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\WinPixEventRuntime\bin\x64\WinPixEventRuntime.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\AgilitySDK\bin\x64\D3D12Core.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\AgilitySDK\bin\x64\d3d12SDKLayers.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\AgilitySDK\bin\x64\D3D12StateObjectCompiler.dll $(SolutionDir)\Bin\Debug-windows-x86_64\$(ProjectName)\</Command>
@@ -110,7 +111,7 @@ xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\AgilitySDK\bin\x64\D3D12StateObje
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;PROJECT_PATH="H:/MyProject/DashRender/DashProject/DashProject";DASH_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\DashCore\ThirdParty;..\DashCore\ThirdParty\AgilitySDK\include;..\DashCore\ThirdParty\AgilitySDK\include\d3dx12;..\DashCore\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\DashCore\ThirdParty;..\DashCore\ThirdParty\AgilitySDK\include;..\DashCore\ThirdParty\AgilitySDK\include\d3dx12;..\DashCore\ThirdParty\AgilitySDK\include\WinPixEventRuntime;..\DashCore\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -132,6 +133,7 @@ xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\AgilitySDK\bin\x64\D3D12StateObje
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\dxc\bin\x64\dxil.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Debug\assimp-vc143-mtd.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Release\assimp-vc143-mt.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\
+xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\WinPixEventRuntime\bin\x64\WinPixEventRuntime.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\AgilitySDK\bin\x64\D3D12Core.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\AgilitySDK\bin\x64\d3d12SDKLayers.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\AgilitySDK\bin\x64\D3D12StateObjectCompiler.dll $(SolutionDir)\Bin\Release-windows-x86_64\$(ProjectName)\</Command>
@@ -142,7 +144,7 @@ xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\AgilitySDK\bin\x64\D3D12StateObje
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;PROJECT_PATH="H:/MyProject/DashRender/DashProject/DashProject";DASH_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\DashCore\ThirdParty;..\DashCore\ThirdParty\AgilitySDK\include;..\DashCore\ThirdParty\AgilitySDK\include\d3dx12;..\DashCore\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\DashCore\ThirdParty;..\DashCore\ThirdParty\AgilitySDK\include;..\DashCore\ThirdParty\AgilitySDK\include\d3dx12;..\DashCore\ThirdParty\AgilitySDK\include\WinPixEventRuntime;..\DashCore\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -164,6 +166,7 @@ xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\AgilitySDK\bin\x64\D3D12StateObje
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\dxc\bin\x64\dxil.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Debug\assimp-vc143-mtd.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\assimp\bin\Release\assimp-vc143-mt.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\
+xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\WinPixEventRuntime\bin\x64\WinPixEventRuntime.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\AgilitySDK\bin\x64\D3D12Core.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\AgilitySDK\bin\x64\d3d12SDKLayers.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\
 xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\AgilitySDK\bin\x64\D3D12StateObjectCompiler.dll $(SolutionDir)\Bin\Distribution-windows-x86_64\$(ProjectName)\</Command>
@@ -177,21 +180,11 @@ xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\AgilitySDK\bin\x64\D3D12StateObje
     <ClCompile Include="Src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\DashCore\DashCore.vcxproj">
       <Project>{4EB4C27B-3A81-1D87-639A-0B2F4FC65215}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\WinPixEventRuntime.1.0.231030001\build\WinPixEventRuntime.targets" Condition="Exists('..\packages\WinPixEventRuntime.1.0.231030001\build\WinPixEventRuntime.targets')" />
   </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\WinPixEventRuntime.1.0.231030001\build\WinPixEventRuntime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinPixEventRuntime.1.0.231030001\build\WinPixEventRuntime.targets'))" />
-  </Target>
 </Project>
