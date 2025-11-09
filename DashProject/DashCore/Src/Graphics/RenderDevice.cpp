@@ -12,6 +12,9 @@
 #include "Utility/FileUtility.h"
 #include "TextureLoader/TextureLoaderManager.h"
 
+extern "C" { __declspec(dllexport) extern const UINT D3D12SDKVersion = D3D12_SDK_VERSION; }
+extern "C" { __declspec(dllexport) extern LPCSTR D3D12SDKPath = ".\\"; }
+
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3d12.lib")

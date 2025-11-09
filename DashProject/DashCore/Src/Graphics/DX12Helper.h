@@ -5,6 +5,13 @@
 #include "Utility/RefCounting.h"
 #include "Utility/StringUtility.h"
 
+#include "d3d12.h"
+#include "d3d12shader.h"
+#include "d3d12sdklayers.h"
+#include "d3dcommon.h"
+#include "dxgiformat.h"
+#include "d3dx12.h"
+
 namespace Dash
 {
     struct FD3D12VideoMemoryInfo
@@ -16,7 +23,6 @@ namespace Dash
         uint64 NonLocalMemoryBudget;
     };
     
-
 #define D3D12_GPU_VIRTUAL_ADDRESS_NULL      ((D3D12_GPU_VIRTUAL_ADDRESS)0)
 #define D3D12_GPU_VIRTUAL_ADDRESS_UNKNOWN   ((D3D12_GPU_VIRTUAL_ADDRESS)-1)
 

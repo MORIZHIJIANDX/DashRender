@@ -40,6 +40,9 @@
     <Filter Include="Src\Shaders">
       <UniqueIdentifier>{E6043150-52BA-A945-DBAE-A31C4763A049}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Shaders\DumpShaders">
+      <UniqueIdentifier>{757BF313-E1B2-3BAB-EABC-9FCE567362A4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Src\TextureLoader">
       <UniqueIdentifier>{843AA8C6-F050-A65C-39C8-317EA51D77E4}</UniqueIdentifier>
     </Filter>
@@ -48,6 +51,21 @@
     </Filter>
     <Filter Include="ThirdParty">
       <UniqueIdentifier>{107145F9-FC28-8746-6530-60A251072237}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\AgilitySDK">
+      <UniqueIdentifier>{F4B84EBE-6025-0AB9-2919-A21695442C21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\AgilitySDK\include">
+      <UniqueIdentifier>{6794AF9E-D3AC-96C8-9C59-266208312B62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\AgilitySDK\include\d3dx12">
+      <UniqueIdentifier>{6C7D6690-5864-2888-01B5-8EA5ED7AA1EE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\AgilitySDK\src">
+      <UniqueIdentifier>{0BD14548-7793-79D2-C043-085F2C4552B0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\AgilitySDK\src\d3dx12">
+      <UniqueIdentifier>{90994D9D-7CEA-38DF-A54E-27A191FECB48}</UniqueIdentifier>
     </Filter>
     <Filter Include="ThirdParty\DirectXTex">
       <UniqueIdentifier>{631DCFD8-CF89-8AD3-987D-223104A9AC3B}</UniqueIdentifier>
@@ -85,11 +103,14 @@
     <Filter Include="ThirdParty\imgui\backends">
       <UniqueIdentifier>{E4EDCF95-50B0-0320-9960-92AC0562DCFD}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ThirdParty\loguru">
-      <UniqueIdentifier>{3D06AB32-A91C-A9C8-F293-34EA5EE97950}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Asset\AssetDefines.h">
+      <Filter>Src\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Asset\AssetManager.h">
+      <Filter>Src\Asset</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Asset\Material.h">
       <Filter>Src\Asset</Filter>
     </ClInclude>
@@ -123,14 +144,26 @@
     <ClInclude Include="Src\Framework\Actor\Actor.h">
       <Filter>Src\Framework\Actor</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Framework\Actor\CameraActor.h">
+      <Filter>Src\Framework\Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Framework\Actor\StaticMeshActor.h">
+      <Filter>Src\Framework\Actor</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Framework\Component\CameraComponent.h">
       <Filter>Src\Framework\Component</Filter>
     </ClInclude>
     <ClInclude Include="Src\Framework\Component\Component.h">
       <Filter>Src\Framework\Component</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Framework\Component\StaticMeshComponent.h">
+      <Filter>Src\Framework\Component</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Framework\GameApp.h">
       <Filter>Src\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Framework\RenderLayer\PostProcessRenderLayer.h">
+      <Filter>Src\Framework\RenderLayer</Filter>
     </ClInclude>
     <ClInclude Include="Src\Framework\RenderLayer\RenderLayer.h">
       <Filter>Src\Framework\RenderLayer</Filter>
@@ -162,6 +195,9 @@
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocatorPage.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\D3D12Resource.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\DX12Helper.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
@@ -172,6 +208,9 @@
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\DynamicDescriptorHeap.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\GPUProfiler.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\GpuBuffer.h">
@@ -186,7 +225,13 @@
     <ClInclude Include="Src\Graphics\GpuResourcesStateTracker.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\GraphicTypesFwd.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\GraphicsCore.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\GraphicsDefines.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\InputAssemblerLayout.h">
@@ -199,6 +244,9 @@
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\PrimitiveTopology.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\QueryHeap.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\RasterizerState.h">
@@ -237,6 +285,9 @@
     <ClInclude Include="Src\Graphics\ShaderPass.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\ShaderPreprocesser.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\ShaderResource.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
@@ -253,9 +304,6 @@
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\Viewport.h">
-      <Filter>Src\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Graphics\d3dx12.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\AABB.h">
@@ -390,10 +438,16 @@
     <ClInclude Include="Src\Utility\Mouse.h">
       <Filter>Src\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Utility\RefCounting.h">
+      <Filter>Src\Utility</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Utility\StringUtility.h">
       <Filter>Src\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\SystemTimer.h">
+      <Filter>Src\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\ThreadSafeCounter.h">
       <Filter>Src\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\ThreadSafeQueue.h">
@@ -401,6 +455,66 @@
     </ClInclude>
     <ClInclude Include="Src\Utility\Visitor.h">
       <Filter>Src\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3d12.h">
+      <Filter>ThirdParty\AgilitySDK\include</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3d12compatibility.h">
+      <Filter>ThirdParty\AgilitySDK\include</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3d12compiler.h">
+      <Filter>ThirdParty\AgilitySDK\include</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3d12sdklayers.h">
+      <Filter>ThirdParty\AgilitySDK\include</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3d12shader.h">
+      <Filter>ThirdParty\AgilitySDK\include</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3d12video.h">
+      <Filter>ThirdParty\AgilitySDK\include</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dcommon.h">
+      <Filter>ThirdParty\AgilitySDK\include</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dshadercacheregistration.h">
+      <Filter>ThirdParty\AgilitySDK\include</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12.h">
+      <Filter>ThirdParty\AgilitySDK\include\d3dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_barriers.h">
+      <Filter>ThirdParty\AgilitySDK\include\d3dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_check_feature_support.h">
+      <Filter>ThirdParty\AgilitySDK\include\d3dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_core.h">
+      <Filter>ThirdParty\AgilitySDK\include\d3dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_default.h">
+      <Filter>ThirdParty\AgilitySDK\include\d3dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_pipeline_state_stream.h">
+      <Filter>ThirdParty\AgilitySDK\include\d3dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_property_format_table.h">
+      <Filter>ThirdParty\AgilitySDK\include\d3dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_render_pass.h">
+      <Filter>ThirdParty\AgilitySDK\include\d3dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_resource_helpers.h">
+      <Filter>ThirdParty\AgilitySDK\include\d3dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_root_signature.h">
+      <Filter>ThirdParty\AgilitySDK\include\d3dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_state_object.h">
+      <Filter>ThirdParty\AgilitySDK\include\d3dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\AgilitySDK\include\dxgiformat.h">
+      <Filter>ThirdParty\AgilitySDK\include</Filter>
     </ClInclude>
     <ClInclude Include="ThirdParty\DirectXTex\BC.h">
       <Filter>ThirdParty\DirectXTex</Filter>
@@ -663,6 +777,12 @@
     <ClInclude Include="ThirdParty\dxc\inc\dxcapi.h">
       <Filter>ThirdParty\dxc\inc</Filter>
     </ClInclude>
+    <ClInclude Include="ThirdParty\dxc\inc\dxcerrors.h">
+      <Filter>ThirdParty\dxc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\dxc\inc\dxcisense.h">
+      <Filter>ThirdParty\dxc\inc</Filter>
+    </ClInclude>
     <ClInclude Include="ThirdParty\imgui\backends\imgui_impl_dx12.h">
       <Filter>ThirdParty\imgui\backends</Filter>
     </ClInclude>
@@ -687,14 +807,14 @@
     <ClInclude Include="ThirdParty\imgui\imstb_truetype.h">
       <Filter>ThirdParty\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="ThirdParty\loguru\loguru.h">
-      <Filter>ThirdParty\loguru</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Framework\Actor\CameraActor.h" />
-    <ClInclude Include="Src\Framework\Component\StaticMeshComponent.h" />
-    <ClInclude Include="Src\Framework\Actor\StaticMeshActor.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Asset\AssetDefines.cpp">
+      <Filter>Src\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Asset\AssetManager.cpp">
+      <Filter>Src\Asset</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Asset\Material.cpp">
       <Filter>Src\Asset</Filter>
     </ClCompile>
@@ -710,14 +830,26 @@
     <ClCompile Include="Src\Framework\Actor\Actor.cpp">
       <Filter>Src\Framework\Actor</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Framework\Actor\CameraActor.cpp">
+      <Filter>Src\Framework\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Framework\Actor\StaticMeshActor.cpp">
+      <Filter>Src\Framework\Actor</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Framework\Component\CameraComponent.cpp">
       <Filter>Src\Framework\Component</Filter>
     </ClCompile>
     <ClCompile Include="Src\Framework\Component\Component.cpp">
       <Filter>Src\Framework\Component</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Framework\Component\StaticMeshComponent.cpp">
+      <Filter>Src\Framework\Component</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Framework\GameApp.cpp">
       <Filter>Src\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Framework\RenderLayer\PostProcessRenderLayer.cpp">
+      <Filter>Src\Framework\RenderLayer</Filter>
     </ClCompile>
     <ClCompile Include="Src\Framework\RenderLayer\RenderLayer.cpp">
       <Filter>Src\Framework\RenderLayer</Filter>
@@ -749,6 +881,9 @@
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocatorPage.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Graphics\D3D12Resource.cpp">
+      <Filter>Src\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Graphics\DX12Helper.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
@@ -759,6 +894,9 @@
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\DynamicDescriptorHeap.cpp">
+      <Filter>Src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\GPUProfiler.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\GpuBuffer.cpp">
@@ -776,6 +914,9 @@
     <ClCompile Include="Src\Graphics\GraphicsCore.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Graphics\GraphicsDefines.cpp">
+      <Filter>Src\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Graphics\InputAssemblerLayout.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
@@ -786,6 +927,9 @@
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\PrimitiveTopology.cpp">
+      <Filter>Src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\QueryHeap.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\RasterizerState.cpp">
@@ -821,6 +965,9 @@
     <ClCompile Include="Src\Graphics\ShaderPass.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Graphics\ShaderPreprocesser.cpp">
+      <Filter>Src\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Graphics\ShaderResource.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
@@ -837,6 +984,9 @@
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Math\Color.cpp">
+      <Filter>Src\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Math\MathType.cpp">
       <Filter>Src\Math</Filter>
     </ClCompile>
     <ClCompile Include="Src\MeshLoader\MeshLoaderHelper.cpp">
@@ -887,11 +1037,20 @@
     <ClCompile Include="Src\Utility\Mouse.cpp">
       <Filter>Src\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Utility\RefCounting.cpp">
+      <Filter>Src\Utility</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Utility\StringUtility.cpp">
       <Filter>Src\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\SystemTimer.cpp">
       <Filter>Src\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utility\ThreadSafeCounter.cpp">
+      <Filter>Src\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\AgilitySDK\src\d3dx12\d3dx12_property_format_table.cpp">
+      <Filter>ThirdParty\AgilitySDK\src\d3dx12</Filter>
     </ClCompile>
     <ClCompile Include="ThirdParty\DirectXTex\BC.cpp">
       <Filter>ThirdParty\DirectXTex</Filter>
@@ -965,22 +1124,33 @@
     <ClCompile Include="ThirdParty\imgui\imgui_widgets.cpp">
       <Filter>ThirdParty\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="ThirdParty\loguru\loguru.cpp">
-      <Filter>ThirdParty\loguru</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Framework\Actor\CameraActor.cpp" />
-    <ClCompile Include="Src\Math\MathType.cpp" />
-    <ClCompile Include="Src\Framework\Component\StaticMeshComponent.cpp" />
-    <ClCompile Include="Src\Framework\Actor\StaticMeshActor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Src\Shaders\ComputeGrayscaleShader.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\DumpShaders\ComputeGrayscaleShader.hlsl">
+      <Filter>Src\Shaders\DumpShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\DumpShaders\TestBindlessPS.hlsl">
+      <Filter>Src\Shaders\DumpShaders</Filter>
+    </FxCompile>
     <FxCompile Include="Src\Shaders\IMGUIShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\MeshShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\PostProcessShader.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
     <FxCompile Include="Src\Shaders\PresentShader.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\TestBindlessPS.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\TestBindlessPSAfter.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\generateMips.hlsl">

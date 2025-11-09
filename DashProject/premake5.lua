@@ -35,7 +35,10 @@ project "DashCore"
     characterset ("MBCS")
 
     -- add dxc lib dir
-    libdirs { "%{wks.location}/%{prj.name}/ThirdParty/dxc/lib/x64" }
+    libdirs 
+	{ 
+		"%{wks.location}/%{prj.name}/ThirdParty/dxc/lib/x64",
+	}
     
     files
     {
@@ -48,9 +51,11 @@ project "DashCore"
 
     includedirs
     {
+		"%{prj.name}/ThirdParty",
+		"%{prj.name}/ThirdParty/AgilitySDK/include",
+		"%{prj.name}/ThirdParty/AgilitySDK/include/d3dx12",
         "%{prj.name}/Src/PCH",
         "%{prj.name}/Src",
-        "%{prj.name}/ThirdParty",
     }
 
     links
@@ -59,7 +64,6 @@ project "DashCore"
     }
 
     nuget { "WinPixEventRuntime:1.0.231030001" }
-    nuget { "Microsoft.Direct3D.D3D12:1.613.1" }
 
     filter { "system:windows" }
         prebuildcommands { "powershell -ExecutionPolicy Bypass -File %{wks.location}/Vendor/GetDXC/GetDXC.ps1 %{wks.location}/%{prj.name}/ThirdParty/dxc" }
@@ -123,6 +127,10 @@ project "DashProject"
 
     prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\ThirdParty\\assimp\\bin\\Debug\\assimp-vc143-mtd.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
     prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\ThirdParty\\assimp\\bin\\Release\\assimp-vc143-mt.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
+	
+	prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\ThirdParty\\AgilitySDK\\bin\\x64\\D3D12Core.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
+	prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\ThirdParty\\AgilitySDK\\bin\\x64\\d3d12SDKLayers.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
+	prebuildcommands { "xcopy /Y /D %{wks.location}\\DashCore\\ThirdParty\\AgilitySDK\\bin\\x64\\D3D12StateObjectCompiler.dll %{wks.location}\\Bin\\"..outputdir.."\\%{prj.name}\\" }
 
     files
     {
@@ -132,8 +140,10 @@ project "DashProject"
 
     includedirs
     {
+	    "DashCore/ThirdParty",
+		"DashCore/ThirdParty/AgilitySDK/include",
+		"DashCore/ThirdParty/AgilitySDK/include/d3dx12",
         "DashCore/Src",
-        "DashCore/ThirdParty"
     }
 
     links
@@ -142,7 +152,6 @@ project "DashProject"
     }
 
     nuget { "WinPixEventRuntime:1.0.231030001" }
-    nuget { "Microsoft.Direct3D.D3D12:1.613.1" }
 
     filter "system:windows"
         systemversion "latest"

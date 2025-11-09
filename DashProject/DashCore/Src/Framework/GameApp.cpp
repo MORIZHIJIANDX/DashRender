@@ -54,7 +54,7 @@ namespace Dash
 			file << result.ShaderCode;
 			file.close();
 		}
-		
+		*/
 		FShaderCreationInfo csInfo{ EShaderStage::Compute, FFileUtility::GetEngineShaderDir("TestBindlessPS.hlsl"),  "CS_Main" };
 		FShaderPassRef ComputeGrayscalePass = FShaderPass::MakeComputeShaderPass("BindlessComputeGrayScalePass", csInfo);
 
@@ -63,7 +63,7 @@ namespace Dash
 		ComputeGrayscalePSOInitializer.Finalize();
 
 		FComputePSO* ComputeGrayscalePSO = FGraphicsCore::PipelineStateCache->GetComputePipelineState(ComputeGrayscalePSOInitializer, "BindlessComputeGrayScale");
-		*/
+		
 
 		AddRenderLayer(std::make_unique<FSceneRenderLayer>());
 		AddRenderLayer(std::make_unique<FPostProcessRenderLayer>());

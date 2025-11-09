@@ -189,7 +189,7 @@ namespace Dash
 		desc.MipCount = desc.AutoGenerateMips ? desc.ComputeNumMips() : mipCount;
 		desc.MsaaSampleCount = 1;
 		desc.MsaaQuality = 0;
-		//desc.InitialStateMask = EResourceState::CopyDestination;
+		desc.InitialStateMask = EResourceState::Common;
 
 		desc.ResolveResourceDimensionData(true, false, false);
 

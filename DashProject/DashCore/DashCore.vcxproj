@@ -27,6 +27,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
+    <EnableASAN>true</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -76,9 +77,10 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;ENGINE_PATH="E:/DXCode/DashRender/DashProject/DashCore";DASH_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Src\PCH;Src;ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>ThirdParty;ThirdParty\AgilitySDK\include;ThirdParty\AgilitySDK\include\d3dx12;Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -108,8 +110,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;ENGINE_PATH="E:/DXCode/DashRender/DashProject/DashCore";DASH_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Src\PCH;Src;ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>ThirdParty;ThirdParty\AgilitySDK\include;ThirdParty\AgilitySDK\include\d3dx12;Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -143,8 +145,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;ENGINE_PATH="E:/DXCode/DashRender/DashProject/DashCore";DASH_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Src\PCH;Src;ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>ThirdParty;ThirdParty\AgilitySDK\include;ThirdParty\AgilitySDK\include\d3dx12;Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -174,6 +176,8 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Asset\AssetDefines.h" />
+    <ClInclude Include="Src\Asset\AssetManager.h" />
     <ClInclude Include="Src\Asset\Material.h" />
     <ClInclude Include="Src\Asset\StaticMesh.h" />
     <ClInclude Include="Src\Asset\Texture.h" />
@@ -191,6 +195,7 @@
     <ClInclude Include="Src\Framework\Component\Component.h" />
     <ClInclude Include="Src\Framework\Component\StaticMeshComponent.h" />
     <ClInclude Include="Src\Framework\GameApp.h" />
+    <ClInclude Include="Src\Framework\RenderLayer\PostProcessRenderLayer.h" />
     <ClInclude Include="Src\Framework\RenderLayer\RenderLayer.h" />
     <ClInclude Include="Src\Framework\RenderLayer\SceneRenderLayer.h" />
     <ClInclude Include="Src\Framework\RenderLayer\UIRenderLayer.h" />
@@ -201,19 +206,24 @@
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocation.h" />
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocator.h" />
     <ClInclude Include="Src\Graphics\CpuDescriptorAllocatorPage.h" />
+    <ClInclude Include="Src\Graphics\D3D12Resource.h" />
     <ClInclude Include="Src\Graphics\DX12Helper.h" />
     <ClInclude Include="Src\Graphics\DepthBuffer.h" />
     <ClInclude Include="Src\Graphics\DepthStencilState.h" />
     <ClInclude Include="Src\Graphics\DynamicDescriptorHeap.h" />
+    <ClInclude Include="Src\Graphics\GPUProfiler.h" />
     <ClInclude Include="Src\Graphics\GpuBuffer.h" />
     <ClInclude Include="Src\Graphics\GpuLinearAllocator.h" />
     <ClInclude Include="Src\Graphics\GpuResource.h" />
     <ClInclude Include="Src\Graphics\GpuResourcesStateTracker.h" />
+    <ClInclude Include="Src\Graphics\GraphicTypesFwd.h" />
     <ClInclude Include="Src\Graphics\GraphicsCore.h" />
+    <ClInclude Include="Src\Graphics\GraphicsDefines.h" />
     <ClInclude Include="Src\Graphics\InputAssemblerLayout.h" />
     <ClInclude Include="Src\Graphics\PipelineStateObject.h" />
     <ClInclude Include="Src\Graphics\PixelBuffer.h" />
     <ClInclude Include="Src\Graphics\PrimitiveTopology.h" />
+    <ClInclude Include="Src\Graphics\QueryHeap.h" />
     <ClInclude Include="Src\Graphics\RasterizerState.h" />
     <ClInclude Include="Src\Graphics\ReadbackBuffer.h" />
     <ClInclude Include="Src\Graphics\RenderDevice.h" />
@@ -226,13 +236,13 @@
     <ClInclude Include="Src\Graphics\ShaderCompiler.h" />
     <ClInclude Include="Src\Graphics\ShaderMap.h" />
     <ClInclude Include="Src\Graphics\ShaderPass.h" />
+    <ClInclude Include="Src\Graphics\ShaderPreprocesser.h" />
     <ClInclude Include="Src\Graphics\ShaderResource.h" />
     <ClInclude Include="Src\Graphics\ShaderTechnique.h" />
     <ClInclude Include="Src\Graphics\SubResourceData.h" />
     <ClInclude Include="Src\Graphics\SwapChain.h" />
     <ClInclude Include="Src\Graphics\TextureBuffer.h" />
     <ClInclude Include="Src\Graphics\Viewport.h" />
-    <ClInclude Include="Src\Graphics\d3dx12.h" />
     <ClInclude Include="Src\Math\AABB.h" />
     <ClInclude Include="Src\Math\AABB2.h" />
     <ClInclude Include="Src\Math\AABB3.h" />
@@ -277,10 +287,32 @@
     <ClInclude Include="Src\Utility\LogEnums.h" />
     <ClInclude Include="Src\Utility\LogManager.h" />
     <ClInclude Include="Src\Utility\Mouse.h" />
+    <ClInclude Include="Src\Utility\RefCounting.h" />
     <ClInclude Include="Src\Utility\StringUtility.h" />
     <ClInclude Include="Src\Utility\SystemTimer.h" />
+    <ClInclude Include="Src\Utility\ThreadSafeCounter.h" />
     <ClInclude Include="Src\Utility\ThreadSafeQueue.h" />
     <ClInclude Include="Src\Utility\Visitor.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3d12.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3d12compatibility.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3d12compiler.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3d12sdklayers.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3d12shader.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3d12video.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dcommon.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dshadercacheregistration.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_barriers.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_check_feature_support.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_core.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_default.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_pipeline_state_stream.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_property_format_table.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_render_pass.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_resource_helpers.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_root_signature.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\d3dx12\d3dx12_state_object.h" />
+    <ClInclude Include="ThirdParty\AgilitySDK\include\dxgiformat.h" />
     <ClInclude Include="ThirdParty\DirectXTex\BC.h" />
     <ClInclude Include="ThirdParty\DirectXTex\DDS.h" />
     <ClInclude Include="ThirdParty\DirectXTex\DirectXTex.h" />
@@ -368,6 +400,8 @@
     <ClInclude Include="ThirdParty\assimp\version.h" />
     <ClInclude Include="ThirdParty\dxc\inc\d3d12shader.h" />
     <ClInclude Include="ThirdParty\dxc\inc\dxcapi.h" />
+    <ClInclude Include="ThirdParty\dxc\inc\dxcerrors.h" />
+    <ClInclude Include="ThirdParty\dxc\inc\dxcisense.h" />
     <ClInclude Include="ThirdParty\imgui\backends\imgui_impl_dx12.h" />
     <ClInclude Include="ThirdParty\imgui\backends\imgui_impl_win32.h" />
     <ClInclude Include="ThirdParty\imgui\imconfig.h" />
@@ -376,9 +410,10 @@
     <ClInclude Include="ThirdParty\imgui\imstb_rectpack.h" />
     <ClInclude Include="ThirdParty\imgui\imstb_textedit.h" />
     <ClInclude Include="ThirdParty\imgui\imstb_truetype.h" />
-    <ClInclude Include="ThirdParty\loguru\loguru.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Asset\AssetDefines.cpp" />
+    <ClCompile Include="Src\Asset\AssetManager.cpp" />
     <ClCompile Include="Src\Asset\Material.cpp" />
     <ClCompile Include="Src\Asset\StaticMesh.cpp" />
     <ClCompile Include="Src\Asset\Texture.cpp" />
@@ -390,6 +425,7 @@
     <ClCompile Include="Src\Framework\Component\Component.cpp" />
     <ClCompile Include="Src\Framework\Component\StaticMeshComponent.cpp" />
     <ClCompile Include="Src\Framework\GameApp.cpp" />
+    <ClCompile Include="Src\Framework\RenderLayer\PostProcessRenderLayer.cpp" />
     <ClCompile Include="Src\Framework\RenderLayer\RenderLayer.cpp" />
     <ClCompile Include="Src\Framework\RenderLayer\SceneRenderLayer.cpp" />
     <ClCompile Include="Src\Framework\RenderLayer\UIRenderLayer.cpp" />
@@ -400,19 +436,23 @@
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocation.cpp" />
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocator.cpp" />
     <ClCompile Include="Src\Graphics\CpuDescriptorAllocatorPage.cpp" />
+    <ClCompile Include="Src\Graphics\D3D12Resource.cpp" />
     <ClCompile Include="Src\Graphics\DX12Helper.cpp" />
     <ClCompile Include="Src\Graphics\DepthBuffer.cpp" />
     <ClCompile Include="Src\Graphics\DepthStencilState.cpp" />
     <ClCompile Include="Src\Graphics\DynamicDescriptorHeap.cpp" />
+    <ClCompile Include="Src\Graphics\GPUProfiler.cpp" />
     <ClCompile Include="Src\Graphics\GpuBuffer.cpp" />
     <ClCompile Include="Src\Graphics\GpuLinearAllocator.cpp" />
     <ClCompile Include="Src\Graphics\GpuResource.cpp" />
     <ClCompile Include="Src\Graphics\GpuResourcesStateTracker.cpp" />
     <ClCompile Include="Src\Graphics\GraphicsCore.cpp" />
+    <ClCompile Include="Src\Graphics\GraphicsDefines.cpp" />
     <ClCompile Include="Src\Graphics\InputAssemblerLayout.cpp" />
     <ClCompile Include="Src\Graphics\PipelineStateObject.cpp" />
     <ClCompile Include="Src\Graphics\PixelBuffer.cpp" />
     <ClCompile Include="Src\Graphics\PrimitiveTopology.cpp" />
+    <ClCompile Include="Src\Graphics\QueryHeap.cpp" />
     <ClCompile Include="Src\Graphics\RasterizerState.cpp" />
     <ClCompile Include="Src\Graphics\ReadbackBuffer.cpp" />
     <ClCompile Include="Src\Graphics\RenderDevice.cpp" />
@@ -424,6 +464,7 @@
     <ClCompile Include="Src\Graphics\ShaderCompiler.cpp" />
     <ClCompile Include="Src\Graphics\ShaderMap.cpp" />
     <ClCompile Include="Src\Graphics\ShaderPass.cpp" />
+    <ClCompile Include="Src\Graphics\ShaderPreprocesser.cpp" />
     <ClCompile Include="Src\Graphics\ShaderResource.cpp" />
     <ClCompile Include="Src\Graphics\ShaderTechnique.cpp" />
     <ClCompile Include="Src\Graphics\SubResourceData.cpp" />
@@ -449,8 +490,11 @@
     <ClCompile Include="Src\Utility\Keyboard.cpp" />
     <ClCompile Include="Src\Utility\LogManager.cpp" />
     <ClCompile Include="Src\Utility\Mouse.cpp" />
+    <ClCompile Include="Src\Utility\RefCounting.cpp" />
     <ClCompile Include="Src\Utility\StringUtility.cpp" />
     <ClCompile Include="Src\Utility\SystemTimer.cpp" />
+    <ClCompile Include="Src\Utility\ThreadSafeCounter.cpp" />
+    <ClCompile Include="ThirdParty\AgilitySDK\src\d3dx12\d3dx12_property_format_table.cpp" />
     <ClCompile Include="ThirdParty\DirectXTex\BC.cpp" />
     <ClCompile Include="ThirdParty\DirectXTex\BC4BC5.cpp" />
     <ClCompile Include="ThirdParty\DirectXTex\BC6HBC7.cpp" />
@@ -475,16 +519,33 @@
     <ClCompile Include="ThirdParty\imgui\imgui_draw.cpp" />
     <ClCompile Include="ThirdParty\imgui\imgui_tables.cpp" />
     <ClCompile Include="ThirdParty\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="ThirdParty\loguru\loguru.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Src\Shaders\ComputeGrayscaleShader.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\DumpShaders\ComputeGrayscaleShader.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\DumpShaders\TestBindlessPS.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Src\Shaders\IMGUIShader.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Src\Shaders\MeshShader.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\PostProcessShader.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Src\Shaders\PresentShader.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\TestBindlessPS.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\TestBindlessPSAfter.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Src\Shaders\generateMips.hlsl">
@@ -496,12 +557,12 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\WinPixEventRuntime.1.0.230302001\build\WinPixEventRuntime.targets" Condition="Exists('..\packages\WinPixEventRuntime.1.0.230302001\build\WinPixEventRuntime.targets')" />
+    <Import Project="..\packages\WinPixEventRuntime.1.0.231030001\build\WinPixEventRuntime.targets" Condition="Exists('..\packages\WinPixEventRuntime.1.0.231030001\build\WinPixEventRuntime.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\WinPixEventRuntime.1.0.230302001\build\WinPixEventRuntime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinPixEventRuntime.1.0.230302001\build\WinPixEventRuntime.targets'))" />
+    <Error Condition="!Exists('..\packages\WinPixEventRuntime.1.0.231030001\build\WinPixEventRuntime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinPixEventRuntime.1.0.231030001\build\WinPixEventRuntime.targets'))" />
   </Target>
 </Project>

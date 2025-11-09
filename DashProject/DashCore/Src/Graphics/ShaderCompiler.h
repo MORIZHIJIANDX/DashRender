@@ -2,7 +2,6 @@
 
 #include <wtypes.h>
 #include <Unknwn.h>
-#include "dxc/inc/d3d12shader.h"
 #include "dxc/inc/dxcapi.h"
 #include "ShaderResource.h"
 #include "Utility/RefCounting.h"

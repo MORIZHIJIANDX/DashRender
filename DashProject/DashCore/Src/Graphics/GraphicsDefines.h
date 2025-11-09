@@ -1,8 +1,5 @@
 #pragma once
 
-#include <d3d12.h>
-#include <d3d12shader.h>
-
 namespace Dash
 {
 	#define SHADER_BLOB_FILE_EXTENSION ".cso"

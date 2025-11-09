@@ -5,7 +5,6 @@
 #include <Unknwn.h>
 #include "InputAssemblerLayout.h"
 #include "dxc/inc/dxcapi.h"
-#include "dxc/inc/d3d12shader.h"
 #include "Utility/RefCounting.h"
 #include "Utility/ThreadSafeCounter.h"
 

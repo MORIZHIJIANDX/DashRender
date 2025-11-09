@@ -1,5 +1,4 @@
 #include "PCH/PCH.h"
-
 #include "TestApplication.h"
 #include "Utility/LogManager.h"
 #include "Utility/Keyboard.h"

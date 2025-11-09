@@ -35,11 +35,17 @@
 
 #include "Math/MathType.h"
 
-#include <d3d12.h>
+#include "d3d12.h"
+#include "d3d12shader.h"
+#include "d3d12sdklayers.h"
+#include "d3dcommon.h"
+#include "dxgiformat.h"
+#include "d3dx12.h"
+
 #include <dxgi1_6.h>
+
 #include <D3Dcompiler.h>
 #include <DirectXMath.h>
-#include "d3dx12.h"
 
 #include <wrl.h>
 #include <shellapi.h>

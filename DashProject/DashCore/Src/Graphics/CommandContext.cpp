@@ -256,8 +256,8 @@ namespace Dash
 			d3dSubResources.emplace_back(subresourceData[i].D3DSubResource());
 		}
 
-		// Resource must be in the copy-destination state.
-		context.TransitionBarrier(dest, EResourceState::CopyDestination, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
+		// Resource must be in the common state.
+		context.TransitionBarrier(dest, EResourceState::Common, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, true);
 		UpdateSubresources(context.GetD3DCommandList(), dest->GetResource()->GetResource(), alloc.Resource.GetResource()->GetResource(), alloc.Offset, firstSubresource, numSubresources, d3dSubResources.data());
 		context.Finish(true);
 	}

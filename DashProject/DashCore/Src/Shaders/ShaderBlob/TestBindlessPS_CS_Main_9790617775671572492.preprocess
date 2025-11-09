@@ -1,0 +1,2 @@
+InputTexture=Texture2D
+OutputTexture=RWTexture2D<float4>
