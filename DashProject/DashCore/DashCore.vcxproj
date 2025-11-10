@@ -78,7 +78,7 @@
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;ENGINE_PATH="E:/DXCode/DashRender/DashProject/DashCore";DASH_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>ThirdParty;ThirdParty\AgilitySDK\include;ThirdParty\AgilitySDK\include\d3dx12;ThirdParty\WinPixEventRuntime\include\WinPixEventRuntime;Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -110,7 +110,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;ENGINE_PATH="E:/DXCode/DashRender/DashProject/DashCore";DASH_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>ThirdParty;ThirdParty\AgilitySDK\include;ThirdParty\AgilitySDK\include\d3dx12;ThirdParty\WinPixEventRuntime\include\WinPixEventRuntime;Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -145,7 +145,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;ENGINE_PATH="H:/MyProject/DashRender/DashProject/DashCore";DASH_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;ENGINE_PATH="E:/DXCode/DashRender/DashProject/DashCore";DASH_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>ThirdParty;ThirdParty\AgilitySDK\include;ThirdParty\AgilitySDK\include\d3dx12;ThirdParty\WinPixEventRuntime\include\WinPixEventRuntime;Src\PCH;Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -530,18 +530,6 @@
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Src\Shaders\DumpShaders\ComputeGrayscaleShader.hlsl">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="Src\Shaders\DumpShaders\IMGUIShader.hlsl">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="Src\Shaders\DumpShaders\MeshShader.hlsl">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="Src\Shaders\DumpShaders\PostProcessShader.hlsl">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="Src\Shaders\DumpShaders\TestBindlessPS.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Src\Shaders\IMGUIShader.hlsl">

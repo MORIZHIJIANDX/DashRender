@@ -1156,18 +1156,6 @@
     <FxCompile Include="Src\Shaders\DumpShaders\ComputeGrayscaleShader.hlsl">
       <Filter>Src\Shaders\DumpShaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\DumpShaders\IMGUIShader.hlsl">
-      <Filter>Src\Shaders\DumpShaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Src\Shaders\DumpShaders\MeshShader.hlsl">
-      <Filter>Src\Shaders\DumpShaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Src\Shaders\DumpShaders\PostProcessShader.hlsl">
-      <Filter>Src\Shaders\DumpShaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Src\Shaders\DumpShaders\TestBindlessPS.hlsl">
-      <Filter>Src\Shaders\DumpShaders</Filter>
-    </FxCompile>
     <FxCompile Include="Src\Shaders\IMGUIShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>

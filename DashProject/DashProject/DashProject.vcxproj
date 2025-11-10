@@ -80,7 +80,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;PROJECT_PATH="H:/MyProject/DashRender/DashProject/DashProject";DASH_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;PROJECT_PATH="E:/DXCode/DashRender/DashProject/DashProject";DASH_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\DashCore\ThirdParty;..\DashCore\ThirdParty\AgilitySDK\include;..\DashCore\ThirdParty\AgilitySDK\include\d3dx12;..\DashCore\ThirdParty\AgilitySDK\include\WinPixEventRuntime;..\DashCore\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -110,7 +110,7 @@ xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\AgilitySDK\bin\x64\D3D12StateObje
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;PROJECT_PATH="H:/MyProject/DashRender/DashProject/DashProject";DASH_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;PROJECT_PATH="E:/DXCode/DashRender/DashProject/DashProject";DASH_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\DashCore\ThirdParty;..\DashCore\ThirdParty\AgilitySDK\include;..\DashCore\ThirdParty\AgilitySDK\include\d3dx12;..\DashCore\ThirdParty\AgilitySDK\include\WinPixEventRuntime;..\DashCore\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -143,7 +143,7 @@ xcopy /Y /D $(SolutionDir)\DashCore\ThirdParty\AgilitySDK\bin\x64\D3D12StateObje
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;PROJECT_PATH="H:/MyProject/DashRender/DashProject/DashProject";DASH_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DASH_PLATFORM_WINDOWS;PROJECT_PATH="E:/DXCode/DashRender/DashProject/DashProject";DASH_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\DashCore\ThirdParty;..\DashCore\ThirdParty\AgilitySDK\include;..\DashCore\ThirdParty\AgilitySDK\include\d3dx12;..\DashCore\ThirdParty\AgilitySDK\include\WinPixEventRuntime;..\DashCore\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
