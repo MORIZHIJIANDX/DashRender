@@ -11,6 +11,50 @@ namespace Dash
     struct TScalarTraits {};
 
     template<>
+    struct TScalarTraits<uint16>
+    {
+        static uint16 Pi()
+        {
+            return 3;
+        }
+
+        static uint16 TwoPi()
+        {
+            return 6;
+        }
+
+        static uint16 InvPi()
+        {
+            return 0;
+        }
+
+        static float InvTwoPi()
+        {
+            return 0;
+        }
+
+        static uint16 Infinity()
+        {
+            return std::numeric_limits<uint16>::infinity();
+        }
+
+        static uint16 Epsilon()
+        {
+            return std::numeric_limits<uint16>::epsilon();
+        }
+
+        static uint16 Max()
+        {
+            return std::numeric_limits<uint16>::max();
+        }
+
+        static uint16 Lowest()
+        {
+            return std::numeric_limits<uint16>::lowest();
+        }
+    };
+
+    template<>
     struct TScalarTraits<std::size_t>
     {
         static std::size_t Pi()

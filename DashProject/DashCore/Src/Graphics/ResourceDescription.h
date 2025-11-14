@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ResourceFormat.h"
+#include "GraphicsDefines.h"
 
 namespace Dash
 {
@@ -16,9 +17,6 @@ namespace Dash
 	protected:
 		void QueryAllocationInfo();
 		virtual void ResolveResourceDimensionData(bool allowUAV = true, bool allowRTV = true, bool allowDSV = false) {};
-
-	public:
-		EResourceState InitialStateMask = EResourceState::Common;
 
 	protected:
 		D3D12_RESOURCE_DESC mDescription{};
@@ -86,21 +84,52 @@ namespace Dash
 	{
 	public:
 		uint32 Size = 1;
-		uint32 Count = 1;
 		uint32 Stride = 1;
+		EBufferUsage Usage = EBufferUsage::Default;
+		EResourceBindFlag BindFlags = EResourceBindFlag::None;
+		EBufferMiscFlag MiscFlags = EBufferMiscFlag::None;
+		EResourceFormat Format = EResourceFormat::Unknown;
 
-		static FBufferDescription Create(uint32 elementSize, uint32 elementCount, bool cpuAccess = false, uint32 elementAlignment = 1, EResourceState initialStateMask = EResourceState::Common);
+		static FBufferDescription Create(uint32 size, uint32 stride, EBufferUsage usage, EResourceBindFlag bindFlags, EBufferMiscFlag miscFlags, EResourceFormat format);
 
-		template<typename ElementType>
-		static FBufferDescription Create(uint32 elementCount, bool cpuAccess = false, uint32 elementAlignment = 1, EResourceState initialStateMask = EResourceState::Common);
+		static FBufferDescription CreateVertex(uint32 elementSize, uint32 elementCount);
+		template<typename TVertexType>
+		static FBufferDescription CreateVertex(uint32 elementCount)
+		{
+			CreateVertex(sizeof(TVertexType), elementCount);
+		}
+
+		static FBufferDescription CreateDynamicVertex(uint32 elementSize, uint32 elementCount);
+		template<typename TVertexType>
+		static FBufferDescription CreateDynamicVertex(uint32 elementCount)
+		{
+			CreateDynamicVertex(sizeof(TVertexType), elementCount);
+		}
+
+		static FBufferDescription CreateIndex(uint32 size, uint32 stride);
+		template<typename TIndexType>
+		static FBufferDescription CreateIndex(uint32 elementCount)
+		{
+			CreateIndex(elementCount * sizeof(TIndexType), sizeof(TIndexType));
+		}
+
+		static FBufferDescription CreateDynamicIndexBuffer(uint32 size, uint32 stride);
+		template<typename TIndexType>
+		static FBufferDescription CreateDynamicIndexBuffer(uint32 elementCount)
+		{
+			CreateDynamicIndexBuffer(elementCount * sizeof(TIndexType), sizeof(TIndexType));
+		}
+
+		static FBufferDescription CreateStructured(uint32 elementSize, uint32 elementCount, bool uav = false, bool dynamic = false);
+		template<typename TStructureType>
+		static FBufferDescription CreateStructured(uint32 elementCount, bool uav = false, bool dynamic = false)
+		{
+			CreateStructured(sizeof(TStructureType), elementCount, uav, dynamic);
+		}
+
+		static FBufferDescription CreateCounter();
 
 	protected:
 		virtual void ResolveResourceDimensionData(bool allowUAV, bool allowRTV, bool allowDSV = false) override;
 	};
-
-	template<typename ElementType>
-	FBufferDescription FBufferDescription::Create(uint32 elementCount, bool cpuAccess /*= false*/, uint32 elementAlignment /*= 1*/, EResourceState initialStateMask /*= EResourceState::Common*/)
-	{
-		return Create(sizeof(ElementType), elementCount, cpuAccess, elementAlignment, initialStateMask);
-	}
 }

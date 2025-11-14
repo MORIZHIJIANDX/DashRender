@@ -688,6 +688,13 @@ namespace Dash
 		return bufferRef;
 	}
 
+	FByteAddressBufferRef FRenderDevice::CreateByteAddressBuffer(const std::string& name, uint32 numElements, uint32 elementSize, EResourceState initStates)
+	{
+		FByteAddressBufferRef bufferRef{ new FByteAddressBuffer() };
+		bufferRef->InitResource(name, numElements, elementSize, 1, initStates);
+		return bufferRef;
+	}
+
 	FReadbackBufferRef FRenderDevice::CreateReadbackBuffer(const std::string& name, uint32 numElements, uint32 elementSize)
 	{
 		FReadbackBufferRef bufferRef{ new FReadbackBuffer() };

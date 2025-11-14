@@ -40,7 +40,7 @@ namespace Dash
 
 	void FTextureBuffer::CreateBuffer(const std::string& name)
 	{
-		CreateTextureResource(mDesc.D3DResourceDescription(), CD3DX12_CLEAR_VALUE{}, name, mDesc.InitialStateMask);
+		CreateTextureResource(mDesc.D3DResourceDescription(), CD3DX12_CLEAR_VALUE{}, name);
 		CreateViews();
 	}
 

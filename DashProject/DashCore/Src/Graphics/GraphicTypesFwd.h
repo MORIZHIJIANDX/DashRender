@@ -21,6 +21,7 @@ namespace Dash
 	class FGpuBuffer;
 	class FGpuConstantBuffer;
 	class FStructuredBuffer;
+	class FByteAddressBuffer;
 	class FGpuVertexBuffer;
 	class FGpuIndexBuffer;
 	class FGpuDynamicVertexBuffer;
@@ -42,6 +43,7 @@ namespace Dash
 	using FGpuBufferRef = TRefCountPtr<FGpuBuffer>;
 	using FGpuConstantBufferRef = TRefCountPtr<FGpuConstantBuffer>;
 	using FStructuredBufferRef = TRefCountPtr<FStructuredBuffer>;
+	using FByteAddressBufferRef = TRefCountPtr<FByteAddressBuffer>;
 	using FGpuVertexBufferRef = TRefCountPtr<FGpuVertexBuffer>;
 	using FGpuIndexBufferRef = TRefCountPtr<FGpuIndexBuffer>;
 	using FGpuDynamicVertexBufferRef = TRefCountPtr<FGpuDynamicVertexBuffer>;

@@ -95,4 +95,42 @@ namespace Dash
 		Raster,
 		Compute
 	};
+
+	enum class ED3D12ViewType
+	{
+		CBV,
+		SRV,
+		UAV,
+		RTV,
+		DSV,
+	};
+
+	enum class EBufferUsage
+	{
+		Default,
+		Upload,
+		Readback
+	};
+
+	enum class EResourceBindFlag : uint16
+	{
+		None = 0,
+		ShaderResource = BIT(0),
+		RenderTarget = BIT(1),
+		DepthStencil = BIT(2),
+		UnorderedAccess = BIT(3),
+	};
+	ENABLE_BITMASK_OPERATORS(EResourceBindFlag);
+
+	enum class EBufferMiscFlag : uint16
+	{
+		None = 0,
+		IndirectArgs = BIT(0),
+		ByteAddressBuffer = BIT(1),
+		StructuredBuffer = BIT(2),
+		ConstantBuffer = BIT(3),
+		VertexBuffer = BIT(4),
+		IndexBuffer = BIT(5),
+	};
+	ENABLE_BITMASK_OPERATORS(EBufferMiscFlag);
 }

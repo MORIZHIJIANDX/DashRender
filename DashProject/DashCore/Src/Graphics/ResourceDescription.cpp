@@ -96,7 +96,7 @@ namespace Dash
 		FColorBufferDescription desc;
 		desc.Dimension = dimension;
 		desc.Format = format;
-		desc.InitialStateMask = initialStateMask;
+		//desc.InitialStateMask = initialStateMask;
 		desc.Magnitude = magnitude;
 		desc.MipCount = mipCount;
 		desc.MsaaSampleCount = sampleCount;
@@ -134,7 +134,7 @@ namespace Dash
 		FDepthBufferDescription desc;
 		desc.Dimension = ETextureDimension::Texture2D;
 		desc.Format = format;
-		desc.InitialStateMask = initialStateMask;
+		//desc.InitialStateMask = initialStateMask;
 		desc.Magnitude = FResourceMagnitude(width, height);
 		desc.MipCount = mipCount;
 		desc.MsaaSampleCount = sampleCount;
@@ -154,11 +154,63 @@ namespace Dash
 		desc.Count = elementCount;
 		desc.Stride = FMath::AlignUp(elementSize, elementAlignment);
 		desc.Size = desc.Stride * elementCount;
-		desc.InitialStateMask = initialStateMask;
+		//desc.InitialStateMask = initialStateMask;
 
 		desc.ResolveResourceDimensionData(unorderedAccess, false);
 
 		return desc;
+	}
+
+	FBufferDescription FBufferDescription::Create(uint32 size, uint32 stride, EBufferUsage usage, EResourceBindFlag bindFlags, EBufferMiscFlag miscFlags, EResourceFormat format)
+	{
+		FBufferDescription desc;
+		desc.Size = size;
+		desc.Stride = stride;
+		desc.Usage = usage;
+		desc.BindFlags = bindFlags;
+		desc.MiscFlags = miscFlags;
+		desc.Format = format;
+
+		//desc.ResolveResourceDimensionData(unorderedAccess, false);
+
+		return desc;
+	}
+
+	FBufferDescription FBufferDescription::CreateVertex(uint32 elementSize, uint32 elementCount)
+	{
+		return FBufferDescription::Create(elementSize * elementCount, elementSize, EBufferUsage::Default, EResourceBindFlag::None, EBufferMiscFlag::VertexBuffer, EResourceFormat::Unknown);
+	}
+
+	FBufferDescription FBufferDescription::CreateDynamicVertex(uint32 elementSize, uint32 elementCount)
+	{
+		return FBufferDescription::Create(elementSize * elementCount, elementSize, EBufferUsage::Upload, EResourceBindFlag::None, EBufferMiscFlag::VertexBuffer, EResourceFormat::Unknown);
+	}
+
+	FBufferDescription FBufferDescription::CreateIndex(uint32 size, uint32 stride)
+	{
+		return FBufferDescription::Create(size, stride, EBufferUsage::Default, EResourceBindFlag::None, EBufferMiscFlag::IndexBuffer, EResourceFormat::Unknown);
+	}
+
+	FBufferDescription FBufferDescription::CreateDynamicIndexBuffer(uint32 size, uint32 stride)
+	{
+		return FBufferDescription::Create(size, stride, EBufferUsage::Upload, EResourceBindFlag::None, EBufferMiscFlag::IndexBuffer, EResourceFormat::Unknown);
+	}
+
+	FBufferDescription FBufferDescription::CreateStructured(uint32 elementSize, uint32 elementCount, bool uav, bool dynamic)
+	{
+		ASSERT_MSG(uav ^ dynamic, "Buffer cannot be dynamic and be accessed as UAV at the same time!");
+		EResourceBindFlag bindFlag = EResourceBindFlag::ShaderResource;
+		if (uav)
+		{
+			bindFlag |= EResourceBindFlag::UnorderedAccess;
+		}
+		return FBufferDescription::Create(elementSize * elementCount, elementSize, dynamic ? EBufferUsage::Upload : EBufferUsage::Default, 
+			bindFlag, EBufferMiscFlag::StructuredBuffer, EResourceFormat::Unknown);
+	}
+
+	FBufferDescription FBufferDescription::CreateCounter()
+	{
+		return FBufferDescription::Create(sizeof(uint32), 0, EBufferUsage::Default, EResourceBindFlag::UnorderedAccess, EBufferMiscFlag::None, EResourceFormat::Unknown);
 	}
 
 	void FBufferDescription::ResolveResourceDimensionData(bool allowUAV, bool allowRTV, bool allowDSV)
@@ -189,7 +241,6 @@ namespace Dash
 		desc.MipCount = desc.AutoGenerateMips ? desc.ComputeNumMips() : mipCount;
 		desc.MsaaSampleCount = 1;
 		desc.MsaaQuality = 0;
-		desc.InitialStateMask = EResourceState::Common;
 
 		desc.ResolveResourceDimensionData(true, false, false);
 

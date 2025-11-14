@@ -304,6 +304,8 @@ namespace Dash
 			return CreateStructuredBuffer(name, numElements, sizeof(StructuredBufferType), initData);
 		}
 
+		FByteAddressBufferRef CreateByteAddressBuffer(const std::string& name, uint32 numElements, uint32 elementSize, EResourceState initStates = EResourceState::Common);
+
 		FReadbackBufferRef CreateReadbackBuffer(const std::string& name, uint32 numElements, uint32 elementSize);
 
 		bool UAVLoadSupportR11G11B10Float() const { return mTypedUAVLoadSupport_R11G11B10_FLOAT; }

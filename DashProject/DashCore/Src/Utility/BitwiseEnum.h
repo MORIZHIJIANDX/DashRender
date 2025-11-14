@@ -83,6 +83,7 @@ namespace Dash
         return lhs;
     }
 
+    #define BIT(x) (1 << x)
     #define ENABLE_BITMASK_OPERATORS(x)  \
     template<>                           \
     struct EnableBitMaskOperators<x>     \
